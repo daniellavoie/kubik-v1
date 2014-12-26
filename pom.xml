@@ -27,6 +27,15 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<repositories>
+		<repository>
+        <id>spring-snapshots</id>
+        <name>Spring Maven Snapshot Repository</name>
+        <url>http://s3.amazonaws.com/maven.springframework.org/snapshot</url>
+	</repository>
+	</repositories>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -39,6 +48,11 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-elasticsearch</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-elasticsearch</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
