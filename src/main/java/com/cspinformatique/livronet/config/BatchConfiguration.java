@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.FixedLengthTokenizer;
 import org.springframework.batch.item.file.transform.Range;
@@ -29,6 +30,9 @@ public class BatchConfiguration {
 				setNames(getDilicomNames());
 				setColumns(getDilicomRanges());
 			}});
+            setFieldSetMapper(new BeanWrapperFieldSetMapper<DilicomReference>() {{
+                setTargetType(DilicomReference.class);
+            }});
 		}});
 		
 		return reader;
