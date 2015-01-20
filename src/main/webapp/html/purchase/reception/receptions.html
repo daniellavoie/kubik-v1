@@ -1,0 +1,55 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Réception fournisseur</title>
+		
+		<link th:replace="util/import :: head">
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-app="KubikReceptions">
+			<h1>Réception fournisseur</h1>
+						
+			<table class="panel panel-default sessions table table-striped table-hover table-condensed" ng-controller="KubikReceptionsController as receptionsView">
+				<thead>
+					<tr class="text-center">
+						<th>Fournisseur</th>
+						<th>Commande</th>
+						<th>Status</th>
+						<th>Mode livraison</th>
+						<th>Type de date de livraison</th>
+						<th>Date de livraison</th>
+						<th>Date réception</th>
+						<th>Produits</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="reception in receptions" ng-click="openReception(reception.id)">
+						<td>{{reception.supplier.name}} - {{reception.supplier.ean13}}</td>
+						<td><a th:href="@{/purchaseOrder/{{reception.purchaseOrder.id}}}">{{reception.purchaseOrder.id}}</a></td>
+						<td>
+							<span ng-if="reception.status == 'OPEN'" class="label label-info">Ouverte</span>
+							<span ng-if="reception.status == 'CLOSED'" class="label label-success">Fermée</span>
+							<span ng-if="reception.status == 'CANCELED'" class="label label-danger">Annulée</span>
+						</td>
+						<td>{{reception.shippingMode}}</td>
+						<td>{{reception.deliveryDateType}}</td>
+						<td>{{reception.deliveryDate | date : "short"}}</td>
+						<td>{{reception.dateReceived | date : "short"}}</td>
+						<td>{{reception.details.length}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/purchase/receptions.js}"></script>
+	</body>
+</html>

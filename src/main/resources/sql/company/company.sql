@@ -1,0 +1,1 @@
+INSERT INTO `kubik`.`company` (`name`, `dilicom_image_encryption_key`, `ean13`) VALUES ('La Dimension Fantastique', 'IYdaoLI0M0XLRpj0', '3025594503604');

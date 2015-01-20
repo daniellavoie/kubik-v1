@@ -1,0 +1,29 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Clients</title>
+		
+		<link th:replace="util/import :: head">
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="KubikCustomersPage" ng-controller="KubikCustomersPageController as view"  class="container text-center">
+			<h1>Clients</h1>
+						
+			<div th:replace="sales/customers :: customers"></div>
+		</div>
+		
+		<div class="customer-card"></div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/sales/customers-page.js}"></script>
+	</body>
+</html>

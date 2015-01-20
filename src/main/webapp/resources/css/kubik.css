@@ -1,0 +1,15 @@
+body { 
+    padding-top: 50px; 
+}
+
+.table th{
+	text-align: center;
+}
+
+table.sessions tbody tr:HOVER{
+	cursor: pointer;
+}
+
+.pointer:hover{
+	cursor: pointer;
+}

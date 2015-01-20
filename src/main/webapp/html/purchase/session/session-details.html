@@ -1,0 +1,239 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+
+	<head>
+		<title>La Dimension Fantastique - Préparation de commande</title>
+		
+		<link th:replace="util/import :: head">
+		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/session/session-details.css}" />
+	</head>
+	
+	<body >
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-app="KubikPurchaseSessionDetails" ng-controller="SessionDetailsController as view">
+			<h1>Préparation de commande </h1>
+			
+			<div class="header form-inline">
+				<div class="form-group">
+					<label>Statut : </label>
+					<span ng-if="session.status == 'DRAFT'" class="label label-info">Brouillon</span>
+					<span ng-if="session.status == 'SUBMITED'" class="label label-success">Soumis</span>
+					<span ng-if="session.status == 'CANCELED'" class="label label-danger">Annulé</span>
+				</div>
+				
+				<div class="minDeliveryDate form-group">
+					<label>Date de livraison min. :</label>
+					<input 
+						ng-model="session.minDeliveryDate" 
+						type="text" 
+						class="date form-control"
+						placeholder="dd/MM/yyyy" 
+					/>
+				</div>
+				
+				<div class="maxDeliveryDate form-group">
+					<label>Date de livraison max :</label>
+					<input 
+						ng-model="session.maxDeliveryDate"
+						type="text" 
+						class="date form-control"
+						placeholder="dd/MM/yyyy"	
+					/>
+				</div>
+			</div>
+			
+			<table class="panel panel-default table table-striped table-condensed">
+				<thead class="panel-heading">
+					<tr>
+						<th>Produit</th>
+						<th>Disponibilité</th>
+						<th>Fournisseur</th>
+						<th>Quantité</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="detail in session.details">
+						<td>
+							<a href="#" ng-click="kubikProductCard.openCard(detail.product.id)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
+						<td>{{detail.product.availabilityCode}}</td>
+						<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
+						<td>
+							<input 
+								ng-model="detail.quantity"
+								class="quantity" 
+								type="number"
+								min="1" 
+								max="99999" 
+							/>
+						</td>
+							
+						<td>
+							<button
+								ng-click="deleteDetail(detail)" 
+								type="button" 
+								class="btn btn-warning btn-xs"
+							>
+								<span class="glyphicon glyphicon-trash"></span>
+							</button>
+							
+						</td>
+					</tr>
+					
+					<tr ng-if="session.details.length == 0">
+						<td colspan="5">
+							Aucun produit dans la commande.
+						</td>
+					</tr>
+					 
+					<tr ng-repeat="productSearch in productsToValidate">
+						<td>
+							<a href="#" ng-click="kubikProductCard.openCard(detail.product.id)">
+								{{productSearch.selectedProduct.ean13}} - {{productSearch.selectedProduct.standardLabel}}
+							</a>
+						</td>
+						<td>{{productSearch.selectedProduct.availabilityCode}}</td>
+						<td>
+							<span ng-if="productSearch.products.length == 1">
+								{{productSearch.selectedProduct.supplier.name}} - {{productSearch.selectedProduct.supplier.ean13}}
+							</span>
+							
+							<select 
+								class="supplier"
+								ng-if="productSearch.products.length > 1"
+								ng-change="changeSelectedProduct()"
+							>
+								<option 
+									ng-repeat="product in productSearch.products" 
+									ng-checked="product.supplier.ean13 == selectedProduct.supplier.ean13"
+									ng-value="product.supplier.ean13"
+								>
+									{{product.supplier.name}} - {{product.supplier.ean13}}
+								</option>							
+							</select>
+						</td>
+						
+						<td>
+							<input 
+								ng-model="productSearch.newProductQuantity"
+								class="quantity" 
+								type="number" 
+								ng-value="1"
+								min="1" 
+								max="99999" />
+						</td>
+						
+						<td>
+							<button
+								ng-click="resetNewProduct()" 
+								type="button" 
+								class="btn btn-warning btn-xs"
+							>
+								<span class="glyphicon glyphicon-remove"></span>
+							</button>
+							<button
+								ng-click="createDetail(productSearch.selectedProduct, productSearch.newProductQuantity)" 
+								type="button" 
+								class="btn btn-success btn-xs"
+							>
+								<span class="glyphicon glyphicon-ok"></span>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+				
+				<tfoot ng-if="session.status == 'DRAFT'" ng-controller="NewProductController as newProductView" class="new-product">
+					<tr ng-if="productSearch == null || productSearch.products.length == 0">
+						<td colspan="5" ng-controller="ProductSelectorController as selectorView">
+							<div class="selector input-group">
+								<div class="input-group-btn">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+										<span class="selector-button-label">Ean13</span> <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu" role="menu">
+										<li><a ng-click="openSearchReference()" href="#">Recherche</a></li>
+										<li><a ng-click="displayEan13Selector()" href="#">Ean13</a></li>
+										<li><a ng-click="displayCsvSelector()" href="#">Csv</a></li>
+									</ul>
+								</div>
+								<!-- /btn-group -->
+								<div class="selector-content">
+									<input ng-keyup="keyup($event)"  type="text" placeholder="Saisissez un ean13" class="ean13 form-control">
+									<input type="file" class="csv form-control hidden">
+									
+									<div 
+										ng-if="productSearch != null && productSearch.products.length == 0" 
+										class="alert alert-danger" 
+										role="alert"
+									>
+										Aucun produit retrouvé
+									</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+			
+			<div ng-if="session.status == 'DRAFT'">
+				<button ng-click="confirmCancelSession()" type="button" class="btn btn-danger">Annuler la préparation</button>
+				<button ng-click="confirmSubmitSession()" type="button" class="btn btn-primary">Générer les commandes</button>
+			</div>
+			
+			<div class="confirm-submit modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<p>Etes-vous sûr de générer les commandes fournisseurs ?</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+							<button ng-click="submitSession()" type="button" class="btn btn-primary">Générer les commandes</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="confirm-cancel modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<p>Etes-vous sûr de vouloir annuler la préparation de la commande ?</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
+							<button ng-click="cancelSession()" type="button" class="btn btn-danger">Annuler la préparation</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="redirection-modal modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<p>Préparation de commande mise-à-jour.</p>
+							<p>
+								<button ng-click="redirectToPurchaseOrders()" type="button" class="btn btn-default" data-dismiss="modal">Voir les commandes</button>
+								<button ng-click="redirectToPurchaseSessions()" type="button" class="btn btn-default" data-dismiss="modal">Voir les préparations</button>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="search-reference"></div>
+		
+		<div class="product-card"></div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		
+		<script type="text/javascript" th:src="@{/js/purchase/session-details.js}"></script>
+	</body>
+</html>

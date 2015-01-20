@@ -1,0 +1,311 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="product-card" th:remove="tag">
+		<div class="kubikProductCard autoModal modal fade">
+			<div class="modal-dialog" ng-controller="KubikProductCardController as view">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">{{product.extendedLabel}}</h4>
+					</div>
+					
+					<div class="modal-body">
+						<div class="text-center">
+							<img src="http://images1.centprod.com/{{company.ean13}}/{{product.imageEncryptedKey}}-cover-medium.jpg">
+						</div>
+					
+						<ul class="nav nav-tabs">
+							<li role="presentation" ng-click="showTab('product')" class="active"><a href="#">Produit</a></li>
+							<li role="presentation" ng-click="showTab('publisher')" ><a href="#">Editeur</a></li>
+							<li role="presentation" ng-click="showTab('price')" ><a href="#">Prix</a></li>
+							<li role="presentation" ng-click="showTab('supplier')" ><a href="#">Fournisseur</a></li>
+							<li role="presentation" ng-click="showTab('dimensions')" ><a href="#">Dimensions</a></li>
+						</ul>
+						
+						<div class="tab product">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Ean13</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{product.ean13}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Titre</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.extendedLabel}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.extendedLabel" placeholder="Titre">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Auteur</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.author}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.author" placeholder="Auteur">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Date de disponibilité</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.datePublished | date}}</p>
+										<input ng-if="editMode" class="date-published form-control" value="{{product.datePublished}}" placeholder="Date de publication">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Date de fin de disponibilité</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.publishEndDate | date}}</p>
+										<input ng-if="editMode" class="publish-end-date form-control" placeholder="Date de fin de disponibilité" />
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Titre court</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.standardLabel}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.standardLabel" placeholder="Titre court">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Titre caisse</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.cashRegisterLabel}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.cashRegisterLabel" placeholder="Titre caisse">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Thème</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.theme}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.theme" placeholder="Thème">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Collection</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.collection}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.collection" placeholder="Collection">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Référence collection</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{product.collectionReference}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.collectionReference" placeholder="Référence collection">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Disponibilité</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{product.availabilityCode}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Disponible à la commande</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">
+											<span ng-if="product.availableForOrder">Oui</span>
+											<span ng-if="!product.availableForOrder">Non</span>
+										</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Type de produit</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{product.productType}}</p>
+									</div>
+								</div>
+							</form>
+						</div>
+						
+						<div class="tab publisher hidden">	
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Nom</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.publisher}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.publisher" placeholder="Nom">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Présentation</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.publisherPresentation}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.publisherPresentation" placeholder="Présentation">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Isbn</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.publisherIsnb}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.publisherIsnb" placeholder="Isbn">
+									</div>
+								</div>
+							</form>
+						</div>
+						
+						<div class="tab price hidden">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Type de prix</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{product.priceType}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Prix TTC</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.priceTaxIn | currency : "&euro;"}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.priceTaxIn" placeholder="Prix TTC">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Taxes</label>
+									<div ng-if="!editMode" class="col-sm-8">
+										<p ng-if="product.tvaRate1 != null && product.tvaRate1 != 0" class="form-control-static">{{product.tvaRate1}} %</p>
+										<p ng-if="product.tvaRate2 != null && product.tvaRate2 != 0" class="form-control-static">{{product.tvaRate2}} %</p>
+										<p ng-if="product.tvaRate3 != null && product.tvaRate3 != 0" class="form-control-static">{{product.tvaRate3}} %</p>
+									</div>
+									<div ng-if="editMode" class="col-sm-8">
+										<input class="form-control" ng-model="product.tvaRate1" placeholder="Taux taxe 1">
+										<input class="form-control" ng-model="product.tvaRate2" placeholder="Taux taxe 2">
+										<input class="form-control" ng-model="product.tvaRate3" placeholder="Taux taxe 3">
+									</div>
+								</div>
+							</form>
+						</div>
+						
+						<div class="tab supplier hidden">
+							<form class="form-horizontal">	
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Nom</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{product.supplier.name}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Ean13</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{product.supplier.ean13}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Référence</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.supplierReference}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.supplierReference" placeholder="Référence">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Type de retour</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{product.returnType}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Unité de commande</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{product.returnType}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Commande à l'unité</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">
+											<span ng-if="product.orderableByUnit">Oui</span>
+											<span ng-if="!product.orderableByUnit">Non</span>
+										</p>
+									</div>
+								</div>
+ 							</form>
+						</div>
+						
+						<div class="tab dimensions hidden">							 
+							<form class="form-horizontal">	
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Hauteur</label>
+									<div class="col-sm-8" ng-if="product.height != null">
+										<p ng-if="!editMode" class="form-control-static">{{product.height}} mm</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.height" placeholder="Hauteur en millimètre">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Largeur</label>
+									<div class="col-sm-8" ng-if="product.width != null">
+										<p ng-if="!editMode" class="form-control-static">{{product.width}} mm</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.width" placeholder="Largeur en millimètre">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Epaisseur</label>
+									<div class="col-sm-8" ng-if="product.thickness != null">
+										<p ng-if="!editMode" class="form-control-static">{{product.thickness}} mm</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.thickness" placeholder="Epaisseur en millimètre">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Poids</label>
+									<div class="col-sm-8" ng-if="product.weight != null">
+										<p ng-if="!editMode" class="form-control-static">{{product.weight}} g</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.weight" placeholder="Poids en gramme">
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+						
+					<div class="modal-footer">
+						<button
+							ng-click="cancelModify()"
+							type="button" 
+							class="cancel btn btn-danger hidden" 
+						>Annuler</button>
+						
+						<button 
+							ng-click="save()"
+							type="button" 
+							class="save btn btn-success hidden" 
+						>Enregistrer</button>
+						
+						<button 
+							ng-click="modify()"
+							type="button" 
+							class="modify btn btn-primary" 
+						>Modifier</button>
+						
+						<button
+							type="button" 
+							class="closeModal btn btn-default" 
+							data-dismiss="modal"
+						>Fermer</button>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+	</div>
+</body>
+
+</html>

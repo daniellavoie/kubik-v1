@@ -1,0 +1,72 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Factures</title>
+		
+		<link th:replace="util/import :: head">
+		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/invoices.css}" />
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="KubikInvoicesPage" ng-controller="KubikInvoicesPageController as view"  class="container text-center">
+			<h1>Factures</h1>
+	
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!invoicePage.first" ng-click="changePage(invoicePage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{invoicePage.number+1}} sur {{invoicePage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!invoicePage.last" ng-click="changePage(invoicePage.number+1)">Suivante</a>
+				</li>
+			</ul>
+						
+			<table class="invoices table table-condensed table-striped table-hover panel panel-default">
+				<thead>
+					<tr>
+						<th>Numéro</th>
+						<th>Date</th>
+						<th>Client</th>
+						<th>Produits</th>
+						<th>Montant</th>					
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr ng-repeat="invoice in invoicePage.content" ng-click="openInvoice(invoice)">
+						<td>{{invoice.number}}</td>
+						<td>{{invoice.paidDate | date : "short"}}</td>
+						<td ng-if="invoice.customer != null">
+							<a href="#" ng-click="kubikCustomerCard.openCard(invoice.customer)">
+								<span ng-if="invoice.customer.company == null">{{invoice.customer.firstName}} {{invoice.customer.lastName}}</span>
+								<span ng-if="invoice.customer.company != null">{{invoice.customer.company}}</span>
+							</a>
+						</td>
+						<td ng-if="invoice.customer == null">
+							Anonyme
+						</td>
+						<td>{{invoice.details.length}}</td>
+						<td>{{invoice.totalAmount | currency : '&euro;'}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="customer-card"></div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/sales/invoices-page.js}"></script>
+	</body>
+</html>

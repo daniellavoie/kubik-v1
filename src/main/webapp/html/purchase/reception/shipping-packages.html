@@ -1,0 +1,28 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="shipping-packages" th:remove="tag">
+		<div class="shiping-packages-modal modal fade">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<h3 class="modal-header">
+						Colis
+					</h3>
+					
+					<div class="modal-body">
+						<div ng-repeat="shippingPackage in reception.shippingPackages">{{shippingPackage.number}}</div>
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

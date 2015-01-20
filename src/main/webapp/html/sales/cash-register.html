@@ -1,0 +1,205 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+
+	<head>
+		<title>La Dimension Fantastique - Caisse enregistreuse</title>
+		
+		<link th:replace="util/import :: head">
+		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/cash-register.css}" />
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="KubikCashRegister" ng-controller="KubikCashRegisterController as view">
+			<div class="container text-center">
+				<h1>Caisse enregistreuse</h1>
+				
+				<ul class="invoice-tabs nav nav-tabs">
+					<li ng-repeat="invoice in invoices" id="invoice-tab-{{invoice.id}}" role="presentation" ng-click="showInvoice(invoice)">
+						<a ng-if="invoice.customer == null" href="#">
+							<span>Client anoynme</span>
+							<span class="panel panel-default">	
+								<span ng-click="kubikCustomerSearch.openSearchModal()" class="pointer glyphicon glyphicon-search"></span>
+							</span>
+						</a>
+						<a ng-if="invoice.customer != null" href="#">
+							<span>{{invoice.customer.firstName}} {{invoice.customer.lastName}}</span>
+							<span class="panel panel-default">
+								<span ng-click="kubikCustomerSearch.openSearchModal()" class="pointer glyphicon glyphicon-search"></span>
+								<span ng-click="kubikCustomerCard.openCard(invoice.customer)" class="pointer glyphicon glyphicon-user"></span>
+								<span ng-click="removeCustomerFromInvoice()" class="pointer glyphicon glyphicon-remove"></span>
+							</span>
+						</a>
+					</li>
+					<li ng-click="newInvoice()">
+						<a href="#">+</a>
+					</li>
+				</ul>
+				
+				<div ng-repeat="invoice in invoices" ng-if="isSelectedInvoice(invoice)">
+					<table class="panel panel-default table table-striped table-condensed">
+						<thead class="panel-heading">
+							<tr>
+								<th>Produit</th>
+								<th>Prix TTC</th>
+								<th>Taxe</th>
+								<th>Quantité</th>
+								<th>Montant</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="detail in invoice.details">
+								<td><a href="#" ng-click="kubikProductCard.openCard(detail.product.id)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
+								<td>{{detail.unitPrice | currency : '&euro;'}}
+								<td>
+									<div ng-repeat="taxAmount in invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
+								</td>
+								<td>
+									<input 
+										id="detail-{{detail.id}}"
+										ng-keyup="quantityChanged($event)"
+										ng-model="detail.quantity"
+										class="quantity" 
+										type="number"
+										min="1" 
+										max="99999" 
+									/>
+								</td>
+								
+								<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>
+								
+								<td>
+									<button
+										ng-click="removeInvoiceDetail(detail)" 
+										type="button" 
+										class="btn btn-warning btn-xs"
+									>
+										<span class="glyphicon glyphicon-trash"></span>
+									</button>
+								</td>
+							</tr>
+							
+							<tr ng-if="invoice.details.length == 0">
+								<td colspan="6">
+									Aucun produit dans le panier.
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<div class="confirm-cancel modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<p>Etes-vous sûr de vouloir annuler la annuler la vente ?</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
+								<button type="button" class="btn btn-danger" ng-click="cancelInvoice()">Annuler la vente</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<footer class="footer text-center">
+				<div class="container">
+					<div class="col-md-4 col-sm-3 col-lg-4">
+						<input ng-model="ean13" ng-change="searchProduct()" type="text" class="form-control " placeholder="Ean13" />
+					</div>
+					<div class="col-md-2 col-sm-3 col-lg-2">
+						<button ng-click="kubikReferenceSearch.openSearch()" type="button" class="btn btn-primary form-control">Rechercher</button>
+					</div>
+					
+					<div class="col-md-2 col-sm-2 col-lg-2">
+						<button ng-click="confirmCancelInvoice()" type="button" class="btn btn-danger form-control">Annuler</button>
+					</div>
+					
+					<div class="col-md-2 col-sm-2 col-lg-2">
+						<button ng-click="checkoutInvoice()" type="button" class="checkout btn btn-success form-control">Encaisser</button>
+					</div>
+					<div class="col-md-2 col-sm-2 col-lg-2">
+						<h4>{{invoice.totalAmount | currency : '&euro;'}}</h4>
+					</div>
+				</div>
+			</footer>
+			
+			<div class="payment-modal modal fade" ng-controller="KubikPaymentController as paymentView">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Paiement</h4>
+						</div>
+						
+						<div class="modal-body text-center">
+							<div ng-if="invoice.status.type != 'PAID'">
+								<div class="form-group"> 
+									<label>Somme à aquiter</label>
+									<p class="form-control-static">{{amountLeft | currency : '&euro;'}}</p>
+								</div>
+								
+								<div class="btn-group btn-group-justified" data-toggle="buttons">
+									<label 
+										id="payment-method-{{paymentMethod.type}}" 
+										ng-repeat="paymentMethod in paymentMethods" 
+										class="btn btn-default" 
+										ng-click="selectPaymentMethod(paymentMethod)"
+									> 
+										<input type="radio" autocomplete="off">{{paymentMethod.description}}
+									</label>
+								</div>
+								
+								<div class="form-group">
+									<label>Montant du paiement</label>
+									<div class="input-group">
+										<span class="input-group-addon" id="sizing-addon1">&euro;</span> 
+										<input type="text" class="payment-amount form-control">
+									</div>
+								</div>
+								
+								<div class="actions">
+									<button ng-click="validatePayment()" class="validate btn btn-success form-control">Valider</button>
+									<button class="cancel btn btn-danger form-control" data-dismiss="modal">Annuler</button>
+								</div>
+								
+								<div class="form-group"> 
+									<label>Paiements enregistrés</label>
+									<p ng-if="invoice.payments.length == 0" class="form-control-static">Aucun</p>
+									<p ng-if="invoice.payments.length != 0" ng-repeat="payment in invoice.payments" class="form-control-static">
+										{{payment.paymentMethod.description}} : {{payment.amount | currency : '&euro;'}}	
+									</p>
+								</div>
+							</div>
+							<div ng-if="invoice.status.type == 'PAID'">
+								<p>Impression du reçu</p>
+								<p>
+									<button ng-click="openReceipt()" type="button" class="btn btn-default form-control" data-dismiss="modal">Voir le reçu</button>
+									<!-- 	<button ng-click="redirectToReceipt()" type="button" class="btn btn-default" data-dismiss="modal">Imprimer une facture</button> -->
+									<button ng-click="closeSale()" type="button" class="btn btn-default form-control" data-dismiss="modal">Poursuivre les ventes</button>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<div th:replace="sales/customers-modal :: customers-modal"></div>
+		</div>
+		
+		<div class="search-reference"></div>
+		
+		<div class="product-card"></div>
+		
+		<div class="customer-card"></div>
+		
+		<script th:replace="util/import :: scripts"></script>		
+		<script type="text/javascript" th:src="@{/js/sales/cash-register.js}"></script>
+	</body>
+</html>

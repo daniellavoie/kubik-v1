@@ -1,0 +1,7 @@
+.products-search .glyphicon:hover{
+	cursor: pointer;
+}
+
+.products-search tbody td .product-image{
+	height: 30px;
+}

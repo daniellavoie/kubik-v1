@@ -1,0 +1,135 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+
+	<head>
+		<title>La Dimension Fantastique - Réception fournisseur</title>
+		
+		<link th:replace="util/import :: head">
+		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/reception/reception-details.css}" />
+	</head>
+	
+	<body >
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-app="KubikReceptionDetails" ng-controller="KubikReceptionDetailsController as view">
+			<h1>Réception fournisseur</h1>
+			
+			<table class="panel panel-default table table-condensed">
+				<thead class="panel-heading">
+					<tr class="text-center">
+						<th>Fournisseur</th>
+						<th>Commande</th>
+						<th>Status</th>
+						<th>Mode livraison</th>
+						<th>Type de date de livraison</th>
+						<th>Date de livraison</th>
+						<th>Date réception</th>
+						<th>Produits</th>
+						<th>Colis</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr>
+						<td>{{reception.supplier.name}} - {{reception.supplier.ean13}}</td>
+						<td><a th:href="@{/purchaseOrder/{{reception.purchaseOrder.id}}}">{{reception.purchaseOrder.id}}</a></td>
+						<td>
+							<span ng-if="reception.status == 'OPEN'" class="label label-info">Ouverte</span>
+							<span ng-if="reception.status == 'CLOSED'" class="label label-success">Fermée</span>
+							<span ng-if="reception.status == 'CANCELED'" class="label label-danger">Annulée</span>
+						</td>
+						<td>{{reception.shippingMode}}</td>
+						<td>{{reception.deliveryDateType}}</td>
+						<td>{{reception.deliveryDate | date : "short"}}</td>
+						<td>{{reception.dateReceived | date : "short"}}</td>
+						<td>{{reception.details.length}}</td>
+						<td><a href="#"  data-toggle="modal" data-target=".shiping-packages-modal">{{reception.shippingPackages.length}}</a></td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<table class="panel panel-default table table-striped table-condensed">
+				<thead class="panel-heading">
+					<tr>
+						<th>Produit</th>
+						<th>Qté commandé</th>
+						<th>Qté reçu</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="detail in reception.details">
+						<td>
+							<a href="#" ng-click="kubikProductCard.openCard(detail.product.id)">
+								{{detail.product.ean13}} - {{detail.product.standardLabel}}
+							</a>
+						</td>
+						<td>{{detail.quantityToReceive}}</td>
+						<td>
+							<input 
+								ng-if="reception.status  == 'OPEN'"
+								ng-model="detail.quantityReceived"
+								class="quantity" 
+								type="number"
+								min="1" 
+								max="99999" 
+							/>
+							<span ng-if="reception.status != 'OPEN'">
+								{{detail.quantityReceived}}
+							</span>
+						</td>
+					</tr>
+					
+					<tr ng-if="reception.details.length == 0">
+						<td colspan="3">
+							Aucun produit dans la commande.
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<div ng-if="reception.status == 'OPEN'">
+				<button ng-click="confirmReceptionValidation()" type="button" class="btn btn-primary">Confirmer la réception</button>
+			</div>
+			
+			<div class="confirm-validation modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<p>Etes-vous sûr de vouloir valider cette reception ?</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+							<button ng-click="validateReception()" type="button" class="btn btn-primary">Valider la réception</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="redirection-modal modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<p>Reception validée.</p>
+							<p>
+								<button ng-click="redirectToPurchaseOrders()" type="button" class="btn btn-default" data-dismiss="modal">Voir les commandes</button>
+								<button ng-click="redirectToReceptions()" type="button" class="btn btn-default" data-dismiss="modal">Voir les réceptions</button>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div th:include="purchase/reception/shipping-packages :: shipping-packages"></div>
+		</div>
+		
+		<div class="product-card"></div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		
+		<script type="text/javascript" th:src="@{/js/purchase/reception-details.js}"></script>
+	</body>
+</html>
