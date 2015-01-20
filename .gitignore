@@ -1,14 +1,14 @@
-.DS_Store
-.classpath
-.project
-.settings
-target
+**.DS_Store
+**.classpath
+**.project
+**.settings
+*/target
 
-test.lck
-test.log
-test.properties
-test.script
+server/test.lck
+server/test.log
+server/test.properties
+server/test.script
 
-data
-dilicom
-*.edi
+server/data
+server/dilicom
+server/*.edi
