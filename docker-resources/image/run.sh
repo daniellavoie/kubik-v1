@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar /dilicom-sync/dilicom-sync.jar | tee /var/dilicom-sync.log
+java -jar /kubik/kubik.jar | tee /var/kubik.log

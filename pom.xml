@@ -21,6 +21,8 @@
 	</distributionManagement>
 	
 	<build>
+		<finalName>kubik</finalName>
+		
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -33,6 +35,26 @@
                     </execution>
                 </executions>
             </plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+
+						<configuration>
+							<finalName>docker</finalName>
+							<descriptors>
+								<descriptor>src/assembly/docker-assembly.xml</descriptor>
+							</descriptors>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
 	</build>
 	

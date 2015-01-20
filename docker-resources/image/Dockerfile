@@ -1,8 +1,8 @@
 FROM dockerfile/java:oracle-java8
 
-MAINTAINER Daniel Lavoie <dlavoie@cspinformatiqe.com>
+MAINTAINER Daniel Lavoie <dlavoie@cspinformatique.com>
 
-ADD dilicom-sync.jar /dilicom-sync/dilicom-sync.jar
+ADD kubik.jar /kubik/kubik.jar
 ADD run.sh /run.sh
 
 RUN chmod +x /*.sh
