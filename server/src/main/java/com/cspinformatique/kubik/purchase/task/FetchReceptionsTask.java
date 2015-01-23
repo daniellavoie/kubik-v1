@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -33,7 +34,7 @@ import com.cspinformatique.kubik.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.purchase.service.ReceptionService;
 
 @Component
-public class FetchReceptionsTask {
+public class FetchReceptionsTask implements InitializingBean{
 	private static final Logger logger = LoggerFactory
 			.getLogger(FetchReceptionsTask.class);
 
@@ -53,11 +54,14 @@ public class FetchReceptionsTask {
 	// private String remoteDirectory = "/pub/O";
 
 	@Value("${kubik.reference.dilicom.archive.folder}")
-	private String archiveDirectory;
+	private String archiveDirectoryPath;
 
 	@Value("${kubik.reference.dilicom.receptions.folder}")
-	private String referencesDirectory;
+	private String receptionsDirectoryPath;
 
+	private File archiveDirectory;
+	private File receptionsDirectory;
+	
 	private DateFormat dateFormat;
 	private DecimalFormat quantityNumberFormat;
 
@@ -66,13 +70,22 @@ public class FetchReceptionsTask {
 		this.quantityNumberFormat = new DecimalFormat("00000.000");
 	}
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		archiveDirectory = new File(archiveDirectoryPath);
+		receptionsDirectory = new File(receptionsDirectoryPath);
+
+		if(!archiveDirectory.exists()) archiveDirectory.mkdirs();
+		if(!receptionsDirectory.exists()) receptionsDirectory.mkdirs();
+	};
+	
 	@Transactional
 	@Scheduled(fixedDelay = 1000 * 60 * 30)
 	public void fetchDilicomFiles() {
 		// Fetch files from remote FTP server.
 
 		// Process files in local directory.
-		for (File file : new File(referencesDirectory).listFiles()) {
+		for (File file : receptionsDirectory.listFiles()) {
 			this.processFile(file);
 		}
 
@@ -81,10 +94,10 @@ public class FetchReceptionsTask {
 
 	private void archiveFiles() {
 		try {
-			for (File file : new File(referencesDirectory).listFiles()) {
+			for (File file : receptionsDirectory.listFiles()) {
 				logger.info("Archiving file " + file.getAbsolutePath());
 
-				FileUtils.moveFileToDirectory(file, new File(archiveDirectory),
+				FileUtils.moveFileToDirectory(file, archiveDirectory,
 						true);
 			}
 		} catch (IOException ioEx) {

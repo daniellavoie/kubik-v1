@@ -27,18 +27,24 @@ public class FetchDilicomTask implements InitializingBean {
 	private JobExecutionService jobExecutionService;
 
 	@Value("${kubik.reference.dilicom.archive.folder}")
-	private String archiveDirectory;
+	private String archiveDirectoryPath;
 
 	@Value("${kubik.reference.dilicom.references.folder}")
-	private String referencesDirectory;
+	private String referencesDirectoryPath;
+	
+	private File archiveDirectory;
+	private File referencesDirectory;
 
 	// private AbstractInboundFileSynchronizer<?> ftpInboundFileSynchronizer;
 	// private String remoteDirectory = "/pub/O";
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// TODO Auto-generated method stub
+		archiveDirectory = new File(archiveDirectoryPath);
+		referencesDirectory = new File(referencesDirectoryPath);
 
+		if(!archiveDirectory.exists()) archiveDirectory.mkdirs();
+		if(!referencesDirectory.exists()) referencesDirectory.mkdirs();
 	}
 
 	@Scheduled(fixedDelay = 1000 * 60 * 30)
@@ -48,7 +54,7 @@ public class FetchDilicomTask implements InitializingBean {
 		// Fetch files from remote FTP server.
 
 		// Process files in local directory.
-		for (File file : new File(referencesDirectory).listFiles()) {
+		for (File file : referencesDirectory.listFiles()) {
 			// Fire a new job execution.
 			this.jobExecutionService.executeJob(
 					BatchConfiguration.IMPORT_DILICOM_REFERENCES_JOB,
