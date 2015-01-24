@@ -1,5 +1,5 @@
 #!/bin/bash
-SCRIPTS_FOLDER="/docker-workspace/ldf-kubik/docker-resources/scripts"
+SCRIPTS_FOLDER="/docker-workspace/Kubik/server-docker-resources/scripts"
 
 cd $SCRIPTS_FOLDER
 
