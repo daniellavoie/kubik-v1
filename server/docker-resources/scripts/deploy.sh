@@ -5,4 +5,4 @@ cd $SCRIPTS_FOLDER
 
 elasticsearch/deploy.sh
 mysql/deploy.sh
-ldf-kubik/deploy.sh
+kubik/deploy.sh
