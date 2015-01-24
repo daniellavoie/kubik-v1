@@ -1,5 +1,5 @@
 #!/bin/bash
-WORKSPACE="/docker-workspace/ldf-kubik"
+WORKSPACE="/docker-workspace/Kubik"
 KUBIK_DATA_DIR="/docker-volumes/ldf-kubik"
 
 docker rm -f ldf-kubik
