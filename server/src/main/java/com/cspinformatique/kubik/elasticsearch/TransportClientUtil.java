@@ -8,26 +8,25 @@ import org.springframework.core.env.Environment;
 
 public abstract class TransportClientUtil {
 	public static Client buildTransportClient(Environment env) {
-		try (TransportClient client = new TransportClient(ImmutableSettings
-				.settingsBuilder().put("client.transport.ignore_cluster_name", true).build())) {
+		TransportClient client = new TransportClient(ImmutableSettings
+				.settingsBuilder().put("client.transport.ignore_cluster_name", true).build());
+		
+		for (String urlString : env.getRequiredProperty(
+				"kubik.elasticsearch.urls").split(",")) {
+			String[] url = urlString.split(":");
 
-			for (String urlString : env.getRequiredProperty(
-					"kubik.elasticsearch.urls").split(",")) {
-				String[] url = urlString.split(":");
-
-				if (url.length != 2) {
-					throw new RuntimeException(
-							"Property kubik.elasticsearch.urls is not properly defined.");
-				}
-
-				String hostname = url[0];
-				int port = Integer.valueOf(url[1]);
-
-				client.addTransportAddress(new InetSocketTransportAddress(
-						hostname, port));
+			if (url.length != 2) {
+				throw new RuntimeException(
+						"Property kubik.elasticsearch.urls is not properly defined.");
 			}
 
-			return (Client) client;
+			String hostname = url[0];
+			int port = Integer.valueOf(url[1]);
+
+			client.addTransportAddress(new InetSocketTransportAddress(
+					hostname, port));
 		}
+
+		return (Client) client;
 	}
 }

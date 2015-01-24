@@ -14,6 +14,6 @@ public abstract class NodeClientUtil {
 								.settingsBuilder()
 								.put("cluster-nodes",
 										env.getRequiredProperty("kubik.elasticsearch.urls"))
-								.build()).client(true).node();
+								.build()).node();
 	}
 }
