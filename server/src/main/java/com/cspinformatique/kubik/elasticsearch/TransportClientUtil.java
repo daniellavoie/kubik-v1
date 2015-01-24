@@ -1,15 +1,18 @@
 package com.cspinformatique.kubik.elasticsearch;
 
+import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.springframework.core.env.Environment;
 
 public abstract class TransportClientUtil {
-	public static TransportClient buildTransportClient(Environment env) {
-		try (TransportClient transportClient = new TransportClient()) {
+	public static Client buildTransportClient(Environment env) {
+		try (TransportClient client = new TransportClient(ImmutableSettings
+				.settingsBuilder().put("client.transport.ignore_cluster_name", true).build())) {
 
 			for (String urlString : env.getRequiredProperty(
-					"kubik.elasticsearch.urls").split(";")) {
+					"kubik.elasticsearch.urls").split(",")) {
 				String[] url = urlString.split(":");
 
 				if (url.length != 2) {
@@ -20,12 +23,11 @@ public abstract class TransportClientUtil {
 				String hostname = url[0];
 				int port = Integer.valueOf(url[1]);
 
-				transportClient
-						.addTransportAddress(new InetSocketTransportAddress(
-								hostname, port));
+				client.addTransportAddress(new InetSocketTransportAddress(
+						hostname, port));
 			}
 
-			return transportClient;
+			return (Client) client;
 		}
 	}
 }

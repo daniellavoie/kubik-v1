@@ -2,7 +2,6 @@ package com.cspinformatique.kubik.config;
 
 import javax.annotation.Resource;
 
-import org.elasticsearch.node.NodeBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -10,6 +9,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
+import com.cspinformatique.kubik.elasticsearch.NodeClientUtil;
 import com.cspinformatique.kubik.elasticsearch.TransportClientUtil;
 
 @Configuration
@@ -21,8 +21,8 @@ public class ElasticsearchConfig {
 	
 	@Bean
     public ElasticsearchTemplate elasticsearchTemplate() {
-		if(env.getRequiredProperty("kubik.elasticsearch.localNode", Boolean.class)){
-			return new ElasticsearchTemplate(NodeBuilder.nodeBuilder().local(true).node().client());
+		if(env.getRequiredProperty("kubik.elasticsearch.node", Boolean.class)){
+			return new ElasticsearchTemplate(NodeClientUtil.buildNode(env).client());
 		}else{
 			return new ElasticsearchTemplate(TransportClientUtil.buildTransportClient(env));			
 		}
