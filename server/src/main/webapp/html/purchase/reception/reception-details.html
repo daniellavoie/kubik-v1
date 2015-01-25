@@ -70,8 +70,10 @@
 						<td>{{detail.quantityToReceive}}</td>
 						<td>
 							<input 
+								id="detail-{{detail.id}}"
 								ng-if="reception.status  == 'OPEN'"
 								ng-model="detail.quantityReceived"
+								ng-keyup="quantityChanged($event)"
 								class="quantity" 
 								type="number"
 								min="1" 
