@@ -3,7 +3,6 @@
 <html 
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
-
 >
 
 	<head>
@@ -29,6 +28,7 @@
 						<th>Date de livraison min.</th>
 						<th>Date de livraison max.</th>
 						<th>Produits</th>
+						<th>Quantité</th>
 						<th>&nbsp;</th>
 					</tr>
 					</thead>
@@ -47,6 +47,7 @@
 						<td>{{order.minDeliveryDate | date : "short"}}</td>
 						<td>{{order.maxDeliveryDate | date : "short"}}</td>
 						<td>{{order.details.length}}</td>
+						<td>{{calculateOrderQuantity(order)}}</td>
 						<td>
 							<span ng-if="order.sentToDilicom" class="glyphicon glyphicon-transfer" title="Envoyé à Dilicom"></span>
 							&nbsp;
