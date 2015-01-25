@@ -31,7 +31,8 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Ean13</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{product.ean13}}</p>
+										<p ng-if="product.id != null" class="form-control-static">{{product.ean13}}</p>
+										<input ng-if="editMode && product.id == null" class="form-control" ng-model="product.ean13" placeholder="Ean13">
 									</div>
 								</div>
 								
@@ -195,18 +196,36 @@
 						</div>
 						
 						<div class="tab supplier hidden">
-							<form class="form-horizontal">	
-								<div class="form-group">
-									<label class="col-sm-4 control-label">Nom</label>
-									<div class="col-sm-8">
-										<p class="form-control-static">{{product.supplier.name}}</p>
+							<form class="form-horizontal">
+								<div ng-if="!editMode || product.dilicomReference">
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Nom</label>
+										<div class="col-sm-8">
+											<p class="form-control-static">{{product.supplier.name}}</p>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Ean13</label>
+										<div class="col-sm-8">
+											<p class="form-control-static">{{product.supplier.ean13}}</p>
+										</div>
 									</div>
 								</div>
 								
-								<div class="form-group">
-									<label class="col-sm-4 control-label">Ean13</label>
-									<div class="col-sm-8">
-										<p class="form-control-static">{{product.supplier.ean13}}</p>
+								<div ng-if="editMode && !product.dilicomReference">
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Fournisseur</label>
+										<div class="col-sm-8">
+											<select 
+												class="product-supplier form-control">
+												<option 
+													ng-repeat="supplier in suppliers" 
+													id="product-supplier-{{supplier.id}}" 
+													value="{{supplier.id}}"
+												>{{supplier.name}} - {{supplier.ean13}}</option>
+											</select>
+										</div>
 									</div>
 								</div>
 								

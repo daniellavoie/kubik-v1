@@ -27,7 +27,7 @@ window.KubikProductCard.prototype.init = function(){
 			$scope.product = $scope.originalProduct;
 			
 			$scope.endEditMode();
-		}
+		};
 		
 		$scope.endEditMode = function(){
 			$scope.editMode = false;
@@ -40,6 +40,17 @@ window.KubikProductCard.prototype.init = function(){
 			$scope.refreshModalBackdrop();
 		};
 		
+		$scope.getSupplier = function(id){
+			for(var supplierIndex in $scope.suppliers){
+				var supplier = $scope.suppliers[supplierIndex];
+				if(supplier.id == id){
+					return supplier;
+				}
+			}
+			
+			return null;
+		}
+		
 		$scope.modify = function(){
 			$scope.editMode = true;
 			
@@ -49,7 +60,6 @@ window.KubikProductCard.prototype.init = function(){
 			$scope.$closeBtn.addClass("hidden");
 			
 			$scope.originalProduct = $.extend(true, {}, $scope.product);
-
 			
 			$timeout(function(){
 				if($scope.editMode){
@@ -63,6 +73,13 @@ window.KubikProductCard.prototype.init = function(){
 						$element.datepicker({format : 'dd/mm/yyyy'});
 					});
 				}
+				
+				var supplier = $scope.getSupplier($scope.product.supplier.id);
+				if(supplier == null){
+					supplier = $scope.suppliers[0];
+				}
+				
+				$("#product-supplier-" + supplier.id).attr("SELECTED", "SELECTED");
 			});
 			
 			$scope.refreshModalBackdrop();
@@ -94,8 +111,10 @@ window.KubikProductCard.prototype.init = function(){
 		$scope.save = function(){
 			$scope.product.datePublished = $(".date-published").datepicker("getDate");
 			$scope.product.publishEndDate = $(".publish-end-date").datepicker("getDate");
+			$scope.product.supplier = $scope.getSupplier($("select.product-supplier").val());
 			
 			$http.post(kubikProductCard.productUrl, $scope.product).success(function(product){
+				$scope.product = product;
 				$scope.endEditMode();
 				if(kubikProductCard.productSaved != undefined){
 					kubikProductCard.productSaved(product);
@@ -126,9 +145,11 @@ window.KubikProductCard.prototype.init = function(){
 		$scope.$modifyBtn = kubikProductCard.$modalContainer.find(".modify")
 		$scope.$closeBtn = kubikProductCard.$modalContainer.find(".closeModal")
 		$scope.$cancelBtn = kubikProductCard.$modalContainer.find(".cancel")
-	});
 
-	
+		$http.get("/supplier").success(function(suppliers){
+			$scope.suppliers = suppliers;
+		});
+	});
 	$.get(
 		"/product?card", 
 		function(productCardHtml) {

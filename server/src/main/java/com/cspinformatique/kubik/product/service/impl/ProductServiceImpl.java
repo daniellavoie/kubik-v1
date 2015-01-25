@@ -84,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
 						.parseByCode(reference.getBarcodeType()) : null,
 				reference.getMainReference(),
 				reference.getSecondaryReference(),
-				reference.getReferencesCount(), null);
+				reference.getReferencesCount(), null, true);
 	}
 
 	@Override
@@ -113,8 +113,10 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	private void calculateImageEncryptedKey(Product product) {
-		product.setImageEncryptedKey(this.imageService.getEncryptedUrl(
-				product.getEan13(), product.getSupplier().getEan13()));
+		if(product.getSupplier() != null){
+			product.setImageEncryptedKey(this.imageService.getEncryptedUrl(
+					product.getEan13(), product.getSupplier().getEan13()));
+		}
 	}
 
 	@PostConstruct

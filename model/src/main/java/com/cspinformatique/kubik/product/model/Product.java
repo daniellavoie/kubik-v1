@@ -59,6 +59,8 @@ public class Product {
 	
 	private String imageEncryptedKey;
 	
+	private boolean dilicomReference;
+	
 	public Product(){
 		
 	}
@@ -80,7 +82,7 @@ public class Product {
 			String replacedByEan13, Boolean orderableByUnit,
 			BarcodeType barcodeType, Boolean mainReference,
 			Boolean secondaryReference, Integer referencesCount,
-			String imageEncryptedKey) {
+			String imageEncryptedKey, boolean dilicomReference) {
 		this.id = id;
 		this.ean13 = ean13;
 		this.supplier = supplier;
@@ -125,6 +127,7 @@ public class Product {
 		this.secondaryReference = secondaryReference;
 		this.referencesCount = referencesCount;
 		this.imageEncryptedKey = imageEncryptedKey;
+		this.dilicomReference = dilicomReference;
 	}
 
 	@Id
@@ -486,5 +489,13 @@ public class Product {
 
 	public void setImageEncryptedKey(String imageEncryptedKey) {
 		this.imageEncryptedKey = imageEncryptedKey;
+	}
+
+	public boolean isDilicomReference() {
+		return dilicomReference;
+	}
+
+	public void setDilicomReference(boolean dilicomReference) {
+		this.dilicomReference = dilicomReference;
 	}
 }

@@ -77,8 +77,10 @@
 						<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
 						<td>
 							<input 
+								id="order-detail-{{detail.id}}"	
 								ng-model="detail.quantity"
-								class="quantity" 
+								ng-keyup="quantityChanged($event)"
+								class="quantity"
 								type="number"
 								min="1" 
 								max="99999" 
@@ -175,7 +177,8 @@
 								</div>
 								<!-- /btn-group -->
 								<div class="selector-content">
-									<input ng-keyup="keyup($event)"  type="text" placeholder="Saisissez un ean13" class="ean13 form-control">
+									<input ng-keyup="keyup($event)" type="text" placeholder="Saisissez un ean13" class="ean13 form-control">
+																		
 									<input type="file" class="csv form-control hidden">
 									
 									<div 
@@ -187,6 +190,8 @@
 									</div>
 								</div>
 							</div>
+									
+							<img ng-if="loading" th:src="@{/img/loading.gif}" />
 						</td>
 					</tr>
 				</tfoot>

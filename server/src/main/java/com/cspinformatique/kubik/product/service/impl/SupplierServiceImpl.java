@@ -12,6 +12,11 @@ public class SupplierServiceImpl implements SupplierService {
 	@Autowired private SupplierRepository supplierRepository;
 	
 	@Override
+	public Iterable<Supplier> findAll(){
+		return this.supplierRepository.findAll();
+	}
+	
+	@Override
 	public Supplier findByEan13(String ean13) {
 		return this.supplierRepository.findByEan13(ean13);
 	}

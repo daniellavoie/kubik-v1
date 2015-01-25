@@ -9,7 +9,6 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 	$scope.$on("addProductSearch", function(event, productSearch){
 		var product = productSearch.products[0];
 		
-		
 		var detail = $scope.getDetail(product);
 		if(detail != null){
 			detail.quantity += 1;
@@ -77,7 +76,7 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 		}
 		
 		return null;	
-	}
+	};
 	
 	$scope.loadSession = function(){
 		$http.get(sessionId).success(function(session){
@@ -104,7 +103,11 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 	$scope.saveSession = function(success){
 		for(var detailIndex in $scope.session.details){
 			var detail = $scope.session.details[detailIndex];
-						
+
+			if(detail.quantity = ""){
+				detail.quantity = 0;
+			}
+
 			detail.product = {
 				id : detail.product.id,
 				ean13 : detail.product.ean13,

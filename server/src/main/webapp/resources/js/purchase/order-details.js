@@ -7,25 +7,23 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 	});
 	
 	$scope.$on("addProductSearch", function(event, productSearch){
-		$scope.addProductToValidate(productSearch);
-	});
-	
-	$scope.addProductToValidate = function(productSearch){
-		var alreadyPresent = false;
-		for(var detailIndex in $scope.order.details){
-			var product = $scope.order.details[detailIndex].product;
-			
-			if(product.ean13 == productSearch.products[0].ean13){
-				alreadyPresent = true;
+		var product = productSearch.products[0];
+		
+		var detail = $scope.getDetail(product);
+		if(detail != null){
+			detail.quantity += 1;
+			$scope.saveOrder();
+		}else{
+			productSearch.newProductQuantity = 1;
+
+			if(productSearch.products.length > 1){
+				productSearch.selectedProduct = product;
+				$scope.productsToValidate[product.ean13] = productSearch;
+			}else{
+				$scope.createDetail(product, productSearch.newProductQuantity)
 			}
 		}
-		
-		if(!alreadyPresent){
-			productSearch.newProductQuantity = 1;
-			productSearch.selectedProduct = productSearch.products[0];
-			$scope.productsToValidate[productSearch.selectedProduct.ean13] = productSearch;
-		}
-	};
+	});
 	
 	$scope.cancelOrder = function(){
 		$scope.order.status = "CANCELED";
@@ -49,6 +47,7 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 		$scope.order.details.push({
 			purchaseOrder : {id : orderId},
 			product : {
+				id : selectedProduct.id,
 				ean13 : selectedProduct.ean13,
 				supplier : {id : selectedProduct.supplier.id}
 			},
@@ -70,10 +69,33 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 		}
 	};
 	
+	$scope.getDetail = function(product){
+		for(var detailIndex in $scope.order.details){
+			if($scope.order.details[detailIndex].product.ean13 == product.ean13){
+				return $scope.order.details[detailIndex];
+			}
+		}
+		
+		return null;	
+	};
+	
 	$scope.loadOrder = function(){
 		$http.get(orderId).success(function(order){
 			$scope.order = order;
+
+			$timeout(function(){
+				if($scope.inputIdToFocus != undefined){
+					$("#" + $scope.inputIdToFocus).focus();
+				}
+			})
 		});
+	};
+	
+	$scope.quantityChanged = function($event){
+		$scope.inputIdToFocus = $event.target.id;
+		if($scope.quantityChangedTimer != undefined) clearTimeout($scope.quantityChangedTimer);
+	    
+		$scope.quantityChangedTimer = setTimeout($scope.saveOrder, 1000);
 	};
 	
 	$scope.redirectToPurchaseOrders = function(){
@@ -85,16 +107,9 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 	};
 	
 	$scope.saveOrder = function(success){
-		for(var detailIndex in $scope.order.details){
-			var detail = $scope.order.details[detailIndex];
-						
-			detail.product = {
-				id : detail.product.id,
-				ean13 : detail.product.ean13,
-				supplier : {id : detail.product.supplier.id}
-			};
-		}
+		$scope.loading=true;
 		$http.post(".", $scope.order).success(function(){
+			$scope.loading=false;
 			$scope.$broadcast("orderSaved");
 			
 			$scope.loadOrder();
