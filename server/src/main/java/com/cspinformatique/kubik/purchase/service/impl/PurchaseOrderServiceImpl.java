@@ -93,7 +93,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		for (PurchaseOrderDetail detail : purchaseOrder.getDetails()) {
 			reception.getDetails().add(
 					new ReceptionDetail(null, reception, detail.getProduct(),
-							detail.getQuantity(), 0));
+							detail.getQuantity(), detail.getQuantity()));
 		}
 
 		return this.receptionService.save(reception);
