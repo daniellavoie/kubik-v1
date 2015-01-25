@@ -13,6 +13,7 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 		var detail = $scope.getDetail(product);
 		if(detail != null){
 			detail.quantity += 1;
+			$scope.saveSession();
 		}else{
 			productSearch.newProductQuantity = 1;
 
