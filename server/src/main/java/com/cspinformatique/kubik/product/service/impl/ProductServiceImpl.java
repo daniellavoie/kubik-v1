@@ -119,7 +119,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@PostConstruct
 	protected void init() throws InterruptedException {
-		Thread.sleep(2000);
+		Thread.sleep(5000);
 
 		this.generateProductsFromImportedReferences();
 	}

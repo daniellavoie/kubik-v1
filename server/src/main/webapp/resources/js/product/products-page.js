@@ -6,7 +6,7 @@ var kubikProductSearch = new KubikProductSearch({
 
 app.controller("KubikProductsPageController", function($scope, $http, $timeout){
 	$scope.$on("openProductCard", function(event, product){
-		$scope.kubikProductCard.openCard(product.id);
+		$scope.kubikProductCard.openCard(product);
 	})
 	
 	$scope.kubikProductSearch = kubikProductSearch;

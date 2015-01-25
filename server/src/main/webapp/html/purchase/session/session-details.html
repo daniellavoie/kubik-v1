@@ -60,7 +60,7 @@
 				<tbody>
 					<tr ng-repeat="detail in session.details">
 						<td>
-							<a href="#" ng-click="kubikProductCard.openCard(detail.product.id)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
+							<a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
 						<td>{{detail.product.availabilityCode}}</td>
 						<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
 						<td>
@@ -93,7 +93,7 @@
 					 
 					<tr ng-repeat="productSearch in productsToValidate">
 						<td>
-							<a href="#" ng-click="kubikProductCard.openCard(detail.product.id)">
+							<a href="#" ng-click="kubikProductCard.openCard(detail.product)">
 								{{productSearch.selectedProduct.ean13}} - {{productSearch.selectedProduct.standardLabel}}
 							</a>
 						</td>

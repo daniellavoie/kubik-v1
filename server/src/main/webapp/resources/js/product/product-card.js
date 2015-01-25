@@ -68,14 +68,18 @@ window.KubikProductCard.prototype.init = function(){
 			$scope.refreshModalBackdrop();
 		}
 		
-		$scope.openCard = function(productId){
-			$http.get("/product/" + productId).success(function(product){
-				$scope.product = product;
-				
+		$scope.openCard = function(product){
+			$scope.product = product;
+
+			$timeout(function(){
 				kubikProductCard.$modal = kubikProductCard.$modalContainer.find(".modal").modal({
 					backdrop : "static",
 					keyboard : false
 				});
+				
+				if(product.id == undefined){
+					$scope.modify();
+				}
 			});
 		}
 		
@@ -137,6 +141,6 @@ window.KubikProductCard.prototype.init = function(){
 
 };
 
-window.KubikProductCard.prototype.openCard = function(productId){
-	this.$modalScope.openCard(productId);
+window.KubikProductCard.prototype.openCard = function(product){
+	this.$modalScope.openCard(product);
 }

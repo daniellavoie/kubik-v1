@@ -7,25 +7,23 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 	});
 	
 	$scope.$on("addProductSearch", function(event, productSearch){
-		$scope.addProductToValidate(productSearch);
-	});
-	
-	$scope.addProductToValidate = function(productSearch){
-		var alreadyPresent = false;
-		for(var detailIndex in $scope.session.details){
-			var product = $scope.session.details[detailIndex].product;
-			
-			if(product.ean13 == productSearch.products[0].ean13){
-				alreadyPresent = true;
+		var product = productSearch.products[0];
+		
+		
+		var detail = $scope.getDetail(product);
+		if(detail != null){
+			detail.quantity += 1;
+		}else{
+			productSearch.newProductQuantity = 1;
+
+			if(productSearch.products.length > 1){
+				productSearch.selectedProduct = product;
+				$scope.productsToValidate[product.ean13] = productSearch;
+			}else{
+				$scope.createDetail(product, productSearch.newProductQuantity)
 			}
 		}
-		
-		if(!alreadyPresent){
-			productSearch.newProductQuantity = 1;
-			productSearch.selectedProduct = productSearch.products[0];
-			$scope.productsToValidate[productSearch.selectedProduct.ean13] = productSearch;
-		}
-	};
+	});
 	
 	$scope.cancelSession = function(){
 		$scope.session.status = "CANCELED";
@@ -69,6 +67,16 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 			}
 		}
 	};
+	
+	$scope.getDetail = function(product){
+		for(var detailIndex in $scope.session.details){
+			if($scope.session.details[detailIndex].product.ean13 == product.ean13){
+				return $scope.session.details[detailIndex];
+			}
+		}
+		
+		return null;	
+	}
 	
 	$scope.loadSession = function(){
 		$http.get(sessionId).success(function(session){
