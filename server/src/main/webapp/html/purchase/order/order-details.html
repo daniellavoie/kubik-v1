@@ -29,6 +29,7 @@
 			<table class="panel panel-default table table-condensed">
 				<thead class="panel-heading">
 					<tr>
+						<th>#</th>
 						<th>Fournisseur</th>
 						<th>Création</th>
 						<th>Réception</th>
@@ -42,6 +43,7 @@
 				</thead>
 				<tbody>
 					<tr>
+						<td>{{order.id}}</td>
 						<td>{{order.supplier.name}} - {{order.supplier.ean13}}</td>
 						<td>{{order.date | date : "short"}}</td>
 						<td>{{order.dateReceived | date : "short"}}</td>

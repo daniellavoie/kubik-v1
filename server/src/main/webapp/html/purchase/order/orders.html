@@ -20,6 +20,7 @@
 			<table class="panel panel-default sessions table table-striped table-hover table-condensed" ng-controller="KubikPurchaseOrdersController as ordersView">
 				<thead>
 					<tr class="text-center">
+						<th>#</th>
 						<th>Fournisseur</th>
 						<th>Création</th>
 						<th>Réception</th>
@@ -34,6 +35,7 @@
 					</thead>
 				<tbody>
 					<tr ng-repeat="order in orders" ng-click="openOrder(order.id)">
+						<td>{{order.id}}</td>
 						<td>{{order.supplier.name}} - {{order.supplier.ean13}}</td>
 						<td>{{order.date | date : "short"}}</td>
 						<td>{{order.dateReceived | date : "short"}}</td>
