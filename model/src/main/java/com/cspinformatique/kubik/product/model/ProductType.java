@@ -48,6 +48,6 @@ public enum ProductType {
 			}
 		}
 		
-		throw new IllegalArgumentException("No enum with code " + code);
+		throw null;
 	}
 }

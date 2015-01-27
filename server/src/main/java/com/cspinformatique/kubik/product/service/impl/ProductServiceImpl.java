@@ -66,7 +66,8 @@ public class ProductServiceImpl implements ProductService {
 				reference.getReturnType() != null ? ReturnType
 						.parseByCode(reference.getReturnType()) : null,
 				reference.getAvailableForOrder(), reference.getDatePublished(),
-				ProductType.parseByCode(reference.getProductType()),
+				reference.getProductType() != null ? ProductType
+						.parseByCode(reference.getProductType()) : null,
 				reference.getPublishEndDate(), reference.getStandardLabel(),
 				reference.getCashRegisterLabel(), reference.getThickness(),
 				reference.getWidth(), reference.getHeight(),
@@ -113,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	private void calculateImageEncryptedKey(Product product) {
-		if(product.getSupplier() != null){
+		if (product.getSupplier() != null) {
 			product.setImageEncryptedKey(this.imageService.getEncryptedUrl(
 					product.getEan13(), product.getSupplier().getEan13()));
 		}
@@ -169,6 +170,20 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Product save(Product product) {
+		if(product.getId() != null){
+			Product oldVersion = this.findOne(product.getId());
+			
+			if(oldVersion != null && !product.getSupplier().getEan13().equals(oldVersion.getSupplier().getEan13())){
+				// Delete the reference from the old supplier.
+				this.referenceServive.delete(oldVersion.getEan13(), oldVersion.getSupplier().getEan13());
+			}
+		}
+		
+		// Saves the new reference.
+		this.referenceServive.save(this.referenceServive
+				.buildReferenceFromProduct(product));
+
+		// Saves the products.
 		return this.productRepository.save(product);
 	}
 

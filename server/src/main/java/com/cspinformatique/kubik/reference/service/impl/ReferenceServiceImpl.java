@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.cspinformatique.kubik.product.model.Product;
 import com.cspinformatique.kubik.product.service.ImageService;
 import com.cspinformatique.kubik.reference.model.Reference;
 import com.cspinformatique.kubik.reference.repository.ReferenceRepository;
@@ -28,6 +29,64 @@ public class ReferenceServiceImpl implements ReferenceService {
 	@Autowired
 	private ReferenceRepository referenceRepository;
 
+	public Reference buildReferenceFromProduct(Product product){
+		Reference oldReference = this.findByEan13AndSupplierEan13(product.getEan13(), product.getSupplier().getEan13());
+		
+		String id = null;
+		if(oldReference == null){
+			oldReference = new Reference();
+		}
+		
+		return new Reference(
+			id, 
+			product.getEan13(), 
+			product.getSupplier().getEan13(), 
+			oldReference.getPriceApplicationOrAvailabilityDate(), 
+			oldReference.getAvailability(), 
+			oldReference.getPriceType(), 
+			product.getPriceTaxIn(), 
+			product.getSchoolbook(), 
+			product.getTvaRate1(), 
+			product.getPriceTaxOut1(), 
+			product.getTvaRate2(), 
+			product.getPriceTaxOut2(), 
+			product.getTvaRate3(), 
+			product.getPriceTaxOut3(), 
+			product.getReturnType() != null ? product.getReturnType().getCode() : null, 
+			product.getAvailableForOrder(), 
+			product.getDatePublished(), 
+			product.getProductType() != null ?product.getProductType().getCode() : null, 
+			product.getPublishEndDate(), 
+			product.getStandardLabel(), 
+			product.getCashRegisterLabel(), 
+			product.getThickness(), 
+			product.getWidth(), 
+			product.getHeight(), 
+			product.getWeight(), 
+			product.getExtendedLabel(), 
+			product.getPublisher(), 
+			product.getCollection(), 
+			product.getAuthor(), 
+			product.getPublisherPresentation(), 
+			product.getIsbn(), 
+			product.getSupplierReference(), 
+			product.getCollectionReference(),
+			product.getTheme(), 
+			product.getPublisherIsnb(), 
+			product.getReplacesAReference(), 
+			product.getReplacedByAReference(), 
+			product.getReplacesEan13(), 
+			product.getReplacedByEan13(), 
+			product.getOrderableByUnit(), 
+			product.getBarcodeType() != null ? product.getBarcodeType().getCode() : null, 
+			product.getMainReference(), 
+			product.getSecondaryReference(), 
+			product.getReferencesCount(), 
+			true, 
+			product.getImageEncryptedKey()
+		);
+	}
+	
 	private Iterable<Reference> calculateImageUrl(Iterable<Reference> references) {
 		for (Reference reference : references) {
 			this.calculateImageUrl(reference);
@@ -50,6 +109,11 @@ public class ReferenceServiceImpl implements ReferenceService {
 
 		return reference;
 	}
+	
+	@Override
+	public void delete(String ean13, String supplierEan13){
+		this.referenceRepository.delete(this.findByEan13AndSupplierEan13(ean13, supplierEan13));
+	}
 
 	@Override
 	public Iterable<Reference> findByEan13(String ean13, Sort sort) {
@@ -67,8 +131,14 @@ public class ReferenceServiceImpl implements ReferenceService {
 	@Override
 	public Reference findByEan13AndSupplierEan13(String ean13,
 			String supplierEan13) {
-		return this.calculateImageUrl(this.referenceRepository
-				.findByEan13AndSupplierEan13(ean13, supplierEan13));
+		Reference reference = this.referenceRepository
+				.findByEan13AndSupplierEan13(ean13, supplierEan13);
+		
+		if(reference == null){
+			return null;
+		}
+		
+		return this.calculateImageUrl(reference);
 	}
 
 	@Override

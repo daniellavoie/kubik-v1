@@ -45,6 +45,22 @@
 								</div>
 								
 								<div class="form-group">
+									<label class="col-sm-4 control-label">Titre court</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.standardLabel}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.standardLabel" placeholder="Titre court">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Titre caisse</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.cashRegisterLabel}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.cashRegisterLabel" placeholder="Titre caisse">
+									</div>
+								</div>
+								
+								<div class="form-group">
 									<label class="col-sm-4 control-label">Auteur</label>
 									<div class="col-sm-8">
 										<p ng-if="!editMode" class="form-control-static">{{product.author}}</p>
@@ -53,7 +69,7 @@
 								</div>
 								
 								<div class="form-group">
-									<label class="col-sm-4 control-label">Date de disponibilité</label>
+									<label class="col-sm-4 control-label">Date de publication</label>
 									<div class="col-sm-8">
 										<p ng-if="!editMode" class="form-control-static">{{product.datePublished | date}}</p>
 										<input ng-if="editMode" class="date-published form-control" value="{{product.datePublished}}" placeholder="Date de publication">
@@ -69,18 +85,10 @@
 								</div>
 								
 								<div class="form-group">
-									<label class="col-sm-4 control-label">Titre court</label>
+									<label class="col-sm-4 control-label">Isbn</label>
 									<div class="col-sm-8">
-										<p ng-if="!editMode" class="form-control-static">{{product.standardLabel}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.standardLabel" placeholder="Titre court">
-									</div>
-								</div>
-								
-								<div class="form-group">
-									<label class="col-sm-4 control-label">Titre caisse</label>
-									<div class="col-sm-8">
-										<p ng-if="!editMode" class="form-control-static">{{product.cashRegisterLabel}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.cashRegisterLabel" placeholder="Titre caisse">
+										<p ng-if="!editMode" class="form-control-static">{{product.isbn}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.isbn" placeholder="Isbn">
 									</div>
 								</div>
 								

@@ -49,7 +49,7 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 			product : {
 				id : selectedProduct.id,
 				ean13 : selectedProduct.ean13,
-				supplier : {id : selectedProduct.supplier.id}
+				supplier : {ean13 : selectedProduct.supplier.ean13, id : selectedProduct.supplier.id}
 			},
 			quantity : quantity
 		});

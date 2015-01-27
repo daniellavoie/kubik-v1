@@ -66,7 +66,8 @@
 						<td>
 							<input 
 								ng-model="detail.quantity"
-								ng-change="saveSession()"
+								id="detail-{{detail.id}}"
+								ng-keyup="quantityChanged($event)"
 								class="quantity" 
 								type="number"
 								min="1" 
@@ -176,6 +177,8 @@
 									</div>
 								</div>
 							</div>
+									
+							<img ng-if="loading" th:src="@{/img/loading.gif}" />
 						</td>
 					</tr>
 				</tfoot>

@@ -51,6 +51,6 @@ public enum AvailabilityCode {
 			}
 		}
 		
-		throw new IllegalArgumentException("No enum with code " + code);
+		return null;
 	}
 }

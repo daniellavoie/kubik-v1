@@ -74,7 +74,10 @@ window.KubikProductCard.prototype.init = function(){
 					});
 				}
 				
-				var supplier = $scope.getSupplier($scope.product.supplier.id);
+				var supplier = null;
+				if($scope.product.supplier != null) {
+					supplier = $scope.getSupplier($scope.product.supplier.id);
+				}
 				if(supplier == null){
 					supplier = $scope.suppliers[0];
 				}

@@ -23,6 +23,8 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 				$scope.createDetail(product, productSearch.newProductQuantity)
 			}
 		}
+		
+		$("html, body").animate({ scrollTop: $(document).height() }, 500);
 	});
 	
 	$scope.cancelSession = function(){
@@ -48,7 +50,7 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 			purchaseSession : {id : sessionId},
 			product : {
 				ean13 : selectedProduct.ean13,
-				supplier : {id : selectedProduct.supplier.id}
+				supplier : {ean13 : selectedProduct.supplier.ean13, id : selectedProduct.supplier.id}
 			},
 			quantity : quantity
 		});
@@ -80,6 +82,7 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 	
 	$scope.loadSession = function(){
 		$http.get(sessionId).success(function(session){
+			$scope.loading=false;
 			$scope.session = session;
 			
 			$timeout(function(){
@@ -92,6 +95,13 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 		});
 	};
 	
+	$scope.quantityChanged = function($event){
+		$scope.inputIdToFocus = $event.target.id;
+		if($scope.quantityChangedTimer != undefined) clearTimeout($scope.quantityChangedTimer);
+	    
+		$scope.quantityChangedTimer = setTimeout($scope.saveSession, 1000);
+	};
+	
 	$scope.redirectToPurchaseOrders = function(){
 		location.href = "../purchaseOrder";
 	};
@@ -101,19 +111,8 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 	};
 	
 	$scope.saveSession = function(success){
-		for(var detailIndex in $scope.session.details){
-			var detail = $scope.session.details[detailIndex];
+		$scope.loading=true;
 
-			if(detail.quantity = ""){
-				detail.quantity = 0;
-			}
-
-			detail.product = {
-				id : detail.product.id,
-				ean13 : detail.product.ean13,
-				supplier : {id : detail.product.supplier.id}
-			};
-		}
 		$http.post(".", $scope.session).success(function(){
 			$scope.$broadcast("sessionSaved");
 			

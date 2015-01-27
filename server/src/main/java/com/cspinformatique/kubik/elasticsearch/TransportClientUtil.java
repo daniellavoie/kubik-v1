@@ -26,7 +26,7 @@ public abstract class TransportClientUtil {
 			client.addTransportAddress(new InetSocketTransportAddress(
 					hostname, port));
 		}
-
+		
 		return (Client) client;
 	}
 }

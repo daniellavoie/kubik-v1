@@ -6,9 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import com.cspinformatique.kubik.product.model.Product;
 import com.cspinformatique.kubik.reference.model.Reference;
 
 public interface ReferenceService {
+	Reference buildReferenceFromProduct(Product product);
+	
+	void delete(String ean13, String supplierEan13);
+	
 	Iterable<Reference> findByEan13(String ean13, Sort sort);
 	
 	Iterable<Reference> findByEan13AndImportedInKubik(String ean13, boolean importedInKubik, Sort sort);

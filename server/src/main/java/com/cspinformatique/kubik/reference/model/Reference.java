@@ -216,7 +216,7 @@ public class Reference {
 		this.importedInKubik = importedInKubik;
 		this.imageEncryptedKey = imageEncryptedKey;
 	}
-
+	
 	public String getId() {
 		return id;
 	}
