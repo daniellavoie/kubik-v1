@@ -1,8 +1,16 @@
 #!/bin/bash
-WORKSPACE="/docker-workspace/Kubik"
-KUBIK_DATA_DIR="/docker-volumes/ldf-kubik"
+PREFIX=$1
 
-docker rm -f ldf-kubik
+if [ PREFIX == "" ]
+then
+	PREFIX = "ldf"
+fi
+
+CONTAINER_NAME=$PREFIX-kubik
+WORKSPACE="/docker-workspace/Kubik"
+KUBIK_DATA_DIR="/docker-volumes/$CONTAINER_NAME"
+
+docker rm -f $CONTAINER_NAME
 
 cd $WORKSPACE
 
@@ -16,7 +24,7 @@ echo "Building Dockerfile for Kubik."
 
 sh docker-build.sh
 
-CMD="docker run -d -p 8090:8080 -v $KUBIK_DATA_DIR:/data --name ldf-kubik cspinformatique/kubik"
+CMD="docker run -d -p 8090:8080 -v $KUBIK_DATA_DIR:/data --name $CONTAINER_NAME cspinformatique/kubik"
 
 echo "Launching docker instance for Kubik."
 echo "	Cmd : $CMD"

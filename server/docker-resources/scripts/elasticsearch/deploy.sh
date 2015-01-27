@@ -1,8 +1,16 @@
 #!/bin/bash
-WORKSPACE="/docker-workspace/ldf-kubik"
-ES_DATA_DIR="/docker-volumes/ldf-kubik-elasticsearch"
+PREFIX=$1
 
-docker rm -f ldf-kubik-elasticsearch
+if [ PREFIX == "" ]
+then
+	PREFIX = "ldf"
+fi
+
+CONTAINER_NAME=$PREFIX-kubik-elasticsearch
+WORKSPACE="/docker-workspace/Kubik"
+ES_DATA_DIR="/docker-volumes/$CONTAINER_NAME"
+
+docker rm -f $CONTAINER_NAME
 
 echo "Deploying Elasticsearch for Kubik."
 mkdir -p $ES_DATA_DIR
@@ -16,7 +24,7 @@ $CMD
 
 echo "Launching docker instance of Elasticsearch"
 
-CMD="docker run --name=ldf-kubik-elasticsearch -d -p 9200:9200 -p 9300:9300 -e ES_HEAP_SIZE=3g -v $ES_DATA_DIR:/data dockerfile/elasticsearch /elasticsearch/bin/elasticsearch -Des.config=/data/elasticsearch.yml"
+CMD="docker run --name $CONTAINER_NAME -d -p 9200:9200 -p 9300:9300 -e ES_HEAP_SIZE=3g -v $ES_DATA_DIR:/data dockerfile/elasticsearch /elasticsearch/bin/elasticsearch -Des.config=/data/elasticsearch.yml"
 
 echo "	Cmd : $CMD"
 
