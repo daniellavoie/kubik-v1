@@ -59,6 +59,7 @@
 								<span class="descending hide glyphicon glyphicon-chevron-down"></span>
 							</th>
 							<th>Couverture</th>
+							<th>Inventaire</th>
 							<th>
 								&nbsp;
 							</th>
@@ -73,6 +74,10 @@
 							<td>{{product.publisher}}</td>
 							<td>{{product.datePublished | date}}</td>
 							<td><img id="product-image-{{product.id}}" class="product-image" /></td>
+							<td>
+								<span ng-if="product.productInventory != null">{{product.productInventory.quantityOnHand}}</span>
+								<span ng-if="product.productInventory == null">0</span>
+							</td>
 							<td><span class="glyphicon glyphicon-list-alt" ng-click="openCard($event, product)"></span></td>
 						<tr>
 						

@@ -1,9 +1,8 @@
 package com.cspinformatique.kubik.product.service.impl;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +24,7 @@ import com.cspinformatique.kubik.reference.model.Reference;
 import com.cspinformatique.kubik.reference.service.ReferenceService;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements ProductService, InitializingBean {
 	private static final Logger logger = LoggerFactory
 			.getLogger(ProductServiceImpl.class);
 
@@ -40,6 +39,22 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private SupplierService supplierService;
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(15000);
+				
+					generateProductsFromImportedReferences();
+				} catch (Exception ex) {
+					logger.error("Could not generate products from imported references", ex);
+				}
+			}
+		}).start();
+	}
 
 	@Override
 	public Product buildProductFromReference(Reference reference) {
@@ -118,13 +133,6 @@ public class ProductServiceImpl implements ProductService {
 			product.setImageEncryptedKey(this.imageService.getEncryptedUrl(
 					product.getEan13(), product.getSupplier().getEan13()));
 		}
-	}
-
-	@PostConstruct
-	protected void init() throws InterruptedException {
-		Thread.sleep(5000);
-
-		this.generateProductsFromImportedReferences();
 	}
 
 	@Override

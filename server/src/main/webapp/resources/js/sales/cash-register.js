@@ -289,6 +289,12 @@ app.controller("KubikPaymentController", function($scope, $http, $timeout){
 		$scope.closeSale();
 	}
 	
+	$scope.printReceipt = function(){
+		$http.post("invoice/" + $scope.invoice.id + "/receipt?print");
+		
+		$scope.closeSale();
+	}
+	
 	$scope.selectPaymentMethod = function(paymentMethod){
 		$scope.paymentMethod = paymentMethod;
 	};

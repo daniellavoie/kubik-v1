@@ -24,6 +24,7 @@
 							<li role="presentation" ng-click="showTab('price')" ><a href="#">Prix</a></li>
 							<li role="presentation" ng-click="showTab('supplier')" ><a href="#">Fournisseur</a></li>
 							<li role="presentation" ng-click="showTab('dimensions')" ><a href="#">Dimensions</a></li>
+							<li role="presentation" ng-click="showTab('inventory')" ><a href="#">Inventaire</a></li>
 						</ul>
 						
 						<div class="tab product">
@@ -299,6 +300,25 @@
 									<div class="col-sm-8" ng-if="product.weight != null">
 										<p ng-if="!editMode" class="form-control-static">{{product.weight}} g</p>
 										<input ng-if="editMode" class="form-control" ng-model="product.weight" placeholder="Poids en gramme">
+									</div>
+								</div>
+							</form>
+						</div>
+						
+						<div class="tab inventory hidden">							 
+							<form class="form-horizontal">	
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Quantité disponible</label>
+									<div class="col-sm-8">
+										<p ng-if="product.productInventory != null" class="form-control-static">{{product.productInventory.quantityOnHand}}</p>
+										<p ng-if="product.productInventory == null" class="form-control-static">0</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Mises de côté</label>
+									<div class="col-sm-8">
+										<p ng-if="product.productInventory != null" class="form-control-static">{{product.productInventory.quantityOnHold}}</p>
+										<p ng-if="product.productInventory == null" class="form-control-static">0</p>
 									</div>
 								</div>
 							</form>

@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 import com.cspinformatique.kubik.product.model.Product;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class ProductInventory {
@@ -38,6 +39,7 @@ public class ProductInventory {
 	}
 
 	@OneToOne
+	@JsonBackReference
 	public Product getProduct() {
 		return product;
 	}

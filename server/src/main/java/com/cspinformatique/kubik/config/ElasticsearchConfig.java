@@ -22,7 +22,7 @@ public class ElasticsearchConfig {
 	@Bean
     public ElasticsearchTemplate elasticsearchTemplate() {
 		if(env.getRequiredProperty("kubik.elasticsearch.node", Boolean.class)){
-			return new ElasticsearchTemplate(NodeClientUtil.buildLocalNode().client());
+			return new ElasticsearchTemplate(NodeClientUtil.buildLocalNode());
 		}else{
 			return new ElasticsearchTemplate(TransportClientUtil.buildTransportClient(env));			
 		}

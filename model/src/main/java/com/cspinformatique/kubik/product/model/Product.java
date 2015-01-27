@@ -9,7 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
+
+import com.cspinformatique.kubik.warehouse.model.ProductInventory;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Product {
@@ -60,6 +64,8 @@ public class Product {
 	private String imageEncryptedKey;
 	
 	private boolean dilicomReference;
+	
+	private ProductInventory productInventory;
 	
 	public Product(){
 		
@@ -497,5 +503,15 @@ public class Product {
 
 	public void setDilicomReference(boolean dilicomReference) {
 		this.dilicomReference = dilicomReference;
+	}
+
+	@JsonManagedReference
+	@OneToOne(mappedBy="product")
+	public ProductInventory getProductInventory() {
+		return productInventory;
+	}
+
+	public void setProductInventory(ProductInventory productInventory) {
+		this.productInventory = productInventory;
 	}
 }

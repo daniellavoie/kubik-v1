@@ -22,6 +22,7 @@
 		<module>server</module>
 		<module>reports</module>
 		<module>model</module>
+		<module>proxy</module>
 	</modules>
 	
 	<build>
