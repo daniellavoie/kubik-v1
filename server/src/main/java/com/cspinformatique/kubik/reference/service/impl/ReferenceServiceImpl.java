@@ -1,5 +1,6 @@
 package com.cspinformatique.kubik.reference.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,9 @@ public class ReferenceServiceImpl implements ReferenceService {
 			product.getSecondaryReference(), 
 			product.getReferencesCount(), 
 			true, 
-			product.getImageEncryptedKey()
+			product.getImageEncryptedKey(),
+			new Date(),
+			new Date()
 		);
 	}
 	
@@ -131,8 +134,23 @@ public class ReferenceServiceImpl implements ReferenceService {
 	@Override
 	public Reference findByEan13AndSupplierEan13(String ean13,
 			String supplierEan13) {
-		Reference reference = this.referenceRepository
-				.findByEan13AndSupplierEan13(ean13, supplierEan13);
+		Reference reference = null;
+		List<Reference> references = this.referenceRepository.findByEan13AndSupplierEan13(ean13, supplierEan13);
+		
+		if(references.size() > 0){
+			reference = references.get(0);
+		}
+		
+		boolean firstResult = true;
+		for(Reference referenceToClean : references){
+			if(!firstResult){
+				logger.warn("Deleting double reference " + reference.getEan13() + " from supplier "  +reference.getSupplierEan13() + " created at " + reference.getCreationDate() + ".");
+				
+				this.referenceRepository.delete(referenceToClean);				
+			}
+			
+			firstResult = false;
+		}
 		
 		if(reference == null){
 			return null;
@@ -159,8 +177,7 @@ public class ReferenceServiceImpl implements ReferenceService {
 		Map<String, Reference> referenceMap = new HashMap<String, Reference>();
 		for (Reference reference : references) {
 			try {
-				Reference oldReference = this.referenceRepository
-						.findByEan13AndSupplierEan13(reference.getEan13(),
+				Reference oldReference = this.findByEan13AndSupplierEan13(reference.getEan13(),
 								reference.getSupplierEan13());
 
 				if (oldReference != null) {

@@ -1,9 +1,8 @@
 package com.cspinformatique.kubik.sales.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletResponse;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -45,13 +44,13 @@ public class InvoiceController {
 
 	@Autowired
 	private PrintService printService;
-	
+
 	@Autowired
 	private ReportService reportService;
 
-	@RequestMapping(value = "/{invoiceId}/receipt", method = RequestMethod.GET, produces = "application/pdf")
-	public void generatePdfReceipt(@PathVariable int invoiceId,
-			HttpServletResponse response) {
+	@RequestMapping(value = "/{invoiceId}/receipt", method = RequestMethod.GET)
+	public void generateReceiptPdf(@PathVariable int invoiceId,
+			ServletResponse response) {
 		try {
 			JasperExportManager.exportReportToPdfStream(this.reportService
 					.generateReceiptReport(invoiceService.findOne(invoiceId)),
@@ -62,18 +61,10 @@ public class InvoiceController {
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/{invoiceId}/receipt", method = RequestMethod.POST, params="print")
-	public void generatePdfReceipt(@PathVariable int invoiceId) {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		try {
-			JasperExportManager.exportReportToPdfStream(this.reportService
-					.generateReceiptReport(invoiceService.findOne(invoiceId)),
-					outputStream);
-		} catch (JRException ex) {
-			throw new RuntimeException(ex);
-		}
-		
-		this.printService.print(outputStream.toByteArray());
+	@RequestMapping(value = "/{invoiceId}/receipt", method = RequestMethod.POST, params = "print")
+	public void generateReceiptPrintJob(@PathVariable int invoiceId) {
+		this.printService
+				.createReceiptPrintJob(this.invoiceService.findOne(invoiceId));
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "status", produces = MediaType.APPLICATION_JSON_VALUE)

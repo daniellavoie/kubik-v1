@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.reference.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,7 +15,7 @@ public interface ReferenceRepository extends
 	
 	Iterable<Reference> findByEan13AndImportedInKubik(String ean13, boolean importedInKubik, Sort sort);
 	
-	Reference findByEan13AndSupplierEan13(String ean13, String supplierEan13);
+	List<Reference> findByEan13AndSupplierEan13(String ean13, String supplierEan13);
 	
 	Page<Reference> findByImportedInKubik(boolean importedInubik, Pageable pageable);
 }

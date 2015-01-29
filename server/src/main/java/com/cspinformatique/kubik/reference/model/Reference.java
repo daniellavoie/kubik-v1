@@ -146,6 +146,12 @@ public class Reference {
 
 	private String imageEncryptedKey;
 	
+	@Field(type=FieldType.Date)
+	private Date creationDate;
+	
+	@Field(type=FieldType.Date)
+	private Date updateDate;
+	
 	public Reference(){
 		
 	}
@@ -168,7 +174,7 @@ public class Reference {
 			String replacedByEan13, Boolean orderableByUnit,
 			Integer barcodeType, Boolean mainReference,
 			Boolean secondaryReference, Integer referencesCount, boolean importedInKubik,
-			String imageEncryptedKey) {
+			String imageEncryptedKey, Date creationDate, Date updateDate) {
 		this.id = id;
 		this.ean13 = ean13;
 		this.supplierEan13 = distributorEan13;
@@ -215,6 +221,8 @@ public class Reference {
 		this.referencesCount = referencesCount;
 		this.importedInKubik = importedInKubik;
 		this.imageEncryptedKey = imageEncryptedKey;
+		this.creationDate = creationDate;
+		this.updateDate = updateDate;
 	}
 	
 	public String getId() {
@@ -584,5 +592,21 @@ public class Reference {
 
 	public void setImageEncryptedKey(String imageEncryptedKey) {
 		this.imageEncryptedKey = imageEncryptedKey;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
 	}
 }

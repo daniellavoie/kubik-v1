@@ -175,7 +175,7 @@ public class ReferenceItemProcessor implements
 					dilicomReference.getOrderableByUnit(),
 					dilicomReference.getBarcodeType(), mainReference,
 					secondaryReference, dilicomReference.getReferencesCount(),
-					importedInKubik, null);
+					importedInKubik, null, new Date(), new Date());
 
 			/*
 			 * this.publisherIsnb = publisherIsnb; this.replacesAReference =
