@@ -26,6 +26,7 @@ public class Invoice {
 	private Date cancelDate;
 	private Date invoiceDate;
 	private Date paidDate;
+	private Date refundDate;
 	private Double totalTaxLessAmount;
 	private Double rebateAmount;
 	private Map<Double, InvoiceTaxAmount> taxesAmounts;
@@ -44,7 +45,7 @@ public class Invoice {
 
 	public Invoice(Integer id, Long number, User user, InvoiceStatus status,
 			Customer customer, Date date, Date cancelDate, Date invoiceDate,
-			Date paidDate, Double totalTaxLessAmount, Double rebateAmount,
+			Date paidDate, Date refundDate, Double totalTaxLessAmount, Double rebateAmount,
 			Map<Double, InvoiceTaxAmount> taxesAmounts, Double totalTaxAmount,
 			Double totalAmount, List<Payment> payments, Double amountPaid,
 			Double amountReturned, CashRegisterSession cashRegisterSession,
@@ -58,6 +59,7 @@ public class Invoice {
 		this.cancelDate = cancelDate;
 		this.invoiceDate = invoiceDate;
 		this.paidDate = paidDate;
+		this.refundDate = refundDate;
 		this.totalTaxLessAmount = totalTaxLessAmount;
 		this.rebateAmount = rebateAmount;
 		this.taxesAmounts = taxesAmounts;
@@ -149,6 +151,14 @@ public class Invoice {
 
 	public void setStatus(InvoiceStatus status) {
 		this.status = status;
+	}
+
+	public Date getRefundDate() {
+		return refundDate;
+	}
+
+	public void setRefundDate(Date refundDate) {
+		this.refundDate = refundDate;
 	}
 
 	public Double getTotalTaxLessAmount() {

@@ -40,7 +40,8 @@
 						<th>Date</th>
 						<th>Client</th>
 						<th>Produits</th>
-						<th>Montant</th>					
+						<th>Montant</th>
+						<th>Statut</th>	
 					</tr>
 				</thead>
 				
@@ -59,6 +60,7 @@
 						</td>
 						<td>{{invoice.details.length}}</td>
 						<td>{{invoice.totalAmount | currency : '&euro;'}}</td>
+						<td>{{invoice.status.description}}</td>
 					</tr>
 				</tbody>
 			</table>

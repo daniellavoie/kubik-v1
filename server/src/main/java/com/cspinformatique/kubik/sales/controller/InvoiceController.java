@@ -63,24 +63,31 @@ public class InvoiceController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@RequestMapping(value = "/{invoiceId}/receipt", method = RequestMethod.POST, params = "print")
 	public void generateReceiptPrintJob(@PathVariable int invoiceId) {
-		this.printService
-				.createReceiptPrintJob(this.invoiceService.findOne(invoiceId));
+		this.printService.createReceiptPrintJob(this.invoiceService
+				.findOne(invoiceId));
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = "status", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<Invoice> findByStatus(
-			@RequestParam String status,
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	Page<Invoice> findByStatus(@RequestParam(required = false) String status,
 			@RequestParam(defaultValue = "0") Integer page,
 			@RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
 			@RequestParam(defaultValue = "paidDate") String sortBy) {
-		return this.invoiceService.findByStatus(invoiceStatusService
-				.findOne(status), new PageRequest(page, resultPerPage,
-				direction != null ? direction : Direction.DESC, sortBy));
+		PageRequest pageRequest = new PageRequest(page, resultPerPage,
+				direction != null ? direction : Direction.DESC, sortBy);
+
+		if (status != null) {
+			return this.invoiceService.findByStatus(
+					invoiceStatusService.findOne(status), pageRequest);
+		} else {
+			return this.invoiceService.findAll(pageRequest);
+		}
 	}
 
 	@RequestMapping(value = "/{invoiceId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Invoice findOne(@PathVariable int invoiceId) {
+	public @ResponseBody
+	Invoice findOne(@PathVariable int invoiceId) {
 		return this.invoiceService.findOne(invoiceId);
 	}
 
@@ -95,14 +102,15 @@ public class InvoiceController {
 	}
 
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Invoice save(@RequestBody Invoice invoice) {
+	public @ResponseBody
+	Invoice save(@RequestBody Invoice invoice) {
 		return this.invoiceService.save(invoice);
 	}
 
 	@RequestMapping(value = "/{invoiceId}/payment", method = {
 			RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Iterable<Payment> savePayments(
-			Iterable<Payment> payments) {
+	public @ResponseBody
+	Iterable<Payment> savePayments(Iterable<Payment> payments) {
 		return this.paymentService.save(payments);
 	}
 }

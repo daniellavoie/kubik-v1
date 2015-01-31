@@ -12,6 +12,8 @@ public interface InvoiceService {
 	
 	Invoice generateNewInvoice(CashRegisterSession session);
 	
+	Page<Invoice> findAll(Pageable pageable);
+	
 	Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable);
 	
 	Invoice findOne(int id);

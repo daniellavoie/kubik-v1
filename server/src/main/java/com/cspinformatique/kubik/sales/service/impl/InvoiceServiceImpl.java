@@ -201,6 +201,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 	}
 	
 	@Override
+	public Page<Invoice> findAll(Pageable pageable){
+		return this.invoiceRepository.findAll(pageable);
+	}
+	
+	@Override
 	public Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable){
 		return this.invoiceRepository.findByStatus(status, pageable);
 	}
@@ -214,7 +219,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 	public Invoice generateNewInvoice(CashRegisterSession session) {
 		return this.save(new Invoice(null, null, null, invoiceStatusRepository
 				.findOne(Types.DRAFT.name()), null, new Date(), null, null,
-				null, 0d, 0d, new HashMap<Double, InvoiceTaxAmount>(), 0d, 0d,
+				null, null, 0d, 0d, new HashMap<Double, InvoiceTaxAmount>(), 0d, 0d,
 				new ArrayList<Payment>(), 0d, 0d, session,
 				new ArrayList<InvoiceDetail>()));
 	}
@@ -260,6 +265,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 					// Update inventory.
 					this.updateInventory(invoice);;
+				}
+
+				if (status.equals(Types.REFUND.name())
+						&& !oldInvoice.getStatus().getType()
+								.equals(Types.REFUND.name())) {
+					invoice.setRefundDate(new Date());
 				}
 			}
 		}

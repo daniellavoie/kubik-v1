@@ -6,7 +6,7 @@ import javax.persistence.Id;
 @Entity
 public class InvoiceStatus {
 	public enum Types{
-		DRAFT, CANCELED, PAID
+		DRAFT, CANCELED, PAID, REFUND
 	}
 	
 	private String type;

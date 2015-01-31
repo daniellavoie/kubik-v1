@@ -9,8 +9,7 @@ app.controller("KubikInvoicesPageController", function($scope, $http, $timeout){
 	}
 	
 	$scope.loadInvoices = function(){
-		var params = {	status : "PAID",
-						page : $scope.page,
+		var params = {	page : $scope.page,
 						resultPerPage : $scope.resultPerPage,
 						sortBy : $scope.sortBy,
 						direction : $scope.direction};
