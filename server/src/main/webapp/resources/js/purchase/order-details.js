@@ -64,6 +64,8 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 			if($scope.order.details[detailIndex].product.ean13 == orderDetail.product.ean13){
 				$scope.order.details.splice(detailIndex, 1);
 				
+				$scope.saveOrder();
+				
 				break;
 			}
 		}
