@@ -1,7 +1,5 @@
 package com.cspinformatique.kubik.sales.service.impl;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -131,7 +130,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 				// Calculates invoice details amounts
 				detail.setUnitPrice(product.getPriceTaxIn());
-				detail.setTotalAmount(new BigDecimal(detail.getUnitPrice() * quantity).round(new MathContext(3)).doubleValue());
+				detail.setTotalAmount(detail.getUnitPrice() * quantity);
 				detail.setTaxesAmounts(detailTaxesAmounts);
 
 				double detailTotalTaxAmount = 0d;
@@ -167,9 +166,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 			}
 		}
 
-		invoice.setTotalAmount(totalAmount);
-		invoice.setTotalTaxAmount(totalTaxAmount);
-		invoice.setTotalTaxLessAmount(totalTaxLessAmount);
+		invoice.setTotalAmount(Precision.round(totalAmount, 2));
+		invoice.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));
+		invoice.setTotalTaxLessAmount(Precision.round(totalTaxLessAmount, 2));
 		invoice.setTaxesAmounts(totalTaxesAmounts);
 
 		// Calculate cash to return.
