@@ -64,7 +64,8 @@
 						<td>{{detail.product.availabilityCode}}</td>
 						<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
 						<td>
-							<input 
+							<input
+								ng-if="session.status != 'SUBMITED'" 
 								ng-model="detail.quantity"
 								id="detail-{{detail.id}}"
 								ng-keyup="quantityChanged($event)"
@@ -73,17 +74,19 @@
 								min="1" 
 								max="99999" 
 							/>
+							<span ng-if="session.status == 'SUBMITED'">{{detail.quantity}}</span>
 						</td>
 							
 						<td>
 							<button
+								ng-if="session.status != 'SUBMITED'"
 								ng-click="deleteDetail(detail)" 
 								type="button" 
 								class="btn btn-warning btn-xs"
 							>
 								<span class="glyphicon glyphicon-trash"></span>
 							</button>
-							
+							&nbsp;
 						</td>
 					</tr>
 					
