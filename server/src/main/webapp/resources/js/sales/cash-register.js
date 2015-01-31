@@ -309,7 +309,7 @@ app.controller("KubikPaymentController", function($scope, $http, $timeout){
 		var $paymentAmount = $(".payment-amount");
 		var newPayment = {
 			invoice : {id : $scope.invoice.id},
-			amount : parseFloat($paymentAmount.val()),
+			amount : parseFloat($paymentAmount.val().replace(",", ".")),
 			paymentMethod : $scope.paymentMethod
 		};
 		
