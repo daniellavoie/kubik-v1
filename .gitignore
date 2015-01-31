@@ -12,3 +12,4 @@ server/test.script
 server/data
 server/dilicom
 server/*.edi
+server/docker-resources/target
