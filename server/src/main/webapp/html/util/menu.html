@@ -6,8 +6,15 @@
 <body>
 	<div th:fragment="menu">
 		<!-- Fixed navbar -->
-		<nav class="navbar navbar-default navbar-fixed-top">
+		<nav th:attr="class=${'navbar navbar-default navbar-fixed-top ' + @environment.getProperty('kubik.environment')}">
 			<div class="container">
+				<div 
+					th:if="${@environment.getProperty('kubik.environment') != 'production'}"
+					th:attr="class=${'pull-right ' + @environment.getProperty('kubik.environment')}"
+				>
+					Environment de <span th:text="${@environment.getProperty('kubik.environment')}"></span>
+				</div>
+				
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
 						<span class="sr-only">Toggle navigation</span> 
