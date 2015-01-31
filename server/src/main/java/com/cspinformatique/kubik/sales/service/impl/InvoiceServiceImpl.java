@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.sales.service.impl;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -129,7 +131,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 				// Calculates invoice details amounts
 				detail.setUnitPrice(product.getPriceTaxIn());
-				detail.setTotalAmount(detail.getUnitPrice() * quantity);
+				detail.setTotalAmount(new BigDecimal(detail.getUnitPrice() * quantity).round(new MathContext(2)).doubleValue());
 				detail.setTaxesAmounts(detailTaxesAmounts);
 
 				double detailTotalTaxAmount = 0d;
