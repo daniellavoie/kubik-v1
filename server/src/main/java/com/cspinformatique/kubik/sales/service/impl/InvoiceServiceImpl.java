@@ -131,7 +131,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 				// Calculates invoice details amounts
 				detail.setUnitPrice(product.getPriceTaxIn());
-				detail.setTotalAmount(new BigDecimal(detail.getUnitPrice() * quantity).round(new MathContext(2)).doubleValue());
+				detail.setTotalAmount(new BigDecimal(detail.getUnitPrice() * quantity).round(new MathContext(3)).doubleValue());
 				detail.setTaxesAmounts(detailTaxesAmounts);
 
 				double detailTotalTaxAmount = 0d;
