@@ -320,7 +320,9 @@ app.controller("KubikPaymentController", function($scope, $http, $timeout){
 		if($scope.amountLeft <= 0){
 			$scope.invoice.status = {type : "PAID"};
 			
-			$http.post("invoice", $scope.invoice);
+			$http.post("invoice", $scope.invoice).success(function(invoice){
+				$scope.invoice = invoice;
+			});
 		}
 		
 		$paymentAmount.val("");

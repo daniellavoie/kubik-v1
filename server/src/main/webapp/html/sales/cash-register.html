@@ -177,14 +177,20 @@
 									</p>
 								</div>
 							</div>
+							
 							<div ng-if="invoice.status.type == 'PAID'">
-								<p>Vente terminé</p>
-								<p>
+								<h4>Vente terminé</h4>
+								
+								<div class="form-group"> 
+									<label>A rendre</label>
+									<p class="form-control-static">{{invoice.amountReturned | currency : '&euro;'}}</p>
+								</div>
+								
+								<div>
 									<button ng-click="openReceipt()" type="button" class="btn btn-default form-control" data-dismiss="modal">Voir le reçu</button>
-										<button ng-click="printReceipt()" type="button" class="btn btn-default" data-dismiss="modal">Imprimer le recu</button>
-									<!-- 	<button ng-click="redirectToReceipt()" type="button" class="btn btn-default" data-dismiss="modal">Imprimer la facture</button> -->
+									<button ng-click="printReceipt()" type="button" class="btn btn-default form-control" data-dismiss="modal">Imprimer le recu</button>
 									<button ng-click="closeSale()" type="button" class="btn btn-default form-control" data-dismiss="modal">Poursuivre les ventes</button>
-								</p>
+								</div>
 							</div>
 						</div>
 					</div>
