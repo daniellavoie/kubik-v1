@@ -112,7 +112,7 @@
 			<footer class="footer text-center">
 				<div class="container">
 					<div class="col-md-4 col-sm-3 col-lg-4">
-						<input ng-model="ean13" ng-change="searchProduct()" type="text" class="form-control " placeholder="Ean13" />
+						<input ng-model="ean13" ng-keyup="searchProductKeyUp($event)" type="text" class="form-control " placeholder="Ean13" />
 					</div>
 					<div class="col-md-2 col-sm-3 col-lg-2">
 						<button ng-click="kubikReferenceSearch.openSearch()" type="button" class="btn btn-primary form-control">Rechercher</button>

@@ -154,6 +154,12 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 		});
 	};
 	
+	$scope.searchProductKeyUp = function($event){
+		if($event.keyCode == 13){
+			$scope.searchProduct();
+		}
+	};
+	
 	$scope.searchProduct = function(){
 		if($scope.ean13 != "" && !$scope.searchInProgress){
 			$scope.searchInProgress = true;
