@@ -37,6 +37,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			references = this.referenceService.findByEan13AndImportedInKubik(ean13, importedInKubik, sort);
 		}
 		
+		references = this.referenceService.cleanDoubles(references);
+		
 		for(Reference reference : references){
 			this.supplierService.generateSupplierIfNotFound(reference.getSupplierEan13());
 			

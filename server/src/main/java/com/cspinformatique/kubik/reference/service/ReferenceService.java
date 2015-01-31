@@ -12,6 +12,10 @@ import com.cspinformatique.kubik.reference.model.Reference;
 public interface ReferenceService {
 	Reference buildReferenceFromProduct(Product product);
 	
+	Iterable<Reference> cleanDoubles(Iterable<Reference> references);
+	
+	void delete(String id);
+	
 	void delete(String ean13, String supplierEan13);
 	
 	Iterable<Reference> findByEan13(String ean13, Sort sort);

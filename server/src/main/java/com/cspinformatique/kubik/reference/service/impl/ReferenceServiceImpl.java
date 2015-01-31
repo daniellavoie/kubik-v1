@@ -1,5 +1,6 @@
 package com.cspinformatique.kubik.reference.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -111,6 +112,30 @@ public class ReferenceServiceImpl implements ReferenceService {
 				reference.getEan13(), reference.getSupplierEan13()));
 
 		return reference;
+	}
+	
+	@Override
+	public Iterable<Reference> cleanDoubles(Iterable<Reference> references){
+		Map<String, Reference> referencesMap = new HashMap<String, Reference>();
+		
+		for(Reference reference : references){
+			String key = reference.getEan13() + "-" + reference.getSupplierEan13();
+			if(!referencesMap.containsKey(key)){
+				referencesMap.put(key, reference);
+			}else{
+				logger.warn("Cleaning reference double for ean13 " + reference.getEan13() + " from supplier " + reference.getSupplierEan13() + ". Reference id " + reference.getId() + ".");
+				
+				this.delete(reference.getId());
+				
+			}
+		}
+		
+		return new ArrayList<Reference>(referencesMap.values());
+	}
+	
+	@Override
+	public void delete(String id){
+		this.referenceRepository.delete(id);
 	}
 	
 	@Override
