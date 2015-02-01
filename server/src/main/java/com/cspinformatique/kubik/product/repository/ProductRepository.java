@@ -16,8 +16,8 @@ public interface ProductRepository extends
 	@Query("SELECT id FROM Product WHERE dilicomReference = ?")
 	List<Integer> findIdByDilicomReference(boolean dilicomReference);
 	
-	public Product findByEan13AndSupplier(String ean13, Supplier supplier);
+	Product findByEan13AndSupplier(String ean13, Supplier supplier);
 
 	@Query("SELECT product FROM Product product WHERE ean13 LIKE :query OR extendedLabel LIKE :query OR publisher LIKE :query OR collection LIKE :query OR author LIKE :query OR isbn LIKE :query")
-	public Page<Product> search(@Param("query") String query, Pageable pageable);
+	Page<Product> search(@Param("query") String query, Pageable pageable);
 }

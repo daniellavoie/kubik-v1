@@ -1,5 +1,6 @@
 package com.cspinformatique.kubik.sales.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -14,4 +15,6 @@ public interface InvoiceRepository extends PagingAndSortingRepository<Invoice, I
 	List<Invoice> findByCashRegisterSessionAndStatus(CashRegisterSession session, InvoiceStatus invoiceStatus);
 	
 	Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable);
+	
+	List<Invoice> findByPaidDateBetween(Date startPaidDate, Date startEndDate);
 }

@@ -1,5 +1,8 @@
 package com.cspinformatique.kubik.sales.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,7 +17,11 @@ public interface InvoiceService {
 	
 	Page<Invoice> findAll(Pageable pageable);
 	
+	List<Invoice> findByPaidDate(Date paidDate);
+	
 	Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable);
+	
+	Invoice findFirstPaidInvoice();
 	
 	Invoice findOne(int id);
 	

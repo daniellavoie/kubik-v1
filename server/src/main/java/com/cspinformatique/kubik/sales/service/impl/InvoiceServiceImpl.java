@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math3.util.Precision;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ import com.cspinformatique.kubik.sales.model.Payment;
 import com.cspinformatique.kubik.sales.repository.InvoiceRepository;
 import com.cspinformatique.kubik.sales.repository.InvoiceStatusRepository;
 import com.cspinformatique.kubik.sales.service.CashRegisterSessionService;
+import com.cspinformatique.kubik.sales.service.DailyReportService;
 import com.cspinformatique.kubik.sales.service.InvoiceService;
 import com.cspinformatique.kubik.warehouse.service.ProductInventoryService;
 
@@ -35,6 +37,9 @@ import com.cspinformatique.kubik.warehouse.service.ProductInventoryService;
 public class InvoiceServiceImpl implements InvoiceService {
 	@Autowired
 	private CashRegisterSessionService cashRegisterSessionService;
+	
+	@Autowired
+	private DailyReportService dailyReportService;
 
 	@Autowired
 	private InvoiceRepository invoiceRepository;
@@ -42,14 +47,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 	@Autowired
 	private InvoiceStatusRepository invoiceStatusRepository;
 
-	@Autowired private ProductInventoryService productInventoryService;
-	
+	@Autowired
+	private ProductInventoryService productInventoryService;
+
 	@Autowired
 	private ProductService productService;
-	
+
 	private DateFormat dateFormat;
-	
-	public InvoiceServiceImpl(){
+
+	public InvoiceServiceImpl() {
 		this.dateFormat = new SimpleDateFormat("yyyyMMdd");
 	}
 
@@ -198,15 +204,34 @@ public class InvoiceServiceImpl implements InvoiceService {
 		return invoices;
 
 	}
-	
+
 	@Override
-	public Page<Invoice> findAll(Pageable pageable){
+	public Page<Invoice> findAll(Pageable pageable) {
 		return this.invoiceRepository.findAll(pageable);
 	}
-	
+
 	@Override
-	public Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable){
+	public Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable) {
 		return this.invoiceRepository.findByStatus(status, pageable);
+	}
+
+	@Override
+	public List<Invoice> findByPaidDate(Date paidDate) {
+		return this.invoiceRepository.findByPaidDateBetween(paidDate, LocalDate
+				.fromDateFields(paidDate).plusDays(1).toDate());
+	}
+
+	@Override
+	public Invoice findFirstPaidInvoice() {
+		Page<Invoice> page = this.invoiceRepository.findByStatus(
+				new InvoiceStatus(Types.PAID.toString(), null),
+				new PageRequest(0, 1, Direction.ASC, "paidDate"));
+
+		if (page.getContent().size() == 0) {
+			return null;
+		}
+
+		return page.getContent().get(0);
 	}
 
 	@Override
@@ -218,26 +243,28 @@ public class InvoiceServiceImpl implements InvoiceService {
 	public Invoice generateNewInvoice(CashRegisterSession session) {
 		return this.save(new Invoice(null, null, null, invoiceStatusRepository
 				.findOne(Types.DRAFT.name()), null, new Date(), null, null,
-				null, null, 0d, 0d, new HashMap<Double, InvoiceTaxAmount>(), 0d, 0d,
-				new ArrayList<Payment>(), 0d, 0d, session,
+				null, null, 0d, 0d, new HashMap<Double, InvoiceTaxAmount>(),
+				0d, 0d, new ArrayList<Payment>(), 0d, 0d, session,
 				new ArrayList<InvoiceDetail>()));
 	}
-	
-	private void generateInvoiceNumber(Invoice invoice){
+
+	private void generateInvoiceNumber(Invoice invoice) {
 		String dateString = dateFormat.format(new Date());
-		
-		Page<Invoice> page = this.findByStatus(this.invoiceStatusRepository.findOne(Types.PAID.name()), new PageRequest(0, 1, Direction.DESC, "paidDate"));
-		
+
+		Page<Invoice> page = this.findByStatus(
+				this.invoiceStatusRepository.findOne(Types.PAID.name()),
+				new PageRequest(0, 1, Direction.DESC, "paidDate"));
+
 		long number = Long.valueOf(dateString + "0001");
-		if(page.getContent().size() > 0){
+		if (page.getContent().size() > 0) {
 			long lastNumber = page.getContent().get(0).getNumber();
 			String lastDateString = String.valueOf(lastNumber).substring(0, 8);
-			
-			if(lastDateString.equals(dateString)){
+
+			if (lastDateString.equals(dateString)) {
 				number = lastNumber + 1;
 			}
 		}
-		
+
 		invoice.setNumber(number);
 	}
 
@@ -259,11 +286,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 						&& !oldInvoice.getStatus().getType()
 								.equals(Types.PAID.name())) {
 					invoice.setPaidDate(new Date());
-					
+
 					this.generateInvoiceNumber(invoice);
 
 					// Update inventory.
-					this.updateInventory(invoice);;
+					this.updateInventory(invoice);
+					
+					// Recalculate daily report.
+					this.dailyReportService.generateDailyReport(invoice.getPaidDate());
 				}
 
 				if (status.equals(Types.REFUND.name())
@@ -279,11 +309,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 		return this.invoiceRepository.save(invoice);
 	}
-	
-	public void updateInventory(Invoice invoice){
-		for(InvoiceDetail detail : invoice.getDetails()){
-			this.productInventoryService.removeInventory(detail.getProduct(), detail.getQuantity());
+
+	public void updateInventory(Invoice invoice) {
+		for (InvoiceDetail detail : invoice.getDetails()) {
+			this.productInventoryService.removeInventory(detail.getProduct(),
+					detail.getQuantity());
 		}
 	}
-
 }

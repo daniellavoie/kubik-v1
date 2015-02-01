@@ -32,7 +32,7 @@ app.controller("KubikInvoiceDetailsController", function($scope, $http, $timeout
 		});
 	};
 
-	$scope.kubikProductCard = new KubikProductCard({productUrl : "../product"});
+	$scope.kubikProductCard = new KubikProductCard();
 	
 	$scope.loadInvoice();
 });

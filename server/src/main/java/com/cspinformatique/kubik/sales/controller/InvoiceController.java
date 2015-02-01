@@ -68,8 +68,8 @@ public class InvoiceController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	Page<Invoice> findByStatus(@RequestParam(required = false) String status,
+	public @ResponseBody Page<Invoice> find(
+			@RequestParam(required = false) String status,
 			@RequestParam(defaultValue = "0") Integer page,
 			@RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
@@ -86,8 +86,7 @@ public class InvoiceController {
 	}
 
 	@RequestMapping(value = "/{invoiceId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	Invoice findOne(@PathVariable int invoiceId) {
+	public @ResponseBody Invoice findOne(@PathVariable int invoiceId) {
 		return this.invoiceService.findOne(invoiceId);
 	}
 
@@ -102,15 +101,14 @@ public class InvoiceController {
 	}
 
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	Invoice save(@RequestBody Invoice invoice) {
+	public @ResponseBody Invoice save(@RequestBody Invoice invoice) {
 		return this.invoiceService.save(invoice);
 	}
 
 	@RequestMapping(value = "/{invoiceId}/payment", method = {
 			RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	Iterable<Payment> savePayments(Iterable<Payment> payments) {
+	public @ResponseBody Iterable<Payment> savePayments(
+			Iterable<Payment> payments) {
 		return this.paymentService.save(payments);
 	}
 }
