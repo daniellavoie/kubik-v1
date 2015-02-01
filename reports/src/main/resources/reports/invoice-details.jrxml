@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-01-19T20:26:46 -->
+<!-- 2015-02-01T22:05:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice-details" pageWidth="186" pageHeight="842" columnWidth="186" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" isIgnorePagination="true" uuid="9b603965-0f6c-46a4-bc12-13011e855597">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik Database"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -69,6 +69,9 @@ WHERE
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
+				<subreportParameter name="INVOICE_DETAIL_ID">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["reports/detail-taxes.jasper"]]></subreportExpression>
 			</subreport>
