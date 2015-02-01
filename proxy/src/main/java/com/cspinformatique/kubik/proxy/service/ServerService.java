@@ -1,4 +1,4 @@
-package com.cspinformatique.kubik.service;
+package com.cspinformatique.kubik.proxy.service;
 
 import com.cspinformatique.kubik.print.model.ReceiptPrintJob;
 import com.cspinformatique.kubik.sales.model.Invoice;
@@ -9,6 +9,4 @@ public interface ServerService {
 	Iterable<ReceiptPrintJob> findPendingReceiptPrintJob();
 	
 	byte[] loadInvoiceReceiptData(Invoice invoice);
-	
-	void registerProxyToServer();
 }

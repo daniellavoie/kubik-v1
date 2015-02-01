@@ -1,10 +1,10 @@
-package com.cspinformatique.kubik.task;
+package com.cspinformatique.kubik.proxy.task;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.cspinformatique.kubik.service.PrintService;
+import com.cspinformatique.kubik.proxy.service.PrintService;
 
 @Component
 public class FetchPrintJobTask {

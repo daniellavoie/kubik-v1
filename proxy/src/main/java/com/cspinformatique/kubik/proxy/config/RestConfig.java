@@ -1,4 +1,4 @@
-package com.cspinformatique.kubik.config;
+package com.cspinformatique.kubik.proxy.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
