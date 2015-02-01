@@ -65,7 +65,7 @@
 						<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
 						<td>{{detail.unitPrice | currency : '&euro;'}}
 						<td>
-							<div ng-repeat="taxAmount in invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
+							<div ng-repeat="(taxRate, taxAmount) in detail.taxesAmounts">{{taxRate}}</div>
 						</td>
 						<td>{{detail.quantity}}</td>						
 						<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>

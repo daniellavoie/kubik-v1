@@ -134,7 +134,7 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 		});
 	};
 
-	$scope.kubikProductCard = new KubikProductCard();
+	$scope.kubikProductCard = new KubikProductCard({productUrl : "../product"});
 	
 	$scope.productsToValidate = {};
 	$scope.loadSession();
