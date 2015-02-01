@@ -1,9 +1,13 @@
 package com.cspinformatique.kubik.product.service.impl;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.math3.util.Precision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,21 +43,27 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Autowired
 	private SupplierService supplierService;
+	
+	@Resource private Environment env;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(15000);
-				
-					generateProductsFromImportedReferences();
-				} catch (Exception ex) {
-					logger.error("Could not generate products from imported references", ex);
+		if(!env.getRequiredProperty("kubik.environment").equals("production")){
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(15000);
+							
+						generateProductsFromImportedReferences();
+
+						generateMissingReferences();
+					} catch (Exception ex) {
+						logger.error("Could not generate products from imported references", ex);
+					}
 				}
-			}
-		}).start();
+			}).start();
+		}
 	}
 
 	@Override
@@ -134,6 +144,18 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 					product.getEan13(), product.getSupplier().getEan13()));
 		}
 	}
+	
+	private void calculateTaxesAmounts(Product product){
+		if(product.getTvaRate1() != null){
+			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate1() / 100), 2));
+		}
+		if(product.getTvaRate2() != null){
+			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate2() / 100), 2));
+		}
+		if(product.getTvaRate3() != null){
+			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate3() / 100), 2));
+		}
+	}
 
 	@Override
 	public Product generateProductIfNotFound(String ean13, String supplierEan13) {
@@ -161,6 +183,12 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 		return product;
 	}
+	
+	private void generateMissingReferences(){
+		for(int productId : this.productRepository.findIdByDilicomReference(false)){
+			this.save(this.findOne(productId));
+		}
+	}
 
 	private void generateProductsFromImportedReferences() {
 		Pageable pageRequest = new PageRequest(0, 100);
@@ -185,6 +213,10 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 				// Delete the reference from the old supplier.
 				this.referenceServive.delete(oldVersion.getEan13(), oldVersion.getSupplier().getEan13());
 			}
+		}
+		
+		if(!product.isDilicomReference()){
+			this.calculateTaxesAmounts(product);
 		}
 		
 		// Saves the new reference.
