@@ -55,6 +55,8 @@ public class DailyReportServiceImpl implements DailyReportService {
 
 	@Override
 	public void generateDailyReport(Date date) {
+		date = LocalDate.fromDateFields(date).toDateTimeAtStartOfDay().toDate();
+		
 		DailyReport dailyReport = this.dailyReportRepository.findByDate(date);
 
 		if (dailyReport == null) {
