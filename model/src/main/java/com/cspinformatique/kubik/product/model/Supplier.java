@@ -10,15 +10,17 @@ public class Supplier {
 	private Integer id;
 	private String ean13;
 	private String name;
+	private String purchaseOrderEan13;
 	
 	public Supplier(){
 		
 	}
 
-	public Supplier(Integer id, String ean13, String name) {
+	public Supplier(Integer id, String ean13, String name, String purchaseOrderEan13) {
 		this.id = id;
 		this.ean13 = ean13;
 		this.name = name;
+		this.purchaseOrderEan13 = purchaseOrderEan13;
 	}
 
 	@Id
@@ -45,5 +47,13 @@ public class Supplier {
 
 	public void setName(String name) {
 		this.name = name;
-	}	
+	}
+
+	public String getPurchaseOrderEan13() {
+		return purchaseOrderEan13;
+	}
+
+	public void setPurchaseOrderEan13(String purchaseOrderEan13) {
+		this.purchaseOrderEan13 = purchaseOrderEan13;
+	}
 }
