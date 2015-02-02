@@ -27,7 +27,7 @@ public class CashRegisterSessionController {
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public String getCashRegisterPage() {
-		return "sales/cash-register";
+		return "sales/cash-register/cash-register";
 	}
 
 	@RequestMapping(value = "/session/invoice", method = RequestMethod.GET)

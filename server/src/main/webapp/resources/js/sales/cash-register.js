@@ -228,9 +228,13 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	
 	$scope.kubikCustomerCard = new KubikCustomerCard({
 		customerUrl : "customer", 
-		customerSaved : function(){
-			// Assign current customer to current invoice.
+		customerSaved : function(customer){
+			$scope.invoice.customer = customer;
 			
+			$scope.saveInvoice();
+			
+			$scope.kubikCustomerCard.closeCard();
+			$scope.kubikCustomerSearch.closeSearchModal();
 		}
 	});
 	

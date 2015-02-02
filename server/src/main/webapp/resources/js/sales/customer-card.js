@@ -28,6 +28,10 @@ window.KubikCustomerCard.prototype.init = function(){
 			$scope.endEditMode();
 		}
 		
+		$scope.closeCard = function(){
+			kubikCustomerCard.$modalContainer.find(".modal").modal("hide");
+		}
+		
 		$scope.endEditMode = function(){
 			$scope.editMode = false;
 			
@@ -102,6 +106,10 @@ window.KubikCustomerCard.prototype.init = function(){
 
 };
 
+window.KubikCustomerCard.prototype.closeCard = function(){
+	this.$modalScope.closeCard();
+}
+
 window.KubikCustomerCard.prototype.openCard = function(productId){
 	this.$modalScope.openCard(productId);
-}
+};

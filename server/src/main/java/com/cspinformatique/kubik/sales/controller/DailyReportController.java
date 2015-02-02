@@ -29,12 +29,12 @@ public class DailyReportController implements InitializingBean {
 
 	@RequestMapping(value = "/{dailyReportID}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public String getDailyReportDetailsPage() {
-		return "sales/daily-report-details";
+		return "sales/daily-report/daily-report-details";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public String getDailyReportPage() {
-		return "sales/daily-report-page";
+		return "sales/daily-report/daily-report-page";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

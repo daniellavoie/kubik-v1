@@ -34,22 +34,22 @@ public class CustomerController {
 
 	@RequestMapping(params = "card", produces = MediaType.TEXT_HTML_VALUE)
 	public String getCustomerCardPage() {
-		return "sales/customer-card :: customer-card";
+		return "sales/customer/customer-card :: customer-card";
 	}
 
 	@RequestMapping(params = "modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getCustomersModal() {
-		return "sales/customers-modal :: customers-modal";
+		return "sales/customer/customers-modal :: customers-modal";
 	}
 
 	@RequestMapping(params = "search", produces = MediaType.TEXT_HTML_VALUE)
 	public String getSeatchCustomerPage() {
-		return "sales/customers :: customers";
+		return "sales/customer/customers :: customers";
 	}
 
 	@RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
 	public String getCustomersPage() {
-		return "sales/customers-page";
+		return "sales/customer/customers-page";
 	}
 
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)

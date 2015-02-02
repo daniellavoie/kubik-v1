@@ -92,12 +92,12 @@ public class InvoiceController {
 
 	@RequestMapping(value = "/{invoiceId}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public String getInvoiceDetailsPage() {
-		return "sales/invoice-details";
+		return "sales/invoice/invoice-details";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public String getInvoicesPage() {
-		return "sales/invoices-page";
+		return "sales/invoice/invoices-page";
 	}
 
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
