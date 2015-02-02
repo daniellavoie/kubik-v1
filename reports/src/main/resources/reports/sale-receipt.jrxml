@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-01-19T20:26:28 -->
+<!-- 2015-02-02T20:49:12 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sale-receipt" pageWidth="226" pageHeight="842" columnWidth="22" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="0e5f4531-9672-428b-94c4-e9a87ed6b5d0">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
@@ -43,7 +43,7 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="141">
+		<band height="156">
 			<textField>
 				<reportElement x="0" y="80" width="186" height="13" uuid="e1574ae1-8f66-4413-afd9-5427a8cd937f"/>
 				<textElement textAlignment="Center"/>
@@ -109,7 +109,8 @@ WHERE
 				<subreportExpression><![CDATA["reports/invoice-taxes.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="56">
+		<band height="14">
+			<printWhenExpression><![CDATA[$F{rebate_amount} != 1d]]></printWhenExpression>
 			<staticText>
 				<reportElement x="0" y="0" width="80" height="13" uuid="30e367b5-ffbe-4bc2-9903-3ce5926231f0"/>
 				<textElement>
@@ -124,22 +125,24 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[TEXT($F{rebate_amount},"0.00") + " €"]]></textFieldExpression>
 			</textField>
+		</band>
+		<band height="36">
 			<staticText>
-				<reportElement x="0" y="15" width="80" height="21" uuid="926b706f-bd2f-4f18-87b8-d4d3ace53768"/>
+				<reportElement x="0" y="0" width="80" height="21" uuid="926b706f-bd2f-4f18-87b8-d4d3ace53768"/>
 				<textElement>
 					<font size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="80" y="15" width="106" height="21" uuid="a38da3e8-cad5-433c-956c-23194d280c1c"/>
+				<reportElement x="80" y="0" width="106" height="21" uuid="a38da3e8-cad5-433c-956c-23194d280c1c"/>
 				<textElement textAlignment="Right">
 					<font size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[TEXT($F{total_amount},"0.00") + " €"]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="40" width="186" height="9" isPrintWhenDetailOverflows="true" uuid="9a53aba7-a7f5-4669-b6ca-d88c78ffe954"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="25" width="186" height="9" isPrintWhenDetailOverflows="true" uuid="9a53aba7-a7f5-4669-b6ca-d88c78ffe954"/>
 				<subreportParameter name="INVOICE_ID">
 					<subreportParameterExpression><![CDATA[$P{INVOICE_ID}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -147,7 +150,7 @@ WHERE
 				<subreportExpression><![CDATA["reports/invoice-payment.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="15">
+		<band height="26">
 			<staticText>
 				<reportElement x="0" y="0" width="80" height="14" uuid="7db63280-e4a9-43e3-9ead-ef23f4eee436"/>
 				<textElement>
