@@ -13,7 +13,7 @@ app.controller("KubikInvoiceDetailsController", function($scope, $http, $timeout
 	};
 	
 	$scope.openReceipt = function(){
-		window.open($scope.invoice.id + "/receipt", "Ticket de caisse", "height=600,width=479");
+		window.open($scope.invoice.id + "/receipt", "Ticket de caisse", "pdf");
 	}
 	
 	$scope.kubikCustomerCard = new KubikCustomerCard({customerUrl : "customer", customerSaved : function(){

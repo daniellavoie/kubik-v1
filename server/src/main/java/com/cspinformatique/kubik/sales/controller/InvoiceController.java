@@ -48,10 +48,11 @@ public class InvoiceController {
 	@Autowired
 	private ReportService reportService;
 
-	@RequestMapping(value = "/{invoiceId}/receipt", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/{invoiceId}/receipt", method = RequestMethod.GET, produces = "application/pdf")
 	public void generateReceiptPdf(@PathVariable int invoiceId,
 			ServletResponse response) {
-		try {
+		try {	
 			JasperExportManager.exportReportToPdfStream(this.reportService
 					.generateReceiptReport(invoiceService.findOne(invoiceId)),
 					response.getOutputStream());

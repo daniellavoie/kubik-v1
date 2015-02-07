@@ -1,6 +1,8 @@
 package com.cspinformatique.kubik.purchase.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,9 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cspinformatique.kubik.purchase.model.PurchaseSession;
+import com.cspinformatique.kubik.purchase.model.PurchaseSession.Status;
 import com.cspinformatique.kubik.purchase.service.PurchaseSessionService;
 
 @Controller
@@ -20,8 +24,22 @@ public class PurchaseSessionController {
 	private PurchaseSessionService purchaseSessionService;
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Iterable<PurchaseSession> findAll() {
-		return this.purchaseSessionService.findAll();
+	public @ResponseBody Iterable<PurchaseSession> findAll(
+			@RequestParam(required = false) String status,
+			@RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "50") Integer resultPerPage,
+			@RequestParam(required = false) Direction direction,
+			@RequestParam(defaultValue = "openDate") String sortBy) {
+
+		PageRequest pageRequest = new PageRequest(page, resultPerPage,
+				direction != null ? direction : Direction.DESC, sortBy);
+
+		if (status != null) {
+			return this.purchaseSessionService.findByStatus(
+					Status.valueOf(status), pageRequest);
+		} else {
+			return this.purchaseSessionService.findAll(pageRequest);
+		}
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

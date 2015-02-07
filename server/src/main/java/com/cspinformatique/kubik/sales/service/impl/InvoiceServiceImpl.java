@@ -59,6 +59,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 		this.dateFormat = new SimpleDateFormat("yyyyMMdd");
 	}
 
+	private void addInventory(Invoice invoice) {
+		for (InvoiceDetail detail : invoice.getDetails()) {
+			this.productInventoryService.addInventory(detail.getProduct(),
+					detail.getQuantity());
+		}
+	}
+
 	private void calculateInvoiceAmounts(Invoice invoice) {
 		HashMap<Double, InvoiceTaxAmount> totalTaxesAmounts = new HashMap<Double, InvoiceTaxAmount>();
 
@@ -268,6 +275,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 		invoice.setNumber(number);
 	}
 
+	private void removeInventory(Invoice invoice) {
+		for (InvoiceDetail detail : invoice.getDetails()) {
+			this.productInventoryService.removeInventory(detail.getProduct(),
+					detail.getQuantity());
+		}
+	}
+
 	@Override
 	public Invoice save(Invoice invoice) {
 		if (invoice.getId() != null) {
@@ -290,16 +304,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 					this.generateInvoiceNumber(invoice);
 
 					// Update inventory.
-					this.updateInventory(invoice);
-					
-					// Recalculate daily report.
-					this.dailyReportService.generateDailyReport(invoice.getPaidDate());
+					this.removeInventory(invoice);
 				}
 
 				if (status.equals(Types.REFUND.name())
 						&& !oldInvoice.getStatus().getType()
 								.equals(Types.REFUND.name())) {
 					invoice.setRefundDate(new Date());
+					
+					this.addInventory(invoice);
 				}
 			}
 		}
@@ -307,13 +320,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 		// Calculate invoice amounts.
 		this.calculateInvoiceAmounts(invoice);
 
-		return this.invoiceRepository.save(invoice);
-	}
-
-	public void updateInventory(Invoice invoice) {
-		for (InvoiceDetail detail : invoice.getDetails()) {
-			this.productInventoryService.removeInventory(detail.getProduct(),
-					detail.getQuantity());
+		Invoice newInvoice = this.invoiceRepository.save(invoice);
+		
+		// Recalculate daily report.
+		if(invoice.getPaidDate() != null){
+			this.dailyReportService.generateDailyReport(invoice.getPaidDate());
 		}
+		
+		return newInvoice;
 	}
 }

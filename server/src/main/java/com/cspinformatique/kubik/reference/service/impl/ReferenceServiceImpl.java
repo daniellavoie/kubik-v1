@@ -34,13 +34,12 @@ public class ReferenceServiceImpl implements ReferenceService {
 	public Reference buildReferenceFromProduct(Product product){
 		Reference oldReference = this.findByEan13AndSupplierEan13(product.getEan13(), product.getSupplier().getEan13());
 		
-		String id = null;
 		if(oldReference == null){
 			oldReference = new Reference();
 		}
 		
 		return new Reference(
-			id, 
+			oldReference.getId(), 
 			product.getEan13(), 
 			product.getSupplier().getEan13(), 
 			oldReference.getPriceApplicationOrAvailabilityDate(), 

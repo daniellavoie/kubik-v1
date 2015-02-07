@@ -1,0 +1,43 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<title>La Dimension Fantastique - Accueil</title>
+		
+		<link th:replace="util/import :: head">
+	    <link th:href="@{/css/login.css}" rel="stylesheet" />
+	</head>
+	
+	<body class="text-center">
+		<header>
+			<img th:src="@{/img/logo-black-small.png}" />
+		</header>
+		
+		<div class="container">			
+			<form class="form-signin" role="form" th:action="@{/login}" method="POST">
+				<h2 class="form-signin-heading">Connexion</h2>
+				
+				<div th:if="${param.error}" class="alert alert-danger alert-dismissible" >
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            		Utilisateur / mot de passe invalide.
+        		</div>
+        		
+		        <div th:if="${param.logout}" class="alert alert-info alert-dismissible">
+		        	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		            You have been logged out.
+		        </div>
+				
+				<label for="username" class="sr-only">Utilisateur</label>
+				<input type="text" id="username" name="username" class="form-control" placeholder="Utilisateur" required autofocus>
+				
+				<label for="password" class="sr-only">Mot de passe</label>
+				<input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+				
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Connexion</button>
+			</form>
+		</div>
+		<script th:replace="util/import :: scripts"></script>
+	</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+
+	<head>
+		<title>La Dimension Fantastique - Fournisseur</title>
+		
+		<link th:replace="util/import :: head">
+		<link rel="stylesheet" type="text/css" th:href="@{/css/product/suppliers.css}" />
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="KubikSuppliers" ng-controller="KubikSuppliersController as view"  class="container text-center">
+			<h1>Fournisseurs</h1>
+			
+			<div class="new-supplier text-center">
+				<button ng-click="newSupplier()" class="btn btn-primary">Nouveau client</button>
+			</div>
+			
+	
+			<table class="suppliers table table-condensed table-striped table-hover panel panel-default">
+				<thead>
+					<tr>
+						<th>Nom</th>
+						<th>Ean13</th>
+						<th>Ean13 pour commande</th>
+						<th>Remise</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr ng-repeat="supplier in suppliers" ng-click="supplierCard.openCard(supplier)">
+						<td>{{supplier.name}}</td>
+						<td>{{supplier.ean13}}</td>
+						<td>{{supplier.purchaseOrderEan13}}</td>
+						<td>{{supplier.discount | number}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="supplier-card"></div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/product/suppliers.js}"></script>
+	</body>
+</html>

@@ -1,0 +1,7 @@
+.new-supplier{
+	margin-bottom: 20px;
+}
+
+.suppliers tbody tr {
+	cursor: pointer;
+}

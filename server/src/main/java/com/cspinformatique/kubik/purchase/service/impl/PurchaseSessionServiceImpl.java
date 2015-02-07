@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.product.model.Supplier;
@@ -28,8 +30,10 @@ import com.cspinformatique.kubik.purchase.service.PurchaseSessionService;
 public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 	@Autowired
 	private ProductService productService;
+	
 	@Autowired
 	private PurchaseOrderService purchaseOrderService;
+	
 	@Autowired
 	private PurchaseSessionRepository purchaseSessionRepository;
 
@@ -38,6 +42,16 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 		return this.purchaseSessionRepository.findAll();
 	}
 
+	@Override
+	public Page<PurchaseSession> findAll(Pageable pageable){
+		return this.purchaseSessionRepository.findAll(pageable);
+	}
+
+	@Override
+	public Page<PurchaseSession> findByStatus(Status status, Pageable pageable){
+		return this.purchaseSessionRepository.findByStatus(status, pageable);
+	}
+	
 	@Override
 	public PurchaseSession findOne(int id) {
 		return this.purchaseSessionRepository.findOne(id);

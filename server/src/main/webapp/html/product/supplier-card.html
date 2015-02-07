@@ -1,0 +1,101 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+	<body>
+		<div th:fragment="supplier-card" th:remove="tag">
+			<div class="supplier-card autoModal modal fade">
+				<div class="modal-dialog" ng-controller="KubikSupplierCardController as view">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Fiche fournisseur</h4>
+						</div>
+						
+						<div class="modal-body">							
+							<div class=" form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Nom</label>
+									<div class="col-sm-8">
+										<div ng-if="!editMode" >
+											<p class="form-control-static">{{supplier.name}}</p>										
+										</div>
+										
+										<div ng-if="editMode" >
+											<input class="form-control" ng-model="supplier.name" placeholder="Nom">
+										</div>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Ean13</label>
+									<div class="col-sm-8">
+										<div ng-if="!editMode || supplier.id != null" >
+											<p class="form-control-static">{{supplier.ean13}}</p>										
+										</div>
+										
+										<div ng-if="editMode && supplier.id == null" >
+											<input class="form-control" ng-model="supplier.ean13" placeholder="Ean13">
+										</div>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Ean13 de commande</label>
+									<div class="col-sm-8">
+										<div ng-if="!editMode" >
+											<p class="form-control-static">{{supplier.purchaseOrderEan133}}</p>
+										</div>
+										
+										<div ng-if="editMode" >
+											<input class="form-control" ng-model="supplier.purchaseOrderEan13" placeholder="Ean13 de commande">
+										</div>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Remise</label>
+									<div class="col-sm-8">
+										<div ng-if="!editMode" >
+											<p class="form-control-static">{{supplier.discount | number}}</p>
+										</div>
+										
+										<div ng-if="editMode" >
+											<input class="form-control" ng-model="supplier.discount" type="number" step="0.1" min="0" max="100" placeholder="Ean13 de commande">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<button
+								ng-click="cancelModify()"
+								type="button" 
+								class="cancel btn btn-danger hidden" 
+							>Annuler</button>
+							
+							<button 
+								ng-click="save()"
+								type="button" 
+								class="save btn btn-success hidden" 
+							>Enregistrer</button>
+							
+							<button 
+								ng-click="modify()"
+								type="button" 
+								class="modify btn btn-primary" 
+							>Modifier</button>
+							
+							<button
+								type="button" 
+								class="closeModal btn btn-default" 
+								data-dismiss="modal"
+							>Fermer</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+		</div>
+	</body>
+</html>

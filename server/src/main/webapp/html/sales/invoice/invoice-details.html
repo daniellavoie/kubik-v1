@@ -26,6 +26,7 @@
 						<th>Client</th>
 						<th>Produits</th>
 						<th>Montant</th>
+						<th>Paiements</th>
 						<th>Statut</th>				
 					</tr>
 				</thead>
@@ -45,6 +46,11 @@
 						</td>
 						<td>{{invoice.details.length}}</td>
 						<td>{{invoice.totalAmount | currency : '&euro;'}}</td>
+						<td>
+							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CARD'" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CASH'" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
+							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CHECK'" title="Espèces - {{payment.amount  | currency : '&euro;'}}"  class="glyphicon glyphicon-edit">&nbsp;</span>
+						</td>
 						<td>{{invoice.status.description}}</td>
 					</tr>
 				</tbody>

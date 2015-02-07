@@ -26,7 +26,7 @@ public class SupplierServiceImpl implements SupplierService {
 		Supplier supplier = this.findByEan13(ean13);
 		
 		if(supplier == null){
-			return this.save(new Supplier(null, ean13, "A défénir", null));
+			return this.save(new Supplier(null, ean13, "A défénir", null, 0f));
 		}
 		
 		return supplier;
@@ -34,6 +34,12 @@ public class SupplierServiceImpl implements SupplierService {
 	
 	@Override
 	public Supplier save(Supplier supplier){
+		if(supplier.getId() == null){
+			if(supplier.getEan13().equals(this.findByEan13(supplier.getEan13()))){
+				throw new RuntimeException("Ean13 already taken.");
+			}
+		}
+		
 		return this.supplierRepository.save(supplier);
 	}
 }

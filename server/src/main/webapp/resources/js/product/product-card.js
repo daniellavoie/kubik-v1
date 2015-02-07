@@ -114,7 +114,10 @@ window.KubikProductCard.prototype.init = function(){
 		$scope.save = function(){
 			$scope.product.datePublished = $(".date-published").datepicker("getDate");
 			$scope.product.publishEndDate = $(".publish-end-date").datepicker("getDate");
-			$scope.product.supplier = $scope.getSupplier($("select.product-supplier").val());
+			
+			if(!$scope.product.dilicomReference){
+				$scope.product.supplier = $scope.getSupplier($("select.product-supplier").val());
+			}
 			
 			$http.post(kubikProductCard.productUrl, $scope.product).success(function(product){
 				$scope.product = product;

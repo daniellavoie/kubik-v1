@@ -43,23 +43,26 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Autowired
 	private SupplierService supplierService;
-	
-	@Resource private Environment env;
+
+	@Resource
+	private Environment env;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if(!env.getRequiredProperty("kubik.environment").equals("production")){
+		if (!env.getRequiredProperty("kubik.environment").equals("production")) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
 						Thread.sleep(15000);
-							
+
 						generateProductsFromImportedReferences();
 
 						generateMissingReferences();
 					} catch (Exception ex) {
-						logger.error("Could not generate products from imported references", ex);
+						logger.error(
+								"Could not generate products from imported references",
+								ex);
 					}
 				}
 			}).start();
@@ -110,7 +113,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 						.parseByCode(reference.getBarcodeType()) : null,
 				reference.getMainReference(),
 				reference.getSecondaryReference(),
-				reference.getReferencesCount(), null, true);
+				reference.getReferencesCount(), 0f, null, true);
 	}
 
 	@Override
@@ -144,16 +147,19 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 					product.getEan13(), product.getSupplier().getEan13()));
 		}
 	}
-	
-	private void calculateTaxesAmounts(Product product){
-		if(product.getTvaRate1() != null){
-			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate1() / 100), 2));
+
+	private void calculateTaxesAmounts(Product product) {
+		if (product.getTvaRate1() != null) {
+			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn()
+					/ (1 + product.getTvaRate1() / 100), 2));
 		}
-		if(product.getTvaRate2() != null){
-			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate2() / 100), 2));
+		if (product.getTvaRate2() != null) {
+			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn()
+					/ (1 + product.getTvaRate2() / 100), 2));
 		}
-		if(product.getTvaRate3() != null){
-			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate3() / 100), 2));
+		if (product.getTvaRate3() != null) {
+			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn()
+					/ (1 + product.getTvaRate3() / 100), 2));
 		}
 	}
 
@@ -183,9 +189,10 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 		return product;
 	}
-	
-	private void generateMissingReferences(){
-		for(int productId : this.productRepository.findIdByDilicomReference(false)){
+
+	private void generateMissingReferences() {
+		for (int productId : this.productRepository
+				.findIdByDilicomReference(false)) {
 			this.save(this.findOne(productId));
 		}
 	}
@@ -206,24 +213,39 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Override
 	public Product save(Product product) {
-		if(product.getId() != null){
+		if (product.getId() != null) {
 			Product oldVersion = this.findOne(product.getId());
-			
-			if(oldVersion != null && !product.getSupplier().getEan13().equals(oldVersion.getSupplier().getEan13())){
+
+			if (oldVersion != null
+					&& !product.getSupplier().getEan13()
+							.equals(oldVersion.getSupplier().getEan13())) {
 				// Delete the reference from the old supplier.
-				this.referenceServive.delete(oldVersion.getEan13(), oldVersion.getSupplier().getEan13());
+				this.referenceServive.delete(oldVersion.getEan13(), oldVersion
+						.getSupplier().getEan13());
 			}
 		}
-		
-		if(!product.isDilicomReference()){
-			this.calculateTaxesAmounts(product);
-		}
-		
-		// Saves the new reference.
-		this.referenceServive.save(this.referenceServive
-				.buildReferenceFromProduct(product));
 
-		// Saves the products.
+		if (!product.isDilicomReference()) {
+			this.calculateTaxesAmounts(product);
+			
+			// Checks if a dilicom reference exists for the new product.
+			Reference existingReference = this.referenceServive.findByEan13AndSupplierEan13(product.getEan13(), product.getSupplier().getEan13());
+
+			if(existingReference != null){
+				// Overwrite product with dilicom reference.
+				product = this.buildProductFromReference(existingReference);
+
+				existingReference.setImportedInKubik(true);
+				
+				this.referenceServive.save(existingReference);
+			}
+		}else{
+			// Generates a new references with the product updates. 
+			this.referenceServive.save(this.referenceServive
+					.buildReferenceFromProduct(product));			
+		}		
+
+		// Saves the product.
 		return this.productRepository.save(product);
 	}
 

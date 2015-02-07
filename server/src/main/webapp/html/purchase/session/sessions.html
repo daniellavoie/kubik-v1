@@ -23,6 +23,20 @@
 				<button class="btn btn-primary" ng-click="newSession()">Nouvelle préparation</button>
 			</div>
 			
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!sessionsPage.first" ng-click="changePage(sessionsPage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{sessionsPage.number+1}} sur {{sessionsPage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!sessionsPage.last" ng-click="changePage(sessionsPage.number+1)">Suivante</a>
+				</li>
+			</ul>
+			
 			<table class="panel panel-default sessions table table-striped table-hover table-condensed" >
 				<thead>
 					<tr class="text-center">
@@ -35,7 +49,7 @@
 					</tr>
 					</thead>
 				<tbody>
-					<tr ng-repeat="session in sessions" ng-click="openSession(session.id)">
+					<tr ng-repeat="session in sessionsPage.content" ng-click="openSession(session.id)">
 						<td>{{session.openDate | date : format : "short"}}</td>
 						<td>{{session.closeDate | date : format : "short"}}</td>
 						<td>

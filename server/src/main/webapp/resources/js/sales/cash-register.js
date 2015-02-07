@@ -178,6 +178,8 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 				}else{
 					$scope.addOneProduct(productSearch.products[0]);
 				}
+			}).finally(function(){
+				$scope.searchInProgress = false;
 			});
 
 			$scope.ean13 = "";
@@ -283,13 +285,10 @@ app.controller("KubikPaymentController", function($scope, $http, $timeout){
 	}
 	
 	$scope.loadPaymentMethods = function(){
+		$scope.paymentMethod = null;
 		// Check the card option by default.
 		$http.get("paymentMethod").success(function(paymentMethods){
 			$scope.paymentMethods = paymentMethods;
-			
-			$timeout(function(){
-				$("#payment-method-CARD").click();
-			}); 
 		});
 	};
 	
@@ -303,23 +302,53 @@ app.controller("KubikPaymentController", function($scope, $http, $timeout){
 		$http.post("invoice/" + $scope.invoice.id + "/receipt?print");
 		
 		$scope.closeSale();
-	}
+	};
 	
 	$scope.selectPaymentMethod = function(paymentMethod){
+		if(paymentMethod.type != "CASH"){
+			$(".payment-amount").val($scope.amountLeft);
+		}
 		$scope.paymentMethod = paymentMethod;
 	};
 	
 	$scope.validatePayment = function(){
 		var $paymentAmount = $(".payment-amount");
-		var newPayment = {
-			invoice : {id : $scope.invoice.id},
-			amount : parseFloat($paymentAmount.val().replace(",", ".")),
-			paymentMethod : $scope.paymentMethod
-		};
+		var paymentVal = parseFloat($paymentAmount.val().replace(",", "."));
 		
-		$scope.invoice.payments.push(newPayment);
+		if(paymentVal  == 0){
+			// Show warning.
+			return;
+		}
 		
-		$scope.amountLeft -= newPayment.amount;
+		if($scope.paymentMethod == null){
+			// Show warning
+			return;
+		}
+		
+		// Checks if the payment already exists.
+		var newPayment = null;
+		for(var paymentIndex in $scope.invoice.payments){
+			var payment = $scope.invoice.payments[paymentIndex];
+			
+			if(payment.paymentMethod.type == $scope.paymentMethod.type){
+				newPayment = payment;
+				newPayment.amount += paymentVal;
+				
+				break;
+			}
+		}
+		
+		if(newPayment == null){
+			newPayment = {
+				invoice : {id : $scope.invoice.id},
+				amount : paymentVal,
+				paymentMethod : $scope.paymentMethod
+			};
+			
+			$scope.invoice.payments.push(newPayment);
+		}
+		
+		$scope.amountLeft -= paymentVal;
 		
 		if($scope.amountLeft <= 0){
 			$scope.invoice.status = {type : "PAID"};
@@ -330,6 +359,8 @@ app.controller("KubikPaymentController", function($scope, $http, $timeout){
 		}
 		
 		$paymentAmount.val("");
+		$scope.paymentMethod = null;
+		$(".payment-methods .active").removeClass("active");
 	};
 	
 	$scope.loadPaymentMethods();
