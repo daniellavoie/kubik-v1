@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,8 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.cspinformatique.kubik.product.model.Product;
 import com.cspinformatique.kubik.product.service.ProductService;
 import com.cspinformatique.kubik.purchase.model.DeliveryDateType;
+import com.cspinformatique.kubik.purchase.model.DiscountType;
 import com.cspinformatique.kubik.purchase.model.PurchaseOrder;
 import com.cspinformatique.kubik.purchase.model.PurchaseOrder.Status;
 import com.cspinformatique.kubik.purchase.model.PurchaseOrderDetail;
@@ -47,6 +50,46 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	public PurchaseOrderServiceImpl() {
 		this.dateFormat = new SimpleDateFormat("yy");
+	}
+	
+	private void calculateAmounts(PurchaseOrder purchaseOrder){
+		double totalAmountTaxOut = 0d;
+
+		if (purchaseOrder.getDetails() != null) {
+			for (PurchaseOrderDetail detail : purchaseOrder.getDetails()) {
+				Product product = productService.findOne(detail.getProduct()
+						.getId());
+				
+				double quantity = detail.getQuantity();
+
+				// Calculates invoice details amounts
+				DiscountType discountType = new DiscountType(DiscountType.Types.SUPPLIER.toString(), null);
+				
+				detail.setDiscountApplied(product.getSupplier().getDiscount());
+				if(product.getDiscount() > detail.getDiscountApplied()){
+					detail.setDiscountApplied(product.getDiscount());
+					discountType.setType(DiscountType.Types.PRODUCT.toString());
+				}
+				
+				if(purchaseOrder.getDiscount() > detail.getDiscountApplied()){
+					detail.setDiscountApplied(purchaseOrder.getDiscount());
+					discountType.setType(DiscountType.Types.ORDER.toString());
+				}
+				
+				if(detail.getDiscount() > detail.getDiscountApplied()){
+					detail.setDiscountApplied(detail.getDiscount());
+					discountType.setType(DiscountType.Types.ORDER_DETAIL.toString());
+				}
+				
+				detail.setUnitPriceTaxOut(product.getPriceTaxOut1() * (1 - (detail.getDiscountApplied() / 100)));
+				detail.setTotalAmountTaxOut(detail.getUnitPriceTaxOut() * quantity);
+
+				// Increment invoice totals amount.
+				totalAmountTaxOut += detail.getTotalAmountTaxOut();
+			}
+		}
+
+		purchaseOrder.setTotalAmountTaxOut(Precision.round(totalAmountTaxOut, 2));
 	}
 
 	@Override
@@ -142,6 +185,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 								.sendOrderToDilicom(purchaseOrder));
 					}
 				}
+				
+				this.calculateAmounts(purchaseOrder);
 			}
 
 			Iterable<PurchaseOrder> results = this.purchaseOrderRepository

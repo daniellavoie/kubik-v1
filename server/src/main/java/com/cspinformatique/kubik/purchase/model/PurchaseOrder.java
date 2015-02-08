@@ -33,17 +33,19 @@ public class PurchaseOrder {
 	private List<PurchaseOrderDetail> details;
 	private Status status;
 	private boolean sentToDilicom;
-	private double discount;
+	
+	private float discount;
+	private double totalAmountTaxOut;
 	
 	public PurchaseOrder(){
 		
 	}
-	
+
 	public PurchaseOrder(long id, Supplier supplier, Date date,
 			Date dateReceived, String operationCode, ShippingMode shippingMode,
 			NotationCode notationCode, Date minDeliveryDate,
 			Date maxDeliveryDate, List<PurchaseOrderDetail> details,
-			Status status, boolean sentToDilicom, double discount) {
+			Status status, boolean sentToDilicom, float discount, double totalAmountTaxOut) {
 		this.id = id;
 		this.supplier = supplier;
 		this.date = date;
@@ -56,6 +58,8 @@ public class PurchaseOrder {
 		this.details = details;
 		this.status = status;
 		this.sentToDilicom = sentToDilicom;
+		this.discount = discount;
+		this.totalAmountTaxOut = totalAmountTaxOut;
 	}
 
 	@Id
@@ -162,11 +166,19 @@ public class PurchaseOrder {
 		this.sentToDilicom = sentToDilicom;
 	}
 
-	public double getDiscount() {
+	public float getDiscount() {
 		return discount;
 	}
 
-	public void setDiscount(double discount) {
+	public void setDiscount(float discount) {
 		this.discount = discount;
+	}
+
+	public double getTotalAmountTaxOut() {
+		return totalAmountTaxOut;
+	}
+
+	public void setTotalAmountTaxOut(double totalAmountTaxOut) {
+		this.totalAmountTaxOut = totalAmountTaxOut;
 	}
 }

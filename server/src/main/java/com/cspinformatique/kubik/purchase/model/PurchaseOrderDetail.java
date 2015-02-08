@@ -15,27 +15,34 @@ public class PurchaseOrderDetail {
 	private PurchaseOrder purchaseOrder;
 	private Product product;
 	private double quantity;
-	private double discount;
-	private double unitPrice;
-	private double totalPrice;
-	
-	public PurchaseOrderDetail(){
-		
+
+	private float discount;
+	private float discountApplied;
+	private DiscountType discountType;
+	private double unitPriceTaxOut;
+	private double totalAmountTaxOut;
+
+	public PurchaseOrderDetail() {
+
 	}
 
 	public PurchaseOrderDetail(Integer id, PurchaseOrder purchaseOrder,
-			Product product, double quantity, double discount, double unitPrice, double totalPrice) {
+			Product product, double quantity, float discount,
+			float discountApplied, DiscountType discountType,
+			double unitPriceTaxOut, double totalAmountTaxOut) {
 		this.id = id;
 		this.purchaseOrder = purchaseOrder;
 		this.product = product;
 		this.quantity = quantity;
 		this.discount = discount;
-		this.unitPrice = unitPrice;
-		this.totalPrice = totalPrice;
+		this.discountApplied = discountApplied;
+		this.discountType = discountType;
+		this.unitPriceTaxOut = unitPriceTaxOut;
+		this.totalAmountTaxOut = totalAmountTaxOut;
 	}
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	public Integer getId() {
 		return id;
 	}
@@ -71,27 +78,44 @@ public class PurchaseOrderDetail {
 		this.quantity = quantity;
 	}
 
-	public double getDiscount() {
+	public float getDiscount() {
 		return discount;
 	}
 
-	public void setDiscount(double discount) {
+	public void setDiscount(float discount) {
 		this.discount = discount;
 	}
 
-	public double getUnitPrice() {
-		return unitPrice;
+	public float getDiscountApplied() {
+		return discountApplied;
 	}
 
-	public void setUnitPrice(double unitPrice) {
-		this.unitPrice = unitPrice;
+	public void setDiscountApplied(float discountApplied) {
+		this.discountApplied = discountApplied;
 	}
 
-	public double getTotalPrice() {
-		return totalPrice;
+	@ManyToOne
+	public DiscountType getDiscountType() {
+		return discountType;
 	}
 
-	public void setTotalPrice(double totalPrice) {
-		this.totalPrice = totalPrice;
+	public void setDiscountType(DiscountType discountType) {
+		this.discountType = discountType;
+	}
+
+	public double getUnitPriceTaxOut() {
+		return unitPriceTaxOut;
+	}
+
+	public void setUnitPriceTaxOut(double unitPriceTaxOut) {
+		this.unitPriceTaxOut = unitPriceTaxOut;
+	}
+
+	public double getTotalAmountTaxOut() {
+		return totalAmountTaxOut;
+	}
+
+	public void setTotalAmountTaxOut(double totalAmountTaxOut) {
+		this.totalAmountTaxOut = totalAmountTaxOut;
 	}
 }
