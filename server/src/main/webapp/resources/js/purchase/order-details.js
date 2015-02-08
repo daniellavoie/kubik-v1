@@ -93,7 +93,7 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 		});
 	};
 	
-	$scope.quantityChanged = function($event){
+	$scope.orderChanged = function($event){
 		$scope.inputIdToFocus = $event.target.id;
 		if($scope.quantityChangedTimer != undefined) clearTimeout($scope.quantityChangedTimer);
 	    

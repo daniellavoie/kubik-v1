@@ -79,14 +79,14 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 						ShippingMode.USUAL_METHOD, NotationCode.USUAL_RULE,
 						new Date(), maxDeliveryDate,
 						new ArrayList<PurchaseOrderDetail>(),
-						PurchaseOrder.Status.DRAFT, false);
+						PurchaseOrder.Status.DRAFT, false, 0d);
 
 				purchaseOrders.put(supplier.getEan13(), order);
 			}
 
 			order.getDetails().add(
 					new PurchaseOrderDetail(null, order, detail.getProduct(),
-							detail.getQuantity()));
+							detail.getQuantity(), 0d, 0d, 0d));
 		}
 
 		this.purchaseOrderService.save(purchaseOrders.values());

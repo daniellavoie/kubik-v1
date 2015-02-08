@@ -33,6 +33,7 @@ public class PurchaseOrder {
 	private List<PurchaseOrderDetail> details;
 	private Status status;
 	private boolean sentToDilicom;
+	private double discount;
 	
 	public PurchaseOrder(){
 		
@@ -42,7 +43,7 @@ public class PurchaseOrder {
 			Date dateReceived, String operationCode, ShippingMode shippingMode,
 			NotationCode notationCode, Date minDeliveryDate,
 			Date maxDeliveryDate, List<PurchaseOrderDetail> details,
-			Status status, boolean sentToDilicom) {
+			Status status, boolean sentToDilicom, double discount) {
 		this.id = id;
 		this.supplier = supplier;
 		this.date = date;
@@ -159,5 +160,13 @@ public class PurchaseOrder {
 
 	public void setSentToDilicom(boolean sentToDilicom) {
 		this.sentToDilicom = sentToDilicom;
+	}
+
+	public double getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(double discount) {
+		this.discount = discount;
 	}
 }

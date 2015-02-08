@@ -29,6 +29,7 @@
 						<th>Livraison</th>
 						<th>Date de livraison min.</th>
 						<th>Date de livraison max.</th>
+						<th>Remise</th>
 						<th>Produits</th>
 						<th>&nbsp;</th>
 					</tr>
@@ -48,6 +49,18 @@
 						<td>{{order.shippingMode}}</td>
 						<td>{{order.minDeliveryDate | date : "short"}}</td>
 						<td>{{order.maxDeliveryDate | date : "short"}}</td>
+						<td>
+							<input 
+								id="order-detail-{{detail.id}}"	
+								ng-model="order.discount"
+								ng-keyup="orderChanged($event)"
+								class="quantity"
+								type="number"
+								min="0" 
+								max="100" 
+								step="0.1"
+							/>
+						</td>
 						<td>{{order.details.length}}</td>
 						<td><span ng-if="order.sentToDilicom" class="glyphicon glyphicon-transfer" title="Envoyé à Dilicom"></span>&nbsp;</td>
 					</tr>
@@ -60,6 +73,7 @@
 						<th>Produit</th>
 						<th>Disponibilité</th>
 						<th>Fournisseur</th>
+						<th>Remise</th>
 						<th>Quantité</th>
 						<th>&nbsp;</th>
 					</tr>
@@ -71,9 +85,21 @@
 						<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
 						<td>
 							<input 
-								id="order-detail-{{detail.id}}"	
+								id="order-detail-discount-{{detail.id}}"	
+								ng-model="detail.discount"
+								ng-keyup="orderChanged($event)"
+								class="quantity"
+								type="number"
+								min="0" 
+								max="100" 
+								step="0.1"
+							/>
+						</td>
+						<td>
+							<input 
+								id="order-detail-quantity-{{detail.id}}"	
 								ng-model="detail.quantity"
-								ng-keyup="quantityChanged($event)"
+								ng-keyup="orderChanged($event)"
 								class="quantity"
 								type="number"
 								min="1" 

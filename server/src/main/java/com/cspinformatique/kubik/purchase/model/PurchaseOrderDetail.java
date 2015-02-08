@@ -15,17 +15,23 @@ public class PurchaseOrderDetail {
 	private PurchaseOrder purchaseOrder;
 	private Product product;
 	private double quantity;
+	private double discount;
+	private double unitPrice;
+	private double totalPrice;
 	
 	public PurchaseOrderDetail(){
 		
 	}
 
 	public PurchaseOrderDetail(Integer id, PurchaseOrder purchaseOrder,
-			Product product, double quantity) {
+			Product product, double quantity, double discount, double unitPrice, double totalPrice) {
 		this.id = id;
 		this.purchaseOrder = purchaseOrder;
 		this.product = product;
 		this.quantity = quantity;
+		this.discount = discount;
+		this.unitPrice = unitPrice;
+		this.totalPrice = totalPrice;
 	}
 
 	@Id
@@ -63,5 +69,29 @@ public class PurchaseOrderDetail {
 
 	public void setQuantity(double quantity) {
 		this.quantity = quantity;
+	}
+
+	public double getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(double discount) {
+		this.discount = discount;
+	}
+
+	public double getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(double unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+
+	public double getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(double totalPrice) {
+		this.totalPrice = totalPrice;
 	}
 }
