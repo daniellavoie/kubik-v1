@@ -16,5 +16,5 @@ public interface InvoiceRepository extends PagingAndSortingRepository<Invoice, I
 	
 	Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable);
 	
-	List<Invoice> findByPaidDateBetween(Date startPaidDate, Date startEndDate);
+	List<Invoice> findByPaidDateBetweenAndStatus(Date startPaidDate, Date startEndDate, InvoiceStatus status);
 }

@@ -37,7 +37,7 @@ import com.cspinformatique.kubik.warehouse.service.ProductInventoryService;
 public class InvoiceServiceImpl implements InvoiceService {
 	@Autowired
 	private CashRegisterSessionService cashRegisterSessionService;
-	
+
 	@Autowired
 	private DailyReportService dailyReportService;
 
@@ -224,8 +224,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	@Override
 	public List<Invoice> findByPaidDate(Date paidDate) {
-		return this.invoiceRepository.findByPaidDateBetween(paidDate, LocalDate
-				.fromDateFields(paidDate).plusDays(1).toDate());
+		return this.invoiceRepository.findByPaidDateBetweenAndStatus(paidDate,
+				LocalDate.fromDateFields(paidDate).plusDays(1).toDate(),
+				new InvoiceStatus(InvoiceStatus.Types.PAID.toString(), null));
 	}
 
 	@Override
@@ -311,7 +312,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 						&& !oldInvoice.getStatus().getType()
 								.equals(Types.REFUND.name())) {
 					invoice.setRefundDate(new Date());
-					
+
 					this.addInventory(invoice);
 				}
 			}
@@ -321,12 +322,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 		this.calculateInvoiceAmounts(invoice);
 
 		Invoice newInvoice = this.invoiceRepository.save(invoice);
-		
+
 		// Recalculate daily report.
-		if(invoice.getPaidDate() != null){
+		if (invoice.getPaidDate() != null) {
 			this.dailyReportService.generateDailyReport(invoice.getPaidDate());
 		}
-		
+
 		return newInvoice;
 	}
 }
