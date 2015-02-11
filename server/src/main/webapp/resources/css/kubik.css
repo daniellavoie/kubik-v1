@@ -18,7 +18,7 @@ body {
 	text-align: center;
 }
 
-table.sessions tbody tr:HOVER{
+table.sessions tbody tr:HOVER, table.receptions tbody tr:HOVER, table.orders tbody tr:HOVER{
 	cursor: pointer;
 }
 

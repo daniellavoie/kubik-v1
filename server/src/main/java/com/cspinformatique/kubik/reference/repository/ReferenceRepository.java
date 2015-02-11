@@ -14,8 +14,10 @@ public interface ReferenceRepository extends
 	Iterable<Reference> findByEan13(String ean13, Sort sort);
 	
 	Iterable<Reference> findByEan13AndImportedInKubik(String ean13, boolean importedInKubik, Sort sort);
-	
+
 	List<Reference> findByEan13AndSupplierEan13(String ean13, String supplierEan13);
+	
+	Reference findByEan13AndSupplierEan13AndImportedInKubik(String ean13, String supplierEan13, boolean importedInKubik);
 	
 	Page<Reference> findByImportedInKubik(boolean importedInubik, Pageable pageable);
 }

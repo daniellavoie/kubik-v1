@@ -1,6 +1,7 @@
 package com.cspinformatique.kubik.product.service.impl;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.apache.commons.math3.util.Precision;
 import org.slf4j.Logger;
@@ -24,6 +25,8 @@ import com.cspinformatique.kubik.product.repository.ProductRepository;
 import com.cspinformatique.kubik.product.service.ImageService;
 import com.cspinformatique.kubik.product.service.ProductService;
 import com.cspinformatique.kubik.product.service.SupplierService;
+import com.cspinformatique.kubik.purchase.model.PurchaseOrder.Status;
+import com.cspinformatique.kubik.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.reference.model.Reference;
 import com.cspinformatique.kubik.reference.service.ReferenceService;
 
@@ -38,6 +41,8 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	@Autowired
 	private ProductRepository productRepository;
 
+	@Autowired private PurchaseOrderService purchaseOrderService;
+	
 	@Autowired
 	private ReferenceService referenceServive;
 
@@ -212,24 +217,39 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	}
 
 	@Override
+	@Transactional	
 	public Product save(Product product) {
-		if (product.getId() != null) {
-			Product oldVersion = this.findOne(product.getId());
-
-			if (oldVersion != null
-					&& !product.getSupplier().getEan13()
-							.equals(oldVersion.getSupplier().getEan13())) {
-				// Delete the reference from the old supplier.
-				this.referenceServive.delete(oldVersion.getEan13(), oldVersion
-						.getSupplier().getEan13());
+		boolean updatePurchaseOrders = false;
+		Product oldVersion = null;
+		
+		if(product.getId() != null){
+			oldVersion = this.findOne(product.getId());
+		}
+		
+		// Checks if the supplier has changed.
+		if (oldVersion != null
+				&& !product.getSupplier().getEan13()
+						.equals(oldVersion.getSupplier().getEan13())) {
+			// Makes sure no purchase orders exists for the product.
+			if(this.purchaseOrderService.findByProduct(product).iterator().hasNext()){
+				throw new RuntimeException("Product can't change supplier as purchase orders exists for it.");
 			}
+			
+			// Delete the reference from the old supplier.
+			this.referenceServive.delete(oldVersion.getEan13(),
+					oldVersion.getSupplier().getEan13());
+		}
+		
+		// checks if the prices needs to be calculated.
+		if(oldVersion == null || product.getPriceTaxIn() != oldVersion.getPriceTaxIn()){
+			this.calculateTaxesAmounts(product);
+			
+			updatePurchaseOrders = true;
 		}
 
 		if (!product.isDilicomReference()) {
-			this.calculateTaxesAmounts(product);
-			
 			// Checks if a dilicom reference exists for the new product.
-			Reference existingReference = this.referenceServive.findByEan13AndSupplierEan13(product.getEan13(), product.getSupplier().getEan13());
+			Reference existingReference = this.referenceServive.find(product.getEan13(), product.getSupplier().getEan13(), false);
 
 			if(existingReference != null){
 				// Overwrite product with dilicom reference.
@@ -243,10 +263,16 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 			// Generates a new references with the product updates. 
 			this.referenceServive.save(this.referenceServive
 					.buildReferenceFromProduct(product));			
-		}		
+		}
 
 		// Saves the product.
-		return this.productRepository.save(product);
+		product = this.productRepository.save(product);
+
+		if(updatePurchaseOrders){
+			this.purchaseOrderService.save(this.purchaseOrderService.findByProductAndStatus(product, Status.DRAFT));
+		}
+		
+		return product;
 	}
 
 	@Override

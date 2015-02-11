@@ -18,10 +18,12 @@ public interface ReferenceService {
 	
 	void delete(String ean13, String supplierEan13);
 	
+	Reference find(String ean13, String supplierEan13, boolean importedInKubik);
+	
 	Iterable<Reference> findByEan13(String ean13, Sort sort);
 	
 	Iterable<Reference> findByEan13AndImportedInKubik(String ean13, boolean importedInKubik, Sort sort);
-	
+
 	Reference findByEan13AndSupplierEan13(String ean13, String supplierEan13);
 	
 	Page<Reference> findByImportedInKubik(boolean importedInubik, Pageable pageable);

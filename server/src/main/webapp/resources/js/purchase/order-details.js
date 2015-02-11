@@ -25,6 +25,18 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 		}
 	});
 	
+	$scope.calculateOrderQuantity = function(order){
+		var quantity = 0;
+		if(order != undefined){
+			for(var detailIndex in order.details){
+				var detail = order.details[detailIndex];
+				
+				quantity += detail.quantity;
+			}
+		}
+		return quantity;
+	};
+	
 	$scope.cancelOrder = function(){
 		$scope.order.status = "CANCELED";
 		
@@ -138,7 +150,12 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 		$scope.submitOrder();
 	}
 
-	$scope.kubikProductCard = new KubikProductCard();
+	$scope.kubikProductCard = new KubikProductCard({
+		productSaved : function(){
+			$scope.loadOrder();
+		}, 
+		productUrl : "../product"
+	});
 	
 	$scope.productsToValidate = {};
 	$scope.loadOrder();

@@ -23,6 +23,23 @@ app.controller("KubikDailyReportPageController", function($scope, $http, $timeou
 		location.href = "dailyReport/" + dailyReport.id;
 	}
 	
+	$scope.reload = function(dailyReport, $event){
+		var $btn = $("#reload-daily-report-" + dailyReport.id + "-btn");
+		var $loading = $("#reload-daily-report-" + dailyReport.id + "-loading");
+		
+		$btn.addClass("hidden");
+		$loading.removeClass("hidden");
+		
+		$http.post("dailyReport/" + dailyReport.id).success(function(){
+			$scope.loadDailyReports();
+		}).finally(function(){
+			$btn.removeClass("hidden");
+			$loading.addClass("hidden");
+		});
+		
+		$event.stopPropagation();
+	}
+	
 	$scope.page = 0;
 	$scope.resultPerPage = 20;
 	$scope.sortBy = "date";

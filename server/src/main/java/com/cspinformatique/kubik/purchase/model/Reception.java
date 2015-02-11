@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 
 import com.cspinformatique.kubik.product.model.Supplier;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -36,13 +37,19 @@ public class Reception {
 	private Status status;
 	private List<ShippingPackage> shippingPackages;
 	
+	private float discount;
+	private double totalAmountTaxOut;
+	
 	public Reception(){
 		
 	}
 
-	public Reception(Integer id, Supplier supplier, ShippingMode shippingMode, Date dateCreated, Date dateReceived,
-			DeliveryDateType deliveryDateType, Date deliveryDate, PurchaseOrder purchaseOrder, List<ReceptionDetail> details,
-			Status status, List<ShippingPackage> shippingPackages) {
+	public Reception(Integer id, Supplier supplier, ShippingMode shippingMode,
+			Date dateCreated, Date dateReceived,
+			DeliveryDateType deliveryDateType, Date deliveryDate,
+			PurchaseOrder purchaseOrder, List<ReceptionDetail> details,
+			Status status, List<ShippingPackage> shippingPackages,
+			float discount, double totalAmountTaxOut) {
 		this.id = id;
 		this.supplier = supplier;
 		this.shippingMode = shippingMode;
@@ -54,6 +61,8 @@ public class Reception {
 		this.details = details;
 		this.status = status;
 		this.shippingPackages = shippingPackages;
+		this.discount = discount;
+		this.totalAmountTaxOut = totalAmountTaxOut;
 	}
 
 	@Id
@@ -126,6 +135,7 @@ public class Reception {
 		this.purchaseOrder = purchaseOrder;
 	}
 
+	@OrderBy("id ASC")
 	@JsonManagedReference
 	@OneToMany(cascade=CascadeType.ALL)
 	public List<ReceptionDetail> getDetails() {
@@ -152,5 +162,21 @@ public class Reception {
 
 	public void setShippingPackages(List<ShippingPackage> shippingPackages) {
 		this.shippingPackages = shippingPackages;
+	}
+
+	public float getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(float discount) {
+		this.discount = discount;
+	}
+
+	public double getTotalAmountTaxOut() {
+		return totalAmountTaxOut;
+	}
+
+	public void setTotalAmountTaxOut(double totalAmountTaxOut) {
+		this.totalAmountTaxOut = totalAmountTaxOut;
 	}
 }

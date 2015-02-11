@@ -83,7 +83,7 @@ window.KubikSupplierCard.prototype.init = function(){
 			var supplier = $scope.supplier;
 			
 			if(supplier.ean13.trim() != "" && supplier.name.trim() != ""){
-				$http.post(kubikSupplierCard.supplierUrl, supplier).success(function(supplier){
+				$http.post(kubikSupplierCard.supplierUrl, supplier).success(function(supplier){					
 					$scope.endEditMode();
 					if(kubikSupplierCard.supplierSaved != undefined){
 						kubikSupplierCard.supplierSaved(supplier);

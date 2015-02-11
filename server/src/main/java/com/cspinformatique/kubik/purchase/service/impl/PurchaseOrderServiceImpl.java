@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.product.model.Product;
+import com.cspinformatique.kubik.product.model.Supplier;
 import com.cspinformatique.kubik.product.service.ProductService;
 import com.cspinformatique.kubik.purchase.model.DeliveryDateType;
 import com.cspinformatique.kubik.purchase.model.DiscountType;
@@ -29,6 +30,7 @@ import com.cspinformatique.kubik.purchase.model.ReceptionDetail;
 import com.cspinformatique.kubik.purchase.model.ShippingPackage;
 import com.cspinformatique.kubik.purchase.repository.PurchaseOrderRepository;
 import com.cspinformatique.kubik.purchase.service.DilicomOrderService;
+import com.cspinformatique.kubik.purchase.service.PurchaseOrderDetailService;
 import com.cspinformatique.kubik.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.purchase.service.ReceptionService;
 
@@ -41,6 +43,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	private ProductService productService;
 
 	@Autowired
+	private PurchaseOrderDetailService purchaseOrderDetailService;
+
+	@Autowired
 	private PurchaseOrderRepository purchaseOrderRepository;
 
 	@Autowired
@@ -51,45 +56,63 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	public PurchaseOrderServiceImpl() {
 		this.dateFormat = new SimpleDateFormat("yy");
 	}
-	
-	private void calculateAmounts(PurchaseOrder purchaseOrder){
+
+	private void calculateAmounts(PurchaseOrder purchaseOrder) {
 		double totalAmountTaxOut = 0d;
 
 		if (purchaseOrder.getDetails() != null) {
 			for (PurchaseOrderDetail detail : purchaseOrder.getDetails()) {
 				Product product = productService.findOne(detail.getProduct()
 						.getId());
-				
+
 				double quantity = detail.getQuantity();
 
 				// Calculates invoice details amounts
-				DiscountType discountType = new DiscountType(DiscountType.Types.SUPPLIER.toString(), null);
-				
+				DiscountType discountType = new DiscountType(
+						DiscountType.Types.SUPPLIER.toString(), null);
+
 				detail.setDiscountApplied(product.getSupplier().getDiscount());
-				if(product.getDiscount() > detail.getDiscountApplied()){
+				if (product.getDiscount() > detail.getDiscountApplied()) {
 					detail.setDiscountApplied(product.getDiscount());
 					discountType.setType(DiscountType.Types.PRODUCT.toString());
 				}
-				
-				if(purchaseOrder.getDiscount() > detail.getDiscountApplied()){
+
+				if (purchaseOrder.getDiscount() > detail.getDiscountApplied()) {
 					detail.setDiscountApplied(purchaseOrder.getDiscount());
 					discountType.setType(DiscountType.Types.ORDER.toString());
 				}
-				
-				if(detail.getDiscount() > detail.getDiscountApplied()){
+
+				if (detail.getDiscount() > detail.getDiscountApplied()) {
 					detail.setDiscountApplied(detail.getDiscount());
-					discountType.setType(DiscountType.Types.ORDER_DETAIL.toString());
+					discountType.setType(DiscountType.Types.ORDER_DETAIL
+							.toString());
 				}
-				
-				detail.setUnitPriceTaxOut(product.getPriceTaxOut1() * (1 - (detail.getDiscountApplied() / 100)));
-				detail.setTotalAmountTaxOut(detail.getUnitPriceTaxOut() * quantity);
+
+				detail.setDiscountType(discountType);
+				detail.setUnitPriceTaxOut(product.getPriceTaxOut1()
+						* (1 - (detail.getDiscountApplied() / 100)));
+				detail.setTotalAmountTaxOut(detail.getUnitPriceTaxOut()
+						* quantity);
 
 				// Increment invoice totals amount.
 				totalAmountTaxOut += detail.getTotalAmountTaxOut();
 			}
 		}
 
-		purchaseOrder.setTotalAmountTaxOut(Precision.round(totalAmountTaxOut, 2));
+		purchaseOrder.setTotalAmountTaxOut(Precision
+				.round(totalAmountTaxOut, 2));
+	}
+	
+	@Override
+	public void confirmAllOrders(){
+		List<PurchaseOrder> purchaseOrders = this.purchaseOrderRepository.findByStatus(Status.DRAFT);
+		
+		for(PurchaseOrder purchaseOrder : purchaseOrders){
+			purchaseOrder.setSentToDilicom(false);
+			purchaseOrder.setStatus(Status.SUBMITED);
+		}
+		
+		this.save(purchaseOrders);
 	}
 
 	@Override
@@ -98,8 +121,20 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	@Override
-	public Iterable<PurchaseOrder> findAll(Pageable pageable) {
+	public Page<PurchaseOrder> findAll(Pageable pageable) {
 		return this.purchaseOrderRepository.findAll(pageable);
+	}
+	
+	@Override
+	public Iterable<PurchaseOrder> findByProduct(Product product){
+		return this.purchaseOrderDetailService.findPurchaseOrdersByProduct(product);
+	}
+
+	@Override
+	public Iterable<PurchaseOrder> findByProductAndStatus(Product product,
+			Status status) {
+		return this.purchaseOrderDetailService
+				.findPurchaseOrdersByProductAndStatus(product, status);
 	}
 
 	@Override
@@ -128,20 +163,33 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	@Override
 	public Reception generateReception(PurchaseOrder purchaseOrder) {
-		Reception reception = new Reception(null, purchaseOrder.getSupplier(), purchaseOrder.getShippingMode(), new Date(), null,
+		Reception reception = new Reception(null, purchaseOrder.getSupplier(),
+				purchaseOrder.getShippingMode(), new Date(), null,
 				DeliveryDateType.SOONEST, purchaseOrder.getMinDeliveryDate(),
 				purchaseOrder, new ArrayList<ReceptionDetail>(),
-				Reception.Status.OPEN, new ArrayList<ShippingPackage>());
+				Reception.Status.OPEN, new ArrayList<ShippingPackage>(), purchaseOrder.getDiscount(), purchaseOrder.getTotalAmountTaxOut());
 
 		for (PurchaseOrderDetail detail : purchaseOrder.getDetails()) {
 			reception.getDetails().add(
 					new ReceptionDetail(null, reception, detail.getProduct(),
-							detail.getQuantity(), detail.getQuantity()));
+							detail.getQuantity(), detail.getQuantity(), detail.getDiscount(), detail.getDiscountApplied(), detail.getDiscountType(), detail.getUnitPriceTaxOut(), detail.getTotalAmountTaxOut()));
 		}
 
 		return this.receptionService.save(reception);
 	}
+	
+	@Override
+	public void initializeNonCalculatedOrders(){
+		this.save(this.purchaseOrderRepository.findByTotalAmountTaxOut(0d));		
+	}
 
+	@Override
+	public void recalculateOpenPurchaseOrderFromSupplier(Supplier supplier) {
+		this.save(this.purchaseOrderRepository.findBySupplierAndStatus(
+				supplier, Status.DRAFT));
+	}
+
+	@Override
 	public PurchaseOrder save(PurchaseOrder purchaseOrder) {
 		return this.save(Arrays.asList(new PurchaseOrder[] { purchaseOrder }))
 				.iterator().next();
@@ -173,9 +221,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 					PurchaseOrder oldOrder = this
 							.findOne(purchaseOrder.getId());
 
-					if ((oldOrder == null
-							|| !purchaseOrder.getStatus().equals(
-									oldOrder.getStatus()) && !purchaseOrder.isSentToDilicom())) {
+					if ((oldOrder == null || !purchaseOrder.getStatus().equals(
+							oldOrder.getStatus())
+							&& !purchaseOrder.isSentToDilicom())) {
 						this.generateReception(purchaseOrder);
 					}
 
@@ -185,7 +233,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 								.sendOrderToDilicom(purchaseOrder));
 					}
 				}
-				
+
 				this.calculateAmounts(purchaseOrder);
 			}
 

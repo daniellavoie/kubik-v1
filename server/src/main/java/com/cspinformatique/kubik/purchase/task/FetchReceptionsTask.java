@@ -148,7 +148,7 @@ public class FetchReceptionsTask implements InitializingBean{
 							this.purchaseOrderService.findOne(Long
 									.parseLong(line.substring(17, 25).trim())),
 							new ArrayList<ReceptionDetail>(), Status.OPEN,
-							new ArrayList<ShippingPackage>());
+							new ArrayList<ShippingPackage>(), 0f, 0d);
 				}
 
 				if (line.startsWith("L")) {
@@ -177,7 +177,7 @@ public class FetchReceptionsTask implements InitializingBean{
 
 					if (detail == null) {
 						detail = new ReceptionDetail(null, reception, product,
-								quantity, 0d);
+								quantity, 0d, 0f, 0f, null, 0d, 0d);
 
 						reception.getDetails().add(detail);
 					}

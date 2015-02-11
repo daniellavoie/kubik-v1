@@ -7,9 +7,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import com.cspinformatique.kubik.product.model.Supplier;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -139,8 +141,9 @@ public class PurchaseOrder {
 		this.maxDeliveryDate = maxDeliveryDate;
 	}
 
+	@OrderBy("id ASC")
 	@JsonManagedReference
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	public List<PurchaseOrderDetail> getDetails() {
 		return details;
 	}

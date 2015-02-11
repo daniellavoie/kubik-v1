@@ -2,6 +2,7 @@ package com.cspinformatique.kubik.product.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -183,6 +184,7 @@ public class Product {
 		this.priceType = priceType;
 	}
 
+	@Column(nullable=false)
 	public Double getPriceTaxIn() {
 		return priceTaxIn;
 	}
@@ -199,6 +201,7 @@ public class Product {
 		this.schoolbook = schoolbook;
 	}
 
+	@Column(nullable=false)
 	public Double getTvaRate1() {
 		return tvaRate1;
 	}
@@ -207,6 +210,7 @@ public class Product {
 		this.tvaRate1 = tvaRate1;
 	}
 
+	@Column(nullable=false)
 	public Double getPriceTaxOut1() {
 		return priceTaxOut1;
 	}
