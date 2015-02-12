@@ -1,6 +1,8 @@
 package com.cspinformatique.kubik.purchase.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cspinformatique.kubik.purchase.model.Reception;
@@ -19,8 +22,14 @@ public class ReceptionController {
 	@Autowired private ReceptionService receptionService;
 	
 	@RequestMapping(method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Iterable<Reception> findAll(){
-		return this.receptionService.findAll();
+	public @ResponseBody Iterable<Reception> findAll(
+			@RequestParam(required = false) String status,
+			@RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "50") Integer resultPerPage,
+			@RequestParam(required = false) Direction direction,
+			@RequestParam(defaultValue = "deliveryDate") String sortBy){
+		return this.receptionService.findAll(new PageRequest(page, resultPerPage,
+				direction != null ? direction : Direction.DESC, sortBy));
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -38,6 +47,11 @@ public class ReceptionController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String getOrdersPage() {
 		return "purchase/reception/receptions";
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, params="initialize")
+	public void initialize(){
+		this.receptionService.initialize();
 	}
 	
 	@RequestMapping(method={RequestMethod.POST, RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)

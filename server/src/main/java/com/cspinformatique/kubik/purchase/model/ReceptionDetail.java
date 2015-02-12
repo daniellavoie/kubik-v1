@@ -16,18 +16,31 @@ public class ReceptionDetail {
 	private Product product;
 	private double quantityToReceive;
 	private double quantityReceived;
+
+	private float discount;
+	private float discountApplied;
+	private DiscountType discountType;
+	private double unitPriceTaxOut;
+	private double totalAmountTaxOut;
 	
 	public ReceptionDetail(){
 		
 	}
 
 	public ReceptionDetail(Integer id, Reception reception, Product product,
-			double quantityToReceive, double quantityReceived) {
+			double quantityToReceive, double quantityReceived, float discount,
+			float discountApplied, DiscountType discountType,
+			double unitPriceTaxOut, double totalAmountTaxOut) {
 		this.id = id;
 		this.reception = reception;
 		this.product = product;
 		this.quantityToReceive = quantityToReceive;
 		this.quantityReceived = quantityReceived;
+		this.discount = discount;
+		this.discountApplied = discountApplied;
+		this.discountType = discountType;
+		this.unitPriceTaxOut = unitPriceTaxOut;
+		this.totalAmountTaxOut = totalAmountTaxOut;
 	}
 
 	@Id
@@ -73,5 +86,46 @@ public class ReceptionDetail {
 
 	public void setQuantityReceived(double quantityReceived) {
 		this.quantityReceived = quantityReceived;
+	}
+
+	public float getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(float discount) {
+		this.discount = discount;
+	}
+
+	public float getDiscountApplied() {
+		return discountApplied;
+	}
+
+	public void setDiscountApplied(float discountApplied) {
+		this.discountApplied = discountApplied;
+	}
+
+	@ManyToOne
+	public DiscountType getDiscountType() {
+		return discountType;
+	}
+
+	public void setDiscountType(DiscountType discountType) {
+		this.discountType = discountType;
+	}
+
+	public double getUnitPriceTaxOut() {
+		return unitPriceTaxOut;
+	}
+
+	public void setUnitPriceTaxOut(double unitPriceTaxOut) {
+		this.unitPriceTaxOut = unitPriceTaxOut;
+	}
+
+	public double getTotalAmountTaxOut() {
+		return totalAmountTaxOut;
+	}
+
+	public void setTotalAmountTaxOut(double totalAmountTaxOut) {
+		this.totalAmountTaxOut = totalAmountTaxOut;
 	}
 }

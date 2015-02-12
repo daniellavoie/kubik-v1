@@ -1,7 +1,20 @@
 var app = angular.module("KubikReceptionDetails", []);
 var receptionId = window.location.pathname.split("/")[2];
 
-app.controller("KubikReceptionDetailsController", function($scope, $http, $timeout){	
+app.controller("KubikReceptionDetailsController", function($scope, $http, $timeout){
+	$scope.calculateReceptionQuantity = function(reception){
+		var quantity = 0;
+		if(reception != undefined){
+			for(var detailIndex in reception.details){
+				var detail = reception.details[detailIndex];
+				
+				quantity += detail.quantityToReceive;
+			}
+		}
+		
+		return quantity;
+	};
+	
 	$scope.cancelReception = function(){
 		$scope.order.status = "CANCELED";
 		
@@ -28,7 +41,7 @@ app.controller("KubikReceptionDetailsController", function($scope, $http, $timeo
 		});
 	};
 	
-	$scope.quantityChanged = function($event){
+	$scope.receptionChanged = function($event){
 		$scope.inputIdToFocus = $event.target.id;
 		if($scope.quantityChangedTimer != undefined) clearTimeout($scope.quantityChangedTimer);
 	    
@@ -44,15 +57,6 @@ app.controller("KubikReceptionDetailsController", function($scope, $http, $timeo
 	};
 	
 	$scope.saveReception = function(success){
-		for(var detailIndex in $scope.reception.details){
-			var detail = $scope.reception.details[detailIndex];
-						
-			detail.product = {
-				id : detail.product.id,
-				ean13 : detail.product.ean13,
-				supplier : {id : detail.product.supplier.id}
-			};
-		}
 		$http.post(".", $scope.reception).success(function(){
 			$scope.$broadcast("receptionSaved");
 			
@@ -74,7 +78,14 @@ app.controller("KubikReceptionDetailsController", function($scope, $http, $timeo
 		});
 	};
 
-	$scope.kubikProductCard = new KubikProductCard();
+	$scope.kubikProductCard = new KubikProductCard({productUrl : "../product"});
+
+	$scope.kubikSupplierCard = new KubikSupplierCard({
+		supplierSaved : function(){
+			$scope.loadReception();
+		}, 
+		supplierUrl : "../supplier"
+	});
 	
 	$scope.loadReception();
 });

@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.cspinformatique.kubik</groupId>
     <artifactId>kubik</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.3</version>
   </parent>
   
   <artifactId>kubik-model</artifactId>
@@ -18,6 +18,10 @@
   	<dependency>
   		<groupId>com.fasterxml.jackson.core</groupId>
   		<artifactId>jackson-annotations</artifactId>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.hibernate</groupId>
+  		<artifactId>hibernate-envers</artifactId>
   	</dependency>
   </dependencies>
 </project>

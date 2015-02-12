@@ -29,14 +29,17 @@
 						<th>Livraison</th>
 						<th>Date de livraison min.</th>
 						<th>Date de livraison max.</th>
+						<th>Remise</th>
 						<th>Produits</th>
+						<th>Quantité</th>
+						<th>Prix HT</th>
 						<th>&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td>{{order.id}}</td>
-						<td>{{order.supplier.name}} - {{order.supplier.ean13}}</td>
+						<td><a href="#" ng-click="kubikSupplierCard.openCard(order.supplier)">{{order.supplier.name}}</a></td>
 						<td>{{order.date | date : "short"}}</td>
 						<td>{{order.dateReceived | date : "short"}}</td>
 						<td>
@@ -48,7 +51,21 @@
 						<td>{{order.shippingMode}}</td>
 						<td>{{order.minDeliveryDate | date : "short"}}</td>
 						<td>{{order.maxDeliveryDate | date : "short"}}</td>
+						<td>
+							<input 
+								id="order-detail-{{detail.id}}"	
+								ng-model="order.discount"
+								ng-keyup="orderChanged($event)"
+								class="quantity"
+								type="number"
+								min="0" 
+								max="100" 
+								step="0.1"
+							/>
+						</td>
 						<td>{{order.details.length}}</td>
+						<td>{{calculateOrderQuantity(order)}}</td>
+						<td>{{order.totalAmountTaxOut | currency : '&euro;'}}</td>
 						<td><span ng-if="order.sentToDilicom" class="glyphicon glyphicon-transfer" title="Envoyé à Dilicom"></span>&nbsp;</td>
 					</tr>
 				</tbody>
@@ -57,30 +74,47 @@
 			<table class="panel panel-default table table-striped table-condensed">
 				<thead class="panel-heading">
 					<tr>
+						<th>Ean13</th>
 						<th>Produit</th>
-						<th>Disponibilité</th>
-						<th>Fournisseur</th>
+						<th>Remise</th>
 						<th>Quantité</th>
+						<th>Remise retenue</th>
+						<th>Prix unitaire HT</th>
+						<th>Prix HT</th>
+						<th>&nbsp;</th>
 						<th>&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="detail in order.details">
-						<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
-						<td>{{detail.product.availabilityCode}}</td>
-						<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
+						<td>{{detail.product.ean13}}</td>
+						<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a></td>
 						<td>
 							<input 
-								id="order-detail-{{detail.id}}"	
+								id="order-detail-discount-{{detail.id}}"	
+								ng-model="detail.discount"
+								ng-keyup="orderChanged($event)"
+								class="quantity"
+								type="number"
+								min="0" 
+								max="100" 
+								step="0.1"
+							/>
+						</td>
+						<td>
+							<input 
+								id="order-detail-quantity-{{detail.id}}"	
 								ng-model="detail.quantity"
-								ng-keyup="quantityChanged($event)"
+								ng-keyup="orderChanged($event)"
 								class="quantity"
 								type="number"
 								min="1" 
 								max="99999" 
 							/>
 						</td>
-							
+						<td><span title="{{detail.discountType.description}}">{{detail.discountApplied}} %</span></td>
+						<td>{{detail.unitPriceTaxOut | currency : '&euro;'}}</td>
+						<td>{{detail.totalAmountTaxOut | currency : '&euro;'}}</td>
 						<td>
 							<button
 								ng-click="deleteDetail(detail)" 
@@ -89,7 +123,10 @@
 							>
 								<span class="glyphicon glyphicon-trash"></span>
 							</button>
-							
+						</td>
+						<td>
+							<span ng-if="detail.product.availabilityCode == 'Disponible'" class="label label-success" title="{{detail.product.availabilityCode}}">&nbsp;</span>
+							<span ng-if="detail.product.availabilityCode != 'Disponible'" class="label label-danger" title="{{detail.product.availabilityCode}}">&nbsp;</span>
 						</td>
 					</tr>
 					
@@ -120,9 +157,7 @@
 									ng-repeat="product in productSearch.products" 
 									ng-checked="product.supplier.ean13 == selectedProduct.supplier.ean13"
 									ng-value="product.supplier.ean13"
-								>
-									{{product.supplier.name}} - {{product.supplier.ean13}}
-								</option>							
+								>{{product.supplier.name}}</option>							
 							</select>
 						</td>
 						
@@ -247,6 +282,8 @@
 		<div class="search-reference"></div>
 		
 		<div class="product-card"></div>
+		
+		<div class="supplier-card"></div>
 		
 		<script th:replace="util/import :: scripts"></script>		
 		<script type="text/javascript" th:src="@{/js/purchase/order-details.js}"></script>

@@ -141,6 +141,11 @@ public class ReferenceServiceImpl implements ReferenceService {
 	public void delete(String ean13, String supplierEan13){
 		this.referenceRepository.delete(this.findByEan13AndSupplierEan13(ean13, supplierEan13));
 	}
+	
+	@Override
+	public Reference find(String ean13, String supplierEan13, boolean importedInKubik){
+		return this.referenceRepository.findByEan13AndSupplierEan13AndImportedInKubik(ean13, supplierEan13, importedInKubik);
+	}
 
 	@Override
 	public Iterable<Reference> findByEan13(String ean13, Sort sort) {

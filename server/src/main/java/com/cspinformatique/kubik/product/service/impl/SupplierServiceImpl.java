@@ -6,9 +6,12 @@ import org.springframework.stereotype.Service;
 import com.cspinformatique.kubik.product.model.Supplier;
 import com.cspinformatique.kubik.product.repository.SupplierRepository;
 import com.cspinformatique.kubik.product.service.SupplierService;
+import com.cspinformatique.kubik.purchase.service.PurchaseOrderService;
 
 @Service
 public class SupplierServiceImpl implements SupplierService {
+	@Autowired private PurchaseOrderService purchaseOrderService;
+	
 	@Autowired private SupplierRepository supplierRepository;
 	
 	@Override
@@ -40,6 +43,10 @@ public class SupplierServiceImpl implements SupplierService {
 			}
 		}
 		
-		return this.supplierRepository.save(supplier);
+		Supplier result = this.supplierRepository.save(supplier);
+		
+		this.purchaseOrderService.recalculateOpenPurchaseOrderFromSupplier(result);
+		
+		return result;
 	}
 }

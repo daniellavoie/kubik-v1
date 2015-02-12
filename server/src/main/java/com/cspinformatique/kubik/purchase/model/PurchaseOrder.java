@@ -7,15 +7,20 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+
+import org.hibernate.envers.Audited;
 
 import com.cspinformatique.kubik.product.model.Supplier;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
+@Audited
 public class PurchaseOrder {
 	public enum Status{
 		DRAFT, CANCELED, SUBMITED, RECEIVED;
@@ -34,15 +39,18 @@ public class PurchaseOrder {
 	private Status status;
 	private boolean sentToDilicom;
 	
+	private float discount;
+	private double totalAmountTaxOut;
+	
 	public PurchaseOrder(){
 		
 	}
-	
+
 	public PurchaseOrder(long id, Supplier supplier, Date date,
 			Date dateReceived, String operationCode, ShippingMode shippingMode,
 			NotationCode notationCode, Date minDeliveryDate,
 			Date maxDeliveryDate, List<PurchaseOrderDetail> details,
-			Status status, boolean sentToDilicom) {
+			Status status, boolean sentToDilicom, float discount, double totalAmountTaxOut) {
 		this.id = id;
 		this.supplier = supplier;
 		this.date = date;
@@ -55,6 +63,8 @@ public class PurchaseOrder {
 		this.details = details;
 		this.status = status;
 		this.sentToDilicom = sentToDilicom;
+		this.discount = discount;
+		this.totalAmountTaxOut = totalAmountTaxOut;
 	}
 
 	@Id
@@ -134,8 +144,9 @@ public class PurchaseOrder {
 		this.maxDeliveryDate = maxDeliveryDate;
 	}
 
+	@OrderBy("id ASC")
 	@JsonManagedReference
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)
 	public List<PurchaseOrderDetail> getDetails() {
 		return details;
 	}
@@ -159,5 +170,21 @@ public class PurchaseOrder {
 
 	public void setSentToDilicom(boolean sentToDilicom) {
 		this.sentToDilicom = sentToDilicom;
+	}
+
+	public float getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(float discount) {
+		this.discount = discount;
+	}
+
+	public double getTotalAmountTaxOut() {
+		return totalAmountTaxOut;
+	}
+
+	public void setTotalAmountTaxOut(double totalAmountTaxOut) {
+		this.totalAmountTaxOut = totalAmountTaxOut;
 	}
 }

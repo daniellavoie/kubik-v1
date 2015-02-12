@@ -39,7 +39,8 @@
 						<th>Date</th>
 						<th>Ventes</th>
 						<th>Ventes TTC</th>
-						<th>Ventes HT</th>	
+						<th>Ventes HT</th>
+						<th>&nbsp;</th>
 					</tr>
 				</thead>
 				
@@ -49,6 +50,19 @@
 						<td>{{dailyReport.salesCount}}</td>
 						<td>{{dailyReport.salesAmountTaxIn | currency : '&euro;'}}</td>
 						<td>{{dailyReport.salesAmountTaxOut | currency : '&euro;'}}</td>
+						<td>
+							<button 
+								id="reload-daily-report-{{dailyReport.id}}-btn" 
+								class="btn btn-xs btn-info" 
+								ng-click="reload(dailyReport, $event)">
+								<span class="glyphicon glyphicon-refresh"></span>
+							</button>
+							<img 
+								id="reload-daily-report-{{dailyReport.id}}-loading"
+								class="hidden" 
+								th:src="@{/img/loading.gif}"
+							/>
+						</td>
 					</tr>
 				</tbody>
 			</table>

@@ -15,10 +15,24 @@
 	<body>
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center" ng-app="KubikReceptions">
+		<div class="container text-center" ng-app="KubikReceptions" ng-controller="KubikReceptionsController as receptionsView">
 			<h1>Réception fournisseur</h1>
+			
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!receptionsPage.first" ng-click="changePage(receptionsPage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{receptionsPage.number+1}} sur {{receptionsPage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!receptionsPage.last" ng-click="changePage(receptionsPage.number+1)">Suivante</a>
+				</li>
+			</ul>
 						
-			<table class="panel panel-default sessions table table-striped table-hover table-condensed" ng-controller="KubikReceptionsController as receptionsView">
+			<table class="panel panel-default receptions table table-striped table-hover table-condensed">
 				<thead>
 					<tr class="text-center">
 						<th>Fournisseur</th>
@@ -29,11 +43,14 @@
 						<th>Date de livraison</th>
 						<th>Date réception</th>
 						<th>Produits</th>
+						<th>Quantité</th>
+						<th>Prix HT</th>
+						<th>&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="reception in receptions" ng-click="openReception(reception.id)">
-						<td>{{reception.supplier.name}} - {{reception.supplier.ean13}}</td>
+					<tr ng-repeat="reception in receptionsPage.content" ng-click="openReception(reception.id)">
+						<td><a href="#" ng-click="openSupplierCard(reception.supplier, $event)">{{reception.supplier.name}}</a></td>
 						<td><a th:href="@{/purchaseOrder/{{reception.purchaseOrder.id}}}">{{reception.purchaseOrder.id}}</a></td>
 						<td>
 							<span ng-if="reception.status == 'OPEN'" class="label label-info">Ouverte</span>
@@ -45,10 +62,19 @@
 						<td>{{reception.deliveryDate | date : "short"}}</td>
 						<td>{{reception.dateReceived | date : "short"}}</td>
 						<td>{{reception.details.length}}</td>
+						<td>{{calculateReceptionQuantity(reception)}}</td>
+						<td>{{reception.totalAmountTaxOut | currency : '&euro;'}}</td>
+						<td>
+							<span ng-if="order.sentToDilicom" class="glyphicon glyphicon-transfer" title="Envoyé à Dilicom"></span>
+							&nbsp;
+						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
+		
+		<div class="supplier-card"></div>
+		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/purchase/receptions.js}"></script>
 	</body>

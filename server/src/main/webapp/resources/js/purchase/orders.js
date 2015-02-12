@@ -12,15 +12,46 @@ app.controller("KubikPurchaseOrdersController", function($scope, $http){
 		return quantity;
 	};
 	
+	$scope.changePage = function(page){
+		$scope.page = page;
+		
+		$scope.loadOrders();
+	}
+	
 	$scope.loadOrders = function(){
-		$http.get("purchaseOrder").success(function(orders){
-			$scope.orders = orders;
+		var params = {	page : $scope.page,
+						resultPerPage : $scope.resultPerPage,
+						sortBy : $scope.sortBy,
+						direction : $scope.direction};
+		
+		$http.get("purchaseOrder?" + $.param(params)).success(function(ordersPage){
+			$scope.ordersPage = ordersPage;
 		});
 	};
 	
 	$scope.openOrder = function(id){
 		window.location.href = "purchaseOrder/" + id;
 	};
+	
+	$scope.openSupplierCard = function(supplier, $event){
+		try{
+			$scope.kubikSupplierCard.openCard(supplier);
+		}finally{
+			$event.stopPropagation();
+		}
+	}
+
+	$scope.kubikSupplierCard = new KubikSupplierCard({
+		supplierSaved : function(){
+			$scope.loadOrders();
+		}, 
+		supplierUrl : "supplier"
+	});
+	
+	$scope.page = 0;
+	$scope.resultPerPage = 50;
+	$scope.sortBy = "date";
+	$scope.direction = "DESC";
 	
 	$scope.loadOrders();
 });

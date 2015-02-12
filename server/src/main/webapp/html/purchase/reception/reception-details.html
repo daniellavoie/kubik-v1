@@ -28,14 +28,17 @@
 						<th>Type de date de livraison</th>
 						<th>Date de livraison</th>
 						<th>Date réception</th>
+						<th>Remise</th>
 						<th>Produits</th>
+						<th>Quantité</th>
+						<th>Prix HT</th>
 						<th>Colis</th>
 					</tr>
 				</thead>
 				
 				<tbody>
 					<tr>
-						<td>{{reception.supplier.name}} - {{reception.supplier.ean13}}</td>
+						<td><a href="#" ng-click="kubikSupplierCard.openCard(reception.supplier)">{{reception.supplier.name}}</a></td>
 						<td><a th:href="@{/purchaseOrder/{{reception.purchaseOrder.id}}}">{{reception.purchaseOrder.id}}</a></td>
 						<td>
 							<span ng-if="reception.status == 'OPEN'" class="label label-info">Ouverte</span>
@@ -46,7 +49,21 @@
 						<td>{{reception.deliveryDateType}}</td>
 						<td>{{reception.deliveryDate | date : "short"}}</td>
 						<td>{{reception.dateReceived | date : "short"}}</td>
+						<td>
+							<input 
+								id="reception-detail-{{detail.id}}"	
+								ng-model="reception.discount"
+								ng-keyup="receptionChanged($event)"
+								class="quantity"
+								type="number"
+								min="0" 
+								max="100" 
+								step="0.1"
+							/>
+						</td>
 						<td>{{reception.details.length}}</td>
+						<td>{{calculateReceptionQuantity(reception)}}</td>
+						<td>{{reception.totalAmountTaxOut | currency : '&euro;'}}</td>
 						<td><a href="#"  data-toggle="modal" data-target=".shiping-packages-modal">{{reception.shippingPackages.length}}</a></td>
 					</tr>
 				</tbody>
@@ -55,17 +72,32 @@
 			<table class="panel panel-default table table-striped table-condensed">
 				<thead class="panel-heading">
 					<tr>
+						<th>Ean13</th>
 						<th>Produit</th>
+						<th>Remise</th>
 						<th>Qté commandé</th>
 						<th>Qté reçu</th>
+						<th>Remise retenue</th>
+						<th>Prix unitaire HT</th>
+						<th>Prix HT</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="detail in reception.details">
+						<td>{{detail.product.ean13}}</td>
+						<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a>
+						</td>
 						<td>
-							<a href="#" ng-click="kubikProductCard.openCard(detail.product)">
-								{{detail.product.ean13}} - {{detail.product.standardLabel}}
-							</a>
+							<input 
+								id="reception-detail-discount-{{detail.id}}"	
+								ng-model="detail.discount"
+								ng-keyup="receptionChanged($event)"
+								class="quantity"
+								type="number"
+								min="0" 
+								max="100" 
+								step="0.1"
+							/>
 						</td>
 						<td>{{detail.quantityToReceive}}</td>
 						<td>
@@ -73,7 +105,7 @@
 								id="detail-{{detail.id}}"
 								ng-if="reception.status  == 'OPEN'"
 								ng-model="detail.quantityReceived"
-								ng-keyup="quantityChanged($event)"
+								ng-keyup="receptionChanged($event)"
 								class="quantity" 
 								type="number"
 								min="1" 
@@ -83,6 +115,9 @@
 								{{detail.quantityReceived}}
 							</span>
 						</td>
+						<td><span title="{{detail.discountType.description}}">{{detail.discountApplied}} %</span></td>
+						<td>{{detail.unitPriceTaxOut | currency : '&euro;'}}</td>
+						<td>{{detail.totalAmountTaxOut | currency : '&euro;'}}</td>
 					</tr>
 					
 					<tr ng-if="reception.details.length == 0">
@@ -129,6 +164,8 @@
 		</div>
 		
 		<div class="product-card"></div>
+		
+		<div class="supplier-card"></div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		

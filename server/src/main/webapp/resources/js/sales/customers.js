@@ -62,9 +62,11 @@ window.KubikCustomerSearch.prototype.init = function(){
 		};
 		
 		$scope.openCard = function($event, customer){
-			$scope.$emit("openCustomerCard", customer);
-			
-			event.stopPropagation()
+			try{
+				$scope.$emit("openCustomerCard", customer);
+			}finally{
+				$event.stopPropagation();
+			}
 		};
 		
 		$scope.sort = function(sortBy, direction){

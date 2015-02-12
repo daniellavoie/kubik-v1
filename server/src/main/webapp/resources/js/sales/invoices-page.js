@@ -19,6 +19,14 @@ app.controller("KubikInvoicesPageController", function($scope, $http, $timeout){
 		});
 	};
 	
+	$scope.openCustomerCard = function(customer, $event){
+		try{
+			$scope.kubikCustomerCard.openCard(customer);
+		}finally{
+			$event.stopPropagation();
+		}
+	}
+	
 	$scope.openInvoice = function(invoice){
 		location.href = "invoice/" + invoice.id;
 	}

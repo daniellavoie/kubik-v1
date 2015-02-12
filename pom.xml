@@ -14,14 +14,14 @@
 	<groupId>com.cspinformatique.kubik</groupId>
 	<artifactId>kubik</artifactId>
 	
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.3</version>
 	
 	<packaging>pom</packaging>
 	
 	<modules>
+		<module>model</module>
 		<module>server</module>
 		<module>reports</module>
-		<module>model</module>
 		<module>proxy</module>
 	</modules>
 	

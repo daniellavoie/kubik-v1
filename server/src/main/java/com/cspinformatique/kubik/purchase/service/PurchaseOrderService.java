@@ -1,20 +1,39 @@
 package com.cspinformatique.kubik.purchase.service;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.cspinformatique.kubik.product.model.Product;
+import com.cspinformatique.kubik.product.model.Supplier;
 import com.cspinformatique.kubik.purchase.model.PurchaseOrder;
+import com.cspinformatique.kubik.purchase.model.PurchaseOrder.Status;
 import com.cspinformatique.kubik.purchase.model.Reception;
 
 public interface PurchaseOrderService {
-	public Iterable<PurchaseOrder> findAll();
 	
-	public Iterable<PurchaseOrder> findAll(Pageable pageable);
+	void confirmAllOrders();
 	
-	public PurchaseOrder findOne(long id);
+	Iterable<PurchaseOrder> findAll();
 	
-	public Reception generateReception(PurchaseOrder purchaseOrder);
+	Page<PurchaseOrder> findAll(Pageable pageable);
 	
-	public PurchaseOrder save(PurchaseOrder purchaseOrder);
+	List<PurchaseOrder> findByProduct(Product product);
 	
-	public Iterable<PurchaseOrder> save(Iterable<PurchaseOrder> entities);
+	List<PurchaseOrder> findByProductAndStatus(Product product, Status status);
+	
+	List<PurchaseOrder> findByStatus(Status status);
+	
+	PurchaseOrder findOne(long id);
+	
+	Reception generateReception(PurchaseOrder purchaseOrder);
+	
+	void initializeNonCalculatedOrders();
+	
+	void recalculateOpenPurchaseOrderFromSupplier(Supplier supplier);
+	
+	PurchaseOrder save(PurchaseOrder purchaseOrder);
+	
+	Iterable<PurchaseOrder> save(Iterable<PurchaseOrder> entities);
 }
