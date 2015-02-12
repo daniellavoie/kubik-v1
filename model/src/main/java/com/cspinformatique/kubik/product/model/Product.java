@@ -13,10 +13,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import org.hibernate.envers.Audited;
+
 import com.cspinformatique.kubik.warehouse.model.ProductInventory;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
+@Audited
 public class Product {
 	private Integer id;
 	private String ean13;

@@ -50,7 +50,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="reception in receptionsPage.content" ng-click="openReception(reception.id)">
-						<td>{{reception.supplier.name}}</td>
+						<td><a href="#" ng-click="openSupplierCard(reception.supplier, $event)">{{reception.supplier.name}}</a></td>
 						<td><a th:href="@{/purchaseOrder/{{reception.purchaseOrder.id}}}">{{reception.purchaseOrder.id}}</a></td>
 						<td>
 							<span ng-if="reception.status == 'OPEN'" class="label label-info">Ouverte</span>
@@ -72,6 +72,9 @@
 				</tbody>
 			</table>
 		</div>
+		
+		<div class="supplier-card"></div>
+		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/purchase/receptions.js}"></script>
 	</body>

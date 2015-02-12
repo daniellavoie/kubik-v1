@@ -49,6 +49,11 @@ public class ReceptionController {
 		return "purchase/reception/receptions";
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, params="initialize")
+	public void initialize(){
+		this.receptionService.initialize();
+	}
+	
 	@RequestMapping(method={RequestMethod.POST, RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Reception save(@RequestBody Reception reception){
 		return this.receptionService.save(reception);

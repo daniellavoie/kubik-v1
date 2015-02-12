@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.product.model.Product;
@@ -126,15 +127,20 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 	
 	@Override
-	public Iterable<PurchaseOrder> findByProduct(Product product){
+	public List<PurchaseOrder> findByProduct(Product product){
 		return this.purchaseOrderDetailService.findPurchaseOrdersByProduct(product);
 	}
 
 	@Override
-	public Iterable<PurchaseOrder> findByProductAndStatus(Product product,
+	public List<PurchaseOrder> findByProductAndStatus(Product product,
 			Status status) {
 		return this.purchaseOrderDetailService
 				.findPurchaseOrdersByProductAndStatus(product, status);
+	}
+	
+	@Override
+	public List<PurchaseOrder> findByStatus(Status status){
+		return this.purchaseOrderRepository.findByStatus(status);
 	}
 
 	@Override
@@ -218,8 +224,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 				}
 
 				if (purchaseOrder.getStatus().equals(Status.SUBMITED)) {
-					PurchaseOrder oldOrder = this
-							.findOne(purchaseOrder.getId());
+					PurchaseOrder oldOrder = null;
+					
+					Revision<Integer, PurchaseOrder> revision = this.purchaseOrderRepository.findLastChangeRevision(purchaseOrder.getId()); 
+					if(revision != null){
+						oldOrder = revision.getEntity();
+					}
 
 					if ((oldOrder == null || !purchaseOrder.getStatus().equals(
 							oldOrder.getStatus())

@@ -6,7 +6,7 @@
 <body>
 	<div th:fragment="menu">
 		<!-- Fixed navbar -->
-		<nav th:attr="class=${'navbar navbar-default navbar-fixed-top ' + @environment.getProperty('kubik.environment')}">
+		<nav th:attr="class=${'navbar navbar-default navbar-fixed-top navbar-inverse ' + @environment.getProperty('kubik.environment')}">
 			<div class="container">
 				<div 
 					th:if="${@environment.getProperty('kubik.environment') != 'production'}"

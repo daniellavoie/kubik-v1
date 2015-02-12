@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.purchase.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,8 +13,8 @@ import com.cspinformatique.kubik.purchase.model.PurchaseOrderDetail;
 public interface PurchaseOrderDetailRepository extends
 		JpaRepository<PurchaseOrderDetail, Integer> {
 	@Query("SELECT purchaseOrder FROM PurchaseOrderDetail detail WHERE detail.product = ?")
-	Iterable<PurchaseOrder> findPurchaseOrdersByProduct(Product product);
+	List<PurchaseOrder> findPurchaseOrdersByProduct(Product product);
 	
 	@Query("SELECT purchaseOrder FROM PurchaseOrderDetail detail WHERE detail.product = ? AND detail.purchaseOrder.status = ?")
-	Iterable<PurchaseOrder> findPurchaseOrdersByProductAndStatus(Product product, Status status);
+	List<PurchaseOrder> findPurchaseOrdersByProductAndStatus(Product product, Status status);
 }

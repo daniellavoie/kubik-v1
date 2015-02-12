@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.cspinformatique.kubik.product.model.Product;
 import com.cspinformatique.kubik.product.model.Supplier;
 import com.cspinformatique.kubik.product.service.ProductService;
 import com.cspinformatique.kubik.purchase.model.NotationCode;
@@ -24,6 +25,7 @@ import com.cspinformatique.kubik.purchase.model.ShippingMode;
 import com.cspinformatique.kubik.purchase.model.PurchaseSession.Status;
 import com.cspinformatique.kubik.purchase.repository.PurchaseSessionRepository;
 import com.cspinformatique.kubik.purchase.service.PurchaseOrderService;
+import com.cspinformatique.kubik.purchase.service.PurchaseSessionDetailService;
 import com.cspinformatique.kubik.purchase.service.PurchaseSessionService;
 
 @Service
@@ -33,6 +35,8 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 	
 	@Autowired
 	private PurchaseOrderService purchaseOrderService;
+	
+	@Autowired private PurchaseSessionDetailService purchaseSessionDetailService;
 	
 	@Autowired
 	private PurchaseSessionRepository purchaseSessionRepository;
@@ -51,6 +55,17 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 	public Page<PurchaseSession> findByStatus(Status status, Pageable pageable){
 		return this.purchaseSessionRepository.findByStatus(status, pageable);
 	}
+	
+	@Override
+	public Iterable<PurchaseSession> findByProduct(Product product){
+		return this.purchaseSessionDetailService.findPurchaseOrdersByProduct(product);
+	}
+	
+	@Override
+	public Iterable<PurchaseSession> findByProductAndStatus(Product product, Status status){
+		return this.purchaseSessionDetailService.findPurchaseOrdersByProductAndStatus(product, status);
+	}
+	
 	
 	@Override
 	public PurchaseSession findOne(int id) {

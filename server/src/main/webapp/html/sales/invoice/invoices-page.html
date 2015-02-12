@@ -51,7 +51,7 @@
 						<td>{{invoice.number}}</td>
 						<td>{{invoice.paidDate | date : "short"}}</td>
 						<td ng-if="invoice.customer != null">
-							<a href="#" ng-click="kubikCustomerCard.openCard(invoice.customer)">
+							<a href="#" ng-click="openCustomerCard(invoice.customer, $event)">
 								<span ng-if="invoice.customer.company == null">{{invoice.customer.firstName}} {{invoice.customer.lastName}}</span>
 								<span ng-if="invoice.customer.company != null">{{invoice.customer.company}}</span>
 							</a>
@@ -64,7 +64,7 @@
 						<td>
 							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CARD'" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
 							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CASH'" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
-							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CHECK'" title="Espèces - {{payment.amount  | currency : '&euro;'}}"  class="glyphicon glyphicon-edit">&nbsp;</span>
+							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CHECK'" title="Chèque - {{payment.amount  | currency : '&euro;'}}"  class="glyphicon glyphicon-edit">&nbsp;</span>
 						</td>
 						<td>{{invoice.status.description}}</td>
 					</tr>

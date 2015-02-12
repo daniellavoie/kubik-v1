@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.purchase.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,9 +19,11 @@ public interface PurchaseOrderService {
 	
 	Page<PurchaseOrder> findAll(Pageable pageable);
 	
-	Iterable<PurchaseOrder> findByProduct(Product product);
+	List<PurchaseOrder> findByProduct(Product product);
 	
-	Iterable<PurchaseOrder> findByProductAndStatus(Product product, Status status);
+	List<PurchaseOrder> findByProductAndStatus(Product product, Status status);
+	
+	List<PurchaseOrder> findByStatus(Status status);
 	
 	PurchaseOrder findOne(long id);
 	

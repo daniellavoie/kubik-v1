@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.purchase.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +17,12 @@ public class PurchaseOrderDetailServiceImpl implements
 	@Autowired private PurchaseOrderDetailRepository purchaseOrderDetailRepository;
 	
 	@Override
-	public Iterable<PurchaseOrder> findPurchaseOrdersByProduct(Product product){
+	public List<PurchaseOrder> findPurchaseOrdersByProduct(Product product){
 		return this.purchaseOrderDetailRepository.findPurchaseOrdersByProduct(product);
 	}
 	
 	@Override
-	public Iterable<PurchaseOrder> findPurchaseOrdersByProductAndStatus(
+	public List<PurchaseOrder> findPurchaseOrdersByProductAndStatus(
 			Product product, Status status) {
 		return this.purchaseOrderDetailRepository.findPurchaseOrdersByProductAndStatus(product, status);
 	}

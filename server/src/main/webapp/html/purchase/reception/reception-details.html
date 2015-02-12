@@ -38,7 +38,7 @@
 				
 				<tbody>
 					<tr>
-						<td>{{reception.supplier.name}}</td>
+						<td><a href="#" ng-click="kubikSupplierCard.openCard(reception.supplier)">{{reception.supplier.name}}</a></td>
 						<td><a th:href="@{/purchaseOrder/{{reception.purchaseOrder.id}}}">{{reception.purchaseOrder.id}}</a></td>
 						<td>
 							<span ng-if="reception.status == 'OPEN'" class="label label-info">Ouverte</span>
@@ -72,6 +72,7 @@
 			<table class="panel panel-default table table-striped table-condensed">
 				<thead class="panel-heading">
 					<tr>
+						<th>Ean13</th>
 						<th>Produit</th>
 						<th>Remise</th>
 						<th>Qté commandé</th>
@@ -83,10 +84,8 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="detail in reception.details">
-						<td>
-							<a href="#" ng-click="kubikProductCard.openCard(detail.product)">
-								{{detail.product.ean13}} - {{detail.product.standardLabel}}
-							</a>
+						<td>{{detail.product.ean13}}</td>
+						<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a>
 						</td>
 						<td>
 							<input 
@@ -165,6 +164,8 @@
 		</div>
 		
 		<div class="product-card"></div>
+		
+		<div class="supplier-card"></div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		

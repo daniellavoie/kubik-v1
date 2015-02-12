@@ -10,7 +10,6 @@ window.KubikProductCard = function(options){
 	this.productUrl = options.productUrl;
 	this.productSaved = options.productSaved;
 	
-	
 	this.init();
 };
 

@@ -62,9 +62,11 @@ window.KubikProductSearch.prototype.init = function(){
 		};
 		
 		$scope.openCard = function($event, product){
-			$scope.$emit("openProductCard", product);
-			
-			event.stopPropagation()
+			try{
+				$scope.$emit("openProductCard", product);
+			}finally{
+				$event.stopPropagation();
+			}
 		};
 		
 		$scope.sort = function(sortBy, direction){

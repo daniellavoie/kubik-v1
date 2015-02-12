@@ -33,6 +33,21 @@ app.controller("KubikPurchaseOrdersController", function($scope, $http){
 		window.location.href = "purchaseOrder/" + id;
 	};
 	
+	$scope.openSupplierCard = function(supplier, $event){
+		try{
+			$scope.kubikSupplierCard.openCard(supplier);
+		}finally{
+			$event.stopPropagation();
+		}
+	}
+
+	$scope.kubikSupplierCard = new KubikSupplierCard({
+		supplierSaved : function(){
+			$scope.loadOrders();
+		}, 
+		supplierUrl : "supplier"
+	});
+	
 	$scope.page = 0;
 	$scope.resultPerPage = 50;
 	$scope.sortBy = "date";

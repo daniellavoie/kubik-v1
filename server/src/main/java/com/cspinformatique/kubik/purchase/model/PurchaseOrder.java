@@ -13,11 +13,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.hibernate.envers.Audited;
+
 import com.cspinformatique.kubik.product.model.Supplier;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
+@Audited
 public class PurchaseOrder {
 	public enum Status{
 		DRAFT, CANCELED, SUBMITED, RECEIVED;
@@ -143,7 +146,7 @@ public class PurchaseOrder {
 
 	@OrderBy("id ASC")
 	@JsonManagedReference
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)
 	public List<PurchaseOrderDetail> getDetails() {
 		return details;
 	}

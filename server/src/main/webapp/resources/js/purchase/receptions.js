@@ -35,6 +35,21 @@ app.controller("KubikReceptionsController", function($scope, $http){
 		window.location.href = "reception/" + id;
 	};
 	
+	$scope.openSupplierCard = function(supplier, $event){
+		try{
+			$scope.kubikSupplierCard.openCard(supplier);
+		}finally{
+			$event.stopPropagation();
+		}
+	}
+
+	$scope.kubikSupplierCard = new KubikSupplierCard({
+		supplierSaved : function(){
+			$scope.loadReceptions();
+		}, 
+		supplierUrl : "supplier"
+	});
+	
 	$scope.page = 0;
 	$scope.resultPerPage = 50;
 	$scope.sortBy = "deliveryDate";

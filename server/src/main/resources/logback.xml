@@ -11,6 +11,7 @@
 	
 <!-- 	<logger name="org.springframework.web" level="DEBUG" /> -->
 <!-- 	<logger name="org.hibernate.SQL" level="DEBUG" /> -->
+<!-- 	<logger name="org.hibernate.tool.hbm2ddl" level="DEBUG" /> -->
 
 	<root level="info">
 		<appender-ref ref="STDOUT" />

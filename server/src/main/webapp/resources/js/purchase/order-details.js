@@ -156,6 +156,13 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 		}, 
 		productUrl : "../product"
 	});
+
+	$scope.kubikSupplierCard = new KubikSupplierCard({
+		supplierSaved : function(){
+			$scope.loadOrder();
+		}, 
+		supplierUrl : "../supplier"
+	});
 	
 	$scope.productsToValidate = {};
 	$scope.loadOrder();

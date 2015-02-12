@@ -78,7 +78,14 @@ app.controller("KubikReceptionDetailsController", function($scope, $http, $timeo
 		});
 	};
 
-	$scope.kubikProductCard = new KubikProductCard();
+	$scope.kubikProductCard = new KubikProductCard({productUrl : "../product"});
+
+	$scope.kubikSupplierCard = new KubikSupplierCard({
+		supplierSaved : function(){
+			$scope.loadReception();
+		}, 
+		supplierUrl : "../supplier"
+	});
 	
 	$scope.loadReception();
 });

@@ -1,11 +1,13 @@
 package com.cspinformatique.kubik.purchase.service;
 
+import java.util.List;
+
 import com.cspinformatique.kubik.product.model.Product;
 import com.cspinformatique.kubik.purchase.model.PurchaseOrder;
 import com.cspinformatique.kubik.purchase.model.PurchaseOrder.Status;
 
 public interface PurchaseOrderDetailService {
-	Iterable<PurchaseOrder> findPurchaseOrdersByProduct(Product product);
+	List<PurchaseOrder> findPurchaseOrdersByProduct(Product product);
 	
-	Iterable<PurchaseOrder> findPurchaseOrdersByProductAndStatus(Product product, Status status);
+	List<PurchaseOrder> findPurchaseOrdersByProductAndStatus(Product product, Status status);
 }

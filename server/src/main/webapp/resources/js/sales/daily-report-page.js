@@ -24,20 +24,24 @@ app.controller("KubikDailyReportPageController", function($scope, $http, $timeou
 	}
 	
 	$scope.reload = function(dailyReport, $event){
-		var $btn = $("#reload-daily-report-" + dailyReport.id + "-btn");
-		var $loading = $("#reload-daily-report-" + dailyReport.id + "-loading");
-		
-		$btn.addClass("hidden");
-		$loading.removeClass("hidden");
-		
-		$http.post("dailyReport/" + dailyReport.id).success(function(){
-			$scope.loadDailyReports();
-		}).finally(function(){
-			$btn.removeClass("hidden");
-			$loading.addClass("hidden");
-		});
-		
-		$event.stopPropagation();
+		try{
+			var $btn = $("#reload-daily-report-" + dailyReport.id + "-btn");
+			var $loading = $("#reload-daily-report-" + dailyReport.id + "-loading");
+			
+			$btn.addClass("hidden");
+			$loading.removeClass("hidden");
+			
+			$http.post("dailyReport/" + dailyReport.id).success(function(){
+				$scope.loadDailyReports();
+			}).finally(function(){
+				$btn.removeClass("hidden");
+				$loading.addClass("hidden");
+			});
+			
+			$event.stopPropagation();
+		}finally{
+			$event.stopPropagation();
+		}
 	}
 	
 	$scope.page = 0;
