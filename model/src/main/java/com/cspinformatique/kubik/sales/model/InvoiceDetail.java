@@ -81,7 +81,7 @@ public class InvoiceDetail {
 		this.quantity = quantity;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
 	public Map<Double, InvoiceTaxAmount> getTaxesAmounts() {
 		return taxesAmounts;
 	}

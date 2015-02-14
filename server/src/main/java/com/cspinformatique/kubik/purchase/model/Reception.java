@@ -155,7 +155,7 @@ public class Reception {
 		this.status = status;
 	}
 
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	public List<ShippingPackage> getShippingPackages() {
 		return shippingPackages;
 	}

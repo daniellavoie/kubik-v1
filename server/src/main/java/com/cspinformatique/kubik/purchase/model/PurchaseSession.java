@@ -71,7 +71,7 @@ public class PurchaseSession {
 	}
 
 	@JsonManagedReference
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	public List<PurchaseSessionDetail> getDetails() {
 		return details;
 	}
