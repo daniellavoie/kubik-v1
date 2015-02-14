@@ -136,6 +136,11 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	public Product findByEan13AndSupplier(String ean13, Supplier supplier) {
 		return this.productRepository.findByEan13AndSupplier(ean13, supplier);
 	}
+	
+	@Override
+	public Iterable<Product> findBySupplier(Supplier supplier){
+		return this.productRepository.findBySupplier(supplier);
+	}
 
 	@Override
 	public Product findOne(int id) {

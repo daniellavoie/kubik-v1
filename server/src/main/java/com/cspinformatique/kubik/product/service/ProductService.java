@@ -10,8 +10,10 @@ import com.cspinformatique.kubik.reference.model.Reference;
 public interface ProductService {
 	
 	Product buildProductFromReference(Reference reference);
-	
+
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
+	
+	Iterable<Product> findBySupplier(Supplier supplier);
 	
 	Page<Product> findAll(Pageable pageable);
 	
