@@ -13,3 +13,4 @@ server/data
 server/dilicom
 server/*.edi
 server/docker-resources/target
+server/docker-resources/target/docker/kubik.jar
