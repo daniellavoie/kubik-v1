@@ -178,7 +178,7 @@ public class Invoice {
 		this.rebateAmount = rebateAmount;
 	}
 
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	public Map<Double, InvoiceTaxAmount> getTaxesAmounts() {
 		return taxesAmounts;
 	}
@@ -204,7 +204,7 @@ public class Invoice {
 	}
 
 	@JsonManagedReference
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)
 	public List<Payment> getPayments() {
 		return payments;
 	}
@@ -230,7 +230,7 @@ public class Invoice {
 	}
 
 	@JsonManagedReference
-	@OneToMany(cascade=CascadeType.ALL)	
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)	
 	public List<InvoiceDetail> getDetails() {
 		return details;
 	}
