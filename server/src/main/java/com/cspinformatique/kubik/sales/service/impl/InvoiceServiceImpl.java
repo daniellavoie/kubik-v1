@@ -253,10 +253,32 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 		return page.getContent().get(0);
 	}
+	
+	@Override
+	public Integer findNext(int invoiceId){
+		Page<Integer> result = this.invoiceRepository.findIdByIdGreaterThan(invoiceId, new PageRequest(0, 1, Direction.ASC, "id"));
+		
+		if(result.getContent().size() == 0){
+			return null;
+		}
+
+		return result.getContent().get(0);
+	}
 
 	@Override
 	public Invoice findOne(int id) {
 		return this.invoiceRepository.findOne(id);
+	}
+	
+	@Override
+	public Integer findPrevious(int invoiceId){
+		Page<Integer> result = this.invoiceRepository.findIdByIdLessThan(invoiceId, new PageRequest(0, 1, Direction.DESC, "id"));
+		
+		if(result.getContent().size() == 0){
+			return null;
+		}
+
+		return result.getContent().get(0);
 	}
 
 	@Override

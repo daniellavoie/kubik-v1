@@ -92,10 +92,20 @@ public class InvoiceController {
 			return this.invoiceService.findAll(pageRequest);
 		}
 	}
+	
+	@RequestMapping(value = "/{invoiceId}/next", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Integer findNextInvoice(@PathVariable int invoiceId){
+		return this.invoiceService.findNext(invoiceId);
+	}
 
 	@RequestMapping(value = "/{invoiceId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Invoice findOne(@PathVariable int invoiceId) {
 		return this.invoiceService.findOne(invoiceId);
+	}
+	
+	@RequestMapping(value = "/{invoiceId}/previous", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Integer findPreviousInvoice(@PathVariable int invoiceId){
+		return this.invoiceService.findPrevious(invoiceId);
 	}
 
 	@RequestMapping(value = "/{invoiceId}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)

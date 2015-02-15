@@ -23,7 +23,11 @@ public interface InvoiceService {
 	
 	Invoice findFirstPaidInvoice();
 	
+	Integer findNext(int id);
+	
 	Invoice findOne(int id);
+	
+	Integer findPrevious(int id);
 	
 	Invoice save(Invoice invoice);
 }

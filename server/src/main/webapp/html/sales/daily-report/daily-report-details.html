@@ -15,7 +15,7 @@
 	<body >
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center" ng-app="KubikDailyReportDetails" ng-controller="KubikDailyReportDetailsController as view">
+		<div class="container text-center" ng-cloak ng-app="KubikDailyReportDetails" ng-controller="KubikDailyReportDetailsController as view">
 			<h1>Rapport journalier du {{dailyReport.date | date : "dd/MM/yyyy"}}</h1>
 
 			<table class="daily-report table table-condensed table-striped panel panel-default">

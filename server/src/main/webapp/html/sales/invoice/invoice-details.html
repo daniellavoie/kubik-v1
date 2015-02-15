@@ -15,8 +15,16 @@
 	<body >
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center" ng-app="KubikInvoiceDetails" ng-controller="KubikInvoiceDetailsController as view">
-			<h1>Facture {{invoice.number}}</h1>
+		<div class="container text-center" ng-cloak ng-app="KubikInvoiceDetails" ng-controller="KubikInvoiceDetailsController as view">
+			<div  class="row">
+				<h1 class="col-sm-2">
+					<button ng-if="previousInvoice != null" ng-click="changeInvoice(previousInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
+				</h1>
+				<h1 class="col-sm-8"k>Facture {{invoice.number}}</h1>
+				<h1 class="col-sm-2">
+					<button ng-if="previousInvoice != null" ng-click="changeInvoice(nextInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
+				</h1>
+			</div>
 			
 			<table class="invoices table table-condensed panel panel-default">
 				<thead>

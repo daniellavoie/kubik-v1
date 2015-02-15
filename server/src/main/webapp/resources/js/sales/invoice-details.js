@@ -2,6 +2,10 @@ var app = angular.module("KubikInvoiceDetails", []);
 var invoiceId = window.location.pathname.split("/")[2];
 
 app.controller("KubikInvoiceDetailsController", function($scope, $http, $timeout){
+	$scope.changeInvoice = function(invoiceId){
+		location.href = invoiceId;
+	};
+	
 	$scope.confirmRefund = function(){
 		$(".refund-modal").modal();
 	};
@@ -31,6 +35,14 @@ app.controller("KubikInvoiceDetailsController", function($scope, $http, $timeout
 			$scope.invoice = invoice;
 		});
 	};
+	
+	$http.get("../invoice/" + invoiceId + "/next").success(function(invoiceId){
+		$scope.nextInvoice = invoiceId;
+	});
+	
+	$http.get("../invoice/" + invoiceId + "/previous").success(function(invoiceId){
+		$scope.previousInvoice = invoiceId;
+	});
 
 	$scope.kubikProductCard = new KubikProductCard();
 	
