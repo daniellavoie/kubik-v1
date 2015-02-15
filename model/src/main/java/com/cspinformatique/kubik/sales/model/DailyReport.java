@@ -87,7 +87,7 @@ public class DailyReport {
 		this.salesAmountTaxOut = salesAmountTaxOut;
 	}
 
-	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
+	@OneToMany(cascade=CascadeType.ALL)
 	public List<SalesByPaymentMethod> getSalesByPaymentMethods() {
 		return salesByPaymentMethods;
 	}
