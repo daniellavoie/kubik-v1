@@ -1,11 +1,8 @@
 package com.cspinformatique.kubik.reference.controller;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -13,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.product.model.Supplier;
 import com.cspinformatique.kubik.product.service.ProductService;
 import com.cspinformatique.kubik.reference.model.Reference;
 import com.cspinformatique.kubik.reference.service.ReferenceService;
@@ -32,17 +27,6 @@ public class ReferenceController {
 	public String getSearchPage(){
 		return "reference/search :: search";
 	}
-	
-//	@PostConstruct
-//	public void init(){
-//		for(Product product : productService.findBySupplier(new Supplier(15, "","","",0f ))){
-//			Reference reference = this.referenceService.findByEan13AndImportedInKubik(product.getEan13(), true, new Sort("ean13")).iterator().next();
-//			
-//			reference.setSupplierEan13(product.getSupplier().getEan13());
-//			
-//			this.referenceService.save(reference);
-//		}
-//	}
 	
 	@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Page<Reference> search(
