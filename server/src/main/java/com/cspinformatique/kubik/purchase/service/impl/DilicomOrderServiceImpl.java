@@ -69,7 +69,7 @@ public class DilicomOrderServiceImpl implements DilicomOrderService{
 			
 			// Fifth line.
 			++lineNumber;
-			writer.write("E" + lineNumberFormat.format(lineNumber) + purchaseOrder.getShippingMode().getCode() + "    " + dateFormat.format(purchaseOrder.getMinDeliveryDate()) + dateFormat.format(purchaseOrder.getMaxDeliveryDate()) + "\n");
+			writer.write("E" + lineNumberFormat.format(lineNumber) + purchaseOrder.getShippingMode().getCode() + "0   " + dateFormat.format(purchaseOrder.getMinDeliveryDate()) + dateFormat.format(purchaseOrder.getMaxDeliveryDate()) + "\n");
 
 			for(PurchaseOrderDetail detail : purchaseOrder.getDetails()){
 				++lineNumber;

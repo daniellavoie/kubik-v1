@@ -144,7 +144,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 				// Calculates invoice details amounts
 				detail.setUnitPrice(product.getPriceTaxIn());
 				detail.setTotalAmount(detail.getUnitPrice() * quantity);
-				detail.setTaxesAmounts(detailTaxesAmounts);
+				
+				if(detail.getTaxesAmounts() != null){
+					detail.getTaxesAmounts().clear();
+					detail.getTaxesAmounts().putAll(detailTaxesAmounts);
+				}else{
+					detail.setTaxesAmounts(detailTaxesAmounts);
+				}
 
 				double detailTotalTaxAmount = 0d;
 				double detailTaxLessAmount = product.getPriceTaxIn() * quantity;
@@ -182,7 +188,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 		invoice.setTotalAmount(Precision.round(totalAmount, 2));
 		invoice.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));
 		invoice.setTotalTaxLessAmount(Precision.round(totalTaxLessAmount, 2));
-		invoice.setTaxesAmounts(totalTaxesAmounts);
+		
+		if(invoice.getTaxesAmounts() != null){
+			invoice.getTaxesAmounts().clear();
+			invoice.getTaxesAmounts().putAll(totalTaxesAmounts);
+		}else{
+			invoice.setTaxesAmounts(totalTaxesAmounts);
+		}
 
 		// Calculate cash to return.
 		double amountPaid = 0d;

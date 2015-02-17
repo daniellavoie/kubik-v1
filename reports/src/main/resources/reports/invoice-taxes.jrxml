@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-02-09T20:45:46 -->
+<!-- 2015-02-17T23:00:20 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="detail-taxes" pageWidth="186" pageHeight="200" columnWidth="186" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="9b603965-0f6c-46a4-bc12-13011e855597">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik Database"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -12,9 +12,9 @@
 	tax_rate,
 	tax_amount
 FROM
-	tax_amount
+	invoice_tax_amount
 INNER join
-	invoice_taxes_amounts on invoice_taxes_amounts.taxes_amounts_id = tax_amount.id
+	invoice_taxes_amounts on invoice_taxes_amounts.taxes_amounts_id = invoice_tax_amount.id
 where
 	invoice_taxes_amounts.invoice_id = $P{INVOICE_ID}]]>
 	</queryString>

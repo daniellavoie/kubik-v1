@@ -204,7 +204,7 @@ public class Invoice {
 	}
 
 	@JsonManagedReference
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	public List<Payment> getPayments() {
 		return payments;
 	}
@@ -230,7 +230,7 @@ public class Invoice {
 	}
 
 	@JsonManagedReference
-	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)	
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)	
 	public List<InvoiceDetail> getDetails() {
 		return details;
 	}

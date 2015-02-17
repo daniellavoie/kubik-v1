@@ -1,6 +1,5 @@
 package com.cspinformatique.kubik.sales.controller;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,12 +19,12 @@ import com.cspinformatique.kubik.sales.service.DailyReportService;
 
 @Controller
 @RequestMapping("/dailyReport")
-public class DailyReportController implements InitializingBean {
+public class DailyReportController {
 	@Autowired
 	private DailyReportService dailyReportService;
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
+	@RequestMapping(value = "/init")
+	public void init() throws Exception {
 		this.dailyReportService.initializeDailyReports();
 	}
 

@@ -48,6 +48,13 @@ public class InvoiceController {
 	@Autowired
 	private ReportService reportService;
 
+	@RequestMapping(value = "/init", method = RequestMethod.GET)
+	public void init(){
+		for(Invoice invoice : this.invoiceService.findAll(new PageRequest(0, 10000)).getContent()){
+			this.invoiceService.save(invoice);
+		}
+	}
+
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{invoiceId}/receipt", method = RequestMethod.GET, produces = "application/pdf")
 	public void generateReceiptPdf(@PathVariable int invoiceId,

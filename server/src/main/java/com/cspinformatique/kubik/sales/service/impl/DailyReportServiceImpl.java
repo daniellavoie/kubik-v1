@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.transaction.Transactional;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
 import org.joda.time.LocalDate;
@@ -54,6 +56,7 @@ public class DailyReportServiceImpl implements DailyReportService {
 	}
 
 	@Override
+	@Transactional
 	public void generateDailyReport(Date date) {
 		date = LocalDate.fromDateFields(date).toDateTimeAtStartOfDay().toDate();
 		
