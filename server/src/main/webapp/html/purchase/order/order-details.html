@@ -120,11 +120,7 @@
 						</td>
 						<td><span title="{{detail.discountType.description}}">{{detail.discountApplied}} %</span></td>
 						<td class="unitPriceTaxOut">
-						
-							<span ng-if="detail.product.purchasePriceTaxOut == null">{{detail.unitPriceTaxOut | currency : '&euro;'}}</span>
-							<span ng-if="detail.product.purchasePriceTaxOut != null">
-								<input class="form-control" ng-model="detail.unitPriceTaxOut" ng-keyup="orderChanged($event)" />
-							</span>
+							<span>{{detail.unitPriceTaxOut | currency : '&euro;'}}</span>
 						</td>
 						<td>{{detail.totalAmountTaxOut | currency : '&euro;'}}</td>
 						<td>
