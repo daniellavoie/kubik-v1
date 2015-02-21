@@ -22,7 +22,7 @@ cd docker-resources/scripts
 
 echo "Building Dockerfile for Kubik."
 
-sh $WORKSPACE/server/docker-build.sh
+sh $WORKSPACE/server/docker-resources/scripts/kubik/docker-build.sh
 
 CMD="docker run -d -p 8090:8080 -v $KUBIK_DATA_DIR:/data --name $CONTAINER_NAME cspinformatique/kubik"
 
