@@ -8,7 +8,7 @@ window.KubikCustomerSearch = function(options){
 	}
 	
 	if(options.defaultSortBy == undefined){
-		options.defaultSortBy = "firstName";		
+		options.defaultSortBy = "lastName";		
 	}
 	
 	if(options.defaultSortDirection == undefined){

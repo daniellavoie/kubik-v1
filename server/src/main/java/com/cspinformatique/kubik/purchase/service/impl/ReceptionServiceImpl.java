@@ -57,30 +57,41 @@ public class ReceptionServiceImpl implements ReceptionService {
 
 				double quantity = detail.getQuantityReceived();
 
-				// Calculates invoice details amounts
-				DiscountType discountType = new DiscountType(
-						DiscountType.Types.SUPPLIER.toString(), null);
+				if (product.getPurchasePriceTaxOut() == null) {
+					// Calculates invoice details amounts
+					DiscountType discountType = new DiscountType(
+							DiscountType.Types.SUPPLIER.toString(), null);
 
-				detail.setDiscountApplied(product.getSupplier().getDiscount());
-				if (product.getDiscount() > detail.getDiscountApplied()) {
-					detail.setDiscountApplied(product.getDiscount());
-					discountType.setType(DiscountType.Types.PRODUCT.toString());
+					detail.setDiscountApplied(product.getSupplier()
+							.getDiscount());
+					if (product.getDiscount() > detail.getDiscountApplied()) {
+						detail.setDiscountApplied(product.getDiscount());
+						discountType.setType(DiscountType.Types.PRODUCT
+								.toString());
+					}
+
+					if (reception.getDiscount() > detail
+							.getDiscountApplied()) {
+						detail.setDiscountApplied(reception.getDiscount());
+						discountType.setType(DiscountType.Types.ORDER
+								.toString());
+					}
+
+					if (detail.getDiscount() > detail.getDiscountApplied()) {
+						detail.setDiscountApplied(detail.getDiscount());
+						discountType.setType(DiscountType.Types.ORDER_DETAIL
+								.toString());
+					}
+
+					detail.setDiscountType(discountType);
+					detail.setUnitPriceTaxOut(product.getPriceTaxOut1()
+							* (1 - (detail.getDiscountApplied() / 100)));
+				}else{
+					detail.setDiscount(0f);
+					detail.setDiscountApplied(0f);
+					detail.setDiscountType(null);
 				}
-
-				if (reception.getDiscount() > detail.getDiscountApplied()) {
-					detail.setDiscountApplied(reception.getDiscount());
-					discountType.setType(DiscountType.Types.ORDER.toString());
-				}
-
-				if (detail.getDiscount() > detail.getDiscountApplied()) {
-					detail.setDiscountApplied(detail.getDiscount());
-					discountType.setType(DiscountType.Types.ORDER_DETAIL
-							.toString());
-				}
-
-				detail.setDiscountType(discountType);
-				detail.setUnitPriceTaxOut(product.getPriceTaxOut1()
-						* (1 - (detail.getDiscountApplied() / 100)));
+				
 				detail.setTotalAmountTaxOut(detail.getUnitPriceTaxOut()
 						* quantity);
 

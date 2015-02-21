@@ -62,7 +62,7 @@ public class CustomerController {
 			@RequestParam(defaultValue = "0") Integer page,
 			@RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "firstName") String sortBy) {
+			@RequestParam(defaultValue = "lastName") String sortBy) {
 		return this.customerService.search(query, new PageRequest(page,
 				resultPerPage, direction != null ? direction : Direction.ASC,
 				sortBy));
