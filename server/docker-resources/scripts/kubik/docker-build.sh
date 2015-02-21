@@ -1,3 +1,5 @@
-unzip -o ../../target/docker.zip -d ../target
+WORKSPACE="/docker-workspace/Kubik"
 
-docker build -t cspinformatique/kubik ../target/docker
+unzip -o $WORKSPACE/server/target/docker.zip -d $WORKSPACE/server/target
+
+docker build -t cspinformatique/kubik $WORKSPACE/server/target/docker
