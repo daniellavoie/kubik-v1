@@ -122,7 +122,7 @@
 								class="form-control " 
 								ng-model="detail.unitPriceTaxOut"
 							/>
-							<span ng-if="detail.product.purchasePriceTaxOut == null">
+							<span ng-if="reception.status  != 'OPEN' || detail.product.purchasePriceTaxOut == null">
 								{{detail.unitPriceTaxOut | currency : '&euro;'}}
 							</span>
 						</td>						
