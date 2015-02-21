@@ -34,6 +34,7 @@ public class Product {
 	private Double priceTaxOut2;
 	private Double tvaRate3;
 	private Double priceTaxOut3;
+	private Double purchasePriceTaxOut;
 	private ReturnType returnType;
 	private Boolean availableForOrder;
 	private Date datePublished;
@@ -80,13 +81,13 @@ public class Product {
 			AvailabilityCode availabilityCode, PriceType priceType,
 			Double priceTaxIn, Boolean schoolbook, Double tvaRate1,
 			Double priceTaxOut1, Double tvaRate2, Double priceTaxOut2,
-			Double tvaRate3, Double priceTaxOut3, ReturnType returnType,
-			Boolean availableForOrder, Date datePublished,
-			ProductType productType, Date publishEndDate, String standardLabel,
-			String cashRegisterLabel, Integer thickness, Integer width,
-			Integer height, Integer weight, String extendedLabel,
-			String publisher, String collection, String author,
-			String publisherPresentation, String isbn,
+			Double tvaRate3, Double priceTaxOut3, Double purchasePriceTaxOut,
+			ReturnType returnType, Boolean availableForOrder,
+			Date datePublished, ProductType productType, Date publishEndDate,
+			String standardLabel, String cashRegisterLabel, Integer thickness,
+			Integer width, Integer height, Integer weight,
+			String extendedLabel, String publisher, String collection,
+			String author, String publisherPresentation, String isbn,
 			String supplierReference, String collectionReference, String theme,
 			String publisherIsnb, Boolean replacesAReference,
 			Boolean replacedByAReference, String replacesEan13,
@@ -107,6 +108,7 @@ public class Product {
 		this.priceTaxOut2 = priceTaxOut2;
 		this.tvaRate3 = tvaRate3;
 		this.priceTaxOut3 = priceTaxOut3;
+		this.purchasePriceTaxOut = purchasePriceTaxOut;
 		this.returnType = returnType;
 		this.availableForOrder = availableForOrder;
 		this.datePublished = datePublished;
@@ -187,7 +189,7 @@ public class Product {
 		this.priceType = priceType;
 	}
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	public Double getPriceTaxIn() {
 		return priceTaxIn;
 	}
@@ -204,7 +206,7 @@ public class Product {
 		this.schoolbook = schoolbook;
 	}
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	public Double getTvaRate1() {
 		return tvaRate1;
 	}
@@ -213,7 +215,7 @@ public class Product {
 		this.tvaRate1 = tvaRate1;
 	}
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	public Double getPriceTaxOut1() {
 		return priceTaxOut1;
 	}
@@ -236,6 +238,14 @@ public class Product {
 
 	public void setPriceTaxOut2(Double priceTaxOut2) {
 		this.priceTaxOut2 = priceTaxOut2;
+	}
+
+	public Double getPurchasePriceTaxOut() {
+		return purchasePriceTaxOut;
+	}
+
+	public void setPurchasePriceTaxOut(Double purchasePrice) {
+		this.purchasePriceTaxOut = purchasePrice;
 	}
 
 	public Double getTvaRate3() {

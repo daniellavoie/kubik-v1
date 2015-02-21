@@ -32,12 +32,13 @@ import com.cspinformatique.kubik.purchase.service.PurchaseSessionService;
 public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 	@Autowired
 	private ProductService productService;
-	
+
 	@Autowired
 	private PurchaseOrderService purchaseOrderService;
-	
-	@Autowired private PurchaseSessionDetailService purchaseSessionDetailService;
-	
+
+	@Autowired
+	private PurchaseSessionDetailService purchaseSessionDetailService;
+
 	@Autowired
 	private PurchaseSessionRepository purchaseSessionRepository;
 
@@ -47,26 +48,28 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 	}
 
 	@Override
-	public Page<PurchaseSession> findAll(Pageable pageable){
+	public Page<PurchaseSession> findAll(Pageable pageable) {
 		return this.purchaseSessionRepository.findAll(pageable);
 	}
 
 	@Override
-	public Page<PurchaseSession> findByStatus(Status status, Pageable pageable){
+	public Page<PurchaseSession> findByStatus(Status status, Pageable pageable) {
 		return this.purchaseSessionRepository.findByStatus(status, pageable);
 	}
-	
+
 	@Override
-	public Iterable<PurchaseSession> findByProduct(Product product){
-		return this.purchaseSessionDetailService.findPurchaseOrdersByProduct(product);
+	public Iterable<PurchaseSession> findByProduct(Product product) {
+		return this.purchaseSessionDetailService
+				.findPurchaseOrdersByProduct(product);
 	}
-	
+
 	@Override
-	public Iterable<PurchaseSession> findByProductAndStatus(Product product, Status status){
-		return this.purchaseSessionDetailService.findPurchaseOrdersByProductAndStatus(product, status);
+	public Iterable<PurchaseSession> findByProductAndStatus(Product product,
+			Status status) {
+		return this.purchaseSessionDetailService
+				.findPurchaseOrdersByProductAndStatus(product, status);
 	}
-	
-	
+
 	@Override
 	public PurchaseSession findOne(int id) {
 		return this.purchaseSessionRepository.findOne(id);
@@ -98,10 +101,11 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 
 				purchaseOrders.put(supplier.getEan13(), order);
 			}
-
+			
 			order.getDetails().add(
 					new PurchaseOrderDetail(null, order, detail.getProduct(),
-							detail.getQuantity(), 0f, 0f, null, 0d, 0d));
+							detail.getQuantity(), 0f, 0f, null,
+							0d, 0d));
 		}
 
 		this.purchaseOrderService.save(purchaseOrders.values());
@@ -134,9 +138,10 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 		if (purchaseSession.getDetails() != null) {
 			for (PurchaseSessionDetail detail : purchaseSession.getDetails()) {
 				// Generates the missing ones.
-				detail.setProduct(this.productService.generateProductIfNotFound(detail
-						.getProduct().getEan13(), detail.getProduct()
-						.getSupplier().getEan13()));
+				detail.setProduct(this.productService
+						.generateProductIfNotFound(detail.getProduct()
+								.getEan13(), detail.getProduct().getSupplier()
+								.getEan13()));
 			}
 		}
 

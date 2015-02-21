@@ -68,30 +68,42 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 				double quantity = detail.getQuantity();
 
-				// Calculates invoice details amounts
-				DiscountType discountType = new DiscountType(
-						DiscountType.Types.SUPPLIER.toString(), null);
+				if (product.getPurchasePriceTaxOut() == null) {
+					// Calculates invoice details amounts
+					DiscountType discountType = new DiscountType(
+							DiscountType.Types.SUPPLIER.toString(), null);
 
-				detail.setDiscountApplied(product.getSupplier().getDiscount());
-				if (product.getDiscount() > detail.getDiscountApplied()) {
-					detail.setDiscountApplied(product.getDiscount());
-					discountType.setType(DiscountType.Types.PRODUCT.toString());
+					detail.setDiscountApplied(product.getSupplier()
+							.getDiscount());
+					if (product.getDiscount() > detail.getDiscountApplied()) {
+						detail.setDiscountApplied(product.getDiscount());
+						discountType.setType(DiscountType.Types.PRODUCT
+								.toString());
+					}
+
+					if (purchaseOrder.getDiscount() > detail
+							.getDiscountApplied()) {
+						detail.setDiscountApplied(purchaseOrder.getDiscount());
+						discountType.setType(DiscountType.Types.ORDER
+								.toString());
+					}
+
+					if (detail.getDiscount() > detail.getDiscountApplied()) {
+						detail.setDiscountApplied(detail.getDiscount());
+						discountType.setType(DiscountType.Types.ORDER_DETAIL
+								.toString());
+					}
+
+					detail.setDiscountType(discountType);
+					detail.setUnitPriceTaxOut(product.getPriceTaxOut1()
+							* (1 - (detail.getDiscountApplied() / 100)));
+				}else{
+					detail.setDiscount(0f);
+					detail.setDiscountApplied(0f);
+					detail.setDiscountType(null);
+					detail.setUnitPriceTaxOut(product.getPurchasePriceTaxOut());
 				}
-
-				if (purchaseOrder.getDiscount() > detail.getDiscountApplied()) {
-					detail.setDiscountApplied(purchaseOrder.getDiscount());
-					discountType.setType(DiscountType.Types.ORDER.toString());
-				}
-
-				if (detail.getDiscount() > detail.getDiscountApplied()) {
-					detail.setDiscountApplied(detail.getDiscount());
-					discountType.setType(DiscountType.Types.ORDER_DETAIL
-							.toString());
-				}
-
-				detail.setDiscountType(discountType);
-				detail.setUnitPriceTaxOut(product.getPriceTaxOut1()
-						* (1 - (detail.getDiscountApplied() / 100)));
+				
 				detail.setTotalAmountTaxOut(detail.getUnitPriceTaxOut()
 						* quantity);
 
@@ -103,16 +115,17 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		purchaseOrder.setTotalAmountTaxOut(Precision
 				.round(totalAmountTaxOut, 2));
 	}
-	
+
 	@Override
-	public void confirmAllOrders(){
-		List<PurchaseOrder> purchaseOrders = this.purchaseOrderRepository.findByStatus(Status.DRAFT);
-		
-		for(PurchaseOrder purchaseOrder : purchaseOrders){
+	public void confirmAllOrders() {
+		List<PurchaseOrder> purchaseOrders = this.purchaseOrderRepository
+				.findByStatus(Status.DRAFT);
+
+		for (PurchaseOrder purchaseOrder : purchaseOrders) {
 			purchaseOrder.setSentToDilicom(false);
 			purchaseOrder.setStatus(Status.SUBMITED);
 		}
-		
+
 		this.save(purchaseOrders);
 	}
 
@@ -125,10 +138,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	public Page<PurchaseOrder> findAll(Pageable pageable) {
 		return this.purchaseOrderRepository.findAll(pageable);
 	}
-	
+
 	@Override
-	public List<PurchaseOrder> findByProduct(Product product){
-		return this.purchaseOrderDetailService.findPurchaseOrdersByProduct(product);
+	public List<PurchaseOrder> findByProduct(Product product) {
+		return this.purchaseOrderDetailService
+				.findPurchaseOrdersByProduct(product);
 	}
 
 	@Override
@@ -137,9 +151,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		return this.purchaseOrderDetailService
 				.findPurchaseOrdersByProductAndStatus(product, status);
 	}
-	
+
 	@Override
-	public List<PurchaseOrder> findByStatus(Status status){
+	public List<PurchaseOrder> findByStatus(Status status) {
 		return this.purchaseOrderRepository.findByStatus(status);
 	}
 
@@ -173,20 +187,27 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 				purchaseOrder.getShippingMode(), new Date(), null,
 				DeliveryDateType.SOONEST, purchaseOrder.getMinDeliveryDate(),
 				purchaseOrder, new ArrayList<ReceptionDetail>(),
-				Reception.Status.OPEN, new ArrayList<ShippingPackage>(), purchaseOrder.getDiscount(), purchaseOrder.getTotalAmountTaxOut());
+				Reception.Status.OPEN, new ArrayList<ShippingPackage>(),
+				purchaseOrder.getDiscount(),
+				purchaseOrder.getTotalAmountTaxOut());
 
 		for (PurchaseOrderDetail detail : purchaseOrder.getDetails()) {
 			reception.getDetails().add(
 					new ReceptionDetail(null, reception, detail.getProduct(),
-							detail.getQuantity(), detail.getQuantity(), detail.getDiscount(), detail.getDiscountApplied(), detail.getDiscountType(), detail.getUnitPriceTaxOut(), detail.getTotalAmountTaxOut()));
+							detail.getQuantity(), detail.getQuantity(), detail
+									.getDiscount(),
+							detail.getDiscountApplied(), detail
+									.getDiscountType(), detail
+									.getUnitPriceTaxOut(), detail
+									.getTotalAmountTaxOut()));
 		}
 
 		return this.receptionService.save(reception);
 	}
-	
+
 	@Override
-	public void initializeNonCalculatedOrders(){
-		this.save(this.purchaseOrderRepository.findByTotalAmountTaxOut(0d));		
+	public void initializeNonCalculatedOrders() {
+		this.save(this.purchaseOrderRepository.findByTotalAmountTaxOut(0d));
 	}
 
 	@Override
@@ -225,9 +246,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 				if (purchaseOrder.getStatus().equals(Status.SUBMITED)) {
 					PurchaseOrder oldOrder = null;
-					
-					Revision<Integer, PurchaseOrder> revision = this.purchaseOrderRepository.findLastChangeRevision(purchaseOrder.getId()); 
-					if(revision != null){
+
+					Revision<Integer, PurchaseOrder> revision = this.purchaseOrderRepository
+							.findLastChangeRevision(purchaseOrder.getId());
+					if (revision != null) {
 						oldOrder = revision.getEntity();
 					}
 

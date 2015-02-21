@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.cspinformatique.kubik</groupId>
     <artifactId>kubik</artifactId>
-    <version>0.3</version>
+    <version>0.4</version>
   </parent>
   <artifactId>reports</artifactId>
   <dependencies>

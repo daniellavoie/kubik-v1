@@ -49,19 +49,21 @@
 							<span ng-if="order.status == 'RECEIVED'" class="label label-danger">Reçu</span>
 						</td>
 						<td>{{order.shippingMode}}</td>
-						<td>{{order.minDeliveryDate | date : "short"}}</td>
-						<td>{{order.maxDeliveryDate | date : "short"}}</td>
+						<td>{{order.minDeliveryDate | date : "shortDate"}}</td>
+						<td>{{order.maxDeliveryDate | date : "shortDate"}}</td>
 						<td>
 							<input 
 								id="order-detail-{{detail.id}}"	
+								ng-if="order.status == 'DRAFT'"
 								ng-model="order.discount"
 								ng-keyup="orderChanged($event)"
-								class="quantity"
+								class="quantity form-control"
 								type="number"
 								min="0" 
 								max="100" 
 								step="0.1"
 							/>
+							<span ng-if="order.status != 'DRAFT'">{{order.discount}}</span>
 						</td>
 						<td>{{order.details.length}}</td>
 						<td>{{calculateOrderQuantity(order)}}</td>
@@ -79,7 +81,7 @@
 						<th>Remise</th>
 						<th>Quantité</th>
 						<th>Remise retenue</th>
-						<th>Prix unitaire HT</th>
+						<th>Prix unitaire HT (&euro;)</th>
 						<th>Prix HT</th>
 						<th>&nbsp;</th>
 						<th>&nbsp;</th>
@@ -91,32 +93,43 @@
 						<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a></td>
 						<td>
 							<input 
-								id="order-detail-discount-{{detail.id}}"	
+								id="order-detail-discount-{{detail.id}}"
+								ng-if="order.status == 'DRAFT' && detail.product.purchasePriceTaxOut == null"	
 								ng-model="detail.discount"
 								ng-keyup="orderChanged($event)"
-								class="quantity"
+								class="quantity form-control"
 								type="number"
 								min="0" 
 								max="100" 
 								step="0.1"
 							/>
+							<span ng-if="order.status != 'DRAFT'" >{{detail.discount}}</span>
 						</td>
 						<td>
 							<input 
-								id="order-detail-quantity-{{detail.id}}"	
+								id="order-detail-quantity-{{detail.id}}"
+								ng-if="order.status == 'DRAFT'"
 								ng-model="detail.quantity"
 								ng-keyup="orderChanged($event)"
-								class="quantity"
+								class="quantity form-control"
 								type="number"
 								min="1" 
 								max="99999" 
 							/>
+							<span ng-if="order.status != 'DRAFT'" >{{detail.quantity}}</span>
 						</td>
 						<td><span title="{{detail.discountType.description}}">{{detail.discountApplied}} %</span></td>
-						<td>{{detail.unitPriceTaxOut | currency : '&euro;'}}</td>
+						<td class="unitPriceTaxOut">
+						
+							<span ng-if="detail.product.purchasePriceTaxOut == null">{{detail.unitPriceTaxOut | currency : '&euro;'}}</span>
+							<span ng-if="detail.product.purchasePriceTaxOut != null">
+								<input class="form-control" ng-model="detail.unitPriceTaxOut" ng-keyup="orderChanged($event)" />
+							</span>
+						</td>
 						<td>{{detail.totalAmountTaxOut | currency : '&euro;'}}</td>
 						<td>
 							<button
+								ng-if="order.status == 'DRAFT'"
 								ng-click="deleteDetail(detail)" 
 								type="button" 
 								class="btn btn-warning btn-xs"

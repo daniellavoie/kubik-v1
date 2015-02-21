@@ -41,8 +41,9 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	@Autowired
 	private ProductRepository productRepository;
 
-	@Autowired private PurchaseOrderService purchaseOrderService;
-	
+	@Autowired
+	private PurchaseOrderService purchaseOrderService;
+
 	@Autowired
 	private ReferenceService referenceServive;
 
@@ -95,7 +96,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 				reference.getPriceTaxIn(), reference.getSchoolbook(),
 				reference.getTvaRate1(), reference.getPriceTaxOut1(),
 				reference.getTvaRate2(), reference.getPriceTaxOut2(),
-				reference.getTvaRate3(), reference.getPriceTaxOut3(),
+				reference.getTvaRate3(), reference.getPriceTaxOut3(), 0d,
 				reference.getReturnType() != null ? ReturnType
 						.parseByCode(reference.getReturnType()) : null,
 				reference.getAvailableForOrder(), reference.getDatePublished(),
@@ -136,9 +137,9 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	public Product findByEan13AndSupplier(String ean13, Supplier supplier) {
 		return this.productRepository.findByEan13AndSupplier(ean13, supplier);
 	}
-	
+
 	@Override
-	public Iterable<Product> findBySupplier(Supplier supplier){
+	public Iterable<Product> findBySupplier(Supplier supplier) {
 		return this.productRepository.findBySupplier(supplier);
 	}
 
@@ -222,61 +223,67 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	}
 
 	@Override
-	@Transactional	
+	@Transactional
 	public Product save(Product product) {
 		boolean updatePurchaseOrders = false;
 		Product oldVersion = null;
-		
-		if(product.getId() != null){
+
+		if (product.getId() != null) {
 			oldVersion = this.findOne(product.getId());
 		}
-		
+
 		// Checks if the supplier has changed.
 		if (oldVersion != null
 				&& !product.getSupplier().getEan13()
 						.equals(oldVersion.getSupplier().getEan13())) {
 			// Makes sure no purchase orders exists for the product.
-			if(this.purchaseOrderService.findByProduct(product).iterator().hasNext()){
-				throw new RuntimeException("Product can't change supplier as purchase orders exists for it.");
+			if (this.purchaseOrderService.findByProduct(product).iterator()
+					.hasNext()) {
+				throw new RuntimeException(
+						"Product can't change supplier as purchase orders exists for it.");
 			}
-			
+
 			// Delete the reference from the old supplier.
-			this.referenceServive.delete(oldVersion.getEan13(),
-					oldVersion.getSupplier().getEan13());
+			this.referenceServive.delete(oldVersion.getEan13(), oldVersion
+					.getSupplier().getEan13());
 		}
-		
+
 		// checks if the prices needs to be calculated.
-		if(oldVersion == null || product.getPriceTaxIn() != oldVersion.getPriceTaxIn()){
+		if (oldVersion == null
+				|| product.getPriceTaxIn() != oldVersion.getPriceTaxIn()) {
 			this.calculateTaxesAmounts(product);
-			
+
 			updatePurchaseOrders = true;
 		}
 
 		if (!product.isDilicomReference()) {
 			// Checks if a dilicom reference exists for the new product.
-			Reference existingReference = this.referenceServive.find(product.getEan13(), product.getSupplier().getEan13(), false);
+			Reference existingReference = this.referenceServive
+					.find(product.getEan13(), product.getSupplier().getEan13(),
+							false);
 
-			if(existingReference != null){
+			if (existingReference != null) {
 				// Overwrite product with dilicom reference.
 				product = this.buildProductFromReference(existingReference);
 
 				existingReference.setImportedInKubik(true);
-				
+
 				this.referenceServive.save(existingReference);
 			}
-		}else{
-			// Generates a new references with the product updates. 
+		} else {
+			// Generates a new references with the product updates.
 			this.referenceServive.save(this.referenceServive
-					.buildReferenceFromProduct(product));			
+					.buildReferenceFromProduct(product));
 		}
 
 		// Saves the product.
 		product = this.productRepository.save(product);
 
-		if(updatePurchaseOrders){
-			this.purchaseOrderService.save(this.purchaseOrderService.findByProductAndStatus(product, Status.DRAFT));
+		if (updatePurchaseOrders) {
+			this.purchaseOrderService.save(this.purchaseOrderService
+					.findByProductAndStatus(product, Status.DRAFT));
 		}
-		
+
 		return product;
 	}
 

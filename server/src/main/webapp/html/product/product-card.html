@@ -188,6 +188,14 @@
 									</div>
 								</div>
 								
+								<div ng-if="!product.dilicomReference" class="form-group">
+									<label class="col-sm-4 control-label">Prix d'achat HT</label>
+									<div class="col-sm-8">
+										<p ng-if="!editMode" class="form-control-static">{{product.purchasePriceTaxOut | currency : "&euro;"}}</p>
+										<input ng-if="editMode" class="form-control" ng-model="product.purchasePriceTaxOut" placeholder="Prix d'achat HT">
+									</div>
+								</div>
+								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Taxes</label>
 									<div ng-if="!editMode" class="col-sm-8">

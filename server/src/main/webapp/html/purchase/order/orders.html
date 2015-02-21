@@ -61,8 +61,8 @@
 							<span ng-if="order.status == 'RECEIVED'" class="label label-danger">Reçue</span>
 						</td>
 						<td>{{order.shippingMode}}</td>
-						<td>{{order.minDeliveryDate | date : "short"}}</td>
-						<td>{{order.maxDeliveryDate | date : "short"}}</td>
+						<td>{{order.minDeliveryDate | date : "shortDate"}}</td>
+						<td>{{order.maxDeliveryDate | date : "shortDate"}}</td>
 						<td>{{order.details.length}}</td>
 						<td>{{calculateOrderQuantity(order)}}</td>
 						<td>{{order.totalAmountTaxOut | currency : '&euro;'}}</td>
