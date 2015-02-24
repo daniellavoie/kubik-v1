@@ -256,6 +256,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 			updatePurchaseOrders = true;
 		}
 
+		Reference newReference = null;
 		if (!product.isDilicomReference()) {
 			// Checks if a dilicom reference exists for the new product.
 			Reference existingReference = this.referenceServive
@@ -267,14 +268,17 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 				product = this.buildProductFromReference(existingReference);
 
 				existingReference.setImportedInKubik(true);
-
-				this.referenceServive.save(existingReference);
+				
+				newReference = existingReference;
 			}
-		} else {
-			// Generates a new references with the product updates.
-			this.referenceServive.save(this.referenceServive
-					.buildReferenceFromProduct(product));
 		}
+		
+		if(newReference == null){
+			newReference = this.referenceServive
+					.buildReferenceFromProduct(product);
+		}
+		
+		this.referenceServive.save(newReference);
 
 		// Saves the product.
 		product = this.productRepository.save(product);
