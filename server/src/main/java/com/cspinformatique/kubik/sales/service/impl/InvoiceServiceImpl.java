@@ -285,8 +285,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 	public Invoice generateNewInvoice(CashRegisterSession session) {
 		return this.save(new Invoice(null, null, null, invoiceStatusRepository
 				.findOne(Types.DRAFT.name()), null, new Date(), null, null,
-				null, null, 0d, 0d, new HashMap<Double, InvoiceTaxAmount>(),
-				0d, 0d, new ArrayList<Payment>(), 0d, 0d, session,
+				null, null, 0d, 0d, 0d, new HashMap<Double, InvoiceTaxAmount>(),
+				0d, 0d, 0d, new ArrayList<Payment>(), 0d, 0d, session,
 				new ArrayList<InvoiceDetail>()));
 	}
 

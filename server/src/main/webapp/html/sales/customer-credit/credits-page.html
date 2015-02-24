@@ -1,0 +1,81 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Avoirs clients</title>
+		
+		<link th:replace="util/import :: head">
+		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/credits-page.css}" />
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="KubikCustomerCreditsPage" ng-cloak ng-controller="KubikCustomerCreditsPageController as view"  class="container text-center">
+			<h1>Avoirs clients</h1>
+	
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!customerCreditsPage.first" ng-click="changePage(customerCreditsPage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{customerCreditsPage.number+1}} sur {{customerCreditsPage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!customerCreditsPage.last" ng-click="changePage(customerCreditsPage.number+1)">Suivante</a>
+				</li>
+			</ul>
+						
+			<table class="customer-credits table table-condensed table-striped table-hover panel panel-default">
+				<thead>
+					<tr>
+						<th>Facture</th>
+						<th>Date</th>
+						<th>Client</th>
+						<th>Produits</th>
+						<th>Montant</th>
+						<th>Paiements</th>
+						<th>Statut</th>	
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr ng-repeat="customerCredit in customerCreditsPage.content" ng-click="openCustomerCredit(customerCredit)">
+						<td>{{customerCredit.invoice.number}}</td>
+						<td>{{customerCredit.date | date : "short"}}</td>
+						<td>
+							<a href="#" ng-click="openCustomerCard(customerCredit.customer, $event)">
+								<span ng-if="customerCredit.customer.company == null">{{customerCredit.customer.firstName}} {{customerCredit.customer.lastName}}</span>
+								<span ng-if="customerCredit.customer.company != null">{{customerCredit.customer.company}}</span>
+							</a>
+						</td>
+						<td>{{customerCredit.details.length}}</td>
+						<td>{{customerCredit.totalAmount | currency : '&euro;'}}</td>
+						<td>
+							<span ng-if="customerCredit.paymentMethod.type == 'CARD'" title="Carte" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+							<span ng-if="customerCredit.paymentMethod.type == 'CASH'" title="Espèces" class="glyphicon glyphicon-euro">&nbsp;</span>
+							<span ng-if="customerCredit.paymentMethod.type == 'CHECK'" title="Chèque"  class="glyphicon glyphicon-edit">&nbsp;</span>
+						</td>
+						<td>
+							<span ng-if="customerCredit.status == 'OPEN'">Brouillon</span>
+							<span ng-if="customerCredit.status == 'COMPLETED'">Complété</span>
+							<span ng-if="customerCredit.status == 'CANCELED'">Annulé</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="customer-card"></div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/sales/customer-credits-page.js}"></script>
+	</body>
+</html>

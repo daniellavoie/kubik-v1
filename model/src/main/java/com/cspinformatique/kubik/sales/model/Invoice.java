@@ -30,9 +30,11 @@ public class Invoice {
 	private Date refundDate;
 	private Double totalTaxLessAmount;
 	private Double rebateAmount;
+	private Double rebatePercent;
 	private Map<Double, InvoiceTaxAmount> taxesAmounts;
 	private Double totalTaxAmount;
 	private Double totalAmount;
+	private Double totalAmountRebateOut;
 	private List<Payment> payments;
 	private Double amountPaid;
 	private Double amountReturned;
@@ -46,11 +48,12 @@ public class Invoice {
 
 	public Invoice(Integer id, Long number, User user, InvoiceStatus status,
 			Customer customer, Date date, Date cancelDate, Date invoiceDate,
-			Date paidDate, Date refundDate, Double totalTaxLessAmount, Double rebateAmount,
+			Date paidDate, Date refundDate, Double totalTaxLessAmount,
+			Double rebateAmount, Double rebatePercent,
 			Map<Double, InvoiceTaxAmount> taxesAmounts, Double totalTaxAmount,
-			Double totalAmount, List<Payment> payments, Double amountPaid,
-			Double amountReturned, CashRegisterSession cashRegisterSession,
-			List<InvoiceDetail> details) {
+			Double totalAmount, Double totalAmountRebateOut,
+			List<Payment> payments, Double amountPaid, Double amountReturned,
+			CashRegisterSession cashRegisterSession, List<InvoiceDetail> details) {
 		this.id = id;
 		this.number = number;
 		this.user = user;
@@ -63,9 +66,11 @@ public class Invoice {
 		this.refundDate = refundDate;
 		this.totalTaxLessAmount = totalTaxLessAmount;
 		this.rebateAmount = rebateAmount;
+		this.rebatePercent = rebatePercent;
 		this.taxesAmounts = taxesAmounts;
 		this.totalTaxAmount = totalTaxAmount;
 		this.totalAmount = totalAmount;
+		this.totalAmountRebateOut = totalAmountRebateOut;
 		this.payments = payments;
 		this.amountPaid = amountPaid;
 		this.amountReturned = amountReturned;
@@ -178,7 +183,15 @@ public class Invoice {
 		this.rebateAmount = rebateAmount;
 	}
 
-	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
+	public Double getRebatePercent() {
+		return rebatePercent;
+	}
+
+	public void setRebatePercent(Double rebatePercent) {
+		this.rebatePercent = rebatePercent;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	public Map<Double, InvoiceTaxAmount> getTaxesAmounts() {
 		return taxesAmounts;
 	}
@@ -203,8 +216,16 @@ public class Invoice {
 		this.totalAmount = totalAmount;
 	}
 
+	public Double getTotalAmountRebateOut() {
+		return totalAmountRebateOut;
+	}
+
+	public void setTotalAmountRebateOut(Double totalAmountRebateOut) {
+		this.totalAmountRebateOut = totalAmountRebateOut;
+	}
+
 	@JsonManagedReference
-	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<Payment> getPayments() {
 		return payments;
 	}
@@ -230,7 +251,7 @@ public class Invoice {
 	}
 
 	@JsonManagedReference
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	public List<InvoiceDetail> getDetails() {
 		return details;
 	}
