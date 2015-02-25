@@ -8,14 +8,14 @@
 		<!-- Fixed navbar -->
 		<nav th:attr="class=${'navbar navbar-default navbar-fixed-top navbar-inverse ' + @environment.getProperty('kubik.environment')}">
 			<div class="container">
-				<div 
-					th:if="${@environment.getProperty('kubik.environment') != 'production'}"
-					th:attr="class=${'pull-right ' + @environment.getProperty('kubik.environment')}"
-				>
-					Environnement de
-					<span th:if="${@environment.getProperty('kubik.environment') == 'development'}">développement</span>
-					<span th:if="${@environment.getProperty('kubik.environment') == 'test'}">test</span>
-				</div>
+<!-- 				<div  -->
+<!-- 					th:if="${@environment.getProperty('kubik.environment') != 'production'}" -->
+<!-- 					th:attr="class=${'pull-right ' + @environment.getProperty('kubik.environment')}" -->
+<!-- 				> -->
+<!-- 					Environnement de -->
+<!-- 					<span th:if="${@environment.getProperty('kubik.environment') == 'development'}">développement</span> -->
+<!-- 					<span th:if="${@environment.getProperty('kubik.environment') == 'test'}">test</span> -->
+<!-- 				</div> -->
 				
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
