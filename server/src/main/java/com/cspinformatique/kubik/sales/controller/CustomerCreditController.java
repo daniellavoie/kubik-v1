@@ -37,6 +37,16 @@ public class CustomerCreditController {
 	public @ResponseBody CustomerCredit findOne(@PathVariable int id){
 		return this.customerCreditService.findOne(id);
 	}
+	
+	@RequestMapping(value = "/{id}/next", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Integer findNextCustomerCredit(@PathVariable int id){
+		return this.customerCreditService.findNext(id);
+	}
+	
+	@RequestMapping(value = "/{id}/previous", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Integer findPreviousCustomerCredit(@PathVariable int id){
+		return this.customerCreditService.findPrevious(id);
+	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public String getCustomerCreditDetailsPage() {

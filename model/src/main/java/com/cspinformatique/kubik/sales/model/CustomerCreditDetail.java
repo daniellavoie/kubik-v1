@@ -18,7 +18,8 @@ public class CustomerCreditDetail {
 	private Integer id;
 	private CustomerCredit customerCredit;
 	private Product product;
-	private Double quantity;
+	private double quantity;
+	private double maxQuantity;
 	private Map<Double, InvoiceTaxAmount> taxesAmounts;
 	private Double unitPrice;
 	private Double totalAmount;
@@ -30,13 +31,14 @@ public class CustomerCreditDetail {
 	}
 
 	public CustomerCreditDetail(Integer id, CustomerCredit customerCredit,
-			Product product, Double quantity,
+			Product product, double quantity, double maxQuantity,
 			Map<Double, InvoiceTaxAmount> taxesAmounts, Double unitPrice,
 			Double totalAmount, Double totalTaxAmount, Double totalTaxLessAmount) {
 		this.id = id;
 		this.customerCredit = customerCredit;
 		this.product = product;
 		this.quantity = quantity;
+		this.maxQuantity = maxQuantity;
 		this.taxesAmounts = taxesAmounts;
 		this.unitPrice = unitPrice;
 		this.totalAmount = totalAmount;
@@ -73,12 +75,20 @@ public class CustomerCreditDetail {
 		this.product = product;
 	}
 
-	public Double getQuantity() {
+	public double getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Double quantity) {
+	public void setQuantity(double quantity) {
 		this.quantity = quantity;
+	}
+
+	public double getMaxQuantity() {
+		return maxQuantity;
+	}
+
+	public void setMaxQuantity(double maxQuantity) {
+		this.maxQuantity = maxQuantity;
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)

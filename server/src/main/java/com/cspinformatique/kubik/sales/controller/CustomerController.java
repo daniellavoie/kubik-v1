@@ -14,17 +14,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cspinformatique.kubik.sales.model.Customer;
+import com.cspinformatique.kubik.sales.service.CustomerCreditService;
 import com.cspinformatique.kubik.sales.service.CustomerService;
 
 @Controller
 @RequestMapping("/customer")
 public class CustomerController {
 	@Autowired
+	private CustomerCreditService customerCreditService;
+
+	@Autowired
 	private CustomerService customerService;
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Iterable<Customer> findAll() {
 		return this.customerService.findAll();
+	}
+
+	@RequestMapping(value = "/{id}/customerCreditAmount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Double findCustomerCreditAvailable(
+			@PathVariable int id) {
+		return this.customerCreditService.findCustomerCreditAvailable(new Customer(id));
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

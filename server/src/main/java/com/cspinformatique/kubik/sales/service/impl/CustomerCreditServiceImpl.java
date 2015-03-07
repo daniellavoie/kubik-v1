@@ -1,24 +1,35 @@
 package com.cspinformatique.kubik.sales.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math3.util.Precision;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.product.model.Product;
 import com.cspinformatique.kubik.product.service.ProductService;
+import com.cspinformatique.kubik.sales.model.Customer;
 import com.cspinformatique.kubik.sales.model.CustomerCredit;
+import com.cspinformatique.kubik.sales.model.CustomerCredit.Status;
 import com.cspinformatique.kubik.sales.model.CustomerCreditDetail;
 import com.cspinformatique.kubik.sales.model.Invoice;
 import com.cspinformatique.kubik.sales.model.InvoiceDetail;
 import com.cspinformatique.kubik.sales.model.InvoiceTaxAmount;
 import com.cspinformatique.kubik.sales.repository.CustomerCreditRepository;
 import com.cspinformatique.kubik.sales.service.CustomerCreditService;
+import com.cspinformatique.kubik.sales.service.CustomerService;
+import com.cspinformatique.kubik.sales.service.DailyReportService;
 import com.cspinformatique.kubik.sales.service.InvoiceService;
+import com.cspinformatique.kubik.sales.service.PaymentMethodService;
+import com.cspinformatique.kubik.warehouse.service.ProductInventoryService;
 
 @Service
 public class CustomerCreditServiceImpl implements CustomerCreditService {
@@ -26,10 +37,29 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 	private CustomerCreditRepository customerCreditRepository;
 
 	@Autowired
+	private CustomerService customerService;
+
+	@Autowired
+	private DailyReportService dailyReportService;
+
+	@Autowired
 	private InvoiceService invoiceService;
 
 	@Autowired
+	private ProductInventoryService productInventoryService;
+
+	@Autowired
+	private PaymentMethodService paymentMethodService;
+
+	@Autowired
 	private ProductService productService;
+
+	private void addInventory(CustomerCredit customerCredit) {
+		for (CustomerCreditDetail detail : customerCredit.getDetails()) {
+			this.productInventoryService.addInventory(detail.getProduct(),
+					detail.getQuantity());
+		}
+	}
 
 	private void calculateAmounts(CustomerCredit customerCredit) {
 		HashMap<Double, InvoiceTaxAmount> totalTaxesAmounts = new HashMap<Double, InvoiceTaxAmount>();
@@ -73,7 +103,7 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 							.get(invoiceTaxAmount.getTaxRate());
 
 					if (creditTaxAmount == null) {
-						invoiceTaxAmount = new InvoiceTaxAmount(null,
+						creditTaxAmount = new InvoiceTaxAmount(null,
 								invoiceTaxAmount.getTaxRate(), 0d);
 					}
 
@@ -148,17 +178,43 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 	public Page<CustomerCredit> findAll(Pageable pageable) {
 		return this.customerCreditRepository.findAll(pageable);
 	}
-	
+
 	@Override
-	public CustomerCredit findOne(int id){
+	public List<CustomerCredit> findByCompleteDate(Date date) {
+		return this.customerCreditRepository
+				.findByCompleteDateBetweenAndStatus(
+						LocalDate.fromDateFields(date).toDateTimeAtStartOfDay()
+								.toDate(), LocalDate.fromDateFields(date)
+								.plusDays(1).toDate(), Status.COMPLETED);
+	}
+
+	@Override
+	public List<CustomerCredit> findByInvoice(Invoice invoice) {
+		return this.customerCreditRepository.findByInvoice(invoice);
+	}
+
+	@Override
+	public Double findCustomerCreditAvailable(Customer customer) {
+		Double customerCreditReceived = this.customerCreditRepository
+				.findCustomerCredit(customer);
+
+		Double customerCreditUsed = this.customerCreditRepository
+				.findCustomerCreditUsed(customer);
+
+		return (customerCreditReceived != null ? customerCreditReceived : 0d)
+				- (customerCreditUsed != null ? customerCreditUsed : 0d);
+	}
+
+	@Override
+	public CustomerCredit findOne(int id) {
 		return this.customerCreditRepository.findOne(id);
 	}
 
 	private InvoiceDetail findInvoiceDetail(Invoice invoice,
 			CustomerCreditDetail customerCreditDetail) {
 		for (InvoiceDetail detail : invoice.getDetails()) {
-			if (detail.getProduct().getId() == customerCreditDetail
-					.getProduct().getId()) {
+			if (detail.getProduct().getId()
+					.equals(customerCreditDetail.getProduct().getId())) {
 				return detail;
 			}
 		}
@@ -167,9 +223,90 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 	}
 
 	@Override
+	public Integer findNext(int customerCreditId) {
+		Page<Integer> result = this.customerCreditRepository
+				.findIdByIdGreaterThan(customerCreditId, new PageRequest(0, 1,
+						Direction.ASC, "id"));
+
+		if (result.getContent().size() == 0) {
+			return null;
+		}
+
+		return result.getContent().get(0);
+	}
+
+	@Override
+	public Integer findPrevious(int customerCreditId) {
+		Page<Integer> result = this.customerCreditRepository
+				.findIdByIdLessThan(customerCreditId, new PageRequest(0, 1,
+						Direction.DESC, "id"));
+
+		if (result.getContent().size() == 0) {
+			return null;
+		}
+
+		return result.getContent().get(0);
+	}
+
+	@Override
 	public CustomerCredit save(CustomerCredit customerCredit) {
+		if (customerCredit.getPaymentMethod() == null) {
+			customerCredit.setPaymentMethod(paymentMethodService
+					.findOne("CREDIT"));
+		}
+
+		if (customerCredit.getDate() == null) {
+			customerCredit.setDate(new Date());
+		}
+
 		this.calculateAmounts(customerCredit);
+
+		if (customerCredit.getId() != null) {
+			CustomerCredit oldCustomerCredit = this.findOne(customerCredit
+					.getId());
+
+			Status status = customerCredit.getStatus();
+
+			if (oldCustomerCredit != null) {
+				if (!oldCustomerCredit.getStatus().equals(Status.CANCELED)
+						&& status.equals(Status.CANCELED)) {
+					customerCredit.setCancelDate(new Date());
+				}
+
+				if (!oldCustomerCredit.getStatus().equals(Status.COMPLETED)
+						&& status.equals(Status.COMPLETED)) {
+
+					customerCredit.setCompleteDate(new Date());
+
+					// Update inventories.
+					this.addInventory(oldCustomerCredit);
+
+					this.dailyReportService.generateDailyReport(new Date());
+				}
+			}
+		}
 		
+		// Validate that other credit has the same customer.
+		List<CustomerCredit> existingCredits = this
+				.findByInvoice(customerCredit.getInvoice());
+
+		if (!existingCredits.isEmpty()) {
+			CustomerCredit exitingCredit = existingCredits.get(0);
+			if (!customerCredit.getCustomer().getId()
+					.equals(customerCredit.getCustomer().getId())) {
+				throw new RuntimeException(
+						"Could not link invoice "
+								+ customerCredit.getInvoice()
+										.getNumber()
+								+ " to customer "
+								+ customerCredit.getCustomer()
+										.getId()
+								+ " as it is already linked to customer "
+								+ exitingCredit.getCustomer()
+										.getId());
+			}
+		}
+
 		return this.customerCreditRepository.save(customerCredit);
 	}
 }

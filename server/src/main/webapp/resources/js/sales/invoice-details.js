@@ -20,7 +20,7 @@ app.controller("KubikInvoiceDetailsController", function($scope, $http, $timeout
 		window.open($scope.invoice.id + "/receipt", "Ticket de caisse", "pdf");
 	}
 	
-	$scope.kubikCustomerCard = new KubikCustomerCard({customerUrl : "customer", customerSaved : function(){
+	$scope.kubikCustomerCard = new KubikCustomerCard({customerUrl : "../customer", customerSaved : function(){
 		$scope.loadInvoice();
 	}});
 	
@@ -37,10 +37,12 @@ app.controller("KubikInvoiceDetailsController", function($scope, $http, $timeout
 	};
 	
 	$http.get("../invoice/" + invoiceId + "/next").success(function(invoiceId){
+		if(invoiceId == "") customerCreditId = null;
 		$scope.nextInvoice = invoiceId;
 	});
 	
 	$http.get("../invoice/" + invoiceId + "/previous").success(function(invoiceId){
+		if(invoiceId == "") customerCreditId = null;
 		$scope.previousInvoice = invoiceId;
 	});
 

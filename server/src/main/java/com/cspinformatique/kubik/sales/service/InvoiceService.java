@@ -8,14 +8,19 @@ import org.springframework.data.domain.Pageable;
 
 import com.cspinformatique.kubik.sales.model.CashRegisterSession;
 import com.cspinformatique.kubik.sales.model.Invoice;
+import com.cspinformatique.kubik.sales.model.InvoiceDetail;
 import com.cspinformatique.kubik.sales.model.InvoiceStatus;
 
 public interface InvoiceService {
+	InvoiceDetail findDetailByInvoiceIdAndProductEan13(int invoiceId, String ean13);
+	
 	Iterable<Invoice> findInvoiceByCashRegisterSessionAndInDraft(CashRegisterSession session);
 	
 	Invoice generateNewInvoice(CashRegisterSession session);
 	
 	Page<Invoice> findAll(Pageable pageable);
+	
+	Invoice findByNumber(long number);
 	
 	List<Invoice> findByPaidDate(Date paidDate);
 	

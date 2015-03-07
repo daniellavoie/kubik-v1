@@ -16,8 +16,12 @@
 	<body>
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="KubikCustomerCreditsPage" ng-cloak ng-controller="KubikCustomerCreditsPageController as view"  class="container text-center">
+		<div ng-app="KubikCustomerCreditsPage" ng-cloak ng-controller="KubikCustomerCreditsPageController as view" class="container text-center">
 			<h1>Avoirs clients</h1>
+			
+			<div>
+				<button ng-click="newCustomerCredit()" class="btn btn-primary">Nouvel avoir</button>
+			</div>
 	
 			<ul class="pager row text-center">
 				<li class="col-md-2">
@@ -71,6 +75,32 @@
 					</tr>
 				</tbody>
 			</table>
+			
+			<div class="new-customer-credit-modal modal fade">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content">
+						<div ng-if="newCredit.invoice == null" >
+							<div class="modal-header">
+								<h2>Nouvel avoir</h2>
+							</div>
+							<div class="model-body form-group">
+								<label>Numéro de facture</label>
+								<input type="text" ng-model="customerCredit.invoice.number" ng-keyup="invoiceNumberKeyUp($event)" class="invoice-number form-control">
+							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<button
+								type="button" 
+								class="closeModal btn btn-default" 
+								data-dismiss="modal"
+							>Annuler</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div th:replace="sales/customer/customers-modal :: customers-modal"></div>
 		</div>
 		
 		<div class="customer-card"></div>

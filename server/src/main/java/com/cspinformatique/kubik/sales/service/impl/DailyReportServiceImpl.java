@@ -17,17 +17,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.cspinformatique.kubik.sales.model.CustomerCredit;
 import com.cspinformatique.kubik.sales.model.DailyReport;
 import com.cspinformatique.kubik.sales.model.Invoice;
 import com.cspinformatique.kubik.sales.model.Payment;
 import com.cspinformatique.kubik.sales.model.PaymentMethod;
 import com.cspinformatique.kubik.sales.model.SalesByPaymentMethod;
 import com.cspinformatique.kubik.sales.repository.DailyReportRepository;
+import com.cspinformatique.kubik.sales.service.CustomerCreditService;
 import com.cspinformatique.kubik.sales.service.DailyReportService;
 import com.cspinformatique.kubik.sales.service.InvoiceService;
 
 @Service
 public class DailyReportServiceImpl implements DailyReportService {
+	@Autowired
+	private CustomerCreditService customerCreditService;
+
 	@Autowired
 	private DailyReportRepository dailyReportRepository;
 
@@ -49,9 +54,9 @@ public class DailyReportServiceImpl implements DailyReportService {
 
 		return page.getContent().get(0);
 	}
-	
+
 	@Override
-	public DailyReport findOne(int id){
+	public DailyReport findOne(int id) {
 		return this.dailyReportRepository.findOne(id);
 	}
 
@@ -59,7 +64,7 @@ public class DailyReportServiceImpl implements DailyReportService {
 	@Transactional
 	public void generateDailyReport(Date date) {
 		date = LocalDate.fromDateFields(date).toDateTimeAtStartOfDay().toDate();
-		
+
 		DailyReport dailyReport = this.dailyReportRepository.findByDate(date);
 
 		if (dailyReport == null) {
@@ -68,6 +73,8 @@ public class DailyReportServiceImpl implements DailyReportService {
 		}
 
 		int salesCount = 0;
+		int returnCount = 0;
+
 		double salesAmountTaxIn = 0d;
 		double salesAmountTaxOut = 0d;
 
@@ -106,7 +113,35 @@ public class DailyReportServiceImpl implements DailyReportService {
 			}
 		}
 
+		for (CustomerCredit customerCredit : this.customerCreditService
+				.findByCompleteDate(date)) {
+			++returnCount;
+
+			salesAmountTaxIn -= customerCredit.getTotalAmount();
+			salesAmountTaxOut -= customerCredit.getTotalTaxLessAmount();
+
+			SalesByPaymentMethod salesByPaymentMethod = paymentsMap
+					.get(PaymentMethod.Types.valueOf(customerCredit
+							.getPaymentMethod().getType()));
+
+			if (salesByPaymentMethod == null) {
+				salesByPaymentMethod = new SalesByPaymentMethod(null,
+						customerCredit.getPaymentMethod(), 0, 0d);
+
+				paymentsMap.put(
+						PaymentMethod.Types.valueOf(customerCredit
+								.getPaymentMethod().getType().toString()),
+						salesByPaymentMethod);
+			}
+
+			salesByPaymentMethod.setSalesCount(salesByPaymentMethod
+					.getSalesCount() - 1);
+			salesByPaymentMethod.setPaymentsAmount(salesByPaymentMethod
+					.getPaymentsAmount() - customerCredit.getTotalAmount());
+		}
+
 		dailyReport.setSalesCount(salesCount);
+		dailyReport.setReturnCount(returnCount);
 		dailyReport.setSalesAmountTaxIn(salesAmountTaxIn);
 		dailyReport.setSalesAmountTaxOut(salesAmountTaxOut);
 		dailyReport

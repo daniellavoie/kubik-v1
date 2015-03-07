@@ -58,14 +58,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 	public InvoiceServiceImpl() {
 		this.dateFormat = new SimpleDateFormat("yyyyMMdd");
 	}
-
-	private void addInventory(Invoice invoice) {
-		for (InvoiceDetail detail : invoice.getDetails()) {
-			this.productInventoryService.addInventory(detail.getProduct(),
-					detail.getQuantity());
-		}
-	}
-
+	
 	private void calculateInvoiceAmounts(Invoice invoice) {
 		HashMap<Double, InvoiceTaxAmount> totalTaxesAmounts = new HashMap<Double, InvoiceTaxAmount>();
 
@@ -144,11 +137,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 				// Calculates invoice details amounts
 				detail.setUnitPrice(product.getPriceTaxIn());
 				detail.setTotalAmount(detail.getUnitPrice() * quantity);
-				
-				if(detail.getTaxesAmounts() != null){
+
+				if (detail.getTaxesAmounts() != null) {
 					detail.getTaxesAmounts().clear();
 					detail.getTaxesAmounts().putAll(detailTaxesAmounts);
-				}else{
+				} else {
 					detail.setTaxesAmounts(detailTaxesAmounts);
 				}
 
@@ -188,11 +181,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 		invoice.setTotalAmount(Precision.round(totalAmount, 2));
 		invoice.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));
 		invoice.setTotalTaxLessAmount(Precision.round(totalTaxLessAmount, 2));
-		
-		if(invoice.getTaxesAmounts() != null){
+
+		if (invoice.getTaxesAmounts() != null) {
 			invoice.getTaxesAmounts().clear();
 			invoice.getTaxesAmounts().putAll(totalTaxesAmounts);
-		}else{
+		} else {
 			invoice.setTaxesAmounts(totalTaxesAmounts);
 		}
 
@@ -207,6 +200,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 		invoice.setAmountPaid(amountPaid);
 		invoice.setAmountReturned(invoice.getAmountPaid()
 				- invoice.getTotalAmount());
+	}
+	
+	@Override
+	public InvoiceDetail findDetailByInvoiceIdAndProductEan13(int invoiceId, String ean13){
+		return this.invoiceRepository.findDetailByInvoiceIdAndProductEan13(invoiceId, ean13);
 	}
 
 	@Override
@@ -227,6 +225,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 	@Override
 	public Page<Invoice> findAll(Pageable pageable) {
 		return this.invoiceRepository.findAll(pageable);
+	}
+
+	@Override
+	public Invoice findByNumber(long number) {
+		return this.invoiceRepository.findByNumber(number);
 	}
 
 	@Override
@@ -253,12 +256,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 		return page.getContent().get(0);
 	}
-	
+
 	@Override
-	public Integer findNext(int invoiceId){
-		Page<Integer> result = this.invoiceRepository.findIdByIdGreaterThan(invoiceId, new PageRequest(0, 1, Direction.ASC, "id"));
-		
-		if(result.getContent().size() == 0){
+	public Integer findNext(int invoiceId) {
+		Page<Integer> result = this.invoiceRepository.findIdByIdGreaterThan(
+				invoiceId, new PageRequest(0, 1, Direction.ASC, "id"));
+
+		if (result.getContent().size() == 0) {
 			return null;
 		}
 
@@ -269,12 +273,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 	public Invoice findOne(int id) {
 		return this.invoiceRepository.findOne(id);
 	}
-	
+
 	@Override
-	public Integer findPrevious(int invoiceId){
-		Page<Integer> result = this.invoiceRepository.findIdByIdLessThan(invoiceId, new PageRequest(0, 1, Direction.DESC, "id"));
-		
-		if(result.getContent().size() == 0){
+	public Integer findPrevious(int invoiceId) {
+		Page<Integer> result = this.invoiceRepository.findIdByIdLessThan(
+				invoiceId, new PageRequest(0, 1, Direction.DESC, "id"));
+
+		if (result.getContent().size() == 0) {
 			return null;
 		}
 
@@ -285,8 +290,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 	public Invoice generateNewInvoice(CashRegisterSession session) {
 		return this.save(new Invoice(null, null, null, invoiceStatusRepository
 				.findOne(Types.DRAFT.name()), null, new Date(), null, null,
-				null, null, 0d, 0d, 0d, new HashMap<Double, InvoiceTaxAmount>(),
-				0d, 0d, 0d, new ArrayList<Payment>(), 0d, 0d, session,
+				null, null, 0d, 0d, 0d,
+				new HashMap<Double, InvoiceTaxAmount>(), 0d, 0d, 0d,
+				new ArrayList<Payment>(), 0d, 0d, session,
 				new ArrayList<InvoiceDetail>()));
 	}
 
@@ -340,14 +346,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 					// Update inventory.
 					this.removeInventory(invoice);
-				}
-
-				if (status.equals(Types.REFUND.name())
-						&& !oldInvoice.getStatus().getType()
-								.equals(Types.REFUND.name())) {
-					invoice.setRefundDate(new Date());
-
-					this.addInventory(invoice);
 				}
 			}
 		}

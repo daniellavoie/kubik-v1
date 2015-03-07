@@ -38,6 +38,7 @@
 					<tr>
 						<th>Date</th>
 						<th>Ventes</th>
+						<th>Retours</th>
 						<th>Ventes TTC</th>
 						<th>Ventes HT</th>
 						<th>&nbsp;</th>
@@ -48,6 +49,7 @@
 					<tr ng-repeat="dailyReport in dailyReportPage.content" ng-click="openDailyReport(dailyReport)">
 						<td>{{dailyReport.date | date : "dd/MM/yyyy"}}</td>
 						<td>{{dailyReport.salesCount}}</td>
+						<td>{{dailyReport.returnCount}}</td>
 						<td>{{dailyReport.salesAmountTaxIn | currency : '&euro;'}}</td>
 						<td>{{dailyReport.salesAmountTaxOut | currency : '&euro;'}}</td>
 						<td>

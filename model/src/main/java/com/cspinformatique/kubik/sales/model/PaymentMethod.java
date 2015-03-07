@@ -6,7 +6,7 @@ import javax.persistence.Id;
 @Entity
 public class PaymentMethod {
 	public enum Types{
-		CASH, CARD, CHECK
+		CASH, CARD, CHECK, CREDIT
 	}
 	
 	private String type;

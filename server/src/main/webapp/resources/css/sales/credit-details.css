@@ -1,0 +1,19 @@
+table.customer-credits tbody tr:HOVER{
+	cursor: pointer;
+}
+
+.payment-method .dropdown > span:HOVER{
+	cursor: pointer;
+}
+
+.payment-method .dropdown-menu > span{
+	padding: 10px;
+	padding-right: 0px;
+	
+	font-size: 12px;
+}
+
+.payment-method .dropdown-menu > span:hover{
+	background-color: #E6E6FA;
+	cursor: pointer;
+}

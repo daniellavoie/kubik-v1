@@ -15,14 +15,14 @@
 	<body >
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center" ng-cloak ng-app="KubikInvoiceDetails" ng-controller="KubikInvoiceDetailsController as view">
+		<div class="container text-center" ng-app="KubikInvoiceDetails" ng-controller="KubikInvoiceDetailsController as view" ng-cloak>
 			<div  class="row">
 				<h1 class="col-sm-2">
 					<button ng-if="previousInvoice != null" ng-click="changeInvoice(previousInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
 				</h1>
 				<h1 class="col-sm-8"k>Facture {{invoice.number}}</h1>
 				<h1 class="col-sm-2">
-					<button ng-if="previousInvoice != null" ng-click="changeInvoice(nextInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
+					<button ng-if="next != null" ng-click="changeInvoice(nextInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
 				</h1>
 			</div>
 			
@@ -58,6 +58,7 @@
 							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CARD'" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
 							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CASH'" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
 							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CHECK'" title="Chèque - {{payment.amount  | currency : '&euro;'}}"  class="glyphicon glyphicon-edit">&nbsp;</span>
+							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CREDIT'" title="Avoir - {{payment.amount  | currency : '&euro;'}}"  class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
 						</td>
 						<td>{{invoice.status.description}}</td>
 					</tr>
@@ -67,6 +68,7 @@
 			<table class="panel panel-default table table-striped table-condensed">
 				<thead class="panel-heading">
 					<tr>
+						<th>Ean13</th>
 						<th>Produit</th>
 						<th>Prix TTC</th>
 						<th>Taxe</th>
@@ -76,7 +78,8 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="detail in invoice.details">
-						<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
+						<td>{{detail.product.ean13}}</td>
+						<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a></td>
 						<td>{{detail.unitPrice | currency : '&euro;'}}
 						<td>
 							<div ng-repeat="taxAmount in invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
@@ -90,8 +93,6 @@
 			<button ng-click="printReceipt()" type="button" class="btn btn-primary">Imprimer le reçu</button>
 			
 			<button ng-click="openReceipt()" type="button" class="btn btn-primary">Afficher le reçu</button>
-			
-			<button ng-click="confirmRefund()" type="button" class="btn btn-danger">Rembourser</button>
 			
 			<div class="refund-modal modal fade">
 				<div class="modal-dialog modal-sm">

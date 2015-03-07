@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.cspinformatique.kubik.jasper.service.ReportService;
 import com.cspinformatique.kubik.print.service.PrintService;
 import com.cspinformatique.kubik.sales.model.Invoice;
+import com.cspinformatique.kubik.sales.model.InvoiceDetail;
 import com.cspinformatique.kubik.sales.model.Payment;
 import com.cspinformatique.kubik.sales.service.InvoiceService;
 import com.cspinformatique.kubik.sales.service.InvoiceStatusService;
@@ -49,8 +50,9 @@ public class InvoiceController {
 	private ReportService reportService;
 
 	@RequestMapping(value = "/init", method = RequestMethod.GET)
-	public void init(){
-		for(Invoice invoice : this.invoiceService.findAll(new PageRequest(0, 10000)).getContent()){
+	public void init() {
+		for (Invoice invoice : this.invoiceService.findAll(
+				new PageRequest(0, 10000)).getContent()) {
 			this.invoiceService.save(invoice);
 		}
 	}
@@ -59,7 +61,7 @@ public class InvoiceController {
 	@RequestMapping(value = "/{invoiceId}/receipt", method = RequestMethod.GET, produces = "application/pdf")
 	public void generateReceiptPdf(@PathVariable int invoiceId,
 			ServletResponse response) {
-		try {	
+		try {
 			JasperExportManager.exportReportToPdfStream(this.reportService
 					.generateReceiptReport(invoiceService.findOne(invoiceId)),
 					response.getOutputStream());
@@ -92,9 +94,21 @@ public class InvoiceController {
 			return this.invoiceService.findAll(pageRequest);
 		}
 	}
-	
+
+	@RequestMapping(value = "/{id}/detail/product/ean13/{ean13}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody InvoiceDetail findDetailByInvoiceIdAndProductEan13(
+			@PathVariable int id, @PathVariable String ean13) {
+		return this.invoiceService.findDetailByInvoiceIdAndProductEan13(id,
+				ean13);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = "number", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Invoice findByNumber(@RequestParam long number) {
+		return this.invoiceService.findByNumber(number);
+	}
+
 	@RequestMapping(value = "/{invoiceId}/next", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Integer findNextInvoice(@PathVariable int invoiceId){
+	public @ResponseBody Integer findNextInvoice(@PathVariable int invoiceId) {
 		return this.invoiceService.findNext(invoiceId);
 	}
 
@@ -102,9 +116,9 @@ public class InvoiceController {
 	public @ResponseBody Invoice findOne(@PathVariable int invoiceId) {
 		return this.invoiceService.findOne(invoiceId);
 	}
-	
+
 	@RequestMapping(value = "/{invoiceId}/previous", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Integer findPreviousInvoice(@PathVariable int invoiceId){
+	public @ResponseBody Integer findPreviousInvoice(@PathVariable int invoiceId) {
 		return this.invoiceService.findPrevious(invoiceId);
 	}
 

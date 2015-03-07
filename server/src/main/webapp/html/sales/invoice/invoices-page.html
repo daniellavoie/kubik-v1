@@ -61,10 +61,11 @@
 						</td>
 						<td>{{invoice.details.length}}</td>
 						<td>{{invoice.totalAmount | currency : '&euro;'}}</td>
-						<td>
+						<td> 
 							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CARD'" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
 							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CASH'" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
-							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CHECK'" title="Chèque - {{payment.amount  | currency : '&euro;'}}"  class="glyphicon glyphicon-edit">&nbsp;</span>
+							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CHECK'" title="Chèque - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
+							<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CREDIT'" title="Avoir - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
 						</td>
 						<td>{{invoice.status.description}}</td>
 					</tr>

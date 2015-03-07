@@ -149,6 +149,7 @@
 									<label 
 										id="payment-method-{{paymentMethod.type}}" 
 										ng-repeat="paymentMethod in paymentMethods" 
+										ng-if="paymentMethod.type != 'CREDIT' || invoice.customer != null"
 										class="btn btn-default" 
 										ng-click="selectPaymentMethod(paymentMethod)"
 									> 
