@@ -27,7 +27,7 @@ public interface CustomerCreditRepository extends
 	@Query("SELECT id FROM CustomerCredit customerCredit WHERE id < :id")
 	Page<Integer> findIdByIdLessThan(@Param("id") int id, Pageable pageable);
 
-	@Query("SELECT sum(customerCredit.totalAmount) FROM CustomerCredit customerCredit WHERE customerCredit.status = 'COMPLETE' AND customerCredit.customer = :customer")
+	@Query("SELECT sum(customerCredit.totalAmount) FROM CustomerCredit customerCredit WHERE customerCredit.status = 'COMPLETED' AND customerCredit.customer = :customer")
 	Double findCustomerCredit(@Param("customer") Customer customer);
 
 	@Query("SELECT sum(payment.amount) FROM Payment payment WHERE payment.invoice.status = 'PAID' AND payment.invoice.customer = :customer AND payment.paymentMethod.type = 'CREDIT'")
