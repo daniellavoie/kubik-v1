@@ -90,7 +90,7 @@
 						<td>
 							<input 
 								id="reception-detail-discount-{{detail.id}}"	
-								ng-if="reception.status == 'OPEN' && detail.product.purchasePriceTaxOut == 0"
+								ng-if="reception.status == 'OPEN' && (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)"
 								ng-model="detail.discount"
 								ng-keyup="receptionChanged($event)"
 								class="quantity form-control"
@@ -99,7 +99,7 @@
 								max="100" 
 								step="0.1"
 							/>
-							<span ng-if="reception.status != 'OPEN' && detail.product.purchasePriceTaxOut != 0" >{{detail.discount}}</span>
+							<span ng-if="reception.status != 'OPEN' && detail.product.purchasePriceTaxOut != 0 && detail.product.purchasePriceTaxOut != null)" >{{detail.discount}}</span>
 						</td>
 						<td>{{detail.quantityToReceive}}</td>
 						<td>
@@ -118,11 +118,11 @@
 						<td><span title="{{detail.discountType.description}}">{{detail.discountApplied}} %</span></td>
 						<td class="unitPriceTaxOut">
 							<input
-								ng-if="reception.status  == 'OPEN' && detail.product.purchasePriceTaxOut != 0"
+								ng-if="reception.status  == 'OPEN' && (detail.product.purchasePriceTaxOut != 0 && detail.product.purchasePriceTaxOut != null)"
 								class="form-control " 
 								ng-model="detail.unitPriceTaxOut"
 							/>
-							<span ng-if="reception.status  != 'OPEN' || detail.product.purchasePriceTaxOut == 0">
+							<span ng-if="reception.status  != 'OPEN' || (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)">
 								{{detail.unitPriceTaxOut | currency : '&euro;'}}
 							</span>
 						</td>						

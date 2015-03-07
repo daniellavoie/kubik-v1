@@ -94,7 +94,7 @@
 						<td>
 							<input 
 								id="order-detail-discount-{{detail.id}}"
-								ng-if="order.status == 'DRAFT' && detail.product.purchasePriceTaxOut == 0"	
+								ng-if="order.status == 'DRAFT' && (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)"	
 								ng-model="detail.discount"
 								ng-keyup="orderChanged($event)"
 								class="quantity form-control"
