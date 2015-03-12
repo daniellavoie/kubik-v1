@@ -6,11 +6,4 @@
     <version>0.5</version>
   </parent>
   <artifactId>reports</artifactId>
-  <dependencies>
-  	<dependency>
-  		<groupId>com.cspinformatique.kubik</groupId>
-  		<artifactId>kubik-model</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  </dependencies>
 </project>
