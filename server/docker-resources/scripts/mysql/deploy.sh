@@ -3,14 +3,18 @@ PREFIX=$1
 
 if [ PREFIX == "" ]
 then
-	PREFIX = "ldf"
+        PREFIX = "ldf"
 fi
 
 CONTAINER_NAME=$PREFIX-kubik-mysql
-MYSQL_DATA_FOLDER=/docker-volumes/$CONTAINER_NAME
+MYSQL_DATA_FOLDER=/docker-volumes/$CONTAINER_NAME/data
+MYSQL_CONF_FOLDER=/docker-volumes/$CONTAINER_NAME/conf
 
 docker rm -f $CONTAINER_NAME
 
-echo "Launching docker instance for mysql."
+CMD="docker run -d --name $CONTAINER_NAME -p 3306:3306 -v $MYSQL_DATA_FOLDER:/var/lib/mysql -v $MYSQL_CONF_FOLDER:/etc/mysql dockerfile/mysql"
 
-docker run -d --name $CONTAINER_NAME -p 3306:3306 -v $MYSQL_DATA_FOLDER:/var/lib/mysql dockerfile/mysql
+echo "Launching docker instance for mysql."
+echo "  $CMD"
+
+$CMD
