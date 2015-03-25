@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.cspinformatique.kubik</groupId>
-		<version>0.5</version>
+		<version>0.6</version>
 		<artifactId>kubik</artifactId>
 	</parent>
 	
@@ -153,6 +153,11 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-envers</artifactId>
 			<version>0.2.0.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cspinformatique</groupId>
+			<artifactId>barcode</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 </project>

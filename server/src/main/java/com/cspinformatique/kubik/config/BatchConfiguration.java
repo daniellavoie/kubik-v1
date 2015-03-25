@@ -13,9 +13,9 @@ import org.springframework.context.annotation.Configuration;
 import com.cspinformatique.kubik.batch.itemProcessor.ReferenceItemProcessor;
 import com.cspinformatique.kubik.batch.reader.DilicomReferenceReader;
 import com.cspinformatique.kubik.batch.writer.DilicomReferenceWriter;
-import com.cspinformatique.kubik.reference.model.DilicomReference;
-import com.cspinformatique.kubik.reference.model.Reference;
-import com.cspinformatique.kubik.reference.service.ReferenceService;
+import com.cspinformatique.kubik.domain.reference.model.DilicomReference;
+import com.cspinformatique.kubik.domain.reference.model.Reference;
+import com.cspinformatique.kubik.domain.reference.service.ReferenceService;
 
 @Configuration
 @EnableBatchProcessing

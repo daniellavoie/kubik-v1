@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import com.cspinformatique.kubik.batch.mapper.ReferenceDeletedMappingEnum;
 import com.cspinformatique.kubik.batch.mapper.ReferenceExtractionMappingEnum;
 import com.cspinformatique.kubik.batch.mapper.ReferenceNotificationMappingEnum;
-import com.cspinformatique.kubik.reference.model.DilicomReference;
+import com.cspinformatique.kubik.domain.reference.model.DilicomReference;
 
 @Component
 @StepScope

@@ -21,7 +21,7 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 @PropertySource("classpath:config/thymeleaf.properties")
 public class ThymeleafConfig {
 	@Resource
-	Environment env;
+	private Environment env;
 
 	public @Bean TemplateResolver defaultTemplateResolver() {
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver();

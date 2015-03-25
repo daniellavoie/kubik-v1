@@ -13,7 +13,7 @@ import com.cspinformatique.kubik.elasticsearch.NodeClientUtil;
 import com.cspinformatique.kubik.elasticsearch.TransportClientUtil;
 
 @Configuration
-@EnableElasticsearchRepositories(basePackages="com.cspinformatique.kubik.reference")
+@EnableElasticsearchRepositories(basePackages="com.cspinformatique.kubik.domain.reference")
 @PropertySource("classpath:config/elasticsearch.properties")
 public class ElasticsearchConfig {
 	@Resource

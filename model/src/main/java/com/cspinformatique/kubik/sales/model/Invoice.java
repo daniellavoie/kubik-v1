@@ -10,16 +10,19 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.cspinformatique.kubik.security.model.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
+@Table(indexes=@Index(columnList="paidDate"))
 public class Invoice {
 	private Integer id;
-	private Long number;
+	private String number;
 	private User user;
 	private InvoiceStatus status;
 	private Customer customer;
@@ -46,7 +49,7 @@ public class Invoice {
 
 	}
 
-	public Invoice(Integer id, Long number, User user, InvoiceStatus status,
+	public Invoice(Integer id, String number, User user, InvoiceStatus status,
 			Customer customer, Date date, Date cancelDate, Date invoiceDate,
 			Date paidDate, Date refundDate, Double totalTaxLessAmount,
 			Double rebateAmount, Double rebatePercent,
@@ -88,11 +91,11 @@ public class Invoice {
 		this.id = id;
 	}
 
-	public Long getNumber() {
+	public String getNumber() {
 		return number;
 	}
 
-	public void setNumber(Long number) {
+	public void setNumber(String number) {
 		this.number = number;
 	}
 

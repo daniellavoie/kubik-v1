@@ -18,10 +18,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import com.cspinformatique.kubik.domain.product.service.ProductService;
+import com.cspinformatique.kubik.domain.reference.model.DilicomReference;
+import com.cspinformatique.kubik.domain.reference.model.Reference;
 import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.product.service.ProductService;
-import com.cspinformatique.kubik.reference.model.DilicomReference;
-import com.cspinformatique.kubik.reference.model.Reference;
 
 @Component
 public class ReferenceItemProcessor implements

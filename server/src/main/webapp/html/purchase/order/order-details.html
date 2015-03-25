@@ -41,7 +41,7 @@
 						<td>{{order.id}}</td>
 						<td><a href="#" ng-click="kubikSupplierCard.openCard(order.supplier)">{{order.supplier.name}}</a></td>
 						<td>{{order.date | date : "short"}}</td>
-						<td>{{order.dateReceived | date : "short"}}</td>
+						<td><a th:href="@{/reception/{{order.reception.id}}}">{{order.reception.id}}</a></td>
 						<td>
 							<span ng-if="order.status == 'DRAFT'" class="label label-info">Brouillon</span>
 							<span ng-if="order.status == 'SUBMITED'" class="label label-success">Soumis</span>
