@@ -154,10 +154,5 @@
 			<artifactId>spring-data-envers</artifactId>
 			<version>0.2.0.RELEASE</version>
 		</dependency>
-		<dependency>
-			<groupId>com.cspinformatique</groupId>
-			<artifactId>barcode</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 	</dependencies>
 </project>
