@@ -34,7 +34,7 @@ public interface InvoiceService {
 	
 	Integer findPrevious(int id);
 	
-	Double findProductQuantitySold(int productId);
+	double findProductQuantitySold(int productId);
 	
 	void initializeInvoiceNumbers();
 	

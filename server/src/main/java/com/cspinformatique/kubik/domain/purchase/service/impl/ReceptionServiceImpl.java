@@ -122,8 +122,14 @@ public class ReceptionServiceImpl implements ReceptionService {
 	}
 
 	@Override
-	public Double findProductQuantityReceived(int productId){
-		return this.receptionRepository.findProductQuantityReceived(productId);
+	public double findProductQuantityReceived(int productId){
+		Double result = this.receptionRepository.findProductQuantityReceived(productId);
+		
+		if(result == null){
+			return 0d;
+		}
+		
+		return result;
 	}	
 
 	@Override

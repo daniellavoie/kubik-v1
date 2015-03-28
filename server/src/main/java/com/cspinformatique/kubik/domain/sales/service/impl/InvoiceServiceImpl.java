@@ -288,8 +288,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 	}
 	
 	@Override
-	public Double findProductQuantitySold(int productId){
-		return this.invoiceRepository.findProductQuantityPurchased(productId);
+	public double findProductQuantitySold(int productId){
+		Double result = this.invoiceRepository.findProductQuantityPurchased(productId);
+		
+		if(result == null){
+			return 0d;
+		}
+		
+		return result;
 	}
 
 	@Override

@@ -21,7 +21,7 @@ public interface CustomerCreditService {
 	
 	CustomerCredit findOne(int id);
 	
-	Double findProductQuantityReturned(int productId);
+	double findProductQuantityReturned(int productId);
 	
 	Integer findNext(int invoiceId);
 	

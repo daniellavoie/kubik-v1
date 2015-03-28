@@ -12,7 +12,7 @@ public interface ReceptionService {
 	
 	Reception findOne(int id);
 	
-	Double findProductQuantityReceived(int productId);
+	double findProductQuantityReceived(int productId);
 	
 	void initialize();
 
