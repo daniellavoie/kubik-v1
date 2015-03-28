@@ -12,13 +12,9 @@ KUBIK_DATA_DIR="/docker-volumes/$CONTAINER_NAME"
 
 docker rm -f $CONTAINER_NAME
 
-cd $WORKSPACE
-
 echo "Launching maven build for Kubik."
 
-mvn clean install
-
-cd docker-resources/scripts
+mvn -f $WORKSPACE/pom.xml clean install
 
 echo "Building Dockerfile for Kubik."
 

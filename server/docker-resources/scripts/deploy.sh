@@ -1,6 +1,6 @@
 #!/bin/bash
 PREFIX=$1
-SCRIPTS_FOLDER="/docker-workspace/Kubik/server-docker-resources/scripts"
+SCRIPTS_FOLDER="/docker-workspace/Kubik/server/docker-resources/scripts"
 
 if [ PREFIX == "" ]
 then

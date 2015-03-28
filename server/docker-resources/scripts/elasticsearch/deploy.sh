@@ -7,7 +7,7 @@ then
 fi
 
 CONTAINER_NAME=$PREFIX-kubik-elasticsearch
-WORKSPACE="/docker-workspace/Kubik"
+WORKSPACE="/docker-workspace/Kubik/server"
 ES_DATA_DIR="/docker-volumes/$CONTAINER_NAME"
 
 docker rm -f $CONTAINER_NAME
