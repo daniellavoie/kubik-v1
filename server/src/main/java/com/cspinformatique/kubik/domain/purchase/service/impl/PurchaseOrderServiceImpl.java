@@ -186,9 +186,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 				purchaseOrder.getShippingMode(), new Date(), null,
 				DeliveryDateType.SOONEST, purchaseOrder.getMinDeliveryDate(),
 				purchaseOrder, new ArrayList<ReceptionDetail>(),
-				Reception.Status.OPEN, new ArrayList<ShippingPackage>(),
+				Reception.Status.STANDBY, new ArrayList<ShippingPackage>(),
 				purchaseOrder.getDiscount(),
-				purchaseOrder.getTotalAmountTaxOut());
+				purchaseOrder.getTotalAmountTaxOut(), false);
 
 		for (PurchaseOrderDetail detail : purchaseOrder.getDetails()) {
 			reception.getDetails().add(
@@ -232,7 +232,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 					purchaseOrder.setId(this.generateId());
 				}
 
-				// Checks if the product presents exists in the database.
+				// Checks if the product exists in the database.
 				if (purchaseOrder.getDetails() != null) {
 					for (PurchaseOrderDetail detail : purchaseOrder
 							.getDetails()) {
@@ -245,8 +245,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 				if (purchaseOrder.getStatus().equals(Status.SUBMITED)) {
 					// Checks if the reception needs to be generated.
-					if (purchaseOrder.getReception() == null
-							&& !purchaseOrder.isSentToDilicom()) {
+					if (purchaseOrder.getReception() == null) {
 						purchaseOrder.setReception(this
 								.generateReception(purchaseOrder));
 					}
@@ -268,9 +267,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 					.save(entities);
 
 			// Confirm the orders (rename the FTP files).
-//			for (String ediFiles : orderReferences) {
-//
-//			}
+			for (String ediFile : orderReferences) {
+				this.dilicomOrderService.confirmDilicomOrder(ediFile);
+			}
 
 			return results;
 		} catch (Exception ex) {

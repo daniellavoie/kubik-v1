@@ -9,13 +9,13 @@ import org.springframework.integration.ftp.session.DefaultFtpSessionFactory;
 
 @Configuration
 public class DilicomFtpConfig {
-	@Value("${kubik.reference.dilicom.ftp.url}")
+	@Value("${kubik.dilicom.ftp.url}")
 	private String dilicomFtpUrl;
 
-	@Value("${kubik.reference.dilicom.ftp.username}")
+	@Value("${kubik.dilicom.ftp.username}")
 	private String dilicomFtpUsername;
 
-	@Value("${kubik.reference.dilicom.ftp.password}")
+	@Value("${kubik.dilicom.ftp.password}")
 	private String dilocomFtpPassword;
 	
 	public @Bean SessionFactory<FTPFile> dilicomFtpSessionFactory(){

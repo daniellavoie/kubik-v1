@@ -3,7 +3,9 @@ package com.cspinformatique.kubik.domain.purchase.service.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -15,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.history.Revision;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.product.service.ProductService;
@@ -25,8 +26,8 @@ import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrderDetail;
 import com.cspinformatique.kubik.domain.purchase.model.PurchaseSession;
 import com.cspinformatique.kubik.domain.purchase.model.PurchaseSessionDetail;
 import com.cspinformatique.kubik.domain.purchase.model.Reception;
-import com.cspinformatique.kubik.domain.purchase.model.ReceptionDetail;
 import com.cspinformatique.kubik.domain.purchase.model.Reception.Status;
+import com.cspinformatique.kubik.domain.purchase.model.ReceptionDetail;
 import com.cspinformatique.kubik.domain.purchase.repository.ReceptionRepository;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseSessionService;
@@ -35,6 +36,7 @@ import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryServic
 import com.cspinformatique.kubik.product.model.Product;
 
 @Service
+@Transactional
 public class ReceptionServiceImpl implements ReceptionService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ReceptionServiceImpl.class);
@@ -133,7 +135,6 @@ public class ReceptionServiceImpl implements ReceptionService {
 	}	
 
 	@Override
-	@Transactional
 	public void initialize() {
 		List<Long> idsToFilter = Arrays.asList(new Long[] { 15000030l,
 				15000031l, 15000062l, 15000065l });
@@ -262,49 +263,38 @@ public class ReceptionServiceImpl implements ReceptionService {
 	}
 
 	@Override
+	@Transactional
 	public Reception save(Reception reception) {
-		boolean updateInventory = false;
-		if (reception.getStatus().equals(Status.CLOSED) && reception.getDateReceived() == null) {
-			reception.setDateReceived(new Date());
-
-			updateInventory = true;
-		}
-
-		this.calculateAmounts(reception);
-
-		reception = this.receptionRepository.save(reception);
-
-		if(updateInventory){
-			this.updateInventory(reception);
-		}
-		
-		return reception;
+		return this.save(Arrays.asList(new Reception[]{reception})).iterator().next();
 	}
 
 	@Override
 	public Iterable<Reception> save(Iterable<Reception> receptions) {
+		Set<Reception> receptionsToUpdateInventory = new HashSet<Reception>();
 		for(Reception reception : receptions){
-			if (reception.getStatus().equals(Status.CLOSED)) {
-
-				Reception oldReception = null;
-				Revision<Integer, Reception> revision = this.receptionRepository
-						.findLastChangeRevision(reception.getId());
+			if(reception.getStatus().equals(Status.STANDBY) || reception.getStatus().equals(Status.SHIPPED)){
+				reception.setEditable(true);
+			}else{
+				reception.setEditable(false);
+			}
+			
+			if (reception.getStatus().equals(Status.CLOSED) && reception.getDateReceived() == null) {
+				reception.setDateReceived(new Date());
 				
-				if (revision != null) {
-					oldReception = revision.getEntity();
-				}
-
-				if (oldReception == null
-						|| !oldReception.getStatus().equals(reception.getStatus())) {
-					reception.setDateReceived(new Date());
-					this.updateInventory(reception);
-				}
+				receptionsToUpdateInventory.add(reception);
 			}
 
 			this.calculateAmounts(reception);
 		}
 
-		return this.receptionRepository.save(receptions);
+		receptions = this.receptionRepository.save(receptions);
+		
+		for(Reception reception : receptionsToUpdateInventory){
+			this.updateInventory(reception);
+		}
+		
+		return receptions;
+		
 	}
 
 	private void updateInventory(Reception reception) {
@@ -319,7 +309,7 @@ public class ReceptionServiceImpl implements ReceptionService {
 		Pageable pageRequest = new PageRequest(0, 50);
 		Page<Reception> page = null;
 		do {
-			page = this.receptionRepository.findByStatus(Status.OPEN, pageRequest);
+			page = this.receptionRepository.findByStatus(Status.STANDBY, pageRequest);
 			for(Reception reception : page.getContent()){
 				reception.setStatus(Status.CLOSED);
 			}

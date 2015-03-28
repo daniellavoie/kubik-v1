@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Reception {
 	public enum Status{
-		OPEN, IN_PROGRESS, CLOSED, CANCELED;
+		STANDBY, SHIPPED, IN_PROGRESS, CLOSED, CANCELED;
 	}
 	
 	private Integer id;
@@ -45,6 +45,7 @@ public class Reception {
 	
 	private float discount;
 	private double totalAmountTaxOut;
+	private boolean editable;
 	
 	public Reception(){
 		
@@ -55,7 +56,7 @@ public class Reception {
 			DeliveryDateType deliveryDateType, Date deliveryDate,
 			PurchaseOrder purchaseOrder, List<ReceptionDetail> details,
 			Status status, List<ShippingPackage> shippingPackages,
-			float discount, double totalAmountTaxOut) {
+			float discount, double totalAmountTaxOut, boolean editable) {
 		this.id = id;
 		this.supplier = supplier;
 		this.shippingMode = shippingMode;
@@ -69,6 +70,7 @@ public class Reception {
 		this.shippingPackages = shippingPackages;
 		this.discount = discount;
 		this.totalAmountTaxOut = totalAmountTaxOut;
+		this.editable = editable;
 	}
 
 	@Id
@@ -184,5 +186,13 @@ public class Reception {
 
 	public void setTotalAmountTaxOut(double totalAmountTaxOut) {
 		this.totalAmountTaxOut = totalAmountTaxOut;
+	}
+
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 }

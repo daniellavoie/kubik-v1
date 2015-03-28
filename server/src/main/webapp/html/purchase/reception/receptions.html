@@ -53,7 +53,8 @@
 						<td><a href="#" ng-click="openSupplierCard(reception.supplier, $event)">{{reception.supplier.name}}</a></td>
 						<td><a th:href="@{/purchaseOrder/{{reception.purchaseOrder.id}}}">{{reception.purchaseOrder.id}}</a></td>
 						<td>
-							<span ng-if="reception.status == 'OPEN'" class="label label-info">Ouverte</span>
+							<span ng-if="reception.status == 'STANDBY'" class="label label-default">En attente</span>
+							<span ng-if="reception.status == 'SHIPPED'" class="label label-primary">Expédiée</span>
 							<span ng-if="reception.status == 'CLOSED'" class="label label-success">Fermée</span>
 							<span ng-if="reception.status == 'CANCELED'" class="label label-danger">Annulée</span>
 						</td>

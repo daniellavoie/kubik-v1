@@ -26,10 +26,10 @@ public class FetchDilicomTask implements InitializingBean {
 	@Autowired
 	private JobExecutionService jobExecutionService;
 
-	@Value("${kubik.reference.dilicom.archive.folder}")
+	@Value("${kubik.dilicom.archive.folder}")
 	private String archiveDirectoryPath;
 
-	@Value("${kubik.reference.dilicom.references.folder}")
+	@Value("${kubik.dilicom.references.folder}")
 	private String referencesDirectoryPath;
 	
 	private File archiveDirectory;

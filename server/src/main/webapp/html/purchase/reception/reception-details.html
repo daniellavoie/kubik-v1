@@ -41,7 +41,8 @@
 						<td><a href="#" ng-click="kubikSupplierCard.openCard(reception.supplier)">{{reception.supplier.name}}</a></td>
 						<td><a th:href="@{/purchaseOrder/{{reception.purchaseOrder.id}}}">{{reception.purchaseOrder.id}}</a></td>
 						<td>
-							<span ng-if="reception.status == 'OPEN'" class="label label-info">Ouverte</span>
+							<span ng-if="reception.status == 'STANDBY'" class="label label-default">En attente</span>
+							<span ng-if="reception.status == 'SHIPPED'" class="label label-primary">Expédiée</span>
 							<span ng-if="reception.status == 'CLOSED'" class="label label-success">Fermée</span>
 							<span ng-if="reception.status == 'CANCELED'" class="label label-danger">Annulée</span>
 						</td>
@@ -52,6 +53,7 @@
 						<td>
 							<input 
 								id="reception-detail-{{detail.id}}"	
+								ng-if="reception.editable"
 								ng-model="reception.discount"
 								ng-keyup="receptionChanged($event)"
 								class="quantity form-control"
@@ -60,6 +62,7 @@
 								max="100" 
 								step="0.1"
 							/>
+							<span ng-if="!reception.editable">{{reception.discount}}</span>
 						</td>
 						<td>{{reception.details.length}}</td>
 						<td>{{calculateReceptionQuantity(reception)}}</td>
@@ -90,7 +93,7 @@
 						<td>
 							<input 
 								id="reception-detail-discount-{{detail.id}}"	
-								ng-if="reception.status == 'OPEN' && (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)"
+								ng-if="reception.editable && (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)"
 								ng-model="detail.discount"
 								ng-keyup="receptionChanged($event)"
 								class="quantity form-control"
@@ -99,13 +102,13 @@
 								max="100" 
 								step="0.1"
 							/>
-							<span ng-if="reception.status != 'OPEN' && detail.product.purchasePriceTaxOut != 0 && detail.product.purchasePriceTaxOut != null)" >{{detail.discount}}</span>
+							<span ng-if="!reception.editable && detail.product.purchasePriceTaxOut != 0 && detail.product.purchasePriceTaxOut != null)" >{{detail.discount}}</span>
 						</td>
 						<td>{{detail.quantityToReceive}}</td>
 						<td>
 							<input 
 								id="detail-{{detail.id}}"
-								ng-if="reception.status  == 'OPEN'"
+								ng-if="reception.editable"
 								ng-model="detail.quantityReceived"
 								ng-keyup="receptionChanged($event)"
 								class="quantity form-control" 
@@ -113,16 +116,16 @@
 								min="1" 
 								max="99999" 
 							/>
-							<span ng-if="reception.status != 'OPEN'">{{detail.quantityReceived}}</span>
+							<span ng-if="!reception.editable">{{detail.quantityReceived}}</span>
 						</td>
 						<td><span title="{{detail.discountType.description}}">{{detail.discountApplied}} %</span></td>
 						<td class="unitPriceTaxOut">
 							<input
-								ng-if="reception.status  == 'OPEN' && (detail.product.purchasePriceTaxOut != 0 && detail.product.purchasePriceTaxOut != null)"
+								ng-if="reception.editable && (detail.product.purchasePriceTaxOut != 0 && detail.product.purchasePriceTaxOut != null)"
 								class="form-control " 
 								ng-model="detail.unitPriceTaxOut"
 							/>
-							<span ng-if="reception.status  != 'OPEN' || (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)">
+							<span ng-if="!reception.editable || (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)">
 								{{detail.unitPriceTaxOut | currency : '&euro;'}}
 							</span>
 						</td>						
@@ -137,7 +140,7 @@
 				</tbody>
 			</table>
 			
-			<div ng-if="reception.status == 'OPEN'">
+			<div ng-if="reception.editable">
 				<button ng-click="confirmReceptionValidation()" type="button" class="btn btn-primary">Confirmer la réception</button>
 			</div>
 			
