@@ -26,6 +26,12 @@ public class ProductController {
 	@Autowired
 	private SupplierService supplierService;
 
+	@RequestMapping(params="ean13", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Iterable<Product> findByEan13(
+			@RequestParam String ean13) {
+		return this.productService.findByEan13(ean13);
+	}
+
 	@RequestMapping(params = { "ean13", "supplierEan13" }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Product findByEan13AndSupplierEan13(
 			@RequestParam String ean13, @RequestParam String supplierEan13) {

@@ -198,7 +198,22 @@
 				</div>
 			</div>
 		
+			<div class="product-not-found alert modal fade hidden">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body alert alert-danger">
+							Aucune produit retrouvé pour l'ean13 {{ean13}}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+						</div> 
+					</div>
+				</div>
+			</div>
+		
 			<div th:replace="sales/customer/customers-modal :: customers-modal"></div>
+		
+			<div th:replace="product/products-modal :: products-modal"></div>
 		</div>
 		
 		<div class="search-reference"></div>

@@ -47,7 +47,6 @@
 								<li><a th:href="@{/dailyReport}">Rapports journaliers</a></li>
 <!-- 								<li><a href="#">Commandes</a></li> -->
 <!-- 								<li><a href="#">Factures</a></li> -->
-    							<li class="divider"></li>
 								<li><a th:href="@{/customer}">Clients</a></li>
 								<li><a th:href="@{/customerCredit}">Avoirs clients</a></li>
 							</ul>
@@ -58,8 +57,11 @@
 							<ul class="dropdown-menu" role="menu">
 								<li><a th:href="@{/product}">Produits</a></li>
 								<li><a th:href="@{/supplier}">Fournisseurs</a></li>
+    							<li class="divider"></li>
+								<li><a th:href="@{/dilicom/referencesUpdates}">Mises à jour Dilicom</a></li>
 							</ul>
 						</li>
+<<<<<<< Upstream, based on master
 						
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Comptabilité<span class="caret"></span></a>
@@ -76,6 +78,8 @@
 <!-- 						</li> -->
 						
 <!-- 						<li><a href="#" c data-toggle="dropdown" role="button" aria-expanded="false">Dilicom</span></a></li> -->
+=======
+>>>>>>> 972eefc WIP
 					</ul>
 						
 					<form class="logout" th:action="@{/logout}" method="post">

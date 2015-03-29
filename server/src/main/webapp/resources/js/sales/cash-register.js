@@ -163,20 +163,18 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	$scope.searchProduct = function(){
 		if($scope.ean13 != "" && !$scope.searchInProgress){
 			$scope.searchInProgress = true;
-			$http.get("productSearch/" + $scope.ean13 + "?importedInKubik").success(function(productSearch){
+			$http.get("product?ean13=" + $scope.ean13).success(function(productsPage){
 				// Check if a product was found
-				if(productSearch.products.length == 0){
+				if(productsPage.content.length == 0){
 					// Show a warning explaining that the product does not exists.
-				}else if (productSearch.products.length > 1){
+					(".product-not-found").modal();
+				}else if (productsPage.content.length > 1){
 					// Show modal to ask product confirmation.
-					$scope.productSearch = productSearch;
+					$scope.products = productsPage.content;
 					
-					$("choose-product-modal").modal({
-						backdrop : "static",
-						keyboard : "false"
-					});
+					
 				}else{
-					$scope.addOneProduct(productSearch.products[0]);
+					$scope.addOneProduct(productsPage.content[0]);
 				}
 			}).finally(function(){
 				$scope.searchInProgress = false;
@@ -249,7 +247,7 @@ app.controller("KubikPaymentController", function($scope, $http, $timeout){
 		
 		$scope.invoice = invoice;		
 		$scope.amountLeft = invoice.totalAmount;
-		
+			
 		// Open the modal.
 		$(".payment-modal").modal({
 			backdrop : "static",

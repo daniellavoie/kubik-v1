@@ -11,6 +11,8 @@ public interface ProductService {
 	
 	Product buildProductFromReference(Reference reference);
 
+	Iterable<Product> findByEan13(String ean13);
+	
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
 	
 	Iterable<Product> findBySupplier(Supplier supplier);

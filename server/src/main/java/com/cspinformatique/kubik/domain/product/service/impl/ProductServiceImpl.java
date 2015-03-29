@@ -36,7 +36,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 			.getLogger(ProductServiceImpl.class);
 
 	@Autowired
-	ImageService imageService;
+	private ImageService imageService;
 
 	@Autowired
 	private ProductRepository productRepository;
@@ -131,6 +131,11 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 		}
 
 		return productPage;
+	}
+	
+	@Override
+	public Iterable<Product> findByEan13(String ean13){
+		return this.productRepository.findByEan13(ean13);
 	}
 
 	@Override
