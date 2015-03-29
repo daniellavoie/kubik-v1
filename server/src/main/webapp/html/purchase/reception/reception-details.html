@@ -96,6 +96,7 @@
 								ng-if="reception.editable && (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)"
 								ng-model="detail.discount"
 								ng-keyup="receptionChanged($event)"
+								ng-click="receptionChanged($event)"
 								class="quantity form-control"
 								type="number"
 								min="0" 
@@ -110,6 +111,7 @@
 								id="detail-{{detail.id}}"
 								ng-if="reception.editable"
 								ng-model="detail.quantityReceived"
+								ng-click="receptionChanged($event)"
 								ng-keyup="receptionChanged($event)"
 								class="quantity form-control" 
 								type="number"
@@ -123,6 +125,7 @@
 							<input
 								ng-if="reception.editable && (detail.product.purchasePriceTaxOut != 0 && detail.product.purchasePriceTaxOut != null)"
 								class="form-control " 
+								ng-keyup="receptionChanged($event)"
 								ng-model="detail.unitPriceTaxOut"
 							/>
 							<span ng-if="!reception.editable || (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)">
