@@ -30,8 +30,7 @@ public class ServerServiceImpl implements ServerService {
 
 	@Override
 	public void deleteReceiptPrintJob(int id) {
-		this.restTemplate.exchange(this.serverUrl + "/invoice/" + id
-				+ "/receipt", HttpMethod.DELETE, new HttpEntity<Void>(null,
+		this.restTemplate.exchange(this.serverUrl + "/print/" + id, HttpMethod.DELETE, new HttpEntity<Void>(null,
 				RestUtil.createBasicAuthHeader(kubikUsername, kubikPassword)),
 				Void.class);
 	}
@@ -40,7 +39,7 @@ public class ServerServiceImpl implements ServerService {
 	public Iterable<ReceiptPrintJob> findPendingReceiptPrintJob() {
 		return Arrays.asList(this.restTemplate
 				.exchange(
-						serverUrl + "/print.jsonm",
+						serverUrl + "/print",
 						HttpMethod.GET,
 						new HttpEntity<Void>(null, RestUtil
 								.createBasicAuthHeader(kubikUsername,
@@ -51,7 +50,7 @@ public class ServerServiceImpl implements ServerService {
 	@Override
 	public byte[] loadInvoiceReceiptData(Invoice invoice) {
 		return this.restTemplate.exchange(
-				serverUrl + "/print",
+				serverUrl + "/invoice/" + invoice.getId() + "/receipt",
 				HttpMethod.GET,
 				new HttpEntity<Void>(null, RestUtil.createBasicAuthHeader(
 						kubikUsername, kubikPassword)), byte[].class).getBody();

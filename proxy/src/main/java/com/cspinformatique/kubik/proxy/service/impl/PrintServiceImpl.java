@@ -36,18 +36,20 @@ public class PrintServiceImpl implements PrintService {
 	private boolean lostPrinter = false;
 	private boolean lostServer = false;
 
-	private javax.print.PrintService loadPrinterConfiguration(){
+	private void loadPrinterConfiguration(){
 		javax.print.PrintService[] services = PrintServiceLookup
 				.lookupPrintServices(PRINT_FLAVOR, null);
-
+		this.printer = null;
+		
 		for (javax.print.PrintService service : services) {
 			if (service.getName().contains(printerName)) {
 				this.printer = service;
 			}
 		}
-
-		throw new RuntimeException("Printer " + printerName
-				+ " could not be found.");
+		
+		if(this.printer == null){
+			throw new PrinterNotFoundException(printerName);
+		}
 	}
 
 	@Override
