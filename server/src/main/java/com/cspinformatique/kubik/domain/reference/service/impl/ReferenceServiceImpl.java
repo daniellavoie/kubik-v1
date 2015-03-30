@@ -18,7 +18,7 @@ import com.cspinformatique.kubik.domain.product.service.ImageService;
 import com.cspinformatique.kubik.domain.reference.model.Reference;
 import com.cspinformatique.kubik.domain.reference.repository.ReferenceRepository;
 import com.cspinformatique.kubik.domain.reference.service.ReferenceService;
-import com.cspinformatique.kubik.product.model.Product;
+import com.cspinformatique.kubik.model.product.Product;
 
 @Service
 public class ReferenceServiceImpl implements ReferenceService {

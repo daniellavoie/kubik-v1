@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.cspinformatique.kubik.domain.sales.service.DailyReportService;
-import com.cspinformatique.kubik.sales.model.DailyReport;
+import com.cspinformatique.kubik.model.sales.DailyReport;
 
 @Controller
 @RequestMapping("/dailyReport")

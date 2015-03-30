@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cspinformatique.kubik.domain.sales.service.CashRegisterService;
 import com.cspinformatique.kubik.domain.sales.service.CashRegisterSessionService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
-import com.cspinformatique.kubik.sales.model.Invoice;
+import com.cspinformatique.kubik.model.sales.Invoice;
 
 @Controller
 @RequestMapping("/cashRegister")

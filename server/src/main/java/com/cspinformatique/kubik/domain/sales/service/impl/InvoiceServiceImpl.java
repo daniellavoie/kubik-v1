@@ -27,14 +27,14 @@ import com.cspinformatique.kubik.domain.sales.service.CashRegisterSessionService
 import com.cspinformatique.kubik.domain.sales.service.DailyReportService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.sales.model.CashRegisterSession;
-import com.cspinformatique.kubik.sales.model.Invoice;
-import com.cspinformatique.kubik.sales.model.InvoiceDetail;
-import com.cspinformatique.kubik.sales.model.InvoiceStatus;
-import com.cspinformatique.kubik.sales.model.InvoiceStatus.Types;
-import com.cspinformatique.kubik.sales.model.InvoiceTaxAmount;
-import com.cspinformatique.kubik.sales.model.Payment;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.sales.CashRegisterSession;
+import com.cspinformatique.kubik.model.sales.Invoice;
+import com.cspinformatique.kubik.model.sales.InvoiceDetail;
+import com.cspinformatique.kubik.model.sales.InvoiceStatus;
+import com.cspinformatique.kubik.model.sales.InvoiceTaxAmount;
+import com.cspinformatique.kubik.model.sales.Payment;
+import com.cspinformatique.kubik.model.sales.InvoiceStatus.Types;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -243,6 +243,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 		return this.invoiceRepository.findByPaidDateBetweenAndStatus(paidDate,
 				LocalDate.fromDateFields(paidDate).plusDays(1).toDate(),
 				new InvoiceStatus(InvoiceStatus.Types.PAID.toString(), null));
+	}
+	
+	@Override
+	public Page<Invoice> findByPaidDateBetweenAndStatus(Date startPaidDate,
+			Date startEndDate, InvoiceStatus status, Pageable pageable){
+		return this.invoiceRepository.findByPaidDateBetweenAndStatus(startPaidDate, startEndDate, status, pageable);
 	}
 
 	@Override

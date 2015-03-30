@@ -10,8 +10,8 @@ import com.cspinformatique.kubik.domain.sales.service.CustomerCreditService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.domain.warehouse.repository.ProductInventoryRepository;
 import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.warehouse.model.ProductInventory;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.warehouse.ProductInventory;
 
 @Service
 public class ProductInventoryServiceImpl implements ProductInventoryService {

@@ -8,7 +8,7 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.envers.Audited;
 
-import com.cspinformatique.kubik.product.model.Product;
+import com.cspinformatique.kubik.model.product.Product;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity

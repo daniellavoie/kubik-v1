@@ -6,14 +6,17 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.cspinformatique.kubik.sales.model.Customer;
-import com.cspinformatique.kubik.sales.model.CustomerCredit;
-import com.cspinformatique.kubik.sales.model.Invoice;
+import com.cspinformatique.kubik.model.sales.Customer;
+import com.cspinformatique.kubik.model.sales.CustomerCredit;
+import com.cspinformatique.kubik.model.sales.CustomerCredit.Status;
+import com.cspinformatique.kubik.model.sales.Invoice;
 
 public interface CustomerCreditService {
 	Page<CustomerCredit> findAll(Pageable pageable);
 	
 	List<CustomerCredit> findByCompleteDate(Date date);
+	
+	Page<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate, Date endDate, Status status, Pageable pageable);
 	
 	List<CustomerCredit> findByInvoice(Invoice invoice);
 	

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
 import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrderDetail;
 import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder.Status;
-import com.cspinformatique.kubik.product.model.Product;
+import com.cspinformatique.kubik.model.product.Product;
 
 public interface PurchaseOrderDetailRepository extends
 		JpaRepository<PurchaseOrderDetail, Integer> {

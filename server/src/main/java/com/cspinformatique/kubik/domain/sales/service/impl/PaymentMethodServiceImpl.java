@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.sales.repository.PaymentMethodRepository;
 import com.cspinformatique.kubik.domain.sales.service.PaymentMethodService;
-import com.cspinformatique.kubik.sales.model.PaymentMethod;
+import com.cspinformatique.kubik.model.sales.PaymentMethod;
 
 @Service
 public class PaymentMethodServiceImpl implements PaymentMethodService {

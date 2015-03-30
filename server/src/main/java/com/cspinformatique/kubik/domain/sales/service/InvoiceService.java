@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.cspinformatique.kubik.sales.model.CashRegisterSession;
-import com.cspinformatique.kubik.sales.model.Invoice;
-import com.cspinformatique.kubik.sales.model.InvoiceDetail;
-import com.cspinformatique.kubik.sales.model.InvoiceStatus;
+import com.cspinformatique.kubik.model.sales.CashRegisterSession;
+import com.cspinformatique.kubik.model.sales.Invoice;
+import com.cspinformatique.kubik.model.sales.InvoiceDetail;
+import com.cspinformatique.kubik.model.sales.InvoiceStatus;
 
 public interface InvoiceService {
 	InvoiceDetail findDetailByInvoiceIdAndProductEan13(int invoiceId, String ean13);
@@ -23,6 +23,9 @@ public interface InvoiceService {
 	Invoice findByNumber(String number);
 	
 	List<Invoice> findByPaidDate(Date paidDate);
+	
+	Page<Invoice> findByPaidDateBetweenAndStatus(Date startPaidDate,
+			Date startEndDate, InvoiceStatus status, Pageable pageable);
 	
 	Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable);
 	

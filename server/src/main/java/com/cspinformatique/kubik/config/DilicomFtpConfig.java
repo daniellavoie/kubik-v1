@@ -16,17 +16,17 @@ public class DilicomFtpConfig {
 	private String dilicomFtpUsername;
 
 	@Value("${kubik.dilicom.ftp.password}")
-	private String dilocomFtpPassword;
+	private String dilicomFtpPassword;
 	
 	public @Bean SessionFactory<FTPFile> dilicomFtpSessionFactory(){
 		DefaultFtpSessionFactory dilicomFtpSessionFactory = new DefaultFtpSessionFactory();
 		
 		dilicomFtpSessionFactory.setHost(dilicomFtpUrl);
-		dilicomFtpSessionFactory.setClientMode(0);
+		dilicomFtpSessionFactory.setClientMode(2);
 		dilicomFtpSessionFactory.setFileType(0);
 		dilicomFtpSessionFactory.setPort(21);
 		dilicomFtpSessionFactory.setUsername(dilicomFtpUsername);
-		dilicomFtpSessionFactory.setPassword(dilocomFtpPassword);
+		dilicomFtpSessionFactory.setPassword(dilicomFtpPassword);
         
         return dilicomFtpSessionFactory;
 	}

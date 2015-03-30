@@ -7,7 +7,7 @@ import com.cspinformatique.kubik.domain.purchase.model.PurchaseSession;
 import com.cspinformatique.kubik.domain.purchase.model.PurchaseSession.Status;
 import com.cspinformatique.kubik.domain.purchase.repository.PurchaseSessionDetailRepository;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseSessionDetailService;
-import com.cspinformatique.kubik.product.model.Product;
+import com.cspinformatique.kubik.model.product.Product;
 
 @Service
 public class PurchaseSessionDetailServiceImpl implements

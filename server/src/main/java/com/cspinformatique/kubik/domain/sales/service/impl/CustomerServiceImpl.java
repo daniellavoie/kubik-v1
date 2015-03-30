@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.sales.repository.CustomerRepository;
 import com.cspinformatique.kubik.domain.sales.service.CustomerService;
-import com.cspinformatique.kubik.sales.model.Customer;
+import com.cspinformatique.kubik.model.sales.Customer;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {

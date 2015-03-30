@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.cspinformatique.kubik.product.model.Supplier;
+import com.cspinformatique.kubik.model.product.Supplier;
 
 @Entity
 public class Rma {

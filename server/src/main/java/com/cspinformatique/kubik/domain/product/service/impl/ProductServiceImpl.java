@@ -22,13 +22,13 @@ import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder.Status;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.domain.reference.model.Reference;
 import com.cspinformatique.kubik.domain.reference.service.ReferenceService;
-import com.cspinformatique.kubik.product.model.AvailabilityCode;
-import com.cspinformatique.kubik.product.model.BarcodeType;
-import com.cspinformatique.kubik.product.model.PriceType;
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.product.model.ProductType;
-import com.cspinformatique.kubik.product.model.ReturnType;
-import com.cspinformatique.kubik.product.model.Supplier;
+import com.cspinformatique.kubik.model.product.AvailabilityCode;
+import com.cspinformatique.kubik.model.product.BarcodeType;
+import com.cspinformatique.kubik.model.product.PriceType;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.ProductType;
+import com.cspinformatique.kubik.model.product.ReturnType;
+import com.cspinformatique.kubik.model.product.Supplier;
 
 @Service
 public class ProductServiceImpl implements ProductService, InitializingBean {

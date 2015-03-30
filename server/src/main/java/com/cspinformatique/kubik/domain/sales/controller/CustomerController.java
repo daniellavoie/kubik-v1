@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cspinformatique.kubik.domain.sales.service.CustomerCreditService;
 import com.cspinformatique.kubik.domain.sales.service.CustomerService;
-import com.cspinformatique.kubik.sales.model.Customer;
+import com.cspinformatique.kubik.model.sales.Customer;
 
 @Controller
 @RequestMapping("/customer")

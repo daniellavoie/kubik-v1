@@ -1,6 +1,6 @@
 package com.cspinformatique.kubik.domain.product.service;
 
-import com.cspinformatique.kubik.product.model.Supplier;
+import com.cspinformatique.kubik.model.product.Supplier;
 
 public interface SupplierService {
 	

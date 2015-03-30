@@ -4,8 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.cspinformatique.kubik.domain.reference.model.Reference;
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.product.model.Supplier;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.Supplier;
 
 public interface ProductService {
 	

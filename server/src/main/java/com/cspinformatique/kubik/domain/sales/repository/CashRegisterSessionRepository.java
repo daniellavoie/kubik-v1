@@ -4,8 +4,8 @@ import java.util.Date;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.cspinformatique.kubik.sales.model.CashRegister;
-import com.cspinformatique.kubik.sales.model.CashRegisterSession;
+import com.cspinformatique.kubik.model.sales.CashRegister;
+import com.cspinformatique.kubik.model.sales.CashRegisterSession;
 
 public interface CashRegisterSessionRepository extends
 		PagingAndSortingRepository<CashRegisterSession, Integer> {

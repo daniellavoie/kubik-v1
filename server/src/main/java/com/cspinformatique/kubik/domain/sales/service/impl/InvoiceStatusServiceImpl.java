@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.sales.repository.InvoiceStatusRepository;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceStatusService;
-import com.cspinformatique.kubik.sales.model.InvoiceStatus;
+import com.cspinformatique.kubik.model.sales.InvoiceStatus;
 
 @Service
 public class InvoiceStatusServiceImpl implements InvoiceStatusService {

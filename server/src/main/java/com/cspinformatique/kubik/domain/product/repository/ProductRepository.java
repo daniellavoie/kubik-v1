@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.product.model.Supplier;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.Supplier;
 
 public interface ProductRepository extends
 		PagingAndSortingRepository<Product, Integer> {

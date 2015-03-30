@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.cspinformatique.kubik.print.model.ReceiptPrintJob;
+import com.cspinformatique.kubik.model.print.ReceiptPrintJob;
+import com.cspinformatique.kubik.model.sales.Invoice;
 import com.cspinformatique.kubik.print.repository.PrintJobRepository;
 import com.cspinformatique.kubik.print.service.PrintService;
 import com.cspinformatique.kubik.proxy.service.ProxyService;
-import com.cspinformatique.kubik.sales.model.Invoice;
 
 @Service
 public class PrintServiceImpl implements PrintService {

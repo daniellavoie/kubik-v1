@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cspinformatique.kubik.domain.product.service.ProductSearchService;
-import com.cspinformatique.kubik.product.model.ProductSearch;
+import com.cspinformatique.kubik.model.product.ProductSearch;
 
 @Controller
 @RequestMapping("/productSearch")

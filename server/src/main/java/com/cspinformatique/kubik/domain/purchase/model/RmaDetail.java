@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import com.cspinformatique.kubik.product.model.Product;
+import com.cspinformatique.kubik.model.product.Product;
 
 @Entity
 public class RmaDetail {

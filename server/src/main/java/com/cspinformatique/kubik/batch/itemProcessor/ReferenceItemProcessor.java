@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.reference.model.DilicomReference;
 import com.cspinformatique.kubik.domain.reference.model.Reference;
-import com.cspinformatique.kubik.product.model.Product;
+import com.cspinformatique.kubik.model.product.Product;
 
 @Component
 public class ReferenceItemProcessor implements

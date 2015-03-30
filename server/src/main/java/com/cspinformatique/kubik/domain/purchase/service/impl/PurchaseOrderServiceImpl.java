@@ -31,8 +31,8 @@ import com.cspinformatique.kubik.domain.purchase.service.DilicomOrderService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderDetailService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.domain.purchase.service.ReceptionService;
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.product.model.Supplier;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.Supplier;
 
 @Service
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {

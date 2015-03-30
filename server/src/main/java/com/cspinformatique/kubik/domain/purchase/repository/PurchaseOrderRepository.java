@@ -7,7 +7,7 @@ import org.springframework.data.repository.history.RevisionRepository;
 
 import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
 import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder.Status;
-import com.cspinformatique.kubik.product.model.Supplier;
+import com.cspinformatique.kubik.model.product.Supplier;
 
 public interface PurchaseOrderRepository extends
 		RevisionRepository<PurchaseOrder, Long, Integer>,

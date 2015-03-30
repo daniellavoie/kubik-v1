@@ -3,7 +3,7 @@ package com.cspinformatique.kubik.domain.sales.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.cspinformatique.kubik.sales.model.Customer;
+import com.cspinformatique.kubik.model.sales.Customer;
 
 public interface CustomerService {
 	Iterable<Customer> findAll();

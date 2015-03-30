@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
-import com.cspinformatique.kubik.print.model.ReceiptPrintJob;
+import com.cspinformatique.kubik.model.print.ReceiptPrintJob;
 import com.cspinformatique.kubik.proxy.exception.PrinterNotFoundException;
 import com.cspinformatique.kubik.proxy.service.PrintService;
 import com.cspinformatique.kubik.proxy.service.ServerService;

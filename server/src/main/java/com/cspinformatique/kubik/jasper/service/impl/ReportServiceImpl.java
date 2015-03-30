@@ -15,7 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.jasper.service.ReportService;
-import com.cspinformatique.kubik.sales.model.Invoice;
+import com.cspinformatique.kubik.model.sales.Invoice;
 
 @Service
 public class ReportServiceImpl implements ReportService {

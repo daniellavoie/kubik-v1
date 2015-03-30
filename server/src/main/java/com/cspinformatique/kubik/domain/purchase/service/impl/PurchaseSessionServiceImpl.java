@@ -25,8 +25,8 @@ import com.cspinformatique.kubik.domain.purchase.repository.PurchaseSessionRepos
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseSessionDetailService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseSessionService;
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.product.model.Supplier;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.Supplier;
 
 @Service
 public class PurchaseSessionServiceImpl implements PurchaseSessionService {

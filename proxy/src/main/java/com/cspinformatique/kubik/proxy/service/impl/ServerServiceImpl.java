@@ -9,10 +9,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.cspinformatique.kubik.print.model.ReceiptPrintJob;
+import com.cspinformatique.kubik.model.print.ReceiptPrintJob;
+import com.cspinformatique.kubik.model.sales.Invoice;
 import com.cspinformatique.kubik.proxy.service.ServerService;
 import com.cspinformatique.kubik.proxy.util.RestUtil;
-import com.cspinformatique.kubik.sales.model.Invoice;
 
 @Service
 public class ServerServiceImpl implements ServerService {

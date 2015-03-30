@@ -9,15 +9,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.cspinformatique.kubik.sales.model.Customer;
-import com.cspinformatique.kubik.sales.model.CustomerCredit;
-import com.cspinformatique.kubik.sales.model.Invoice;
-import com.cspinformatique.kubik.sales.model.CustomerCredit.Status;
+import com.cspinformatique.kubik.model.sales.Customer;
+import com.cspinformatique.kubik.model.sales.CustomerCredit;
+import com.cspinformatique.kubik.model.sales.Invoice;
+import com.cspinformatique.kubik.model.sales.CustomerCredit.Status;
 
 public interface CustomerCreditRepository extends
 		JpaRepository<CustomerCredit, Integer> {
 
 	List<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate, Date endDate, Status status);
+	
+	Page<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate, Date endDate, Status status, Pageable pageable);
 	
 	List<CustomerCredit> findByInvoice(Invoice invoice);
 	

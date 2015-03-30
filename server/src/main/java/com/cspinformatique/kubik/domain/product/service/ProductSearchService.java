@@ -1,6 +1,6 @@
 package com.cspinformatique.kubik.domain.product.service;
 
-import com.cspinformatique.kubik.product.model.ProductSearch;
+import com.cspinformatique.kubik.model.product.ProductSearch;
 
 public interface ProductSearchService {
 	public ProductSearch searchByEan13(String ean13);

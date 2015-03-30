@@ -40,8 +40,8 @@ import com.cspinformatique.kubik.domain.purchase.task.exception.ProductNotFoundE
 import com.cspinformatique.kubik.domain.purchase.task.exception.PurchaseOrderNotFoundException;
 import com.cspinformatique.kubik.domain.purchase.task.exception.PurchaseOrderReceptionNotFoundException;
 import com.cspinformatique.kubik.domain.purchase.task.exception.ReceptionAlreadyReceivedException;
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.product.model.Supplier;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.Supplier;
 
 @Component
 public class FetchReceptionsTask implements InitializingBean {

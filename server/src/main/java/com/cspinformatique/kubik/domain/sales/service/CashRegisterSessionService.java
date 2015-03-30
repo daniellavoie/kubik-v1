@@ -1,7 +1,7 @@
 package com.cspinformatique.kubik.domain.sales.service;
 
-import com.cspinformatique.kubik.sales.model.CashRegister;
-import com.cspinformatique.kubik.sales.model.CashRegisterSession;
+import com.cspinformatique.kubik.model.sales.CashRegister;
+import com.cspinformatique.kubik.model.sales.CashRegisterSession;
 
 public interface CashRegisterSessionService {	
 	CashRegisterSession closeSession(int id);

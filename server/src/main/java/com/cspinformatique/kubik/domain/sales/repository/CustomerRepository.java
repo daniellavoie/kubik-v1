@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.cspinformatique.kubik.sales.model.Customer;
+import com.cspinformatique.kubik.model.sales.Customer;
 
 public interface CustomerRepository extends
 		PagingAndSortingRepository<Customer, Integer> {

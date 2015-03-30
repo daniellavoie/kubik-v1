@@ -1,7 +1,7 @@
 package com.cspinformatique.kubik.domain.warehouse.service;
 
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.warehouse.model.ProductInventory;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.warehouse.ProductInventory;
 
 public interface ProductInventoryService {
 	ProductInventory findByProduct(Product product);

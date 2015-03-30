@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.cspinformatique.kubik.print.model.ReceiptPrintJob;
+import com.cspinformatique.kubik.model.print.ReceiptPrintJob;
 import com.cspinformatique.kubik.print.service.PrintService;
 
 @Controller

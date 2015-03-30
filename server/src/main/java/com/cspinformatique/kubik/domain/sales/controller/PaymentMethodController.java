@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cspinformatique.kubik.domain.sales.service.PaymentMethodService;
-import com.cspinformatique.kubik.sales.model.PaymentMethod;
+import com.cspinformatique.kubik.model.sales.PaymentMethod;
 
 @Controller
 @RequestMapping("/paymentMethod")

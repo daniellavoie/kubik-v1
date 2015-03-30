@@ -21,12 +21,12 @@ import com.cspinformatique.kubik.domain.sales.repository.DailyReportRepository;
 import com.cspinformatique.kubik.domain.sales.service.CustomerCreditService;
 import com.cspinformatique.kubik.domain.sales.service.DailyReportService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
-import com.cspinformatique.kubik.sales.model.CustomerCredit;
-import com.cspinformatique.kubik.sales.model.DailyReport;
-import com.cspinformatique.kubik.sales.model.Invoice;
-import com.cspinformatique.kubik.sales.model.Payment;
-import com.cspinformatique.kubik.sales.model.PaymentMethod;
-import com.cspinformatique.kubik.sales.model.SalesByPaymentMethod;
+import com.cspinformatique.kubik.model.sales.CustomerCredit;
+import com.cspinformatique.kubik.model.sales.DailyReport;
+import com.cspinformatique.kubik.model.sales.Invoice;
+import com.cspinformatique.kubik.model.sales.Payment;
+import com.cspinformatique.kubik.model.sales.PaymentMethod;
+import com.cspinformatique.kubik.model.sales.SalesByPaymentMethod;
 
 @Service
 public class DailyReportServiceImpl implements DailyReportService {

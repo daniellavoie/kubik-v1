@@ -33,7 +33,7 @@ import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseSessionService;
 import com.cspinformatique.kubik.domain.purchase.service.ReceptionService;
 import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
-import com.cspinformatique.kubik.product.model.Product;
+import com.cspinformatique.kubik.model.product.Product;
 
 @Service
 @Transactional

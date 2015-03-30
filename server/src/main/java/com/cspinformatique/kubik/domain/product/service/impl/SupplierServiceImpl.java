@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.cspinformatique.kubik.domain.product.repository.SupplierRepository;
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
-import com.cspinformatique.kubik.product.model.Supplier;
+import com.cspinformatique.kubik.model.product.Supplier;
 
 @Service
 public class SupplierServiceImpl implements SupplierService {

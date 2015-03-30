@@ -5,7 +5,7 @@ import java.util.Date;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.cspinformatique.kubik.sales.model.DailyReport;
+import com.cspinformatique.kubik.model.sales.DailyReport;
 
 public interface DailyReportService {
 	Page<DailyReport> findAll(Pageable pageable);

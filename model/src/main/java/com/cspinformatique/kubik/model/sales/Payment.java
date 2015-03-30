@@ -1,0 +1,66 @@
+package com.cspinformatique.kubik.model.sales;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+@Entity
+public class Payment {
+	private int id;
+	private Invoice invoice;
+	private double amount;
+	private PaymentMethod paymentMethod;
+	
+	public Payment(){
+		
+	}
+
+	public Payment(int id, Invoice invoice, double amount,
+			PaymentMethod paymentMethod) {
+		this.id = id;
+		this.invoice = invoice;
+		this.amount = amount;
+		this.paymentMethod = paymentMethod;
+	}
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@ManyToOne
+	@JsonBackReference
+	public Invoice getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
+	}
+
+	public double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+
+	@ManyToOne
+	public PaymentMethod getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+}

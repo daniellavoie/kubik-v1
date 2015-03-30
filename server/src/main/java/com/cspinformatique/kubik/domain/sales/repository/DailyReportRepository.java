@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.cspinformatique.kubik.sales.model.DailyReport;
+import com.cspinformatique.kubik.model.sales.DailyReport;
 
 public interface DailyReportRepository extends
 		JpaRepository<DailyReport, Integer> {

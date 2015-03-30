@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.cspinformatique.kubik.domain.reference.model.Reference;
-import com.cspinformatique.kubik.product.model.Product;
+import com.cspinformatique.kubik.model.product.Product;
 
 public interface ReferenceService {
 	Reference buildReferenceFromProduct(Product product);

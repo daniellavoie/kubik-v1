@@ -1,22 +1,20 @@
 package com.cspinformatique.kubik.config;
 
-import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.cspinformatique.kubik.domain.accounting.converter.EntryMessageConverter;
+
+@Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void configureMessageConverters(
 			List<HttpMessageConverter<?>> converters) {
-		StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
-		stringConverter.setSupportedMediaTypes(Arrays.asList(new MediaType(
-				"text", "plain", Charset.forName("UTF-8"))));
+		EntryMessageConverter entryMessageConverter = new EntryMessageConverter();
 		
-		converters.add(stringConverter);
+		converters.add(entryMessageConverter);
 	}
 }

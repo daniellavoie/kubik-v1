@@ -15,7 +15,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>com.cspinformatique.kubik.KubikProxy</mainClass>
+					<mainClass>com.cspinformatique.kubik.model.KubikProxy</mainClass>
 				</configuration>
 				<executions>
 					<execution>

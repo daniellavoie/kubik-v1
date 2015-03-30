@@ -13,9 +13,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cspinformatique.kubik.company.model.Company;
 import com.cspinformatique.kubik.domain.company.service.CompanyService;
 import com.cspinformatique.kubik.domain.product.service.ImageService;
+import com.cspinformatique.kubik.model.company.Company;
 
 @Service
 public class ImageServiceImpl implements ImageService, InitializingBean {

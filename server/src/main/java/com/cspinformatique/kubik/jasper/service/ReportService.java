@@ -1,6 +1,6 @@
 package com.cspinformatique.kubik.jasper.service;
 
-import com.cspinformatique.kubik.sales.model.Invoice;
+import com.cspinformatique.kubik.model.sales.Invoice;
 
 import net.sf.jasperreports.engine.JasperPrint;
 

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.sales.repository.CashRegisterSessionRepository;
 import com.cspinformatique.kubik.domain.sales.service.CashRegisterSessionService;
-import com.cspinformatique.kubik.sales.model.CashRegister;
-import com.cspinformatique.kubik.sales.model.CashRegisterSession;
+import com.cspinformatique.kubik.model.sales.CashRegister;
+import com.cspinformatique.kubik.model.sales.CashRegisterSession;
 
 @Service
 public class CashRegisterSessionServiceImpl implements

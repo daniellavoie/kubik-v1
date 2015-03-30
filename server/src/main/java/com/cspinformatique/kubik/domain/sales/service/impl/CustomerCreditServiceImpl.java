@@ -24,14 +24,14 @@ import com.cspinformatique.kubik.domain.sales.service.DailyReportService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.domain.sales.service.PaymentMethodService;
 import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.sales.model.Customer;
-import com.cspinformatique.kubik.sales.model.CustomerCredit;
-import com.cspinformatique.kubik.sales.model.CustomerCredit.Status;
-import com.cspinformatique.kubik.sales.model.CustomerCreditDetail;
-import com.cspinformatique.kubik.sales.model.Invoice;
-import com.cspinformatique.kubik.sales.model.InvoiceDetail;
-import com.cspinformatique.kubik.sales.model.InvoiceTaxAmount;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.sales.Customer;
+import com.cspinformatique.kubik.model.sales.CustomerCredit;
+import com.cspinformatique.kubik.model.sales.CustomerCreditDetail;
+import com.cspinformatique.kubik.model.sales.Invoice;
+import com.cspinformatique.kubik.model.sales.InvoiceDetail;
+import com.cspinformatique.kubik.model.sales.InvoiceTaxAmount;
+import com.cspinformatique.kubik.model.sales.CustomerCredit.Status;
 
 @Service
 public class CustomerCreditServiceImpl implements CustomerCreditService {
@@ -189,6 +189,11 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 								.plusDays(1).toDate(), Status.COMPLETED);
 	}
 
+	@Override
+	public Page<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate, Date endDate, Status status, Pageable pageable){
+		return this.customerCreditRepository.findByCompleteDateBetweenAndStatus(startDate, endDate, status, pageable);
+	}
+	
 	@Override
 	public List<CustomerCredit> findByInvoice(Invoice invoice) {
 		return this.customerCreditRepository.findByInvoice(invoice);

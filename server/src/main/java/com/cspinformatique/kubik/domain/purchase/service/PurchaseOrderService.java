@@ -8,8 +8,8 @@ import org.springframework.data.domain.Pageable;
 import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
 import com.cspinformatique.kubik.domain.purchase.model.Reception;
 import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder.Status;
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.product.model.Supplier;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.Supplier;
 
 public interface PurchaseOrderService {
 	

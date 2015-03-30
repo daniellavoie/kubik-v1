@@ -26,10 +26,10 @@ import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceStatusService;
 import com.cspinformatique.kubik.domain.sales.service.PaymentService;
 import com.cspinformatique.kubik.jasper.service.ReportService;
+import com.cspinformatique.kubik.model.sales.Invoice;
+import com.cspinformatique.kubik.model.sales.InvoiceDetail;
+import com.cspinformatique.kubik.model.sales.Payment;
 import com.cspinformatique.kubik.print.service.PrintService;
-import com.cspinformatique.kubik.sales.model.Invoice;
-import com.cspinformatique.kubik.sales.model.InvoiceDetail;
-import com.cspinformatique.kubik.sales.model.Payment;
 
 @Controller
 @RequestMapping("/invoice")

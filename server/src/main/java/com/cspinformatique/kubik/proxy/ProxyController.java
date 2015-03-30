@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.cspinformatique.kubik.model.proxy.Proxy;
 import com.cspinformatique.kubik.proxy.service.ProxyService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.cspinformatique.kubik.proxy.model.Proxy;
 
 @Controller
 @RequestMapping("/proxy")

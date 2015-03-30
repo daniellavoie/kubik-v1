@@ -11,8 +11,8 @@ import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
 import com.cspinformatique.kubik.domain.reference.model.Reference;
 import com.cspinformatique.kubik.domain.reference.service.ReferenceService;
-import com.cspinformatique.kubik.product.model.Product;
-import com.cspinformatique.kubik.product.model.ProductSearch;
+import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.ProductSearch;
 
 @Service
 public class ProductSearchServiceImpl implements ProductSearchService {

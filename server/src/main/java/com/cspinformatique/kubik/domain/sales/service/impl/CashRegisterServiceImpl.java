@@ -9,7 +9,7 @@ import com.cspinformatique.kubik.domain.sales.repository.CashRegisterRepository;
 import com.cspinformatique.kubik.domain.sales.service.CashRegisterService;
 
 
-import com.cspinformatique.kubik.sales.model.CashRegister;
+import com.cspinformatique.kubik.model.sales.CashRegister;
 
 @Service
 public class CashRegisterServiceImpl implements CashRegisterService {
