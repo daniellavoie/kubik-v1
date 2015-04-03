@@ -12,6 +12,8 @@ import com.cspinformatique.kubik.model.sales.CustomerCredit.Status;
 import com.cspinformatique.kubik.model.sales.Invoice;
 
 public interface CustomerCreditService {
+	Iterable<CustomerCredit> findAll();
+	
 	Page<CustomerCredit> findAll(Pageable pageable);
 	
 	List<CustomerCredit> findByCompleteDate(Date date);
@@ -19,6 +21,8 @@ public interface CustomerCreditService {
 	Page<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate, Date endDate, Status status, Pageable pageable);
 	
 	List<CustomerCredit> findByInvoice(Invoice invoice);
+	
+	Page<CustomerCredit> findByStatusAndNumberIsNotNull(Status status, Pageable pageable);
 	
 	Double findCustomerCreditAvailable(Customer customer);
 	

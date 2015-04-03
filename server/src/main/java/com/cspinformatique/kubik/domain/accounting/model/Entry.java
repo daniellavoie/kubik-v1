@@ -10,7 +10,7 @@ public class Entry {
 	private String description;
 	private double credit;
 	private double debit;
-	private String paymentMethodCode;
+	private String currency;
 	
 	public Entry() {
 		
@@ -18,7 +18,7 @@ public class Entry {
 
 	public Entry(Date date, String journalCode, String account,
 			String invoiceNumber, String description, double credit,
-			double debit, String paymentMethodCode) {
+			double debit, String currency) {
 		this.date = date;
 		this.journalCode = journalCode;
 		this.account = account;
@@ -26,7 +26,7 @@ public class Entry {
 		this.description = description;
 		this.credit = credit;
 		this.debit = debit;
-		this.paymentMethodCode = paymentMethodCode;
+		this.currency = currency;
 	}
 
 	public Date getDate() {
@@ -85,11 +85,11 @@ public class Entry {
 		this.debit = debit;
 	}
 
-	public String getPaymentMethodCode() {
-		return paymentMethodCode;
+	public String getCurrency() {
+		return currency;
 	}
 
-	public void setPaymentMethodCode(String paymentMethodCode) {
-		this.paymentMethodCode = paymentMethodCode;
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 }

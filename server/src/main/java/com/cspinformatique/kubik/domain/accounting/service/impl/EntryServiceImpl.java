@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,9 +33,9 @@ import com.cspinformatique.kubik.model.sales.PaymentMethod;
 @Service
 public class EntryServiceImpl implements EntryService, InitializingBean {
 	private static final String ANONYMUS_CLIENT = "ANONYME";
-	private static final String CUSTOMER_ACCOUNT_PREFIX = "41";
+	private static final String CUSTOMER_ACCOUNT_PREFIX = "411";
 	private static final String PRODUCT_ACCOUNT_PREFIX = "7070";
-	private static final String SALES_ACCOUNT = "580000";
+	private static final String SALES_ACCOUNT_PREFIX = "580";
 	private static final String TAX_ACCOUNT_PREFIX = "4457";
 
 	@Autowired
@@ -71,8 +71,8 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 				String customerName = this.getCustomerName(invoice, 16);
 
 				entries.add(new Entry(invoice.getPaidDate(), "vt", this
-						.getCustomerAccount(invoice), invoice.getNumber(),
-						"VENTE " + customerName + " - DEBIT", invoice
+						.getCustomerAccount(invoice), "F" + invoice.getNumber(),
+						StringUtils.stripAccents("VENTE " + customerName), invoice
 								.getTotalAmount(), 0d, ""));
 
 				// Generates a credit entry for each product account.
@@ -98,8 +98,7 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 									+ decimalFormat
 											.format(productAmountEntry.getKey())
 											.replace(".", "").substring(0, 2),
-							invoice.getNumber(), "VENTE " + customerName
-									+ " - CREDIT", 0d, productAmountEntry
+							"F" + invoice.getNumber(), StringUtils.stripAccents("VENTE " + customerName), 0d, productAmountEntry
 									.getValue(), ""));
 				}
 
@@ -115,8 +114,7 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 											.format(invoiceTaxAmount
 													.getTaxRate())
 											.replace(".", "").substring(0, 2),
-							invoice.getNumber(), "VENTE " + customerName
-									+ " - CREDIT", 0d, invoiceTaxAmount
+							"F" + invoice.getNumber(), StringUtils.stripAccents("VENTE " + customerName), 0d, invoiceTaxAmount
 									.getTaxAmount(), ""));
 				}
 			}
@@ -137,10 +135,10 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 				String customerName = this.getCustomerName(customerCredit, 14);
 
 				entries.add(new Entry(customerCredit.getCompleteDate(), "rt",
-						this.getCustomerAccount(customerCredit), customerCredit
-								.getInvoice().getNumber(), "RETOUR "
-								+ customerName + " - CREDIT", 0d,
-						customerCredit.getTotalAmount(), ""));
+						this.getCustomerAccount(customerCredit), "A" + customerCredit
+								.getInvoice().getNumber(), StringUtils.stripAccents("RETOUR "
+								+ customerName), 0d,
+						customerCredit.getTotalAmount(), "E"));
 
 				// Generates a debit entry for each product account.
 				HashMap<Double, Double> productAccountAmounts = new HashMap<Double, Double>();
@@ -168,9 +166,9 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 									+ decimalFormat
 											.format(productAmountEntry.getKey())
 											.replace(".", "").substring(0, 2),
-							customerCredit.getInvoice().getNumber(), "RETOUR "
-									+ customerName + " - DEBIT",
-							productAmountEntry.getValue(), 0d, ""));
+											"A" + customerCredit.getInvoice().getNumber(), StringUtils.stripAccents("RETOUR "
+									+ customerName),
+							productAmountEntry.getValue(), 0d, "E"));
 				}
 
 				// Generate a debit entry for each TVA rate.
@@ -185,9 +183,9 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 											.format(invoiceTaxAmount
 													.getTaxRate())
 											.replace(".", "").substring(0, 2),
-							customerCredit.getInvoice().getNumber(), "RETOUR "
-									+ customerName + " - DEBIT",
-							invoiceTaxAmount.getTaxAmount(), 0d, ""));
+											"A" + customerCredit.getInvoice().getNumber(), StringUtils.stripAccents("RETOUR "
+									+ customerName),
+							invoiceTaxAmount.getTaxAmount(), 0d, "E"));
 				}
 			}
 
@@ -223,26 +221,25 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 						entries.add(new Entry(
 								invoice.getPaidDate(),
 								"op",
-								SALES_ACCOUNT,
-								invoice.getNumber(),
+								SALES_ACCOUNT_PREFIX + payment
+								.getPaymentMethod().getAccountingCode(),
+								"F" + invoice.getNumber(),
 								"REGLEMENT "
 										+ this.getCustomerName(invoice, 11)
 										+ " - "
 										+ payment.getPaymentMethod()
 												.getDescription().toUpperCase(),
-								0d, payment.getAmount(), payment
-										.getPaymentMethod().getAccountingCode()));
+								0d, payment.getAmount(), "E"));
 
 						// Generates a credit entry for the customer account.
 						entries.add(new Entry(invoice.getPaidDate(), "op", this
-								.getCustomerAccount(invoice), invoice
-								.getNumber(), "REGLEMENT "
+								.getCustomerAccount(invoice), "F" + invoice
+								.getNumber(), StringUtils.stripAccents("REGLEMENT "
 								+ this.getCustomerName(invoice, 11)
 								+ " - "
 								+ payment.getPaymentMethod().getDescription()
-										.toUpperCase(), payment.getAmount(),
-								0d, payment.getPaymentMethod()
-										.getAccountingCode()));
+										.toUpperCase()), payment.getAmount(),
+								0d, "E"));
 					}
 				}
 			}
@@ -265,25 +262,24 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 						.equals(PaymentMethod.Types.CREDIT)) {
 					// Generates a credit entry for the sales account.
 					entries.add(new Entry(customerCredit.getCompleteDate(),
-							"op", SALES_ACCOUNT, customerCredit.getInvoice()
-									.getNumber(), "REMB."
+							"op", SALES_ACCOUNT_PREFIX + customerCredit
+							.getPaymentMethod().getAccountingCode(), "A" + customerCredit.getInvoice()
+									.getNumber(), StringUtils.stripAccents("REMB."
 									+ this.getCustomerName(customerCredit, 16)
 									+ " - "
 									+ customerCredit.getPaymentMethod()
-											.getDescription().toUpperCase(),
-							customerCredit.getTotalAmount(), 0d, customerCredit
-									.getPaymentMethod().getAccountingCode()));
+											.getDescription().toUpperCase()),
+							customerCredit.getTotalAmount(), 0d, "E"));
 
 					// Generates a debit entry for the customer account.
 					entries.add(new Entry(customerCredit.getCompleteDate(),
 							"op", this.getCustomerAccount(customerCredit),
-							customerCredit.getInvoice().getNumber(), "REMB. "
+							"A" + customerCredit.getInvoice().getNumber(), StringUtils.stripAccents("REMB. "
 									+ this.getCustomerName(customerCredit, 16)
 									+ " - "
 									+ customerCredit.getPaymentMethod()
-											.getDescription().toUpperCase(),
-							0d, customerCredit.getTotalAmount(), customerCredit
-									.getPaymentMethod().getAccountingCode()));
+											.getDescription().toUpperCase()),
+							0d, customerCredit.getTotalAmount(), "E"));
 				}
 			}
 
@@ -297,7 +293,7 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 	}
 
 	private String getCustomerAccount(Invoice invoice) {
-		String customerAccount = CUSTOMER_ACCOUNT_PREFIX + "0000";
+		String customerAccount = CUSTOMER_ACCOUNT_PREFIX + "9999";
 
 		if (invoice.getCustomer() != null) {
 			customerAccount = CUSTOMER_ACCOUNT_PREFIX
@@ -309,7 +305,7 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 
 	private String getCustomerAccount(CustomerCredit customerCredit) {
 		return CUSTOMER_ACCOUNT_PREFIX
-				+ String.format("%04d", customerCredit.getCustomer().getId());
+				+ String.format("%05d", customerCredit.getCustomer().getId());
 	}
 
 	private String getCustomerName(Invoice invoice, int length) {

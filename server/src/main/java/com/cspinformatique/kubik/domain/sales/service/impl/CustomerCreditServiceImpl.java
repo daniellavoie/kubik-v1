@@ -176,6 +176,11 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 	}
 
 	@Override
+	public Iterable<CustomerCredit> findAll() {
+		return this.customerCreditRepository.findAll();
+	}
+
+	@Override
 	public Page<CustomerCredit> findAll(Pageable pageable) {
 		return this.customerCreditRepository.findAll(pageable);
 	}
@@ -197,6 +202,11 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 	@Override
 	public List<CustomerCredit> findByInvoice(Invoice invoice) {
 		return this.customerCreditRepository.findByInvoice(invoice);
+	}
+	
+	@Override
+	public Page<CustomerCredit> findByStatusAndNumberIsNotNull(Status status, Pageable pageable){
+		return this.customerCreditRepository.findByStatusAndNumberIsNotNull(status, pageable);
 	}
 
 	@Override
@@ -265,6 +275,16 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 		return result.getContent().get(0);
 	}
 
+	private String generateCustomerCreditNumber() {
+		Page<CustomerCredit> page = this.findByStatusAndNumberIsNotNull(CustomerCredit.Status.COMPLETED, new PageRequest(0, 1, Direction.DESC, "completeDate"));
+
+		if (page.getContent().size() > 0 && page.getContent().get(0).getNumber() != null) {
+			return String.format("%09d", Long.valueOf(page.getContent().get(0).getNumber()) + 1);
+		}else{
+			return String.format("%09d", 1);
+		}
+	}
+
 	@Override
 	@Transactional
 	public CustomerCredit save(CustomerCredit customerCredit) {
@@ -288,6 +308,10 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 			if(customerCredit.getStatus().equals(Status.COMPLETED) && customerCredit.getCompleteDate() == null){
 				customerCredit.setCompleteDate(new Date());
 				customerCreditCompleted = true;
+			}
+			
+			if(customerCredit.getNumber() == null){
+				customerCredit.setNumber(this.generateCustomerCreditNumber());
 			}
 		}
 		

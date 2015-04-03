@@ -20,7 +20,7 @@
 				<h1 class="col-sm-2">
 					<button ng-if="previousCustomerCredit != null" ng-click="changeCustomerCredit(previousCustomerCredit)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
 				</h1>
-				<h1 class="col-sm-8"k>Avoir {{customerCredit.id}}</h1>
+				<h1 class="col-sm-8"k>Avoir {{customerCredit.number}}</h1>
 				<h1 class="col-sm-2">
 					<button ng-if="nextCustomerCredit != null" ng-click="changeCustomerCredit(nextCustomerCredit)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
 				</h1>
@@ -29,6 +29,7 @@
 			<table class="invoices table table-condensed panel panel-default">
 				<thead>
 					<tr>
+						<th>Numéro</th>
 						<th>Facture</th>
 						<th>Date</th>
 						<th>Client</th>
@@ -41,6 +42,7 @@
 				
 				<tbody>
 					<tr>
+						<td>{{customerCredit.number}}</td>
 						<td>
 							<a href="#" ng-click="openInvoice()">{{customerCredit.invoice.number}}</a>
 						</td>

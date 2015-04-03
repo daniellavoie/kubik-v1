@@ -23,6 +23,7 @@ public class CustomerCredit {
 	};
 
 	private Integer id;
+	private String number;
 	private Invoice invoice;
 	private Customer customer;
 	private List<CustomerCreditDetail> details;
@@ -44,13 +45,14 @@ public class CustomerCredit {
 
 	}
 
-	public CustomerCredit(Integer id, Invoice invoice, Customer customer,
+	public CustomerCredit(Integer id, String number, Invoice invoice, Customer customer,
 			List<CustomerCreditDetail> details, Status status, Date date,
 			Date cancelDate, Date completeDate, PaymentMethod paymentMethod, Double rebateAmount,
 			Map<Double, InvoiceTaxAmount> taxesAmounts,
 			Double totalTaxLessAmount, Double totalTaxAmount,
 			Double totalAmount, Double totalAmountRebateOut) {
 		this.id = id;
+		this.number = number;
 		this.invoice = invoice;
 		this.customer = customer;
 		this.details = details;
@@ -75,6 +77,14 @@ public class CustomerCredit {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
 	}
 
 	@ManyToOne

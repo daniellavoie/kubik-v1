@@ -319,9 +319,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 				this.invoiceStatusRepository.findOne(Types.PAID.name()),
 				new PageRequest(0, 1, Direction.DESC, "paidDate"));
 
-		String number = String.format("%010d", 1);
+		String number = String.format("%09d", 1);
 		if (page.getContent().size() > 0 && page.getContent().get(0).getNumber() != null) {
-			number = String.format("%010d", Long.valueOf(page.getContent().get(0).getNumber()) + 1);;
+			number = String.format("%09d", Long.valueOf(page.getContent().get(0).getNumber()) + 1);;
 		}
 
 		return number;
@@ -333,7 +333,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 		Page<Invoice> page = null;
 		Pageable pageRequest = new PageRequest(0, 100, Direction.ASC, "paidDate");
 
-		String number = "0000000001";
+		String number = "000000001";
 		
 		do{
 			page = this.findByStatus(new InvoiceStatus(InvoiceStatus.Types.PAID.toString(), null), pageRequest);
@@ -341,7 +341,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 			for(Invoice invoice : page.getContent()){
 				invoice.setNumber(number);
 
-				number = String.format("%010d", Long.valueOf(number) + 1);;
+				number = String.format("%09d", Long.valueOf(number) + 1);;
 			}
 			
 			this.save(page.getContent());

@@ -58,6 +58,15 @@ public class CustomerCreditController {
 		return "sales/customer-credit/credits-page";
 	}
 	
+	@RequestMapping("/init")
+	public String initialize(){
+		for(CustomerCredit customerCredit : this.customerCreditService.findAll()){
+			this.customerCreditService.save(customerCredit);
+		}
+		
+		return "redirect:/customerCredit";
+	}
+	
 	@RequestMapping(method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody CustomerCredit save(@RequestBody CustomerCredit customerCredit){
 		return this.customerCreditService.save(customerCredit);

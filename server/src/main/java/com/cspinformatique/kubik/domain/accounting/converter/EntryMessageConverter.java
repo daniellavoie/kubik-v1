@@ -78,8 +78,7 @@ public class EntryMessageConverter extends
 					+ separator
 					+ decimalFormat.format(entry.getCredit())
 					+ separator
-					+ (entry.getPaymentMethodCode() != null ? entry
-							.getPaymentMethodCode() : "") + "\n");
+					+ entry.getCurrency() + "\n");
 		}
 
 		printStream.close();

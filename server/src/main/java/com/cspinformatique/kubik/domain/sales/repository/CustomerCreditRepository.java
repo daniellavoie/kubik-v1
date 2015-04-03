@@ -23,6 +23,8 @@ public interface CustomerCreditRepository extends
 	
 	List<CustomerCredit> findByInvoice(Invoice invoice);
 	
+	Page<CustomerCredit> findByStatusAndNumberIsNotNull(Status status, Pageable pageable);
+	
 	@Query("SELECT id FROM CustomerCredit customerCredit WHERE id > :id")
 	Page<Integer> findIdByIdGreaterThan(@Param("id") int id, Pageable pageable);
 
