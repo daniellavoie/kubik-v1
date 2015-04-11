@@ -1,0 +1,101 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<body>
+		<div th:fragment="references">
+			<div class="references-search" ng-cloak ng-controller="KubikReferenceSearchController as referenceSearchView">
+				<div class="form-inline text-center">
+					<div class="form-group">
+						<label class="sr-only" for="query">Recherche</label>
+						<input 
+							id="search-reference-query" 
+							ng-model="query"
+							ng-change="search()"
+							class="form-control" 
+							type="text" 
+							placeholder="Recherche"
+						/>
+					</div>
+	
+					<ul class="pager row text-center">
+						<li class="col-md-2">
+							&nbsp;
+							<a href="#" ng-if="!searchResult.first" ng-click="changePage(searchResult.number-1)">Précédente</a>
+						</li>
+						
+						<li class="col-md-8">Page {{searchResult.number+1}} sur {{searchResult.totalPages}}</li>
+						
+						<li class="col-md-2">
+							&nbsp;
+							<a href="#" ng-if="!searchResult.last" ng-click="changePage(searchResult.number+1)">Suivante</a>
+						</li>
+					</ul>
+				</div>
+			
+				<div class="table-responsive">
+					<table class="panel panel-default table table-hover table-condensed text-center">
+						<thead>
+							<tr>
+								<th>
+									<span>EAN 13</span>
+								</th>
+								<th>
+									<a data-sortBy="title">Titre</a>
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>
+									<a data-sortBy="author">Auteur</a>
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>
+									<a data-sortBy="publisherName">Éditeur</a>
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>
+									<a data-sortBy="publicationDate">Date de pub.</a>
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>Couverture</th>
+								<th>
+									&nbsp;
+								</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							<tr ng-repeat="reference in searchResult.content" ng-click="referenceSelected(reference)">
+								<td>{{reference.ean13}}</td>
+								<td>{{reference.standardLabel}}</td>
+								<td>{{reference.author}}</td>
+								<td>{{reference.publisher}}</td>
+								<td>{{reference.datePublished | date}}</td>
+								<td><img id="reference-image-{{reference.id}}" class="reference-image" /></td>
+								<td>
+									<span class="glyphicon glyphicon-list-alt" ng-click="openCard($event, reference)"></span>
+									<img ng-if="reference.loading" th:src="@{/img/loading-small.gif}" />
+									<span ng-if="!reference.loading && !reference.importedInKubik" class="glyphicon glyphicon-plus" ng-click="createProduct($event, reference)"></span>
+									<span ng-if="!reference.loading && reference.error != null" class="glyphicon glyphicon-exclamation-sign" title="reference.error"></span>
+								</td>
+							<tr>
+							
+							<tr ng-if="searchResult.content.length == 0">
+								<td colspan="7">
+									Aucune référence retrouvée
+								</td>
+							</tr>
+							
+							<tr ng-if="query == null">
+								<td colspan="7">
+									Rechercher une référence
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -7,7 +7,7 @@ import org.springframework.data.envers.repository.support.EnversRevisionReposito
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "com.cspinformatique.kubik", repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class, excludeFilters = @Filter(type = FilterType.REGEX, pattern = "com.cspinformatique.kubik.domain.reference.*"))
+@EnableJpaRepositories(basePackages = "com.cspinformatique.kubik", repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class, excludeFilters = @Filter(type = FilterType.REGEX, pattern = "com.cspinformatique.kubik.domain.dilicom.repository.es.*"))
 public class JpaConfig {
 
 }

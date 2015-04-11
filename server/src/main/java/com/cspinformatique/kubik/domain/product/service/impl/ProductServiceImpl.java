@@ -1,5 +1,8 @@
 package com.cspinformatique.kubik.domain.product.service.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
@@ -14,14 +17,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.cspinformatique.kubik.domain.dilicom.model.Reference;
+import com.cspinformatique.kubik.domain.dilicom.service.ImageService;
 import com.cspinformatique.kubik.domain.product.repository.ProductRepository;
-import com.cspinformatique.kubik.domain.product.service.ImageService;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
 import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder.Status;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
-import com.cspinformatique.kubik.domain.reference.model.Reference;
-import com.cspinformatique.kubik.domain.reference.service.ReferenceService;
 import com.cspinformatique.kubik.model.product.AvailabilityCode;
 import com.cspinformatique.kubik.model.product.BarcodeType;
 import com.cspinformatique.kubik.model.product.PriceType;
@@ -32,7 +34,7 @@ import com.cspinformatique.kubik.model.product.Supplier;
 
 @Service
 public class ProductServiceImpl implements ProductService, InitializingBean {
-	private static final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ProductServiceImpl.class);
 
 	@Autowired
@@ -45,40 +47,45 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	private PurchaseOrderService purchaseOrderService;
 
 	@Autowired
-	private ReferenceService referenceServive;
-
-	@Autowired
 	private SupplierService supplierService;
 
 	@Resource
 	private Environment env;
 
+	private Set<String> productIdsCache;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if (!env.getRequiredProperty("kubik.environment").equals("production")) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						Thread.sleep(15000);
+		LOGGER.info("Caching products.");
 
-						generateProductsFromImportedReferences();
+		this.productIdsCache = new HashSet<String>();
 
-						generateMissingReferences();
-					} catch (Exception ex) {
-						logger.error(
-								"Could not generate products from imported references",
-								ex);
-					}
-				}
-			}).start();
-		}
-	}
+		Pageable pageRequest = new PageRequest(0, 200);
+		Page<Product> page = null;
+		do {
+			page = this.findAll(pageRequest);
+
+			for (Product product : page.getContent()) {
+				this.productIdsCache.add(product.getEan13() + "-"
+						+ product.getSupplier().getEan13());
+			}
+
+			pageRequest = pageRequest.next();
+		} while (page != null && page.getContent().size() != 0);
+
+		LOGGER.info("Products product completed.");
+	};
 
 	@Override
 	public Product buildProductFromReference(Reference reference) {
 		Supplier supplier = this.supplierService.findByEan13(reference
 				.getSupplierEan13());
+
+		if (supplier == null) {
+			supplier = this.supplierService
+					.generateSupplierIfNotFound(reference.getSupplierEan13());
+		}
+
 		Integer productId = null;
 		if (reference.isImportedInKubik()) {
 			Product product = this.findByEan13AndSupplier(reference.getEan13(),
@@ -132,9 +139,9 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 		return productPage;
 	}
-	
+
 	@Override
-	public Iterable<Product> findByEan13(String ean13){
+	public Iterable<Product> findByEan13(String ean13) {
 		return this.productRepository.findByEan13(ean13);
 	}
 
@@ -180,52 +187,9 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	}
 
 	@Override
-	public Product generateProductIfNotFound(String ean13, String supplierEan13) {
-		Supplier supplier = this.supplierService.findByEan13(supplierEan13);
-
-		if (supplier == null) {
-			supplier = this.supplierService
-					.generateSupplierIfNotFound(supplierEan13);
-		}
-
-		Product product = this.findByEan13AndSupplier(ean13, supplier);
-		if (product == null) {
-			Reference reference = this.referenceServive
-					.findByEan13AndSupplierEan13(ean13, supplierEan13);
-
-			logger.info("Generating product " + ean13 + " from supplier "
-					+ supplierEan13 + ".");
-
-			product = this.save(this.buildProductFromReference(reference));
-
-			reference.setImportedInKubik(true);
-
-			referenceServive.save(reference);
-		}
-
-		return product;
-	}
-
-	private void generateMissingReferences() {
-		for (int productId : this.productRepository
-				.findIdByDilicomReference(false)) {
-			this.save(this.findOne(productId));
-		}
-	}
-
-	private void generateProductsFromImportedReferences() {
-		Pageable pageRequest = new PageRequest(0, 100);
-		Page<Reference> page = null;
-		do {
-			for (Reference reference : this.referenceServive
-					.findByImportedInKubik(true, pageRequest)) {
-				this.generateProductIfNotFound(reference.getEan13(),
-						reference.getSupplierEan13());
-			}
-
-			pageRequest = pageRequest.next();
-		} while (page != null && page.hasNext());
-	}
+	public Set<String> getProductIdsCache() {
+		return this.productIdsCache;
+	};
 
 	@Override
 	@Transactional
@@ -247,10 +211,6 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 				throw new RuntimeException(
 						"Product can't change supplier as purchase orders exists for it.");
 			}
-
-			// Delete the reference from the old supplier.
-			this.referenceServive.delete(oldVersion.getEan13(), oldVersion
-					.getSupplier().getEan13());
 		}
 
 		// checks if the prices needs to be calculated.
@@ -260,30 +220,6 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 			updatePurchaseOrders = true;
 		}
-
-		Reference newReference = null;
-		if (!product.isDilicomReference()) {
-			// Checks if a dilicom reference exists for the new product.
-			Reference existingReference = this.referenceServive
-					.find(product.getEan13(), product.getSupplier().getEan13(),
-							false);
-
-			if (existingReference != null) {
-				// Overwrite product with dilicom reference.
-				product = this.buildProductFromReference(existingReference);
-
-				existingReference.setImportedInKubik(true);
-				
-				newReference = existingReference;
-			}
-		}
-		
-		if(newReference == null){
-			newReference = this.referenceServive
-					.buildReferenceFromProduct(product);
-		}
-		
-		this.referenceServive.save(newReference);
 
 		// Saves the product.
 		product = this.productRepository.save(product);

@@ -30,49 +30,52 @@
 					<a href="#" ng-if="!ordersPage.last" ng-click="changePage(ordersPage.number+1)">Suivante</a>
 				</li>
 			</ul>
-						
-			<table class="panel panel-default orders table table-striped table-hover table-condensed">
-				<thead>
-					<tr class="text-center">
-						<th>#</th>
-						<th>Fournisseur</th>
-						<th>Création</th>
-						<th>Réception</th>
-						<th>Status</th>
-						<th>Mode livraison</th>
-						<th>Date de livraison min.</th>
-						<th>Date de livraison max.</th>
-						<th>Produits</th>
-						<th>Quantité</th>
-						<th>Prix HT</th>
-						<th>&nbsp;</th>
-					</tr>
-					</thead>
-				<tbody>
-					<tr ng-repeat="order in ordersPage.content" ng-click="openOrder(order.id)">
-						<td>{{order.id}}</td>
-						<td><a href="#" ng-click="openSupplierCard(order.supplier, $event)">{{order.supplier.name}}</a></td>
-						<td>{{order.date | date : "short"}}</td>
-						<td>{{order.dateReceived | date : "short"}}</td>
-						<td>
-							<span ng-if="order.status == 'DRAFT'" class="label label-info">Brouillon</span>
-							<span ng-if="order.status == 'SUBMITED'" class="label label-success">Soumise</span>
-							<span ng-if="order.status == 'CANCELED'" class="label label-danger">Annulée</span>
-							<span ng-if="order.status == 'RECEIVED'" class="label label-danger">Reçue</span>
-						</td>
-						<td>{{order.shippingMode}}</td>
-						<td>{{order.minDeliveryDate | date : "shortDate"}}</td>
-						<td>{{order.maxDeliveryDate | date : "shortDate"}}</td>
-						<td>{{order.details.length}}</td>
-						<td>{{calculateOrderQuantity(order)}}</td>
-						<td>{{order.totalAmountTaxOut | currency : '&euro;'}}</td>
-						<td>
-							<span ng-if="order.sentToDilicom" class="glyphicon glyphicon-transfer" title="Envoyé à Dilicom"></span>
-							&nbsp;
-						</td>
-					</tr>
-				</tbody>
-			</table>
+			
+
+			<div class="table-responsive">		
+				<table class="panel panel-default orders table table-striped table-hover table-condensed">
+					<thead>
+						<tr class="text-center">
+							<th>#</th>
+							<th>Fournisseur</th>
+							<th>Création</th>
+							<th>Réception</th>
+							<th>Status</th>
+							<th>Mode livraison</th>
+							<th>Date de livraison min.</th>
+							<th>Date de livraison max.</th>
+							<th>Produits</th>
+							<th>Quantité</th>
+							<th>Prix HT</th>
+							<th>&nbsp;</th>
+						</tr>
+						</thead>
+					<tbody>
+						<tr ng-repeat="order in ordersPage.content" ng-click="openOrder(order.id)">
+							<td>{{order.id}}</td>
+							<td><a href="#" ng-click="openSupplierCard(order.supplier, $event)">{{order.supplier.name}}</a></td>
+							<td>{{order.date | date : "short"}}</td>
+							<td>{{order.dateReceived | date : "short"}}</td>
+							<td>
+								<span ng-if="order.status == 'DRAFT'" class="label label-info">Brouillon</span>
+								<span ng-if="order.status == 'SUBMITED'" class="label label-success">Soumise</span>
+								<span ng-if="order.status == 'CANCELED'" class="label label-danger">Annulée</span>
+								<span ng-if="order.status == 'RECEIVED'" class="label label-danger">Reçue</span>
+							</td>
+							<td>{{order.shippingMode}}</td>
+							<td>{{order.minDeliveryDate | date : "shortDate"}}</td>
+							<td>{{order.maxDeliveryDate | date : "shortDate"}}</td>
+							<td>{{order.details.length}}</td>
+							<td>{{calculateOrderQuantity(order)}}</td>
+							<td>{{order.totalAmountTaxOut | currency : '&euro;'}}</td>
+							<td>
+								<span ng-if="order.sentToDilicom" class="glyphicon glyphicon-transfer" title="Envoyé à Dilicom"></span>
+								&nbsp;
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 		
 		<div class="supplier-card"></div>

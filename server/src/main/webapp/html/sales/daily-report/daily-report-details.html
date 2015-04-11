@@ -18,42 +18,46 @@
 		<div class="container text-center" ng-cloak ng-app="KubikDailyReportDetails" ng-controller="KubikDailyReportDetailsController as view">
 			<h1>Rapport journalier du {{dailyReport.date | date : "dd/MM/yyyy"}}</h1>
 
-			<table class="daily-report table table-condensed table-striped panel panel-default">
-				<thead>
-					<tr>
-						<th>Date</th>
-						<th>Ventes</th>
-						<th>Ventes HT</th>	
-						<th>Ventes TTC</th>
-					</tr>
-				</thead>
-				
-				<tbody>
-					<tr>
-						<td>{{dailyReport.date | date : "dd/MM/yyyy"}}</td>
-						<td>{{dailyReport.salesCount}}</td>
-						<td>{{dailyReport.salesAmountTaxOut | currency : '&euro;'}}</td>
-						<td>{{dailyReport.salesAmountTaxIn | currency : '&euro;'}}</td>
-					</tr>
-				</tbody>
-			</table>
+			<div class="table-responsive">
+				<table class="daily-report table table-condensed table-striped panel panel-default">
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Ventes</th>
+							<th>Ventes HT</th>	
+							<th>Ventes TTC</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr>
+							<td>{{dailyReport.date | date : "dd/MM/yyyy"}}</td>
+							<td>{{dailyReport.salesCount}}</td>
+							<td>{{dailyReport.salesAmountTaxOut | currency : '&euro;'}}</td>
+							<td>{{dailyReport.salesAmountTaxIn | currency : '&euro;'}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 			
-			<table class="panel panel-default table table-striped table-condensed">
-				<thead class="panel-heading">
-					<tr>
-						<th>Méthode de paiement</th>
-						<th>Ventes</th>
-						<th>Montant TTC</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="salesByPaymentMethod in dailyReport.salesByPaymentMethods">
-						<td>{{salesByPaymentMethod.paymentMethod.description}}</td>
-						<td>{{salesByPaymentMethod.salesCount}}</td>
-						<td>{{salesByPaymentMethod.paymentsAmount | currency : '&euro;'}}</td>
-					</tr>
-				</tbody>
-			</table>
+			<div class="table-responsive">
+				<table class="panel panel-default table table-striped table-condensed">
+					<thead class="panel-heading">
+						<tr>
+							<th>Méthode de paiement</th>
+							<th>Ventes</th>
+							<th>Montant TTC</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="salesByPaymentMethod in dailyReport.salesByPaymentMethods">
+							<td>{{salesByPaymentMethod.paymentMethod.description}}</td>
+							<td>{{salesByPaymentMethod.salesCount}}</td>
+							<td>{{salesByPaymentMethod.paymentsAmount | currency : '&euro;'}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 		
 		<script th:replace="util/import :: scripts"></script>

@@ -1,0 +1,11 @@
+.attribute:hover{
+	cursor: pointer;
+}
+
+.selected.form-control-static{
+	background-color: #99FF00;
+}
+
+.notifications tbody tr:hover{
+	cursor: pointer;
+}

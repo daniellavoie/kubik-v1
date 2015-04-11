@@ -37,32 +37,34 @@
 				</li>
 			</ul>
 			
-			<table class="panel panel-default sessions table table-striped table-hover table-condensed" >
-				<thead>
-					<tr class="text-center">
-						<th>Date de création</th>
-						<th>Date de fermeture</th>
-						<th>Status</th>
-						<th>Date de livraison min.</th>
-						<th>Date de livraison max.</th>
-						<th>Produits</th>
-					</tr>
-					</thead>
-				<tbody>
-					<tr ng-repeat="session in sessionsPage.content" ng-click="openSession(session.id)">
-						<td>{{session.openDate | date : format : "short"}}</td>
-						<td>{{session.closeDate | date : format : "short"}}</td>
-						<td>
-							<span ng-if="session.status == 'DRAFT'" class="label label-info">Brouillon</span>
-							<span ng-if="session.status == 'SUBMITED'" class="label label-success">Soumis</span>
-							<span ng-if="session.status == 'CANCELED'" class="label label-danger">Annulé</span>
-						</td>
-						<td>{{session.minDeliveryDate | date : format : "short"}}</td>
-						<td>{{session.maxDeliveryDate | date : format : "short"}}</td>
-						<td>{{session.details.length}}</td>
-					</tr>
-				</tbody>
-			</table>
+			<div class="table-responsive">
+				<table class="panel panel-default sessions table table-striped table-hover table-condensed" >
+					<thead>
+						<tr class="text-center">
+							<th>Date de création</th>
+							<th>Date de fermeture</th>
+							<th>Status</th>
+							<th>Date de livraison min.</th>
+							<th>Date de livraison max.</th>
+							<th>Produits</th>
+						</tr>
+						</thead>
+					<tbody>
+						<tr ng-repeat="session in sessionsPage.content" ng-click="openSession(session.id)">
+							<td>{{session.openDate | date : format : "short"}}</td>
+							<td>{{session.closeDate | date : format : "short"}}</td>
+							<td>
+								<span ng-if="session.status == 'DRAFT'" class="label label-info">Brouillon</span>
+								<span ng-if="session.status == 'SUBMITED'" class="label label-success">Soumis</span>
+								<span ng-if="session.status == 'CANCELED'" class="label label-danger">Annulé</span>
+							</td>
+							<td>{{session.minDeliveryDate | date : format : "short"}}</td>
+							<td>{{session.maxDeliveryDate | date : format : "short"}}</td>
+							<td>{{session.details.length}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/purchase/sessions.js}"></script>

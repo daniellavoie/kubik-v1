@@ -18,7 +18,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.integration.file.remote.session.SessionFactory;
-import org.springframework.integration.file.remote.synchronizer.AbstractInboundFileSynchronizer;
 import org.springframework.integration.ftp.filters.FtpSimplePatternFileListFilter;
 import org.springframework.integration.ftp.inbound.FtpInboundFileSynchronizer;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -78,7 +77,7 @@ public class FetchReceptionsTask implements InitializingBean {
 	private DateFormat dateFormat;
 	private DecimalFormat quantityNumberFormat;
 
-	private AbstractInboundFileSynchronizer<?> ftpInboundFileSynchronizer;
+	private FtpInboundFileSynchronizer ftpInboundFileSynchronizer;
 
 	public FetchReceptionsTask() {
 		this.dateFormat = new SimpleDateFormat("ddMMyy");
@@ -98,7 +97,7 @@ public class FetchReceptionsTask implements InitializingBean {
 		ftpInboundFileSynchronizer = new FtpInboundFileSynchronizer(
 				sessionFactory);
 
-		((FtpInboundFileSynchronizer) ftpInboundFileSynchronizer)
+		ftpInboundFileSynchronizer
 				.setFilter(new FtpSimplePatternFileListFilter("EXP*"));
 
 		ftpInboundFileSynchronizer.setRemoteDirectory(remoteDirectory);

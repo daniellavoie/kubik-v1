@@ -47,145 +47,74 @@
 				</div>
 			</div>
 			
-			<table class="panel panel-default table table-striped table-condensed">
-				<thead class="panel-heading">
-					<tr>
-						<th>Produit</th>
-						<th>Disponibilité</th>
-						<th>Fournisseur</th>
-						<th>Quantité</th>
-						<th>&nbsp;</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="detail in session.details">
-						<td>
-							<a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
-						<td>{{detail.product.availabilityCode}}</td>
-						<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
-						<td>
-							<input
-								ng-if="session.status != 'SUBMITED'" 
-								ng-model="detail.quantity"
-								id="detail-{{detail.id}}"
-								ng-keyup="quantityChanged($event)"
-								class="quantity" 
-								type="number"
-								min="1" 
-								max="99999" 
-							/>
-							<span ng-if="session.status == 'SUBMITED'">{{detail.quantity}}</span>
-						</td>
-							
-						<td>
-							<button
-								ng-if="session.status != 'SUBMITED'"
-								ng-click="deleteDetail(detail)" 
-								type="button" 
-								class="btn btn-warning btn-xs"
-							>
-								<span class="glyphicon glyphicon-trash"></span>
-							</button>
-							&nbsp;
-						</td>
-					</tr>
-					
-					<tr ng-if="session.details.length == 0">
-						<td colspan="5">
-							Aucun produit dans la commande.
-						</td>
-					</tr>
-					 
-					<tr ng-repeat="productSearch in productsToValidate">
-						<td>
-							<a href="#" ng-click="kubikProductCard.openCard(detail.product)">
-								{{productSearch.selectedProduct.ean13}} - {{productSearch.selectedProduct.standardLabel}}
-							</a>
-						</td>
-						<td>{{productSearch.selectedProduct.availabilityCode}}</td>
-						<td>
-							<span ng-if="productSearch.products.length == 1">
-								{{productSearch.selectedProduct.supplier.name}} - {{productSearch.selectedProduct.supplier.ean13}}
-							</span>
-							
-							<select 
-								class="supplier"
-								ng-if="productSearch.products.length > 1"
-								ng-change="changeSelectedProduct()"
-							>
-								<option 
-									ng-repeat="product in productSearch.products" 
-									ng-checked="product.supplier.ean13 == selectedProduct.supplier.ean13"
-									ng-value="product.supplier.ean13"
+			<div class="table-responsive">
+				<table class="panel panel-default table table-striped table-condensed">
+					<thead class="panel-heading">
+						<tr>
+							<th>Produit</th>
+							<th>Disponibilité</th>
+							<th>Fournisseur</th>
+							<th>Quantité</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="detail in session.details">
+							<td>
+								<a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
+							<td>{{detail.product.availabilityCode}}</td>
+							<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
+							<td>
+								<input
+									ng-if="session.status != 'SUBMITED'" 
+									ng-model="detail.quantity"
+									id="detail-{{detail.id}}"
+									ng-keyup="quantityChanged($event)"
+									class="quantity" 
+									type="number"
+									min="1" 
+									max="99999" 
+								/>
+								<span ng-if="session.status == 'SUBMITED'">{{detail.quantity}}</span>
+							</td>
+								
+							<td>
+								<button
+									ng-if="session.status != 'SUBMITED'"
+									ng-click="deleteDetail(detail)" 
+									type="button" 
+									class="btn btn-warning btn-xs"
 								>
-									{{product.supplier.name}} - {{product.supplier.ean13}}
-								</option>							
-							</select>
-						</td>
+									<span class="glyphicon glyphicon-trash"></span>
+								</button>
+								&nbsp;
+							</td>
+						</tr>
 						
-						<td>
-							<input 
-								ng-model="productSearch.newProductQuantity"
-								class="quantity" 
-								type="number" 
-								ng-value="1"
-								min="1" 
-								max="99999" />
-						</td>
-						
-						<td>
-							<button
-								ng-click="resetNewProduct()" 
-								type="button" 
-								class="btn btn-warning btn-xs"
-							>
-								<span class="glyphicon glyphicon-remove"></span>
-							</button>
-							<button
-								ng-click="createDetail(productSearch.selectedProduct, productSearch.newProductQuantity)" 
-								type="button" 
-								class="btn btn-success btn-xs"
-							>
-								<span class="glyphicon glyphicon-ok"></span>
-							</button>
-						</td>
-					</tr>
-				</tbody>
-				
-				<tfoot ng-if="session.status == 'DRAFT'" ng-controller="NewProductController as newProductView" class="new-product">
-					<tr ng-if="productSearch == null || productSearch.products.length == 0">
-						<td colspan="5" ng-controller="ProductSelectorController as selectorView">
-							<div class="selector input-group">
-								<div class="input-group-btn">
-									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-										<span class="selector-button-label">Ean13</span> <span class="caret"></span>
-									</button>
-									<ul class="dropdown-menu" role="menu">
-										<li><a ng-click="openSearchReference()" href="#">Recherche</a></li>
-										<li><a ng-click="displayEan13Selector()" href="#">Ean13</a></li>
-										<li><a ng-click="displayCsvSelector()" href="#">Csv</a></li>
-									</ul>
+						<tr ng-if="session.details.length == 0">
+							<td colspan="5">
+								Aucun produit dans la commande.
+							</td>
+						</tr>
+					</tbody>
+					
+					<tfoot ng-if="session.status == 'DRAFT'">
+						<tr>
+							<td colspan="5 container">
+								<div class="col-sm-4">
+									<input ng-keyup="searchProductKeyUp($event)" ng-model="search.ean13" type="text" placeholder="Ean13" class="ean13 form-control">
 								</div>
-								<!-- /btn-group -->
-								<div class="selector-content">
-									<input ng-keyup="keyup($event)"  type="text" placeholder="Saisissez un ean13" class="ean13 form-control">
-									<input type="file" class="csv form-control hidden">
-									
-									<div 
-										ng-if="productSearch != null && productSearch.products.length == 0" 
-										class="alert alert-danger" 
-										role="alert"
-									>
-										Aucun produit retrouvé
-									</div>
+								<div class="col-sm-3">
+									<button class="btn btn-success form-control" ng-click="kubikProductSearch.openSearchModal()">Recherche produit</button>
 								</div>
-							</div>
-									
-							<img ng-if="loading" th:src="@{/img/loading.gif}" />
-						</td>
-					</tr>
-				</tfoot>
-			</table>
+								<div class="col-sm-3">
+									<button class="btn btn-warning form-control" ng-click="kubikReferenceSearch.openSearchModal()">Recherche Dilicom</button>
+								</div>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
 			
 			<div ng-if="session.status == 'DRAFT'">
 				<button ng-click="confirmCancelSession()" type="button" class="btn btn-danger">Annuler la préparation</button>
@@ -233,11 +162,30 @@
 					</div>
 				</div>
 			</div>
+		
+			<div class="product-not-found alert modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div class="alert alert-danger">
+								Aucune produit retrouvé pour l'ean13 {{search.typedEan13}}.
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<div th:replace="product/products-modal :: products-modal"></div>
+		
+			<div th:replace="dilicom/references-modal :: references-modal"></div>
 		</div>
 		
-		<div class="search-reference"></div>
-		
 		<div class="product-card"></div>
+		
+		<div class="reference-card"></div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		

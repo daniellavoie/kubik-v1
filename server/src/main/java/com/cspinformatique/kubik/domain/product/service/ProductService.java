@@ -1,14 +1,15 @@
 package com.cspinformatique.kubik.domain.product.service;
 
+import java.util.Set;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.cspinformatique.kubik.domain.reference.model.Reference;
+import com.cspinformatique.kubik.domain.dilicom.model.Reference;
 import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.product.Supplier;
 
 public interface ProductService {
-	
 	Product buildProductFromReference(Reference reference);
 
 	Iterable<Product> findByEan13(String ean13);
@@ -21,7 +22,7 @@ public interface ProductService {
 	
 	Product findOne(int id);
 	
-	Product generateProductIfNotFound(String ean13, String supplierEan13);
+	Set<String> getProductIdsCache();
 	
 	Product save(Product product);
 	

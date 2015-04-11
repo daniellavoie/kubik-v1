@@ -232,17 +232,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 					purchaseOrder.setId(this.generateId());
 				}
 
-				// Checks if the product exists in the database.
-				if (purchaseOrder.getDetails() != null) {
-					for (PurchaseOrderDetail detail : purchaseOrder
-							.getDetails()) {
-						// Generates the missing ones.
-						this.productService.generateProductIfNotFound(detail
-								.getProduct().getEan13(), detail.getProduct()
-								.getSupplier().getEan13());
-					}
-				}
-
 				if (purchaseOrder.getStatus().equals(Status.SUBMITED)) {
 					// Checks if the reception needs to be generated.
 					if (purchaseOrder.getReception() == null) {

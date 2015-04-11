@@ -115,7 +115,7 @@
 						<input ng-model="ean13" ng-keyup="searchProductKeyUp($event)" type="text" class="form-control " placeholder="Ean13" />
 					</div>
 					<div class="col-md-2 col-sm-3 col-lg-2">
-						<button ng-click="kubikReferenceSearch.openSearch()" type="button" class="btn btn-primary form-control">Rechercher</button>
+						<button ng-click="kubikProductSearch.openSearchModal()" type="button" class="btn btn-primary form-control">Rechercher</button>
 					</div>
 					
 					<div class="col-md-2 col-sm-2 col-lg-2">
@@ -170,6 +170,11 @@
 									<button class="cancel btn btn-danger form-control" data-dismiss="modal">Annuler</button>
 								</div>
 								
+								<div class="form-group" ng-if="invoice.customer != null"> 
+									<label>Avoir client</label>
+									<p class="form-control-static">{{customerCreditAmount | currency : '&euro;'}}</p>
+								</div>
+								
 								<div class="form-group"> 
 									<label>Paiements enregistrés</label>
 									<p ng-if="invoice.payments.length == 0" class="form-control-static">Aucun</p>
@@ -198,15 +203,17 @@
 				</div>
 			</div>
 		
-			<div class="product-not-found alert modal fade hidden">
+			<div class="product-not-found alert modal fade">
 				<div class="modal-dialog">
 					<div class="modal-content">
-						<div class="modal-body alert alert-danger">
-							Aucune produit retrouvé pour l'ean13 {{ean13}}
+						<div class="modal-body">
+							<div class="alert alert-danger">
+								Aucune produit retrouvé pour l'ean13 {{typedEan13}}.
+							</div>
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-						</div> 
+						</div>
 					</div>
 				</div>
 			</div>
@@ -215,8 +222,6 @@
 		
 			<div th:replace="product/products-modal :: products-modal"></div>
 		</div>
-		
-		<div class="search-reference"></div>
 		
 		<div class="product-card"></div>
 		

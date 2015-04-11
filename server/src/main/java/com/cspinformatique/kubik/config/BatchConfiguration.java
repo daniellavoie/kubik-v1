@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.cspinformatique.kubik.batch.itemProcessor.ReferenceItemProcessor;
-import com.cspinformatique.kubik.batch.reader.DilicomReferenceReader;
-import com.cspinformatique.kubik.batch.writer.DilicomReferenceWriter;
-import com.cspinformatique.kubik.domain.reference.model.DilicomReference;
-import com.cspinformatique.kubik.domain.reference.model.Reference;
-import com.cspinformatique.kubik.domain.reference.service.ReferenceService;
+import com.cspinformatique.kubik.domain.dilicom.batch.itemProcessor.ReferenceItemProcessor;
+import com.cspinformatique.kubik.domain.dilicom.batch.reader.DilicomReferenceReader;
+import com.cspinformatique.kubik.domain.dilicom.batch.writer.DilicomReferenceWriter;
+import com.cspinformatique.kubik.domain.dilicom.model.Reference;
+import com.cspinformatique.kubik.domain.dilicom.model.ReferenceDTO;
+import com.cspinformatique.kubik.domain.dilicom.service.ReferenceService;
 
 @Configuration
 @EnableBatchProcessing
@@ -47,7 +47,7 @@ public class BatchConfiguration {
 
 	public @Bean Step notificationFileIntegrationStep() {
 		return stepBuilderFactory.get(NOTIFICATION_FILE_INTEGRATION_STEP)
-				.<DilicomReference, Reference> chunk(1000)
+				.<ReferenceDTO, Reference> chunk(1000)
 				.reader(dilicomReferenceReader).writer(dilicomReferenceWriter)
 				.processor(referenceItemProcessor).build();
 	}

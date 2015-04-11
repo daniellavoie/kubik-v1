@@ -1,0 +1,7 @@
+.references-search .glyphicon:hover{
+	cursor: pointer;
+}
+
+.references-search tbody td .reference-image{
+	height: 30px;
+}

@@ -84,7 +84,7 @@ window.KubikProductSearch.prototype.init = function(){
 				resultPerPage : $scope.resultPerPage,
 				sortBy : $scope.sortBy,
 				direction : $scope.direction 
-			}
+			};
 			
 			$http.get(kubikProductSearch.productUrl + "?" + $.param(params)).success(function(searchResult){
 				$scope.searchResult = searchResult;
@@ -98,15 +98,7 @@ window.KubikProductSearch.prototype.init = function(){
 							"http://images1.centprod.com/" + $scope.company.ean13 + "/" + product.imageEncryptedKey + "-cover-thumb.jpg"
 						);
 					}					
-				})
-				
-				if(kubikProductSearch.modal){
-					$timeout(function(){
-						kubikProductSearch.$container.find(".modal-backdrop")
-					      .css('height', 0)
-					      .css('height', kubikProductSearch.$container[0].scrollHeight);
-					});
-				}
+				});
 			});
 		};
 		
@@ -123,6 +115,7 @@ window.KubikProductSearch.prototype.init = function(){
 			$scope.search();
 		});
 		
+		kubikProductSearch.$scope = $scope;
 	});
 };
 
@@ -130,12 +123,18 @@ window.KubikProductSearch.prototype.closeSearchModal = function(){
 	this.modal.modal("hide");
 };
 
-window.KubikProductSearch.prototype.openSearchModal = function(){
-	this.modal = this.$container.modal({
+window.KubikProductSearch.prototype.openSearchModal = function(searchQuery){
+	var KubikProductSearch = this;
+	this.modal.modal({
 		backdrop : "static",
 		keyboard : false
 	}).on("shown.bs.modal", function(){
 		$("#search-product-query").focus();
+		
+		if(searchQuery != undefined){
+			KubikProductSearch.$scope.query = searchQuery;
+			KubikProductSearch.$scope.search();	
+		}
 	});
 	
 };

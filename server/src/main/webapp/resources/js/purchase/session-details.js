@@ -1,31 +1,38 @@
 var app = angular.module("KubikPurchaseSessionDetails", []);
 var sessionId = window.location.pathname.split("/")[2];
 
+var kubikProductSearch = new KubikProductSearch({
+	app : app,
+	modal : $(".products-modal"),
+	productUrl : "../product"
+});
+
+var kubikReferenceSearch = new KubikReferenceSearch({
+	app : app,
+	modal : $(".references-modal"),
+	referenceUrl : "../reference"
+});
+
 app.controller("SessionDetailsController", function($scope, $http, $timeout){
-	$scope.$on("searchProductClicked", function(event, product){
-		$scope.addProductToValidate({products : {products : [product]}});
+	$scope.$on("openProductCard", function(event, product){
+		$scope.kubikProductCard.openCard(product);
 	});
 	
-	$scope.$on("addProductSearch", function(event, productSearch){
-		var product = productSearch.products[0];
+	$scope.$on("openReferenceCard", function(event, reference){
+		$scope.kubikReferenceCard.openCard(reference);
+	});
 		
+	$scope.addOneProduct = function(product){
 		var detail = $scope.getDetail(product);
 		if(detail != null){
 			detail.quantity += 1;
 			$scope.saveSession();
 		}else{
-			productSearch.newProductQuantity = 1;
-
-			if(productSearch.products.length > 1){
-				productSearch.selectedProduct = product;
-				$scope.productsToValidate[product.ean13] = productSearch;
-			}else{
-				$scope.createDetail(product, productSearch.newProductQuantity)
-			}
+			$scope.createDetail(product, 1)
 		}
 		
 		$("html, body").animate({ scrollTop: $(document).height() }, 500);
-	});
+	};	
 	
 	$scope.cancelSession = function(){
 		$scope.session.status = "CANCELED";
@@ -48,21 +55,22 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 	$scope.createDetail = function(selectedProduct, quantity){
 		$scope.session.details.push({
 			purchaseSession : {id : sessionId},
-			product : {
-				ean13 : selectedProduct.ean13,
-				supplier : {ean13 : selectedProduct.supplier.ean13, id : selectedProduct.supplier.id}
-			},
+			product : selectedProduct,
 			quantity : quantity
 		});
-		
-		delete $scope.productsToValidate[selectedProduct.ean13];
 		
 		$scope.saveSession();
 	};
 	
+	$scope.createProductFromReference = function(reference){
+		$http.post("../reference/" + reference.id + "?createProduct").success(function(product){
+			$scope.addOneProduct(product);			
+		});
+	};
+	
 	$scope.deleteDetail = function(sessionDetail){
 		for(var detailIndex in $scope.session.details){
-			if($scope.session.details[detailIndex].product.ean13 == sessionDetail.product.ean13){
+			if($scope.session.details[detailIndex].product.id == sessionDetail.product.id){
 				$scope.session.details.splice(detailIndex, 1);
 				
 				break;
@@ -72,7 +80,7 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 	
 	$scope.getDetail = function(product){
 		for(var detailIndex in $scope.session.details){
-			if($scope.session.details[detailIndex].product.ean13 == product.ean13){
+			if($scope.session.details[detailIndex].product.id == product.id){
 				return $scope.session.details[detailIndex];
 			}
 		}
@@ -124,6 +132,61 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 		});
 	};
 	
+	$scope.searchProduct = function(){
+		$scope.search.typedEan13 = $scope.search.ean13;
+		
+		if($scope.search.typedEan13 != "" && !$scope.searchInProgress){
+			$scope.searchInProgress = true;
+			$http.get("../product?ean13=" + $scope.search.typedEan13).success(function(products){
+				// Check if a product was found
+				if(products.length == 0){
+					$scope.searchReference();
+				}else {
+					$(".product-not-found").modal("hide");
+					
+					if (products.length > 1){
+						$scope.kubikProductSearch.openSearchModal($scope.search.typedEan13);
+					}else{
+						$scope.addOneProduct(products[0]);
+					}
+				}
+			}).finally(function(){
+				$scope.searchInProgress = false;
+			});
+
+			$scope.search.ean13 = "";
+		}
+	};
+	
+	$scope.searchProductKeyUp = function($event){
+		if($event.keyCode == 13){
+			$scope.ean13 = this.ean13;
+			
+			$scope.searchProduct();
+		}
+	};
+	
+	$scope.searchReference = function(){
+		$scope.searchInProgress = true;
+		$http.get("../reference?search&query=" + $scope.typedEan13).success(function(referencesPage){
+			// Check if a product was found
+			if(referencesPage.content.length == 0){
+				// Show a warning explaining that the product does not exists.
+				$(".product-not-found").modal();
+			}else {
+				$(".product-not-found").modal("hide");
+				
+				if (referencesPage.content.length > 1){
+					$scope.kubikReferenceSearch.openSearchModal($scope.typedEan13);
+				}else{
+					$scope.createProductFromReference(referencesPage.content[0]);
+				}
+			}
+		}).finally(function(){
+			$scope.searchInProgress = false;
+		});
+	};
+	
 	$scope.submitSession = function(){
 		$scope.session.status = "SUBMITED";
 		
@@ -135,74 +198,23 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 	};
 
 	$scope.kubikProductCard = new KubikProductCard();
+
+	$scope.kubikReferenceCard = new KubikReferenceCard();
 	
-	$scope.productsToValidate = {};
+	$scope.kubikProductSearch = kubikProductSearch;
+	$scope.kubikProductSearch.productSelected = function(product){
+		$scope.addOneProduct(product);
+		
+		$scope.kubikProductSearch.closeSearchModal();
+	};
+	
+	$scope.kubikReferenceSearch = kubikReferenceSearch;
+	$scope.kubikReferenceSearch.referenceSelected = function(reference){
+		$scope.createProductFromReference(reference);
+		
+		$scope.kubikReferenceSearch.closeSearchModal();
+	};
+
+	$scope.search = {};
 	$scope.loadSession();
-});
-
-app.controller("NewProductController", function($scope, $http, $timeout){
-	$scope.$on("referenceSelectedFromSearch", function(event, reference){
-		$http.get("../productSearch/" + reference.ean13 + "/" + reference.supplierEan13).success(function(productSearch){
-			if(productSearch.products.length > 0){
-				$scope.$emit("addProductSearch", productSearch);
-			}
-		});
-	});
-	
-	$scope.changeSelectedProduct = function(){
-		for(productIndex in $scope.productSearch.products){
-			var product = $scope.productSearch.products[productIndex];
-			
-			if(product.supplier.ean13 == $(".new-product select.supplier").val()){
-				$scope.selectedProduct = product;
-			}
-		}
-	};
-	
-	$scope.keyup = function($event){
-		if($event.keyCode == 13){
-			$http.get("../productSearch/" + $(".ean13").val()).success(function(productSearch){
-				if(productSearch.products.length > 0){
-					$scope.$emit("addProductSearch", productSearch);
-					$(".ean13").val("");
-				}
-			});
-		}
-	};
-});
-
-app.controller("ProductSelectorController", function($scope){
-	$scope.displayCsvSelector = function(){
-		$scope.$selectorEan13Content.addClass("hidden");
-		$scope.$selectorCsvContent.removeClass("hidden");
-		$scope.$selectorButton.html("Csv");
-	};
-	
-	$scope.displayEan13Selector = function(){
-		$scope.$selectorEan13Content.removeClass("hidden");
-		$scope.$selectorCsvContent.addClass("hidden");			
-		$scope.$selectorButton.html("Ean13");
-	};
-	
-	$scope.openSearchReference = function(){
-		$scope.$selectorEan13Content.addClass("hidden");
-		$scope.$selectorCsvContent.addClass("hidden");	
-		$scope.kubikReferenceSearch.openSearch();			
-		$scope.$selectorButton.html("Recherche");
-	};
-
-	$scope.$selectorContent = $(".selector .selector-content");
-	$scope.$selectorCsvContent = $scope.$selectorContent.find(".csv");  
-	$scope.$selectorEan13Content = $scope.$selectorContent.find(".ean13");  
-	$scope.$selectorButton = $(".selector .selector-button-label");
-	
-	// Initialise SearchReferenceController
-	$scope.kubikReferenceSearch = new KubikReferenceSearch({
-		searchUrl : "../../reference",
-		searchResultUrl : "../../reference",
-		$modalContainer : $(".search-reference"),
-		referenceClicked : function(reference){
-			$scope.$emit("referenceSelectedFromSearch", reference);
-		}
-	});
 });

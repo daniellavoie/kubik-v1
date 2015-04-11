@@ -1,0 +1,156 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+	<head>
+		<title>La Dimension Fantastique - Mise à jour Dilicom</title>
+		
+		<link th:replace="util/import :: head">
+		<link rel="stylesheet" type="text/css" th:href="@{/css/dilicom/notifications.css}" />
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="KubikNotifications" ng-controller="KubikNotificationsController as view"  class="container text-center">
+			<h1>Mise à jour Dilicom</h1>
+
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!notificationsPage.first" ng-click="changePage(notificationsPage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{notificationsPage.number+1}} sur {{notificationsPage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!notificationsPage.last" ng-click="changePage(notificationsPage.number+1)">Suivante</a>
+				</li>
+			</ul>
+			
+			<div class="notifications table-responsive">
+				<table class="panel panel-default table table-hover table-condensed text-center">
+					<thead>
+						<tr>
+							<th>
+								<span>EAN 13</span>
+							</th>
+							<th>
+								<a data-sortBy="title">Titre</a>
+								<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+								<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+							</th>
+							<th>
+								<a data-sortBy="author">Auteur</a>
+								<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+								<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+							</th>
+							<th>
+								<a data-sortBy="publisherName">Date de mise à jour</a>
+								<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+								<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+							</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="notification in notificationsPage.content" ng-click="openNotification(notification)">
+							<td>{{notification.product.ean13}}</td>
+							<td>{{notification.product.standardLabel}}</td>
+							<td>{{notification.product.author}}</td>
+							<td>{{notification.creationDate | date}}</td>
+							<td>
+								<span class="glyphicon glyphicon-download" title="Mettre à jour" ng-click="autoValidateNotification($event, notification)"></span>
+								<span class="glyphicon glyphicon-trash" title="Ignorer" ng-click="ignoreNotification($event, notification)"></span>
+							</td>
+						<tr>
+						
+						<tr ng-if="searchResult.content.length == 0">
+							<td colspan="7">
+								Aucune mise à jour
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="notification-modal modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<h3 class="modal-header">
+							Mise à jour produit
+						</h3>
+						
+						<div class="modal-body">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-6 control-label text-right">Ean13</label>
+								    <div class="col-sm-6 text-left">
+										<p class="form-control-static">{{notification.product.ean13}}</p>
+								    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-6 control-label text-right">Titre</label>
+								    <div class="col-sm-6 text-left">
+										<p class="form-control-static">{{notification.product.extendedLabel}}</p>
+								    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-6 control-label text-right">Fournisseur</label>
+								    <div class="col-sm-6 text-left">
+										<p class="form-control-static">{{notification.product.supplier.name}}</p>
+								    </div>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-sm-6 text-left">
+									<h4>Produit actuel</h4>
+									<button class="btn btn-primary btn-xs" ng-click="overwriteNoAttribute()">Tout cocher</button>
+								</div>
+								<div class="col-sm-6 text-right">
+									<h4>Nouveau produit</h4>
+									<button class="btn btn-primary btn-xs" ng-click="overwriteAllAttributes()">Tout cocher</button>
+								</div>
+							</div>
+							
+							<div ng-repeat="attributeInDiff in attributesInDiff">
+								<div>
+									<h4 class="row">{{attributeInDiff.attributeLabel}}</h4>
+									<div class="row">
+										<div class="col-sm-6">
+											<div 
+												class="attribute form-control-static {{!attributeInDiff.overwrite ? 'selected' : ''}}"
+												ng-click="changeOverwrite(attributeInDiff.attribute, false)"
+											>{{attributeInDiff.oldValue}}&nbsp;</div>
+										</div>
+										<div class="col-sm-6">
+											<div
+												class="attribute form-control-static {{attributeInDiff.overwrite ? 'selected' : ''}}"
+												ng-click="changeOverwrite(attributeInDiff.attribute, true)"
+											>{{attributeInDiff.newValue}}&nbsp;</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+							<button type="button" class="btn btn-primary" ng-click="validateNotification(true)">Enregistrer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="product-card"></div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/dilicom/notifications.js}"></script>
+	</body>
+</html>

@@ -6,10 +6,20 @@ var kukikCustomerSearch = new KubikCustomerSearch({
 	$container : $(".customers-modal")
 });
 
+var kubikProductSearch = new KubikProductSearch({
+	app : app,
+	modal : $(".products-modal"),
+	productUrl : "product"
+});
+
 app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	$scope.$on("openCustomerCard", function(event, customer){
 		$scope.kubikCustomerCard.openCard(customer);
 	})
+	
+	$scope.$on("openProductCard", function(product){
+		$scope.kubikProductCard.openCard(product);
+	});
 	
 	$scope.$on("saleOver", function(){
 		$scope.loadInvoices();
@@ -161,20 +171,23 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	};
 	
 	$scope.searchProduct = function(){
-		if($scope.ean13 != "" && !$scope.searchInProgress){
+		$scope.typedEan13 = $scope.ean13;
+		
+		if($scope.typedEan13 != "" && !$scope.searchInProgress){
 			$scope.searchInProgress = true;
-			$http.get("product?ean13=" + $scope.ean13).success(function(productsPage){
+			$http.get("product?ean13=" + $scope.typedEan13).success(function(products){
 				// Check if a product was found
-				if(productsPage.content.length == 0){
+				if(products.length == 0){
 					// Show a warning explaining that the product does not exists.
-					(".product-not-found").modal();
-				}else if (productsPage.content.length > 1){
-					// Show modal to ask product confirmation.
-					$scope.products = productsPage.content;
+					$(".product-not-found").modal();
+				}else {
+					$(".product-not-found").modal("hide");
 					
-					
-				}else{
-					$scope.addOneProduct(productsPage.content[0]);
+					if (products.length > 1){
+						$scope.kubikProductSearch.openSearchModal($scope.typedEan13);
+					}else{
+						$scope.addOneProduct(products[0]);
+					}
 				}
 			}).finally(function(){
 				$scope.searchInProgress = false;
@@ -197,20 +210,14 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 				$(".checkout").removeAttr("disabled");
 			}
 		});
-	}
-	
-	// Initialise SearchReferenceController
-	$scope.kubikReferenceSearch = new KubikReferenceSearch({
-		searchUrl : "reference",
-		searchResultUrl : "reference",
-		$modalContainer : $(".search-reference"),
-		importedInKubik : true,
-		productUrl : "product",
-		productSelected : function(product){
-			// Add the product to the basket.
-			$scope.addOneProduct(product);
+		
+		// Load customer credit amount.
+		if(invoice.customer != null){
+			$http.get("customer/" + invoice.customer.id + "/customerCreditAmount").success(function(customerCreditAmount){
+				$scope.customerCreditAmount = customerCreditAmount;
+			});
 		}
-	});
+	}
 	
 	$scope.kubikProductCard = new KubikProductCard({productUrl : "product", productSaved : function(){
 		$scope.loadInvoices();
@@ -220,10 +227,15 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	$scope.kubikCustomerSearch = kukikCustomerSearch;
 	$scope.kubikCustomerSearch.customerSelected = function(customer){
 		$scope.invoice.customer = customer;
-		
+			
 		$scope.saveInvoice();
 		
 		$scope.kubikCustomerSearch.closeSearchModal();
+	};
+	
+	$scope.kubikProductSearch = kubikProductSearch;
+	$scope.kubikProductSearch.productSelected = function(product){
+		$scope.addOneProduct(product);
 	};
 	
 	$scope.kubikCustomerCard = new KubikCustomerCard({
@@ -303,9 +315,12 @@ app.controller("KubikPaymentController", function($scope, $http, $timeout){
 	};
 	
 	$scope.selectPaymentMethod = function(paymentMethod){
-		if(paymentMethod.type != "CASH"){
+		if(paymentMethod.type != "CASH" && (paymentMethod.type != "CREDIT" || $scope.customerCreditAmount > $scope.amountLeft)){
 			$(".payment-amount").val($scope.amountLeft);
+		}else if(paymentMethod.type == "CREDIT"){
+			$(".payment-amount").val($scope.customerCreditAmount);
 		}
+		
 		$scope.paymentMethod = paymentMethod;
 	};
 	

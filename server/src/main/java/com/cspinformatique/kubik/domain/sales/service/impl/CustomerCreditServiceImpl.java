@@ -217,8 +217,8 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 		Double customerCreditUsed = this.customerCreditRepository
 				.findCustomerCreditUsed(customer);
 
-		return (customerCreditReceived != null ? customerCreditReceived : 0d)
-				- (customerCreditUsed != null ? customerCreditUsed : 0d);
+		return Precision.round((customerCreditReceived != null ? customerCreditReceived : 0d)
+				- (customerCreditUsed != null ? customerCreditUsed : 0d), 2);
 	}
 
 	@Override

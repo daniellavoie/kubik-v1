@@ -26,124 +26,128 @@
 				</h1>
 			</div>
 			
-			<table class="invoices table table-condensed panel panel-default">
-				<thead>
-					<tr>
-						<th>Numéro</th>
-						<th>Facture</th>
-						<th>Date</th>
-						<th>Client</th>
-						<th>Produits</th>
-						<th>Montant</th>
-						<th>Paiement</th>
-						<th>Statut</th>				
-					</tr>
-				</thead>
-				
-				<tbody>
-					<tr>
-						<td>{{customerCredit.number}}</td>
-						<td>
-							<a href="#" ng-click="openInvoice()">{{customerCredit.invoice.number}}</a>
-						</td>
-						<td>{{customerCredit.date | date : "short"}}</td>
-						<td>
-							<a href="#" ng-click="kubikCustomerCard.openCard(customerCredit.customer)">
-								<span ng-if="invoice.customer.company == null">{{customerCredit.customer.firstName}} {{customerCredit.customer.lastName}}</span>
-								<span ng-if="invoice.customer.company != null">{{customerCredit.customer.company}}</span>
-							</a>
-						</td>
-						<td>{{customerCredit.details.length}}</td>
-						<td>{{customerCredit.totalAmount | currency : '&euro;'}}</td>
-						<td class="payment-method">
-							<div class="{{customerCredit.status == 'OPEN' ? 'dropdown' : ''}}">
-								<span data-toggle="dropdown" aria-haspopup="true" ng-if="customerCredit.paymentMethod.type == 'CARD'" title="Carte" class="glyphicon glyphicon-credit-card">&nbsp;</span>
-								<span data-toggle="dropdown" aria-haspopup="true" ng-if="customerCredit.paymentMethod.type == 'CASH'" title="Espèces" class="glyphicon glyphicon-euro">&nbsp;</span>
-								<span data-toggle="dropdown" aria-haspopup="true" ng-if="customerCredit.paymentMethod.type == 'CHECK'" title="Chèque"  class="glyphicon glyphicon-edit">&nbsp;</span>
-								<span data-toggle="dropdown" aria-haspopup="true" ng-if="customerCredit.paymentMethod.type == 'CREDIT'" title="Avoir" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
-								<div ng-if="customerCredit.status == 'OPEN'" class="dropdown-menu" role="menu">
-									<span title="Carte" ng-click="changePaymentMethod('CARD')" class="glyphicon glyphicon-credit-card">&nbsp;</span>
-									<span title="Espèces" ng-click="changePaymentMethod('CASH')" class="glyphicon glyphicon-euro">&nbsp;</span>
-									<span title="Chèque" ng-click="changePaymentMethod('CHECK')" class="glyphicon glyphicon-edit">&nbsp;</span>
-									<span title="Avoir" ng-click="changePaymentMethod('CREDIT')" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
+			<div class="table-responsive">
+				<table class="invoices table table-condensed panel panel-default">
+					<thead>
+						<tr>
+							<th>Numéro</th>
+							<th>Facture</th>
+							<th>Date</th>
+							<th>Client</th>
+							<th>Produits</th>
+							<th>Montant</th>
+							<th>Paiement</th>
+							<th>Statut</th>				
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr>
+							<td>{{customerCredit.number}}</td>
+							<td>
+								<a href="#" ng-click="openInvoice()">{{customerCredit.invoice.number}}</a>
+							</td>
+							<td>{{customerCredit.date | date : "short"}}</td>
+							<td>
+								<a href="#" ng-click="kubikCustomerCard.openCard(customerCredit.customer)">
+									<span ng-if="invoice.customer.company == null">{{customerCredit.customer.firstName}} {{customerCredit.customer.lastName}}</span>
+									<span ng-if="invoice.customer.company != null">{{customerCredit.customer.company}}</span>
+								</a>
+							</td>
+							<td>{{customerCredit.details.length}}</td>
+							<td>{{customerCredit.totalAmount | currency : '&euro;'}}</td>
+							<td class="payment-method">
+								<div class="{{customerCredit.status == 'OPEN' ? 'dropdown' : ''}}">
+									<span data-toggle="dropdown" aria-haspopup="true" ng-if="customerCredit.paymentMethod.type == 'CARD'" title="Carte" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+									<span data-toggle="dropdown" aria-haspopup="true" ng-if="customerCredit.paymentMethod.type == 'CASH'" title="Espèces" class="glyphicon glyphicon-euro">&nbsp;</span>
+									<span data-toggle="dropdown" aria-haspopup="true" ng-if="customerCredit.paymentMethod.type == 'CHECK'" title="Chèque"  class="glyphicon glyphicon-edit">&nbsp;</span>
+									<span data-toggle="dropdown" aria-haspopup="true" ng-if="customerCredit.paymentMethod.type == 'CREDIT'" title="Avoir" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
+									<div ng-if="customerCredit.status == 'OPEN'" class="dropdown-menu" role="menu">
+										<span title="Carte" ng-click="changePaymentMethod('CARD')" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+										<span title="Espèces" ng-click="changePaymentMethod('CASH')" class="glyphicon glyphicon-euro">&nbsp;</span>
+										<span title="Chèque" ng-click="changePaymentMethod('CHECK')" class="glyphicon glyphicon-edit">&nbsp;</span>
+										<span title="Avoir" ng-click="changePaymentMethod('CREDIT')" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
+									</div>
 								</div>
-							</div>
-						</td>
-						<td>
-							<span ng-if="customerCredit.status == 'OPEN'" class="label label-info">Brouillon</span>
-							<span ng-if="customerCredit.status == 'COMPLETED'" class="label label-primary">Complété</span>
-							<span ng-if="customerCredit.status == 'CANCELED'" class="label label-danger">Annulé</span>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+							</td>
+							<td>
+								<span ng-if="customerCredit.status == 'OPEN'" class="label label-info">Brouillon</span>
+								<span ng-if="customerCredit.status == 'COMPLETED'" class="label label-primary">Complété</span>
+								<span ng-if="customerCredit.status == 'CANCELED'" class="label label-danger">Annulé</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 			
-			<table class="panel panel-default table table-striped table-condensed">
-				<thead class="panel-heading">
-					<tr>
-						<th>Ean13</th>
-						<th>Produit</th>
-						<th>Prix TTC</th>
-						<th>Taxe</th>
-						<th>Qté retour</th>
-						<th>Qté achat</th>
-						<th>Montant</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="detail in customerCredit.details">
-						<td>{{detail.product.ean13}}</td>
-						<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a></td>
-						<td>{{detail.unitPrice | currency : '&euro;'}}
-						<td>
-							<div ng-repeat="taxAmount in invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
-						</td>
-						
-						<td ng-if="customerCredit.status == 'OPEN'">
-							<input 
-								id="detail-{{detail.id}}"
-								ng-focus="focus($event)"
-								ng-change="quantityChanged($event)"
-								ng-model="detail.quantity"
-								class="quantity form-control" 
-								type="number"
-								min="0" 
-								max="{{detail.maxQuantity}}" 
-							/>
-						</td>									
-						<td ng-if="customerCredit.status != 'OPEN'">{{detail.quantity}}</td>
-						<td>{{detail.maxQuantity}}</td>
-						<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>
-					</tr>
-					<tr ng-if="customerCredit.details.length == 0">
-						<td colspan="7">Aucun produit saisi dans l'avoir</td>
-					</tr>
-				</tbody>
-				<tfoot>
-					<tr>
-						<td colspan="7">
-							<div class="col-sm-3">
+			<div class="table-responsive">
+				<table class="panel panel-default table table-striped table-condensed">
+					<thead class="panel-heading">
+						<tr>
+							<th>Ean13</th>
+							<th>Produit</th>
+							<th>Prix TTC</th>
+							<th>Taxe</th>
+							<th>Qté retour</th>
+							<th>Qté achat</th>
+							<th>Montant</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="detail in customerCredit.details">
+							<td>{{detail.product.ean13}}</td>
+							<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a></td>
+							<td>{{detail.unitPrice | currency : '&euro;'}}
+							<td>
+								<div ng-repeat="taxAmount in invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
+							</td>
+							
+							<td ng-if="customerCredit.status == 'OPEN'">
 								<input 
-									id="product-ean13"
-									placeholder="Ean13" 
-									type="text" 
-									class="form-control" 
+									id="detail-{{detail.id}}"
 									ng-focus="focus($event)"
-									ng-keyup="addProduct($event)" 
-									ng-model="detail.product.ean13"
+									ng-change="quantityChanged($event)"
+									ng-model="detail.quantity"
+									class="quantity form-control" 
+									type="number"
+									min="0" 
+									max="{{detail.maxQuantity}}" 
 								/>
-							</div>
-							<div class="col-sm-9 alerts">
-								<img class="loading hidden" th:src="@{/img/loading.gif}">
-								<div class="product-not-found alert alert-warning hidden" role="alert">
-									<button type="button" class="close" ng-click="hideAlerts()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-									Produit non retrouvé sur la facture {{customerCredit.invoice.number}}
+							</td>									
+							<td ng-if="customerCredit.status != 'OPEN'">{{detail.quantity}}</td>
+							<td>{{detail.maxQuantity}}</td>
+							<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>
+						</tr>
+						<tr ng-if="customerCredit.details.length == 0">
+							<td colspan="7">Aucun produit saisi dans l'avoir</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="7">
+								<div class="col-sm-3">
+									<input 
+										id="product-ean13"
+										placeholder="Ean13" 
+										type="text" 
+										class="form-control" 
+										ng-focus="focus($event)"
+										ng-keyup="addProduct($event)" 
+										ng-model="detail.product.ean13"
+									/>
 								</div>
-							</div>
-						</td>
-					</tr>
-				</tfoot>
-			</table>
+								<div class="col-sm-9 alerts">
+									<img class="loading hidden" th:src="@{/img/loading.gif}">
+									<div class="product-not-found alert alert-warning hidden" role="alert">
+										<button type="button" class="close" ng-click="hideAlerts()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+										Produit non retrouvé sur la facture {{customerCredit.invoice.number}}
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
 			
 			<div ng-if="customerCredit.status == 'OPEN'">
 				<button ng-click="cancel()" type="button" class="btn btn-danger">Annuler</button>

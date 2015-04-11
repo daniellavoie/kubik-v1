@@ -36,47 +36,49 @@
 					<a href="#" ng-if="!customerCreditsPage.last" ng-click="changePage(customerCreditsPage.number+1)">Suivante</a>
 				</li>
 			</ul>
-						
-			<table class="customer-credits table table-condensed table-striped table-hover panel panel-default">
-				<thead>
-					<tr>
-						<th>Numéro</th>
-						<th>Facture</th>
-						<th>Date</th>
-						<th>Client</th>
-						<th>Produits</th>
-						<th>Montant</th>
-						<th>Paiements</th>
-						<th>Statut</th>	
-					</tr>
-				</thead>
-				
-				<tbody>
-					<tr ng-repeat="customerCredit in customerCreditsPage.content" ng-click="openCustomerCredit(customerCredit)">
-						<td>{{customerCredit.number}}</td>
-						<td>{{customerCredit.invoice.number}}</td>
-						<td>{{customerCredit.date | date : "short"}}</td>
-						<td>
-							<a href="#" ng-click="openCustomerCard(customerCredit.customer, $event)">
-								<span ng-if="customerCredit.customer.company == null">{{customerCredit.customer.firstName}} {{customerCredit.customer.lastName}}</span>
-								<span ng-if="customerCredit.customer.company != null">{{customerCredit.customer.company}}</span>
-							</a>
-						</td>
-						<td>{{customerCredit.details.length}}</td>
-						<td>{{customerCredit.totalAmount | currency : '&euro;'}}</td>
-						<td>
-							<span ng-if="customerCredit.paymentMethod.type == 'CARD'" title="Carte" class="glyphicon glyphicon-credit-card">&nbsp;</span>
-							<span ng-if="customerCredit.paymentMethod.type == 'CASH'" title="Espèces" class="glyphicon glyphicon-euro">&nbsp;</span>
-							<span ng-if="customerCredit.paymentMethod.type == 'CHECK'" title="Chèque"  class="glyphicon glyphicon-edit">&nbsp;</span>
-						</td>
-						<td>
-							<span ng-if="customerCredit.status == 'OPEN'">Brouillon</span>
-							<span ng-if="customerCredit.status == 'COMPLETED'">Complété</span>
-							<span ng-if="customerCredit.status == 'CANCELED'">Annulé</span>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+					
+			<div class="table-responsive">	
+				<table class="customer-credits table table-condensed table-striped table-hover panel panel-default">
+					<thead>
+						<tr>
+							<th>Numéro</th>
+							<th>Facture</th>
+							<th>Date</th>
+							<th>Client</th>
+							<th>Produits</th>
+							<th>Montant</th>
+							<th>Paiements</th>
+							<th>Statut</th>	
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="customerCredit in customerCreditsPage.content" ng-click="openCustomerCredit(customerCredit)">
+							<td>{{customerCredit.number}}</td>
+							<td>{{customerCredit.invoice.number}}</td>
+							<td>{{customerCredit.date | date : "short"}}</td>
+							<td>
+								<a href="#" ng-click="openCustomerCard(customerCredit.customer, $event)">
+									<span ng-if="customerCredit.customer.company == null">{{customerCredit.customer.firstName}} {{customerCredit.customer.lastName}}</span>
+									<span ng-if="customerCredit.customer.company != null">{{customerCredit.customer.company}}</span>
+								</a>
+							</td>
+							<td>{{customerCredit.details.length}}</td>
+							<td>{{customerCredit.totalAmount | currency : '&euro;'}}</td>
+							<td>
+								<span ng-if="customerCredit.paymentMethod.type == 'CARD'" title="Carte" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+								<span ng-if="customerCredit.paymentMethod.type == 'CASH'" title="Espèces" class="glyphicon glyphicon-euro">&nbsp;</span>
+								<span ng-if="customerCredit.paymentMethod.type == 'CHECK'" title="Chèque"  class="glyphicon glyphicon-edit">&nbsp;</span>
+							</td>
+							<td>
+								<span ng-if="customerCredit.status == 'OPEN'">Brouillon</span>
+								<span ng-if="customerCredit.status == 'COMPLETED'">Complété</span>
+								<span ng-if="customerCredit.status == 'CANCELED'">Annulé</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 			
 			<div class="new-customer-credit-modal modal fade">
 				<div class="modal-dialog modal-sm">

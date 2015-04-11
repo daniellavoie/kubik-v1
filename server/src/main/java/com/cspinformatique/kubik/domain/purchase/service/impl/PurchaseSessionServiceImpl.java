@@ -134,17 +134,6 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 			purchaseSession.setStatus(Status.DRAFT);
 		}
 
-		// Checks if the product presents exists in the database.
-		if (purchaseSession.getDetails() != null) {
-			for (PurchaseSessionDetail detail : purchaseSession.getDetails()) {
-				// Generates the missing ones.
-				detail.setProduct(this.productService
-						.generateProductIfNotFound(detail.getProduct()
-								.getEan13(), detail.getProduct().getSupplier()
-								.getEan13()));
-			}
-		}
-
 		Status status = purchaseSession.getStatus();
 		if (status.equals(Status.SUBMITED) || status.equals(Status.CANCELED)) {
 			PurchaseSession oldSession = this.findOne(purchaseSession.getId());

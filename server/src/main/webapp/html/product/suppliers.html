@@ -22,26 +22,27 @@
 				<button ng-click="newSupplier()" class="btn btn-primary">Nouveau client</button>
 			</div>
 			
-	
-			<table class="suppliers table table-condensed table-striped table-hover panel panel-default">
-				<thead>
-					<tr>
-						<th>Nom</th>
-						<th>Ean13</th>
-						<th>Ean13 pour commande</th>
-						<th>Remise</th>
-					</tr>
-				</thead>
-				
-				<tbody>
-					<tr ng-repeat="supplier in suppliers" ng-click="supplierCard.openCard(supplier)">
-						<td>{{supplier.name}}</td>
-						<td>{{supplier.ean13}}</td>
-						<td>{{supplier.purchaseOrderEan13}}</td>
-						<td>{{supplier.discount | number}}</td>
-					</tr>
-				</tbody>
-			</table>
+			<div class="table-responsive">
+				<table class="suppliers table table-condensed table-striped table-hover panel panel-default">
+					<thead>
+						<tr>
+							<th>Nom</th>
+							<th>Ean13</th>
+							<th>Ean13 pour commande</th>
+							<th>Remise</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="supplier in suppliers" ng-click="supplierCard.openCard(supplier)">
+							<td>{{supplier.name}}</td>
+							<td>{{supplier.ean13}}</td>
+							<td>{{supplier.purchaseOrderEan13}}</td>
+							<td>{{supplier.discount | number}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 		
 		<div class="supplier-card"></div>
