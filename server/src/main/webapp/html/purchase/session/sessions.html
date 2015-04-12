@@ -3,7 +3,7 @@
 <html 
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
-	ng-app="sessions"
+	
 >
 
 	<head>
@@ -13,10 +13,10 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/session/sessions.css}" />
 	</head>
 	
-	<body ng-cloak ng-controller="SessionController as sessionsView">
+	<body >
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center">
+		<div ng-app="sessions" ng-controller="SessionController as sessionsView" ng-cloak class="container text-center">
 			<h1>Préparation de commandes</h1>
 			
 			<div class="header">
