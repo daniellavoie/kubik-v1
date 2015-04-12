@@ -65,6 +65,9 @@ public class FetchReceptionsTask implements InitializingBean {
 	@Value("${kubik.dilicom.archive.folder}")
 	private String archiveDirectoryPath;
 
+	@Value("${kubik.dilicom.ftp.clean.files}")
+	private boolean cleanFiles;
+
 	@Value("${kubik.dilicom.receptions.folder}")
 	private String receptionsDirectoryPath;
 
@@ -101,7 +104,7 @@ public class FetchReceptionsTask implements InitializingBean {
 				.setFilter(new FtpSimplePatternFileListFilter("EXP*"));
 
 		ftpInboundFileSynchronizer.setRemoteDirectory(remoteDirectory);
-		ftpInboundFileSynchronizer.setDeleteRemoteFiles(true);
+		ftpInboundFileSynchronizer.setDeleteRemoteFiles(cleanFiles);
 	};
 
 	@Transactional
@@ -114,22 +117,20 @@ public class FetchReceptionsTask implements InitializingBean {
 		// Process files in local directory.
 		for (File file : receptionsDirectory.listFiles()) {
 			this.processFile(file);
+			
+			this.archiveFile(file);
 		}
 
-		this.archiveFiles();
 	}
 
-	private void archiveFiles() {
+	private void archiveFile(File file) {
 		try {
-			for (File file : receptionsDirectory.listFiles()) {
-				LOGGER.info("Archiving file " + file.getAbsolutePath());
+			LOGGER.info("Archiving file " + file.getAbsolutePath());
 
-				FileUtils.deleteQuietly(new File(archiveDirectoryPath + "/"
-						+ file.getName()));
-				FileUtils.moveFileToDirectory(file, archiveDirectory, true);
-			}
+			FileUtils.moveFileToDirectory(file, archiveDirectory, true);
 		} catch (IOException ioEx) {
-			throw new RuntimeException(ioEx);
+			LOGGER.error("Error while arhiving file " + file.getAbsolutePath()
+					+ ".", ioEx);
 		}
 	}
 

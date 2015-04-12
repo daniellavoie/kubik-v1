@@ -36,6 +36,9 @@ public class FetchDilicomTask implements InitializingBean {
 	@Value("${kubik.dilicom.archive.folder}")
 	private String archiveDirectoryPath;
 
+	@Value("${kubik.dilicom.ftp.clean.files}")
+	private boolean cleanFiles;
+
 	@Value("${kubik.dilicom.references.folder}")
 	private String referencesDirectoryPath;
 
@@ -63,7 +66,7 @@ public class FetchDilicomTask implements InitializingBean {
 
 		ftpInboundFileSynchronizer
 				.setFilter(new FtpSimplePatternFileListFilter("DIF*"));
-		this.ftpInboundFileSynchronizer.setDeleteRemoteFiles(true);
+		this.ftpInboundFileSynchronizer.setDeleteRemoteFiles(cleanFiles);
 	}
 
 	@Scheduled(fixedDelay = 1000 * 60 * 30)
