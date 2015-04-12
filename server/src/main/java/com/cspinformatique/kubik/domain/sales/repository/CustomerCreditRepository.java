@@ -17,14 +17,20 @@ import com.cspinformatique.kubik.model.sales.CustomerCredit.Status;
 public interface CustomerCreditRepository extends
 		JpaRepository<CustomerCredit, Integer> {
 
-	List<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate, Date endDate, Status status);
-	
-	Page<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate, Date endDate, Status status, Pageable pageable);
-	
+	@Query("SELECT customerCredit FROM CustomerCredit customerCredit ORDER BY completeDate ASC")
+	Iterable<CustomerCredit> findAllOrderByCompleteDateDesc();
+
+	List<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate,
+			Date endDate, Status status);
+
+	Page<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate,
+			Date endDate, Status status, Pageable pageable);
+
 	List<CustomerCredit> findByInvoice(Invoice invoice);
-	
-	Page<CustomerCredit> findByStatusAndNumberIsNotNull(Status status, Pageable pageable);
-	
+
+	Page<CustomerCredit> findByStatusAndNumberIsNotNull(Status status,
+			Pageable pageable);
+
 	@Query("SELECT id FROM CustomerCredit customerCredit WHERE id > :id")
 	Page<Integer> findIdByIdGreaterThan(@Param("id") int id, Pageable pageable);
 
@@ -36,7 +42,7 @@ public interface CustomerCreditRepository extends
 
 	@Query("SELECT sum(payment.amount) FROM Payment payment WHERE payment.invoice.status = 'PAID' AND payment.invoice.customer = :customer AND payment.paymentMethod.type = 'CREDIT'")
 	Double findCustomerCreditUsed(@Param("customer") Customer customer);
-	
+
 	@Query("SELECT sum(detail.quantity) FROM CustomerCreditDetail detail WHERE detail.product.id = :productId AND detail.customerCredit.status = 'COMPLETED'")
 	Double findProductQuantityReturned(@Param("productId") int productId);
 }

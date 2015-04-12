@@ -177,7 +177,7 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 
 	@Override
 	public Iterable<CustomerCredit> findAll() {
-		return this.customerCreditRepository.findAll();
+		return this.customerCreditRepository.findAllOrderByCompleteDateDesc();
 	}
 
 	@Override
@@ -337,6 +337,8 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 		}
 
 		customerCredit = this.customerCreditRepository.save(customerCredit);
+		
+		this.customerCreditRepository.flush();
 		
 		if(customerCreditCompleted){
 			this.updateInventory(customerCredit);

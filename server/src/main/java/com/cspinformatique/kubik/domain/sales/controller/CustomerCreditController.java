@@ -19,7 +19,8 @@ import com.cspinformatique.kubik.model.sales.CustomerCredit;
 @Controller
 @RequestMapping("/customerCredit")
 public class CustomerCreditController {
-	@Autowired private CustomerCreditService customerCreditService;
+	@Autowired
+	private CustomerCreditService customerCreditService;
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Page<CustomerCredit> find(
@@ -32,19 +33,19 @@ public class CustomerCreditController {
 
 		return this.customerCreditService.findAll(pageRequest);
 	}
-	
-	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody CustomerCredit findOne(@PathVariable int id){
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody CustomerCredit findOne(@PathVariable int id) {
 		return this.customerCreditService.findOne(id);
 	}
-	
+
 	@RequestMapping(value = "/{id}/next", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Integer findNextCustomerCredit(@PathVariable int id){
+	public @ResponseBody Integer findNextCustomerCredit(@PathVariable int id) {
 		return this.customerCreditService.findNext(id);
 	}
-	
+
 	@RequestMapping(value = "/{id}/previous", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Integer findPreviousCustomerCredit(@PathVariable int id){
+	public @ResponseBody Integer findPreviousCustomerCredit(@PathVariable int id) {
 		return this.customerCreditService.findPrevious(id);
 	}
 
@@ -57,18 +58,26 @@ public class CustomerCreditController {
 	public String getCustomerCreditsPage() {
 		return "sales/customer-credit/credits-page";
 	}
-	
+
 	@RequestMapping("/init")
-	public String initialize(){
-		for(CustomerCredit customerCredit : this.customerCreditService.findAll()){
+	public String initialize() {
+		String number = "000000000";
+
+		for (CustomerCredit customerCredit : this.customerCreditService
+				.findAll()) {
+			number = String.format("%09d", Long.valueOf(number) + 1);
+
+			customerCredit.setNumber(number);
+
 			this.customerCreditService.save(customerCredit);
 		}
-		
+
 		return "redirect:/customerCredit";
 	}
-	
-	@RequestMapping(method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody CustomerCredit save(@RequestBody CustomerCredit customerCredit){
+
+	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody CustomerCredit save(
+			@RequestBody CustomerCredit customerCredit) {
 		return this.customerCreditService.save(customerCredit);
 	}
 }
