@@ -14,7 +14,7 @@ var kubikProductSearch = new KubikProductSearch({
 
 app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	$scope.$on("openCustomerCard", function(event, customer){
-		$scope.kubikCustomerCard.openCard(customer);
+		$scope.openCustomerCard();
 	})
 	
 	$scope.$on("openProductCard", function(product){
@@ -121,6 +121,10 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 			
 			$scope.loadInvoices();
 		});
+	};
+	
+	$scope.openCustomerCard = function(){
+		$scope.kubikCustomerCard.openCard(customer);
 	};
 	
 	$scope.quantityChanged = function($event){
@@ -250,7 +254,10 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 		}
 	});
 	
+	$scope.focusEan13Input = true;
 	$scope.loadInvoices();
+	
+	$(".ean13-input").focus();
 });
 
 app.controller("KubikPaymentController", function($scope, $http, $timeout){
