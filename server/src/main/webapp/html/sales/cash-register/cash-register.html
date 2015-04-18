@@ -63,12 +63,13 @@
 								<td>
 									<input 
 										id="detail-{{detail.id}}"
-										ng-keyup="quantityChanged($event)"
+										ng-keyup="invoiceChanged($event)"
+										ng-click="invoiceChanged($event)"
 										ng-model="detail.quantity"
 										class="quantity form-control" 
 										type="number"
 										min="1" 
-										max="99999" 
+										max="99999"
 									/>
 								</td>
 								
@@ -111,21 +112,34 @@
 		
 			<footer class="footer text-center">
 				<div class="container">
-					<div class="col-md-4 col-sm-3 col-lg-4">
+					<div class="col-sm-3">
 						<input ng-model="ean13" ng-keyup="searchProductKeyUp($event)" type="text" class="form-control ean13-input" placeholder="Ean13" />
 					</div>
-					<div class="col-md-2 col-sm-3 col-lg-2">
+					
+					<div class="col-sm-2">
 						<button ng-click="kubikProductSearch.openSearchModal()" type="button" class="btn btn-primary form-control">Rechercher</button>
 					</div>
 					
-					<div class="col-md-2 col-sm-2 col-lg-2">
+					<div class="col-sm-2">
 						<button ng-click="confirmCancelInvoice()" type="button" class="btn btn-danger form-control">Annuler</button>
 					</div>
 					
-					<div class="col-md-2 col-sm-2 col-lg-2">
+					<div class="col-sm-2">
+						<input 
+						 	placeholder="Remise"
+							type="number" 
+							class="form-control ean13-input"
+							ng-model="invoice.rebatePercent" 
+							ng-keyup="invoiceChanged($event)"
+							ng-click="invoiceChanged($event)"
+						/>
+					</div>
+					
+					<div class="col-sm-2">
 						<button ng-click="checkoutInvoice()" type="button" class="checkout btn btn-success form-control">Encaisser</button>
 					</div>
-					<div class="col-md-2 col-sm-2 col-lg-2">
+					
+					<div class="col-sm-1">
 						<h4>{{invoice.totalAmount | currency : '&euro;'}}</h4>
 					</div>
 				</div>

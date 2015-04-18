@@ -68,6 +68,7 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 		double totalAmount = 0d;
 		double totalTaxLessAmount = 0d;
 		double totalTaxAmount = 0d;
+		double totalRebateAmount = 0d;
 
 		Invoice invoice = this.invoiceService.findOne(customerCredit
 				.getInvoice().getId());
@@ -117,6 +118,14 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 					detailTaxesAmounts.put(creditTaxAmount.getTaxRate(),
 							creditTaxAmount);
 				}
+				
+				double rebateAmount = 0d;
+				if(invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d){
+					rebateAmount = invoiceDetail.getUnitPrice() * (invoice.getRebatePercent() / 100);
+				} else if(invoice.getRebateAmount() != null && invoice.getRebateAmount().doubleValue() != 0d){
+					rebateAmount = invoice.getRebateAmount();
+				}				
+				totalRebateAmount += rebateAmount;
 
 				// Calculates customer credit details amounts
 				detail.setUnitPrice(invoiceDetail.getUnitPrice());
@@ -162,7 +171,8 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 			}
 		}
 
-		customerCredit.setTotalAmount(Precision.round(totalAmount, 2));
+		customerCredit.setRebateAmount(Precision.round(totalRebateAmount, 2));
+		customerCredit.setTotalAmount(Precision.round(totalAmount - totalRebateAmount, 2));
 		customerCredit.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));
 		customerCredit.setTotalTaxLessAmount(Precision.round(
 				totalTaxLessAmount, 2));

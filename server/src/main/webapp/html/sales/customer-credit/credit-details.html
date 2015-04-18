@@ -35,6 +35,7 @@
 							<th>Date</th>
 							<th>Client</th>
 							<th>Produits</th>
+							<th>Remise</th>
 							<th>Montant</th>
 							<th>Paiement</th>
 							<th>Statut</th>				
@@ -55,6 +56,7 @@
 								</a>
 							</td>
 							<td>{{customerCredit.details.length}}</td>
+							<td>{{customerCredit.rebateAmount | currency : '&euro;'}}</td>
 							<td>{{customerCredit.totalAmount | currency : '&euro;'}}</td>
 							<td class="payment-method">
 								<div class="{{customerCredit.status == 'OPEN' ? 'dropdown' : ''}}">

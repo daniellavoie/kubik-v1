@@ -62,12 +62,21 @@ public class InvoiceServiceImpl implements InvoiceService {
 		double totalAmount = 0d;
 		double totalTaxLessAmount = 0d;
 		double totalTaxAmount = 0d;
+		double totalRebateAmount = 0d;
 
 		if (invoice.getDetails() != null) {
 			for (InvoiceDetail detail : invoice.getDetails()) {
 				Product product = productService.findOne(detail.getProduct()
 						.getId());
 				double quantity = detail.getQuantity();
+				
+				double rebateAmount = 0d;
+				if(invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d){
+					rebateAmount = product.getPriceTaxIn() * (invoice.getRebatePercent() / 100);
+				} else if(invoice.getRebateAmount() != null && invoice.getRebateAmount().doubleValue() != 0d){
+						rebateAmount = invoice.getRebateAmount();
+				}				
+				totalRebateAmount += rebateAmount;
 
 				// Builds the tax rates / amounts map.
 				Map<Double, InvoiceTaxAmount> detailTaxesAmounts = new HashMap<Double, InvoiceTaxAmount>();
@@ -84,8 +93,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 					invoiceTaxAmount.setTaxAmount(invoiceTaxAmount
 							.getTaxAmount()
-							+ ((product.getPriceTaxIn() - product
-									.getPriceTaxOut1()) * quantity));
+							+ ((product.getPriceTaxIn() - rebateAmount) * (product.getTvaRate1() / 100) * quantity));
 
 					detailTaxesAmounts.put(product.getTvaRate1(),
 							invoiceTaxAmount);
@@ -104,8 +112,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 					invoiceTaxAmount.setTaxAmount(invoiceTaxAmount
 							.getTaxAmount()
-							+ ((product.getPriceTaxIn() - product
-									.getPriceTaxOut2()) * quantity));
+							+ ((product.getPriceTaxIn() - rebateAmount) * (product.getTvaRate2() / 100) * quantity));
 
 					detailTaxesAmounts.put(product.getTvaRate2(),
 							invoiceTaxAmount);
@@ -124,8 +131,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 					invoiceTaxAmount.setTaxAmount(invoiceTaxAmount
 							.getTaxAmount()
-							+ ((product.getPriceTaxIn() - product
-									.getPriceTaxOut3()) * quantity));
+							+ ((product.getPriceTaxIn() - rebateAmount) * (product.getTvaRate3() / 100) * quantity));
 
 					detailTaxesAmounts.put(product.getTvaRate3(),
 							invoiceTaxAmount);
@@ -175,7 +181,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 			}
 		}
 
-		invoice.setTotalAmount(Precision.round(totalAmount, 2));
+		invoice.setRebateAmount(Precision.round(totalRebateAmount, 2));
+		invoice.setTotalAmount(Precision.round(totalAmount - totalRebateAmount, 2));
 		invoice.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));
 		invoice.setTotalTaxLessAmount(Precision.round(totalTaxLessAmount, 2));
 

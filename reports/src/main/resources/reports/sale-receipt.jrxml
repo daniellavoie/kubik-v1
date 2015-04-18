@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-03-18T22:41:12 -->
+<!-- 2015-04-18T15:51:03 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sale-receipt" pageWidth="226" pageHeight="842" columnWidth="22" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="0e5f4531-9672-428b-94c4-e9a87ed6b5d0">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
@@ -16,6 +16,7 @@
 	total_tax_less_amount,
 	total_amount,
 	amount_returned,
+	rebate_percent,
 	rebate_amount,
 	number
 FROM
@@ -41,6 +42,9 @@ WHERE
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="number" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="rebate_percent" class="java.lang.Double">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<background>
@@ -94,6 +98,21 @@ WHERE
 				<subreportExpression><![CDATA["reports/invoice-details.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
+		<band height="23">
+			<printWhenExpression><![CDATA[$F{rebate_amount} != 0d]]></printWhenExpression>
+			<textField>
+				<reportElement x="80" y="0" width="106" height="13" uuid="552915d7-7599-4d73-b1a4-84d903846093"/>
+				<textElement textAlignment="Right">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-" + TEXT($F{rebate_amount},"0.00") + " €"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="80" height="13" uuid="f804a2ea-5d45-4d64-b151-c3e707ae8741"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["Remise " + TEXT($F{rebate_percent},"0.00") + " : "]]></textFieldExpression>
+			</textField>
+		</band>
 		<band height="24">
 			<staticText>
 				<reportElement x="0" y="0" width="80" height="16" uuid="c0ca530d-b058-4179-b31e-fa12d07c96e4"/>
@@ -117,23 +136,6 @@ WHERE
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["reports/invoice-taxes.jasper"]]></subreportExpression>
 			</subreport>
-		</band>
-		<band height="14">
-			<printWhenExpression><![CDATA[$F{rebate_amount} != 0d]]></printWhenExpression>
-			<staticText>
-				<reportElement x="0" y="0" width="80" height="13" uuid="30e367b5-ffbe-4bc2-9903-3ce5926231f0"/>
-				<textElement>
-					<font size="10"/>
-				</textElement>
-				<text><![CDATA[Remise :]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="80" y="0" width="106" height="13" uuid="552915d7-7599-4d73-b1a4-84d903846093"/>
-				<textElement textAlignment="Right">
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[TEXT($F{rebate_amount},"0.00") + " €"]]></textFieldExpression>
-			</textField>
 		</band>
 		<band height="36">
 			<staticText>

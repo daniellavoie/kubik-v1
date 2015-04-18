@@ -34,6 +34,7 @@
 							<th>Date</th>
 							<th>Client</th>
 							<th>Produits</th>
+							<th>Remise</th>
 							<th>Montant</th>
 							<th>Paiements</th>
 							<th>Statut</th>				
@@ -54,6 +55,7 @@
 								Anonyme
 							</td>
 							<td>{{invoice.details.length}}</td>
+							<td>{{invoice.rebateAmount | currency : '&euro;'}}</td>
 							<td>{{invoice.totalAmount | currency : '&euro;'}}</td>
 							<td>
 								<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CARD'" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>

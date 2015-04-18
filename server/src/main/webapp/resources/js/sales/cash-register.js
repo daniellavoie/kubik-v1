@@ -127,11 +127,11 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 		$scope.kubikCustomerCard.openCard(customer);
 	};
 	
-	$scope.quantityChanged = function($event){
+	$scope.invoiceChanged = function($event){
 		$scope.inputIdToFocus = $event.target.id;
-		if($scope.quantityChangedTimer != undefined) clearTimeout($scope.quantityChangedTimer);
+		if($scope.invoiceChangedTimer != undefined) clearTimeout($scope.invoiceChangedTimer);
 	    
-		$scope.quantityChangedTimer = setTimeout($scope.saveInvoice, 1000);
+		$scope.invoiceChangedTimer = setTimeout($scope.saveInvoice, 1000);
 	}
 	
 	$scope.removeCustomerFromInvoice = function(){
