@@ -22,9 +22,6 @@ public class DilicomFtpConfig {
 		DefaultFtpSessionFactory dilicomFtpSessionFactory = new DefaultFtpSessionFactory();
 		
 		dilicomFtpSessionFactory.setHost(dilicomFtpUrl);
-		dilicomFtpSessionFactory.setClientMode(2);
-		dilicomFtpSessionFactory.setFileType(0);
-		dilicomFtpSessionFactory.setPort(21);
 		dilicomFtpSessionFactory.setUsername(dilicomFtpUsername);
 		dilicomFtpSessionFactory.setPassword(dilicomFtpPassword);
         
