@@ -186,7 +186,7 @@ public class FetchReceptionsTask implements InitializingBean {
 						if (ex instanceof PurchaseOrderNotFoundException) {
 							LOGGER.info("Reception "
 									+ file.getName()
-									+ " kipped since no purchase order were found for id "
+									+ " skipped since no purchase order were found for id "
 									+ ((PurchaseOrderNotFoundException) ex)
 											.getPurchaseOrderId() + ".");
 						} else if (ex instanceof ReceptionAlreadyReceivedException) {

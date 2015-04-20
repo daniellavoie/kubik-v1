@@ -157,6 +157,8 @@ public class DilicomOrderServiceImpl implements DilicomOrderService {
 				client.storeFile(remoteFileName, fileInputStream);
 				
 				client.logout();
+				
+				new File(orderFileName).delete();
 			} catch (IOException ioEx) {
 				LOGGER.error("Error while renaming order.", ioEx);
 			} finally {
@@ -167,8 +169,6 @@ public class DilicomOrderServiceImpl implements DilicomOrderService {
 					LOGGER.error("Error while closing FTP connection.", ioEx);
 				}
 			}
-			
-			new File(orderFileName).delete();
 			
 			return remoteFileName;
 		} catch (IOException ioEx) {
