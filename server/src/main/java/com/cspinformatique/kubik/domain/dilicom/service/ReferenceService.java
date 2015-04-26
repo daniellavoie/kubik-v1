@@ -1,7 +1,5 @@
 package com.cspinformatique.kubik.domain.dilicom.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -34,7 +32,7 @@ public interface ReferenceService {
 	
 	Reference save(Reference reference);
 	
-	Iterable<? extends Reference> save(List<? extends Reference> references);
+	Iterable<Reference> save(Iterable<Reference> references);
 	
 	Page<Reference> search(String query, Pageable pageable);
 }

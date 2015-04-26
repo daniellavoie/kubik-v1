@@ -5,24 +5,14 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
-import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.context.embedded.MimeMappings;
 import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan
 @EnableAutoConfiguration(exclude = { ThymeleafAutoConfiguration.class,
 		ElasticsearchAutoConfiguration.class,
 		ElasticsearchRepositoriesAutoConfiguration.class })
-public class Kubik implements EmbeddedServletContainerCustomizer {
+public class Kubik {
 	public static void main(String args[]) {
 		SpringApplication.run(Kubik.class);
-	}
-
-	@Override
-	public void customize(ConfigurableEmbeddedServletContainer container) {
-		MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
-		mappings.add("html", "text/html;charset=utf-8");
-		container.setMimeMappings(mappings);
 	}
 }

@@ -100,6 +100,8 @@ public class FetchDilicomTask implements InitializingBean {
 		try {
 			LOGGER.info("Archiving file " + file.getAbsolutePath());
 
+			new File(archiveDirectoryPath + "/" + file.getName()).delete();
+			
 			FileUtils.moveFileToDirectory(file, archiveDirectory, true);
 		} catch (IOException ioEx) {
 			LOGGER.error("Error while arhiving file " + file.getAbsolutePath()

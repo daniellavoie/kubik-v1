@@ -38,6 +38,7 @@ public class DilicomReferenceWriter implements ItemWriter<Reference> {
 		// notifications for a single product are
 		// sent for persistence.
 		Map<Integer, ReferenceNotification> notifications = new HashMap<Integer, ReferenceNotification>();
+		Map<String, Reference> references = new HashMap<String, Reference>();
 		for (Reference reference : items) {
 			if (this.productService.getProductIdsCache().contains(
 					reference.getEan13() + "-" + reference.getSupplierEan13())) {
@@ -48,12 +49,14 @@ public class DilicomReferenceWriter implements ItemWriter<Reference> {
 						null, product, ReferenceNotification.Status.NEW, null,
 						null));
 			}
+			
+			references.put(reference.getEan13() + "-" + reference.getSupplierEan13(), reference);
 		}
 
 		if (!notifications.isEmpty()) {
 			this.referenceNotificationService.save(notifications.values());
 		}
 
-		this.referenceService.save(items);
+		this.referenceService.save(references.values());
 	}
 }

@@ -212,8 +212,8 @@ public class ReferenceServiceImpl implements ReferenceService {
 	}
 
 	@Override
-	public Iterable<? extends Reference> save(
-			List<? extends Reference> references) {
+	public Iterable<Reference> save(
+			Iterable<Reference> references) {
 		Map<String, Reference> referenceMap = new HashMap<String, Reference>();
 		for (Reference reference : references) {
 			try {
