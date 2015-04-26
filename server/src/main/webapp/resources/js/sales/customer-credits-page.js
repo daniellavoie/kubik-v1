@@ -7,6 +7,9 @@ var kukikCustomerSearch = new KubikCustomerSearch({
 });
 
 app.controller("KubikCustomerCreditsPageController", function($scope, $http, $timeout){
+	$scope.$on("openCustomerCard", function(event, customer){
+		$scope.openCustomerCard(customer, event);
+	});
 	
 	$scope.changePage = function(page){
 		$scope.page = page;

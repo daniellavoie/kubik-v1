@@ -60,9 +60,11 @@ window.KubikCustomerCard.prototype.init = function(){
 			$scope.customer = customer;
 			
 			// Load customer credit.
-			$http.get(kubikCustomerCard.customerUrl + "/" + customer.id + "/customerCreditAmount").success(function(customerCreditAmount){
-				$scope.customerCreditAmount = customerCreditAmount;
-			});
+			if(customer.id != undefined){
+				$http.get(kubikCustomerCard.customerUrl + "/" + customer.id + "/customerCreditAmount").success(function(customerCreditAmount){
+					$scope.customerCreditAmount = customerCreditAmount;
+				});
+			}
 			
 			$timeout(function(){
 				kubikCustomerCard.$modal = kubikCustomerCard.$modalContainer.find(".modal").modal({
