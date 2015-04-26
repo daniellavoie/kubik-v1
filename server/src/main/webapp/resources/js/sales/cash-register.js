@@ -14,8 +14,8 @@ var kubikProductSearch = new KubikProductSearch({
 
 app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	$scope.$on("openCustomerCard", function(event, customer){
-		$scope.openCustomerCard();
-	})
+		$scope.openCustomerCard(customer, event);
+	});
 	
 	$scope.$on("openProductCard", function(product){
 		$scope.kubikProductCard.openCard(product);
@@ -123,7 +123,7 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 		});
 	};
 	
-	$scope.openCustomerCard = function(){
+	$scope.openCustomerCard = function(customer){
 		$scope.kubikCustomerCard.openCard(customer);
 	};
 	
