@@ -15,17 +15,21 @@ public class Supplier {
 	private String name;
 	private String purchaseOrderEan13;
 	private float discount;
+	private String accountNumber;
+	private String address;
 	
 	public Supplier(){
 		
 	}
 
-	public Supplier(Integer id, String ean13, String name, String purchaseOrderEan13, float discount) {
+	public Supplier(Integer id, String ean13, String name, String purchaseOrderEan13, float discount, String accountNumber, String address) {
 		this.id = id;
 		this.ean13 = ean13;
 		this.name = name;
 		this.purchaseOrderEan13 = purchaseOrderEan13;
 		this.discount = discount;
+		this.accountNumber = accountNumber;
+		this.address = address;
 	}
 
 	@Id
@@ -68,5 +72,21 @@ public class Supplier {
 
 	public void setDiscount(float discount) {
 		this.discount = discount;
+	}
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 }

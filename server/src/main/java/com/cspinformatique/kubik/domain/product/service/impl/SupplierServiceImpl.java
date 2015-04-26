@@ -29,7 +29,7 @@ public class SupplierServiceImpl implements SupplierService {
 		Supplier supplier = this.findByEan13(ean13);
 		
 		if(supplier == null){
-			return this.save(new Supplier(null, ean13, "A défénir", null, 0f));
+			return this.save(new Supplier(null, ean13, "A défénir", null, 0f, null, null));
 		}
 		
 		return supplier;

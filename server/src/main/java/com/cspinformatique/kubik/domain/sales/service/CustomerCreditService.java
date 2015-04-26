@@ -28,11 +28,11 @@ public interface CustomerCreditService {
 	
 	CustomerCredit findOne(int id);
 	
-	double findProductQuantityReturned(int productId);
+	double findProductQuantityReturnedByCustomer(int productId);
 	
-	Integer findNext(int invoiceId);
+	Integer findNext(int customerCreditId);
 	
-	Integer findPrevious(int invoiceId);
+	Integer findPrevious(int customerCreditId);
 	
 	CustomerCredit save(CustomerCredit customerCredit);
 }

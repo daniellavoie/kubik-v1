@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
+<!-- 2015-04-26T23:38:09 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rma" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik Database"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="RmaDetailsDataset" uuid="854e152c-1c7d-4b0f-98a1-b9eda11e2bc8">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik Database"/>
+		<queryString>
+			<![CDATA[SELECT
+	product.ean13,
+	product.extended_label,
+	rma_detail.quantity
+FROM
+	rma_detail
+INNER join
+	rma_details on rma_detail.id = rma_details.details_id
+INNER JOIN
+	rma on rma.id = rma_details.rma_id
+INNER JOIN
+	product on rma_detail.product_id = product.id]]>
+		</queryString>
+		<field name="ean13" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="extended_label" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="quantity" class="java.lang.Double">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="RMA_ID" class="java.lang.Integer">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="SUPPLIER_NAME" class="java.lang.String"/>
+	<parameter name="SUPPLIER_ADDRESS" class="java.lang.String"/>
+	<parameter name="SUPPLIER_ACCOUNT_NUMBER" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+	product.ean13,
+	product.extended_label,
+	rma_detail.quantity
+FROM
+	rma_detail
+INNER join
+	rma_details on rma_detail.id = rma_details.details_id
+INNER JOIN
+	rma on rma.id = rma_details.rma_id
+INNER JOIN
+	product on rma_detail.product_id = product.id
+WHERE
+	rma.id = $P{RMA_ID}]]>
+	</queryString>
+	<field name="ean13" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="extended_label" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="quantity" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<pageHeader>
+		<band height="139">
+			<line>
+				<reportElement x="0" y="80" width="556" height="1" uuid="806ce5df-1219-4876-ae0c-ca7405b1f246">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+			<textField pattern="dd/MM/YYYY">
+				<reportElement x="445" y="10" width="104" height="20" uuid="bb10dbe1-0a4f-4722-9953-c163b63cf979"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="415" y="30" width="134" height="20" uuid="3836ce65-eca3-4cad-a6de-b1818def0a2b"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Retour # " + $P{RMA_ID}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="130" y="0" width="315" height="25" uuid="e622555d-198b-4ccd-a4a1-c59c53304058">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="19" isBold="true"/>
+				</textElement>
+				<text><![CDATA[La Dimension Fantastique]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="55" width="205" height="15" uuid="b8cc42fd-b569-497d-834d-7e854040ad18"/>
+				<text><![CDATA[09 82 42 23 21]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="25" width="205" height="15" uuid="c226e44d-3bb5-4145-b0b3-903bf1d79fde"/>
+				<text><![CDATA[106, rue La Fayette 75010 Paris]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="40" width="245" height="15" uuid="b96f7183-44f8-43ad-ba60-43d8fbf50b6e"/>
+				<text><![CDATA[contact@dimensionfantastique.com]]></text>
+			</staticText>
+			<image>
+				<reportElement x="0" y="-13" width="180" height="93" uuid="3e7c271f-256a-4954-8307-2cb2ffce6e5d"/>
+				<imageExpression><![CDATA["C:/Dev/Projets/kubik/git/kubik/reports/reports/images/Logo-OK-noir.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement mode="Transparent" x="350" y="80" width="206" height="25" forecolor="#000000" backcolor="#FFFFFF" uuid="17ffc236-235e-4707-92e7-a4ac4a9b3349"/>
+				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Compte " + $P{SUPPLIER_ACCOUNT_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="-1" y="80" width="351" height="25" forecolor="#000000" backcolor="#FFFFFF" uuid="1b20bd17-1e4f-4788-a0e5-ca3d3f7cbd3a"/>
+				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="16" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Retour pour " + $P{SUPPLIER_NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="-1" y="105" width="479" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="78c67d3b-c63d-4ea6-ac5f-90d5508e8ba9"/>
+				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SUPPLIER_ADDRESS}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="128" width="556" height="9" uuid="bef4a2e4-284d-4e22-9f47-265224a52484"/>
+				<subreportParameter name="RMA_ID">
+					<subreportParameterExpression><![CDATA[$P{RMA_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["src/main/resources/reports/rma-stats.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="17" backcolor="#B8B8B8" uuid="3ae8ce17-3aaf-4d07-9ff1-eb40791e20d6"/>
+				<staticText>
+					<reportElement x="0" y="0" width="100" height="17" uuid="48a4e0cb-c589-4574-b148-410f16c2e8ca"/>
+					<textElement textAlignment="Center">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ean13]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="100" y="0" width="270" height="17" uuid="0d81afe0-699f-4f43-931f-7cded2151411"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Titre]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="370" y="0" width="67" height="17" uuid="05fbf660-07ba-4d87-b02c-d0b726f05cf9"/>
+					<textElement textAlignment="Center">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Quantité]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30">
+			<frame>
+				<reportElement key="" style="Row" x="0" y="0" width="555" height="30" uuid="81ec2afe-25fd-4c62-bf47-c89452a90621"/>
+				<textField>
+					<reportElement x="0" y="0" width="100" height="30" uuid="19eb4597-6805-4965-ae18-493deec34994"/>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{ean13}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="100" y="0" width="270" height="30" uuid="93324501-8b74-4d44-9a66-0738ead36865"/>
+					<textFieldExpression><![CDATA[$F{extended_label}]]></textFieldExpression>
+				</textField>
+				<textField pattern="0">
+					<reportElement x="370" y="0" width="67" height="30" uuid="9d4778eb-415c-4fe4-b9de-cd3e8807e466"/>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+				</textField>
+				<componentElement>
+					<reportElement x="437" y="0" width="116" height="30" uuid="466bf702-67e3-4408-949f-969fd4d0ac15"/>
+					<jr:EAN13 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<jr:codeExpression><![CDATA[$F{ean13}]]></jr:codeExpression>
+					</jr:EAN13>
+				</componentElement>
+			</frame>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="63">
+			<textField>
+				<reportElement x="0" y="23" width="555" height="40" uuid="04311fa4-e22b-42f5-bd46-a8cabc910e84"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["La Dimension Fantastique\n" +
+"106, rue La Fayette 75010 Paris\n" +
+"S.A.S. au capital de 8000€\n" +
+"808 451 611 R.C.S. Paris"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="18" width="555" height="1" uuid="d67d80b7-5b4f-4360-b9b6-d3e70926d93c"/>
+			</line>
+			<textField evaluationTime="Report">
+				<reportElement x="513" y="0" width="40" height="22" forecolor="#000000" uuid="3f9a258b-678b-4606-ba3a-524b64bdb4a1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="433" y="0" width="80" height="22" forecolor="#000000" uuid="aa2a8324-4f2f-4691-ac02-a20c4a07f4e2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" sur"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

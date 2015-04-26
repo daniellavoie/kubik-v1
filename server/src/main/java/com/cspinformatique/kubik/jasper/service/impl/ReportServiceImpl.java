@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import com.cspinformatique.kubik.domain.purchase.model.Rma;
 import com.cspinformatique.kubik.jasper.service.ReportService;
 import com.cspinformatique.kubik.model.sales.Invoice;
 
@@ -36,10 +37,22 @@ public class ReportServiceImpl implements ReportService {
 			throw new RuntimeException(ex);
 		}
 	}
-
+	
 	@Override
-	public JasperPrint generateInvoiceReport(Invoice invoice) {
-		return null;
-	}
+	public JasperPrint generateRmaReport(Rma rma){
+		try {
+			HashMap<String, Object> reportParameters = new HashMap<String, Object>();
 
+			reportParameters.put("RMA_ID", rma.getId());
+			reportParameters.put("SUPPLIER_NAME", rma.getSupplier().getName());
+			reportParameters.put("SUPPLIER_ADDRESS", rma.getSupplier().getAddress());
+			reportParameters.put("SUPPLIER_ACCOUNT_NUMBER", rma.getSupplier().getAccountNumber());
+
+			return JasperFillManager.fillReport(new ClassPathResource(
+					"reports/rma.jasper").getInputStream(),
+					reportParameters, dataSource.getConnection());
+		} catch (JRException | SQLException | IOException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 }

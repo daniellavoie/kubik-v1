@@ -62,6 +62,8 @@ public class InvoiceController {
 			JasperExportManager.exportReportToPdfStream(this.reportService
 					.generateReceiptReport(invoiceService.findOne(invoiceId)),
 					response.getOutputStream());
+			
+			response.setContentType("application/pdf");
 		} catch (JRException | IOException ex) {
 			throw new RuntimeException(ex);
 		}

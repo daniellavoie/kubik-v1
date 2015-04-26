@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.purchase.service.ReceptionService;
+import com.cspinformatique.kubik.domain.purchase.service.RmaService;
 import com.cspinformatique.kubik.domain.sales.service.CustomerCreditService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.domain.warehouse.repository.ProductInventoryRepository;
@@ -20,8 +21,9 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 	@Autowired private ProductInventoryRepository productInventoyRepository;
 	
 	@Autowired private CustomerCreditService customerCreditService;
-	@Autowired private ReceptionService receptionService;
 	@Autowired private InvoiceService invoiceService;
+	@Autowired private ReceptionService receptionService;
+	@Autowired private RmaService rmaService;
 	
 	@Override
 	public ProductInventory findByProduct(Product product) {
@@ -42,10 +44,11 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 		
 		double oldQuantityOnHand = productInventory.getQuantityOnHand();
 		double quantityReceived = this.receptionService.findProductQuantityReceived(productId);
-		double quantityCustomerReturned = this.customerCreditService.findProductQuantityReturned(productId);
+		double quantityCustomerReturned = this.customerCreditService.findProductQuantityReturnedByCustomer(productId);
+		double quantityReturnedToSupplier = this.rmaService.findProductQuantityReturnedToSupplier(productId);
 		double quantitySold = this.invoiceService.findProductQuantitySold(productId);
 		
-		double quantityOnHand = quantityReceived + quantityCustomerReturned - quantitySold;
+		double quantityOnHand = quantityReceived + quantityCustomerReturned - quantitySold - quantityReturnedToSupplier;
 		
 		productInventory.setQuantityOnHand(quantityOnHand);
 		

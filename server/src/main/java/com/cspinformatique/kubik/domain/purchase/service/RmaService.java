@@ -10,5 +10,13 @@ public interface RmaService {
 	
 	Rma findOne(int id);
 	
+	Integer findNext(int rmaId);
+	
+	Integer findPrevious(int rmaId);
+	
+	double findProductQuantityReturnedToSupplier(int productId);
+	
+	
+	
 	Rma save(Rma rma);
 }

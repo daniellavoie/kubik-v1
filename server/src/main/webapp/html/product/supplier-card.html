@@ -54,6 +54,19 @@
 								</div>
 								
 								<div class="form-group">
+									<label class="col-sm-4 control-label">Numéro de compte</label>
+									<div class="col-sm-8">
+										<div ng-if="!editMode" >
+											<p class="form-control-static">{{supplier.accountNumber}}</p>
+										</div>
+										
+										<div ng-if="editMode" >
+											<input class="form-control" ng-model="supplier.accountNumber" placeholder="Numéro de compte">
+										</div>
+									</div>
+								</div>
+								
+								<div class="form-group">
 									<label class="col-sm-4 control-label">Remise</label>
 									<div class="col-sm-8">
 										<div ng-if="!editMode" >
@@ -62,6 +75,19 @@
 										
 										<div ng-if="editMode" >
 											<input class="form-control" ng-model="supplier.discount" type="number" step="0.1" min="0" max="100" placeholder="Ean13 de commande">
+										</div>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Adresse</label>
+									<div class="col-sm-8">
+										<div ng-if="!editMode" >
+											<p class="form-control-static">{{supplier.address}}</p>
+										</div>
+										
+										<div ng-if="editMode" >
+											<input class="form-control" ng-model="supplier.address" placeholder="Adresse">
 										</div>
 									</div>
 								</div>

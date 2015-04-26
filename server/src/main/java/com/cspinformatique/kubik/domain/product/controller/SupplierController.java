@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
@@ -20,6 +21,11 @@ public class SupplierController {
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Iterable<Supplier> findAll() {
 		return this.supplierService.findAll();
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = "ean13", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Supplier findByEan13(@RequestParam String ean13) {
+		return this.supplierService.findByEan13(ean13);
 	}
 
 	@RequestMapping(params = "card", produces = MediaType.TEXT_HTML_VALUE)

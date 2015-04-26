@@ -44,5 +44,5 @@ public interface CustomerCreditRepository extends
 	Double findCustomerCreditUsed(@Param("customer") Customer customer);
 
 	@Query("SELECT sum(detail.quantity) FROM CustomerCreditDetail detail WHERE detail.product.id = :productId AND detail.customerCredit.status = 'COMPLETED'")
-	Double findProductQuantityReturned(@Param("productId") int productId);
+	Double findProductQuantityReturnedByCustomer(@Param("productId") int productId);
 }

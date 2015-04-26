@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,26 +19,30 @@ import com.cspinformatique.kubik.model.product.Supplier;
 @Entity
 public class Rma {
 	public enum Status{
-		
+		OPEN, CANCELED, SHIPPED
 	}
 	
 	private Integer id;
 	private Supplier supplier;
 	private List<RmaDetail> details;
-	private Date creationDate;
-	private Date closedDate;
+	private Status status;
+	private Date openDate;
+	private Date canceledDate;
+	private Date shippedDate;
 	
 	public Rma(){
 		
 	}
 
 	public Rma(Integer id, Supplier supplier, List<RmaDetail> details,
-			Date creationDate, Date closedDate) {
+			Status status, Date openDate, Date canceledDate, Date shippedDate) {
 		this.id = id;
 		this.supplier = supplier;
 		this.details = details;
-		this.creationDate = creationDate;
-		this.closedDate = closedDate;
+		this.status = status;
+		this.openDate = openDate;
+		this.canceledDate = canceledDate;
+		this.shippedDate = shippedDate;
 	}
 
 	@Id
@@ -67,19 +73,36 @@ public class Rma {
 		this.details = details;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
+	@Enumerated(EnumType.STRING)
+	public Status getStatus() {
+		return status;
 	}
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
-	public Date getClosedDate() {
-		return closedDate;
+	public Date getOpenDate() {
+		return openDate;
 	}
 
-	public void setClosedDate(Date closedDate) {
-		this.closedDate = closedDate;
+	public void setOpenDate(Date openDate) {
+		this.openDate = openDate;
+	}
+
+	public Date getCanceledDate() {
+		return canceledDate;
+	}
+
+	public void setCanceledDate(Date canceledDate) {
+		this.canceledDate = canceledDate;
+	}
+
+	public Date getShippedDate() {
+		return shippedDate;
+	}
+
+	public void setShippedDate(Date shippedDate) {
+		this.shippedDate = shippedDate;
 	}
 }

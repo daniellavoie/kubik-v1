@@ -237,8 +237,8 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 	}
 	
 	@Override
-	public double findProductQuantityReturned(int productId){
-		Double result = this.customerCreditRepository.findProductQuantityReturned(productId);
+	public double findProductQuantityReturnedByCustomer(int productId){
+		Double result = this.customerCreditRepository.findProductQuantityReturnedByCustomer(productId);
 		
 		if(result == null){
 			return 0d;
