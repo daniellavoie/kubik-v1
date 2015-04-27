@@ -3,6 +3,7 @@ var rmaId = window.location.pathname.split("/")[2];
 
 app.controller("KubikRmaDetailsController", function($scope, $http, $timeout){
 	$scope.addProduct = function($event){
+		$scope.error.productNotFound = false;
 		if($event.keyCode == 13){
 			$scope.showLoading();
 			detailFound = false;
@@ -36,6 +37,8 @@ app.controller("KubikRmaDetailsController", function($scope, $http, $timeout){
 					$scope.hideLoading();
 				});
 			}
+			
+			$("#product-ean13").select();
 		}
 	};
 	

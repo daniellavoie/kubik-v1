@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-04-26T23:38:09 -->
+<!-- 2015-04-28T00:43:30 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rma" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik Database"/>
 	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
@@ -108,7 +108,7 @@ WHERE
 			</staticText>
 			<image>
 				<reportElement x="0" y="-13" width="180" height="93" uuid="3e7c271f-256a-4954-8307-2cb2ffce6e5d"/>
-				<imageExpression><![CDATA["C:/Dev/Projets/kubik/git/kubik/reports/reports/images/Logo-OK-noir.png"]]></imageExpression>
+				<imageExpression><![CDATA["reports/images/Logo-OK-noir.png"]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement mode="Transparent" x="350" y="80" width="206" height="25" forecolor="#000000" backcolor="#FFFFFF" uuid="17ffc236-235e-4707-92e7-a4ac4a9b3349"/>
