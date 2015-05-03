@@ -7,8 +7,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import com.cspinformatique.kubik.model.product.Product;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class RmaDetail {
 	private int id;
 	private Rma rma;

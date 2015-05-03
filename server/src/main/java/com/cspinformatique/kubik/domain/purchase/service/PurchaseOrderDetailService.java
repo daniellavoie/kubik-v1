@@ -8,6 +8,7 @@ import com.cspinformatique.kubik.model.product.Product;
 
 public interface PurchaseOrderDetailService {
 	List<PurchaseOrder> findPurchaseOrdersByProduct(Product product);
-	
-	List<PurchaseOrder> findPurchaseOrdersByProductAndStatus(Product product, Status status);
+
+	List<PurchaseOrder> findPurchaseOrdersByProductAndStatus(Product product,
+			Status status);
 }

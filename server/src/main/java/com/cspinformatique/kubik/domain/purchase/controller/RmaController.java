@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.cspinformatique.kubik.domain.purchase.model.Rma;
+import com.cspinformatique.kubik.domain.purchase.model.RmaDetail;
 import com.cspinformatique.kubik.domain.purchase.service.RmaService;
+import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.jasper.service.ReportService;
 
 @Controller
@@ -35,6 +37,9 @@ public class RmaController {
 
 	@Autowired
 	private RmaService rmaService;
+	
+	@Autowired
+	private ProductInventoryService productInventoryService;
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Page<Rma> findAll(
@@ -64,13 +69,12 @@ public class RmaController {
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{rmaId}/report", method = RequestMethod.GET, produces = "application/pdf")
-	public void generateRmaPdf(@PathVariable int rmaId,
-			ServletResponse response) {
+	public void generateRmaPdf(@PathVariable int rmaId, ServletResponse response) {
 		try {
 			JasperExportManager.exportReportToPdfStream(this.reportService
 					.generateRmaReport(this.rmaService.findOne(rmaId)),
 					response.getOutputStream());
-			
+
 			response.setContentType("application/pdf");
 		} catch (JRException | IOException ex) {
 			throw new RuntimeException(ex);
@@ -92,5 +96,23 @@ public class RmaController {
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody Rma save(@RequestBody Rma rma) {
 		return this.rmaService.save(rma);
+	}
+
+	@RequestMapping(params = "fixDetails", method = RequestMethod.GET)
+	public String fixDetails() {
+		for (Rma rma : this.rmaService.findAll(new PageRequest(0, 100000))) {
+			for (RmaDetail detail : rma.getDetails()) {
+				detail.setRma(rma);
+			}
+
+			this.save(rma);
+
+			for (RmaDetail detail : rma.getDetails()) {
+				this.productInventoryService.updateInventory(detail.getProduct());
+			}
+			
+		}
+
+		return this.getRmasPage();
 	}
 }

@@ -121,7 +121,7 @@ app.controller("KubikCustomerCreditDetailsController", function($scope, $http, $
 		$scope.previousCustomerCredit = customerCreditId;
 	});
 
-	$scope.kubikProductCard = new KubikProductCard();
+	$scope.kubikProductCard = new KubikProductCard({productUrl : "../product"});
 	
 	$scope.loadCustomerCredit();
 });

@@ -14,9 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class CustomerCredit {
 	public enum Status {
 		OPEN, COMPLETED, CANCELED
@@ -105,7 +107,6 @@ public class CustomerCredit {
 		this.customer = customer;
 	}
 
-	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<CustomerCreditDetail> getDetails() {
 		return details;

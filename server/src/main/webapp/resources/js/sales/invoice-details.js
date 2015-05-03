@@ -46,7 +46,7 @@ app.controller("KubikInvoiceDetailsController", function($scope, $http, $timeout
 		$scope.previousInvoice = invoiceId;
 	});
 
-	$scope.kubikProductCard = new KubikProductCard();
+	$scope.kubikProductCard = new KubikProductCard({productUrl : "../product"});
 	
 	$scope.loadInvoice();
 });

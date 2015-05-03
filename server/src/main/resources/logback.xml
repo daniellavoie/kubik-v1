@@ -10,7 +10,7 @@
 	</appender>
 	
 <!-- 	<logger name="org.springframework.web" level="DEBUG" /> -->
-<!-- 	<logger name="org.hibernate.SQL" level="DEBUG" /> -->
+<!-- 	<logger name="org.hibernate.SQL" level="TRACE" /> -->
 <!-- 	<logger name="org.hibernate.tool.hbm2ddl" level="DEBUG" /> -->
 <!-- 	<logger name="com.cspinformatique.kubik.model.domain.purchase.task" level="TRACE" /> -->
 

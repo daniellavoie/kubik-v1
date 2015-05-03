@@ -19,15 +19,15 @@
 						</div>
 					
 						<ul class="nav nav-tabs">
-							<li role="presentation" ng-click="showTab('product')" class="active"><a href="#">Produit</a></li>
-							<li role="presentation" ng-click="showTab('publisher')" ><a href="#">Editeur</a></li>
-							<li role="presentation" ng-click="showTab('price')" ><a href="#">Prix</a></li>
-							<li role="presentation" ng-click="showTab('supplier')" ><a href="#">Fournisseur</a></li>
-							<li role="presentation" ng-click="showTab('dimensions')" ><a href="#">Dimensions</a></li>
-							<li role="presentation" ng-click="showTab('inventory')" ><a href="#">Inventaire</a></li>
+							<li role="presentation" ng-click="productTab = 'product'" ng-class="{true : 'active'}[productTab == 'product']"><a href="#">Produit</a></li>
+							<li role="presentation" ng-click="productTab = 'publisher'" ng-class="{true : 'active'}[productTab == 'publisher']"><a href="#">Editeur</a></li>
+							<li role="presentation" ng-click="productTab = 'price'" ng-class="{true : 'active'}[productTab == 'price']"><a href="#">Prix</a></li>
+							<li role="presentation" ng-click="productTab = 'supplier'" ng-class="{true : 'active'}[productTab == 'supplier']"><a href="#">Fournisseur</a></li>
+							<li role="presentation" ng-click="productTab = 'dimensions'" ng-class="{true : 'active'}[productTab == 'dimensions']"><a href="#">Dimensions</a></li>
+							<li role="presentation" ng-click="productTab = 'inventory'" ng-class="{true : 'active'}[productTab == 'inventory']"><a href="#">Inventaire</a></li>
 						</ul>
 						
-						<div class="tab product">
+						<div class="tab product" ng-class="{true : 'hidden'}[productTab != 'product']">
 							<form class="form-horizontal">
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Ean13</label>
@@ -143,7 +143,7 @@
 							</form>
 						</div>
 						
-						<div class="tab publisher hidden">	
+						<div class="tab publisher" ng-class="{true : 'hidden'}[productTab != 'publisher']">	
 							<form class="form-horizontal">
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Nom</label>
@@ -171,7 +171,7 @@
 							</form>
 						</div>
 						
-						<div class="tab price hidden">
+						<div class="tab price" ng-class="{true : 'hidden'}[productTab != 'price']">
 							<form class="form-horizontal">
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Type de prix</label>
@@ -212,7 +212,7 @@
 							</form>
 						</div>
 						
-						<div class="tab supplier hidden">
+						<div class="tab supplier" ng-class="{true : 'hidden'}[productTab != 'supplier']">
 							<form class="form-horizontal">
 								<div ng-if="!editMode || product.dilicomReference">
 									<div class="form-group">
@@ -288,7 +288,7 @@
  							</form>
 						</div>
 						
-						<div class="tab dimensions hidden">							 
+						<div class="tab dimensions" ng-class="{true : 'hidden'}[productTab != 'dimensions']">							 
 							<form class="form-horizontal">	
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Hauteur</label>
@@ -321,8 +321,8 @@
 							</form>
 						</div>
 						
-						<div class="tab inventory hidden">							 
-							<form class="form-horizontal">	
+						<div class="tab inventory" ng-class="{true : 'hidden'}[productTab != 'inventory']">							 
+							<div class="form-horizontal">	
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Quantité disponible</label>
 									<div class="col-sm-8">
@@ -337,7 +337,123 @@
 										<p ng-if="product.productInventory == null" class="form-control-static">0</p>
 									</div>
 								</div>
-							</form>
+							</div>
+							
+							<ul class="nav nav-tabs">
+								<li role="presentation" ng-click="changeInventoryTab('reception')" ng-class="{true : 'active'}[inventoryTab == 'reception']"><a href="#">Commandes</a></li>
+								<li role="presentation" ng-click="changeInventoryTab('invoice')" ng-class="{true : 'active'}[inventoryTab == 'invoice']"><a href="#">Ventes</a></li>
+								<li role="presentation" ng-click="changeInventoryTab('rma')" ng-class="{true : 'active'}[inventoryTab == 'rma']"><a href="#">Retours fournisseurs</a></li>
+								<li role="presentation" ng-click="changeInventoryTab('customerCredit')" ng-class="{true : 'active'}[inventoryTab == 'customerCredit']"><a href="#">Retours clients</a></li>
+							</ul>
+						
+							<div class="text-center">
+								<ul class="pager row">
+									<li class="col-md-2">
+										&nbsp;
+										<a href="#" ng-if="!inventoryTabs[inventoryTab].result.first" ng-click="changePage(inventoryTabs[inventoryTab].result.number-1)">Précédente</a>
+									</li>
+									
+									<li class="col-md-8">
+										Page 
+										{{inventoryTabs[inventoryTab].result.number+1}} 
+										sur 
+										{{(inventoryTabs[inventoryTab].result.totalPages != 0 ? inventoryTabs[inventoryTab].result.totalPages : 1)}}
+									</li>
+									
+									<li class="col-md-2">
+										&nbsp;
+										<a href="#" ng-if="!inventoryTabs[inventoryTab].result.last" ng-click="changePage(inventoryTabs[inventoryTab].result.number+1)">Suivante</a>
+									</li>
+								</ul>
+								
+								<div class="tab reception" ng-class="{true : 'hidden'}[inventoryTab != 'reception']">							 
+									<table class="table table-condensed">
+										<tbody>
+											<tr>
+												<th>Réception</th>
+												<th>Date</th>
+												<th>Quantité</th>
+											</tr>
+										</tbody>
+										<tbody>
+											<tr ng-repeat="detail in inventoryTabs.reception.result.content">
+												<td><a href="/reception/{{detail.reception.id}}" target="_blank">{{detail.reception.id}}</a></td>
+												<td>{{detail.reception.dateReceived | date}}</td>
+												<td>{{detail.quantityReceived}}</td>
+											</tr>
+											<tr ng-if="inventoryTabs.reception.result.content.length == 0">
+												<td colspan="3">Aucune réception pour ce produit</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							
+								<div class="tab invoice" ng-class="{true : 'hidden'}[inventoryTab != 'invoice']">							 
+									<table class="table table-condensed">
+										<tbody>
+											<tr>
+												<th>Facture</th>
+												<th>Date</th>
+												<th>Quantité</th>
+											</tr>
+										</tbody>
+										<tbody>
+											<tr ng-repeat="detail in inventoryTabs.invoice.result.content">
+												<td><a href="/invoice/{{detail.invoice.id}}" target="_blank">{{detail.invoice.id}}</a></td>
+												<td>{{detail.invoice.paidDate | date}}</td>
+												<td>{{detail.quantity}}</td>
+											</tr>
+											<tr ng-if="inventoryTabs.invoice.result.content.length == 0">
+												<td colspan="3">Aucune facture pour ce produit</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							
+								<div class="tab rma" ng-class="{true : 'hidden'}[inventoryTab != 'rma']">							 
+									<table class="table table-condensed">
+										<tbody>
+											<tr>
+												<th>Retour</th>
+												<th>Date</th>
+												<th>Quantité</th>
+											</tr>
+										</tbody>
+										<tbody>
+											<tr ng-repeat="detail in inventoryTabs.rma.result.content">
+												<td><a href="/rma/{{detail.rma.id}}" target="_blank">{{detail.rma.id}}</a></td>
+												<td>{{detail.rma.shippedDate | date}}</td>
+												<td>{{detail.quantity}}</td>
+											</tr>
+											<tr ng-if="inventoryTabs.rma.result.content.length == 0">
+												<td colspan="3">Aucun retour fournisseur pour ce produit</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+						
+								<div class="tab customerCredit" ng-class="{true : 'hidden'}[inventoryTab != 'customerCredit']">							 
+									<table class="table table-condensed">
+										<tbody>
+											<tr>
+												<th>Retour</th>
+												<th>Date</th>
+												<th>Quantité</th>
+											</tr>
+										</tbody>
+										<tbody>
+											<tr ng-repeat="detail in inventoryTabs.customerCredit.result.content">
+												<td><a href="/customerCredit/{{detail.customerCredit.id}}" target="_blank">{{detail.customerCredit.id}}</a></td>
+												<td>{{detail.customerCredit.completeDate | date}}</td>
+												<td>{{detail.quantity}}</td>
+											</tr>
+											<tr ng-if="inventoryTabs.customerCredit.result.content.length == 0">
+												<td colspan="3">Aucun retour client pour ce produit</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
 						</div>
 					</div>
 						

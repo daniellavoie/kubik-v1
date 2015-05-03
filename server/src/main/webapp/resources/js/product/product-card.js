@@ -28,6 +28,18 @@ window.KubikProductCard.prototype.init = function(){
 			$scope.endEditMode();
 		};
 		
+		$scope.changeInventoryTab = function(tabClassName){
+			if($scope.inventoryTab != tabClassName){
+				$scope.inventoryTab = tabClassName;
+			}
+		};
+		
+		$scope.changePage = function(tabName, page){
+			$scope.searchParams.page = page;
+			
+			$scope.loadInventoryTab(tabName);
+		}
+		
 		$scope.endEditMode = function(){
 			$scope.editMode = false;
 			
@@ -48,6 +60,14 @@ window.KubikProductCard.prototype.init = function(){
 			}
 			
 			return null;
+		};
+		
+		$scope.loadInventoryTabs = function(){
+			for(var inventoryTabIndex in $scope.inventoryTabs){
+				var searchParams = $scope.inventoryTabs[inventoryTabIndex].searchParams;
+				
+				$scope.loadInventoryTab(inventoryTabIndex, searchParams.page, searchParams.resultPerPage, searchParams.sortBy, searchParams.direction);
+			}
 		}
 		
 		$scope.modify = function(){
@@ -89,6 +109,8 @@ window.KubikProductCard.prototype.init = function(){
 		
 		$scope.openCard = function(product){
 			$scope.product = product;
+			$scope.productTab = "product";
+			$scope.inventoryTab = "reception";
 
 			$timeout(function(){
 				kubikProductCard.$modal = kubikProductCard.$modalContainer.find(".modal").modal({
@@ -98,6 +120,8 @@ window.KubikProductCard.prototype.init = function(){
 				
 				if(product.id == undefined){
 					$scope.modify();
+				}else{
+					$scope.loadInventoryTabs();
 				}
 			});
 		}
@@ -127,21 +151,6 @@ window.KubikProductCard.prototype.init = function(){
 			})
 		};
 		
-		$scope.showTab = function(tabClass){
-			$(".kubikProductCard .nav li").removeClass("active");
-			$(this).addClass("active");
-			
-			$(".kubikProductCard .tab").addClass("hidden");
-			
-			$(".tab." + tabClass).removeClass("hidden")
-			
-			$timeout(function(){
-				kubikProductCard.$modal.find(".modal-backdrop")
-			      .css('height', 0)
-			      .css('height', kubikProductCard.$modal[0].scrollHeight);
-			});
-		};
-		
 		$.get("/company").success(function(company){
 			$scope.company = company;
 		});
@@ -150,11 +159,48 @@ window.KubikProductCard.prototype.init = function(){
 		$scope.$modifyBtn = kubikProductCard.$modalContainer.find(".modify")
 		$scope.$closeBtn = kubikProductCard.$modalContainer.find(".closeModal")
 		$scope.$cancelBtn = kubikProductCard.$modalContainer.find(".cancel")
-
+		
+		$scope.inventoryTabs = {	customerCredit : {	searchParams : {
+											page : 0,
+											resultPerPage : 20,
+											sortBy : "customerCredit.completeDate",
+											direction : "DESC" }
+									}, 
+									invoice : {	searchParams : {
+										page : 0,
+										resultPerPage : 20,
+										sortBy : "invoice.paidDate",
+										direction : "DESC"  }
+									}, 
+									reception : {	searchParams : {
+										page : 0,
+										resultPerPage : 20,
+										sortBy : "reception.dateReceived",
+										direction : "DESC"  }
+									}, 
+									rma : {	searchParams : {
+										page : 0,
+										resultPerPage : 20,
+										sortBy : "rma.shippedDate",
+										direction : "DESC"  }
+									}};
+		
+		$scope.loadInventoryTab = function(tabName, page, resultPerPage, orderBy, direction){
+			$scope.inventoryTabs[tabName].searchParams = {	page : page,
+															resultPerPage : resultPerPage,
+															sortBy : orderBy,
+															direction : direction};
+			
+			$http.get(kubikProductCard.productUrl + "/" + $scope.product.id + "/" + tabName + "?" + $.param($scope.inventoryTabs[tabName].searchParams)).success(function(searchResult){
+				$scope.inventoryTabs[tabName].result = searchResult;
+			});
+		}
+		
 		$http.get("/supplier").success(function(suppliers){
 			$scope.suppliers = suppliers;
 		});
 	});
+	
 	$.get(
 		"/product?card", 
 		function(productCardHtml) {

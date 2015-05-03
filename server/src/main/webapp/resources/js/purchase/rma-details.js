@@ -25,7 +25,7 @@ app.controller("KubikRmaDetailsController", function($scope, $http, $timeout){
 					"../product?ean13=" + $scope.detail.product.ean13 + "&supplierEan13=" + $scope.rma.supplier.ean13
 				).success(function(product){
 					if(product != ""){
-						$scope.rma.details.push({product : product, quantity : 1});
+						$scope.rma.details.push({product : product, quantity : 1, rma : $scope.rma});
 						
 						$scope.saveRma();
 					}else{
@@ -132,7 +132,7 @@ app.controller("KubikRmaDetailsController", function($scope, $http, $timeout){
 	$scope.error = {};
 	$scope.detail = {product : {}};
 
-	$scope.kubikProductCard = new KubikProductCard();
+	$scope.kubikProductCard = new KubikProductCard({productUrl : "../product"});
 	
 	$scope.loadRma();
 });

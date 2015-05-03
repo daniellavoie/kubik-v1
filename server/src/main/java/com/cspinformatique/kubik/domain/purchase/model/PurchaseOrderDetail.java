@@ -9,10 +9,12 @@ import javax.persistence.ManyToOne;
 import org.hibernate.envers.Audited;
 
 import com.cspinformatique.kubik.model.product.Product;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Audited
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class PurchaseOrderDetail {
 	private Integer id;
 	private PurchaseOrder purchaseOrder;
@@ -55,7 +57,6 @@ public class PurchaseOrderDetail {
 	}
 
 	@ManyToOne
-	@JsonBackReference
 	public PurchaseOrder getPurchaseOrder() {
 		return purchaseOrder;
 	}

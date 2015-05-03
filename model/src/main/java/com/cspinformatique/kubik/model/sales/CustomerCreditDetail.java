@@ -11,9 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.cspinformatique.kubik.model.product.Product;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class CustomerCreditDetail {
 	private Integer id;
 	private CustomerCredit customerCredit;
@@ -57,7 +59,6 @@ public class CustomerCreditDetail {
 	}
 
 	@ManyToOne
-	@JsonBackReference
 	public CustomerCredit getCustomerCredit() {
 		return customerCredit;
 	}

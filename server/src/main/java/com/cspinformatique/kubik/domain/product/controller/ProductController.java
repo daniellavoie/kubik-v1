@@ -15,7 +15,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
+import com.cspinformatique.kubik.domain.purchase.model.Reception;
+import com.cspinformatique.kubik.domain.purchase.model.ReceptionDetail;
+import com.cspinformatique.kubik.domain.purchase.model.Rma;
+import com.cspinformatique.kubik.domain.purchase.model.RmaDetail;
+import com.cspinformatique.kubik.domain.purchase.service.ReceptionDetailService;
+import com.cspinformatique.kubik.domain.purchase.service.RmaDetailService;
+import com.cspinformatique.kubik.domain.sales.service.CustomerCreditDetailService;
+import com.cspinformatique.kubik.domain.sales.service.InvoiceDetailService;
 import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.sales.CustomerCredit;
+import com.cspinformatique.kubik.model.sales.CustomerCreditDetail;
+import com.cspinformatique.kubik.model.sales.InvoiceDetail;
+import com.cspinformatique.kubik.model.sales.InvoiceStatus;
 
 @Controller
 @RequestMapping("/product")
@@ -26,7 +38,19 @@ public class ProductController {
 	@Autowired
 	private SupplierService supplierService;
 
-	@RequestMapping(params="ean13", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Autowired
+	private CustomerCreditDetailService customerCreditDetailService;
+
+	@Autowired
+	private InvoiceDetailService invoiceDetailService;
+
+	@Autowired
+	private ReceptionDetailService receptionDetailService;
+
+	@Autowired
+	private RmaDetailService rmaDetailService;
+
+	@RequestMapping(params = "ean13", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Iterable<Product> findByEan13(
 			@RequestParam String ean13) {
 		return this.productService.findByEan13(ean13);
@@ -68,5 +92,64 @@ public class ProductController {
 		return this.productService.search(query, new PageRequest(page,
 				resultPerPage, direction != null ? direction : Direction.ASC,
 				sortBy));
+	}
+
+	@RequestMapping(value = "/{productId}/customerCredit", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Page<CustomerCreditDetail> findProductCustomerCredits(
+			@PathVariable("productId") int productId,
+			@RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "10") Integer resultPerPage,
+			@RequestParam(required = false) Direction direction,
+			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
+		return this.customerCreditDetailService
+				.findByProductAndCustomerCreditStatus(this.productService
+						.findOne(productId), CustomerCredit.Status.COMPLETED,
+						new PageRequest(page, resultPerPage,
+								direction != null ? direction : Direction.ASC,
+								sortBy));
+	}
+
+	@RequestMapping(value = "/{productId}/invoice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Page<InvoiceDetail> findProductInvoices(
+			@PathVariable("productId") int productId,
+			@RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "10") Integer resultPerPage,
+			@RequestParam(required = false) Direction direction,
+			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
+		return this.invoiceDetailService.findByProductAndInvoiceStatus(
+				this.productService.findOne(productId), new InvoiceStatus(
+						InvoiceStatus.Types.PAID.name(), null),
+				new PageRequest(page, resultPerPage,
+						direction != null ? direction : Direction.ASC, sortBy));
+	}
+
+	@RequestMapping(value = "/{productId}/reception", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Page<ReceptionDetail> findProductPurchaseOrders(
+			@PathVariable("productId") int productId,
+			@RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "10") Integer resultPerPage,
+			@RequestParam(required = false) Direction direction,
+			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
+		return this.receptionDetailService
+				.findByProductAndReceptionStatus(this.productService
+						.findOne(productId), Reception.Status.CLOSED,
+						new PageRequest(page, resultPerPage,
+								direction != null ? direction : Direction.ASC,
+								sortBy));
+	}
+
+	@RequestMapping(value = "/{productId}/rma", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Page<RmaDetail> findProductRmas(
+			@PathVariable("productId") int productId,
+			@RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "10") Integer resultPerPage,
+			@RequestParam(required = false) Direction direction,
+			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
+		return this.rmaDetailService
+				.findByProductAndRmaStatus(this.productService
+						.findOne(productId), Rma.Status.SHIPPED,
+						new PageRequest(page, resultPerPage,
+								direction != null ? direction : Direction.ASC,
+								sortBy));
 	}
 }

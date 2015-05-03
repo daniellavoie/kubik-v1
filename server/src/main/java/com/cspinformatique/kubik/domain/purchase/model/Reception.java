@@ -20,7 +20,6 @@ import org.hibernate.envers.Audited;
 import com.cspinformatique.kubik.model.product.Supplier;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
@@ -144,7 +143,6 @@ public class Reception {
 	}
 
 	@OrderBy("id ASC")
-	@JsonManagedReference
 	@OneToMany(cascade=CascadeType.ALL)
 	public List<ReceptionDetail> getDetails() {
 		return details;
