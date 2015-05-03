@@ -42,11 +42,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	<distributionManagement>
-		<repository>
-			<id>thirdparty</id>
-			<url>http://nexus.hinka.fr/content/repositories/thirdparty</url>
-		</repository>
-	</distributionManagement>
 </project>
