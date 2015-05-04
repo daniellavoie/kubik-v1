@@ -17,12 +17,11 @@ import javax.persistence.Table;
 
 import com.cspinformatique.kubik.model.security.User;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(indexes=@Index(columnList="paidDate"))
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Invoice {
 	private Integer id;
 	private String number;
@@ -230,7 +229,6 @@ public class Invoice {
 		this.totalAmountRebateOut = totalAmountRebateOut;
 	}
 
-	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<Payment> getPayments() {
 		return payments;

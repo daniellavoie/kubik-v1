@@ -19,12 +19,10 @@ import org.hibernate.envers.Audited;
 import com.cspinformatique.kubik.model.product.Supplier;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Audited
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class PurchaseOrder {
 	public enum Status {
 		DRAFT, CANCELED, SUBMITED, RECEIVED;
@@ -157,6 +155,7 @@ public class PurchaseOrder {
 	}
 
 	@OrderBy("id ASC")
+	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	public List<PurchaseOrderDetail> getDetails() {
 		return details;

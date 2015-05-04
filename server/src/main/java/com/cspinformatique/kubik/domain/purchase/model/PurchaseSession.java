@@ -14,10 +14,12 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.envers.Audited;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Audited
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class PurchaseSession {
 	public enum Status {
 		DRAFT, CANCELED, SUBMITED;
@@ -77,7 +79,6 @@ public class PurchaseSession {
 		this.maxDeliveryDate = maxDeliveryDate;
 	}
 
-	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<PurchaseSessionDetail> getDetails() {
 		return details;
@@ -112,12 +113,11 @@ public class PurchaseSession {
 		this.closeDate = closeDate;
 	}
 
-	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<PurchaseOrder> getPurchaseOrders() {
 		return purchaseOrders;
 	}
-	
+
 	public void setPurchaseOrders(List<PurchaseOrder> purchaseOrders) {
 		this.purchaseOrders = purchaseOrders;
 	}

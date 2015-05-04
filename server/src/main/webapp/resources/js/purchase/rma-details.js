@@ -25,7 +25,7 @@ app.controller("KubikRmaDetailsController", function($scope, $http, $timeout){
 					"../product?ean13=" + $scope.detail.product.ean13 + "&supplierEan13=" + $scope.rma.supplier.ean13
 				).success(function(product){
 					if(product != ""){
-						$scope.rma.details.push({product : product, quantity : 1, rma : $scope.rma});
+						$scope.rma.details.push({product : product, quantity : 1, rma : {id : $scope.rma.id}});
 						
 						$scope.saveRma();
 					}else{
@@ -80,6 +80,14 @@ app.controller("KubikRmaDetailsController", function($scope, $http, $timeout){
 		});
 	};
 	
+	$scope.openSupplierCard = function(supplier, $event){
+		try{
+			$scope.kubikSupplierCard.openCard(supplier);
+		}finally{
+			$event.stopPropagation();
+		}
+	}
+	
 	$scope.print = function(){
 		window.open($scope.rma.id + "/report", "Avis de retour fournisseur", "pdf");
 	}
@@ -114,10 +122,13 @@ app.controller("KubikRmaDetailsController", function($scope, $http, $timeout){
 		
 		$scope.saveRma();
 	};
-	
-	$scope.kubikCustomerCard = new KubikCustomerCard({customerUrl : "../customer", customerSaved : function(){
-		$scope.loadRma();
-	}});
+
+	$scope.kubikSupplierCard = new KubikSupplierCard({
+		supplierSaved : function(){
+			$scope.loadRma();
+		}, 
+		supplierUrl : "../supplier"
+	});
 	
 	$http.get(rmaId + "/next").success(function(rmaId){
 		if(rmaId == "") rmaId = null;

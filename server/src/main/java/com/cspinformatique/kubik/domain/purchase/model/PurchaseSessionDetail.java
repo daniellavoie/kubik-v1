@@ -9,10 +9,12 @@ import javax.persistence.ManyToOne;
 import org.hibernate.envers.Audited;
 
 import com.cspinformatique.kubik.model.product.Product;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Audited
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class PurchaseSessionDetail {
 	private int id;
 	private PurchaseSession purchaseSession;
@@ -42,7 +44,6 @@ public class PurchaseSessionDetail {
 	}
 
 	@ManyToOne
-	@JsonBackReference
 	public PurchaseSession getPurchaseSession() {
 		return purchaseSession;
 	}
