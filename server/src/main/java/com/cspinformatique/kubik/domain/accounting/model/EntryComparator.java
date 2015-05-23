@@ -5,8 +5,8 @@ import java.util.Comparator;
 public class EntryComparator implements Comparator<Entry> {
 	@Override
 	public int compare(Entry o1, Entry o2) {
-		Long invoiceNumber1 = Long.parseLong(o1.getInvoiceNumber());
-		Long invoiceNumber2 = Long.parseLong(o2.getInvoiceNumber());
+		Long invoiceNumber1 = Long.parseLong(o1.getInvoiceNumber().substring(1));
+		Long invoiceNumber2 = Long.parseLong(o2.getInvoiceNumber().substring(1));
 
 		if (invoiceNumber1 < invoiceNumber2) {
 			return -1;

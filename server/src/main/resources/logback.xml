@@ -12,7 +12,7 @@
 <!-- 	<logger name="org.springframework.web" level="DEBUG" /> -->
 <!-- 	<logger name="org.hibernate.SQL" level="TRACE" /> -->
 <!-- 	<logger name="org.hibernate.tool.hbm2ddl" level="DEBUG" /> -->
-<!-- 	<logger name="com.cspinformatique.kubik.model.domain.purchase.task" level="TRACE" /> -->
+	<logger name="com.cspinformatique.kubik.domain.accounting" level="DEBUG" />
 
 	<root level="info">
 		<appender-ref ref="STDOUT" />
