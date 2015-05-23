@@ -5,10 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.hibernate.envers.Audited;
-
 @Entity
-@Audited
 public class ShippingPackage {
 	private Integer id;
 	private String number;

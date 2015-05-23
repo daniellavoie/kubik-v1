@@ -7,5 +7,5 @@ import com.cspinformatique.kubik.model.warehouse.ProductInventory;
 
 public interface ProductInventoryRepository extends
 		PagingAndSortingRepository<ProductInventory, Integer> {
-	ProductInventory findByProduct(Product product);
+	ProductInventory findByProduct(Product product);	
 }

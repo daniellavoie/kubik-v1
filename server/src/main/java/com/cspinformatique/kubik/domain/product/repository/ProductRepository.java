@@ -17,9 +17,9 @@ public interface ProductRepository extends
 	List<Integer> findIdByDilicomReference(boolean dilicomReference);
 
 	Iterable<Product> findByEan13(String ean13);
-	
+
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
-	
+
 	Iterable<Product> findBySupplier(Supplier supplier);
 
 	@Query("SELECT product FROM Product product WHERE ean13 LIKE :query OR extendedLabel LIKE :query OR publisher LIKE :query OR collection LIKE :query OR author LIKE :query OR isbn LIKE :query")

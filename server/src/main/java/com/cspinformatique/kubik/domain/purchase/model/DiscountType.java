@@ -3,10 +3,7 @@ package com.cspinformatique.kubik.domain.purchase.model;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import org.hibernate.envers.Audited;
-
 @Entity
-@Audited
 public class DiscountType {
 	public enum Types{
 		SUPPLIER, PRODUCT, ORDER, ORDER_DETAIL

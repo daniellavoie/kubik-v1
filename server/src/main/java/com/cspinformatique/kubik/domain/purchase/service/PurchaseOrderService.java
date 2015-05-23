@@ -29,7 +29,7 @@ public interface PurchaseOrderService {
 	
 	Reception generateReception(PurchaseOrder purchaseOrder);
 	
-	void initializeNonCalculatedOrders();
+	void fixSubmitedDate();
 	
 	void recalculateOpenPurchaseOrderFromSupplier(Supplier supplier);
 	

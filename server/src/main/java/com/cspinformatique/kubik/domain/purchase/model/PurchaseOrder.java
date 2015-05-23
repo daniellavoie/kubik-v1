@@ -14,15 +14,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 
-import org.hibernate.envers.Audited;
-
 import com.cspinformatique.kubik.model.product.Supplier;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Audited
 public class PurchaseOrder {
 	public enum Status {
 		DRAFT, CANCELED, SUBMITED, RECEIVED;
@@ -31,7 +28,7 @@ public class PurchaseOrder {
 	private long id;
 	private Supplier supplier;
 	private Date date;
-	private Date dateReceived;
+	private Date submitedDate;
 	private String operationCode;
 	private ShippingMode shippingMode;
 	private NotationCode notationCode;
@@ -53,7 +50,7 @@ public class PurchaseOrder {
 	}
 
 	public PurchaseOrder(long id, Supplier supplier, Date date,
-			Date dateReceived, String operationCode, ShippingMode shippingMode,
+			Date submitedDate, String operationCode, ShippingMode shippingMode,
 			NotationCode notationCode, Date minDeliveryDate,
 			Date maxDeliveryDate, List<PurchaseOrderDetail> details,
 			Status status, boolean dilicomOrder, boolean sentToDilicom, float discount,
@@ -61,7 +58,7 @@ public class PurchaseOrder {
 		this.id = id;
 		this.supplier = supplier;
 		this.date = date;
-		this.dateReceived = dateReceived;
+		this.submitedDate = submitedDate;
 		this.operationCode = operationCode;
 		this.shippingMode = shippingMode;
 		this.notationCode = notationCode;
@@ -103,12 +100,12 @@ public class PurchaseOrder {
 		this.date = date;
 	}
 
-	public Date getDateReceived() {
-		return dateReceived;
+	public Date getSubmitedDate() {
+		return submitedDate;
 	}
 
-	public void setDateReceived(Date dateReceived) {
-		this.dateReceived = dateReceived;
+	public void setSubmitedDate(Date submitedDate) {
+		this.submitedDate = submitedDate;
 	}
 
 	public String getOperationCode() {

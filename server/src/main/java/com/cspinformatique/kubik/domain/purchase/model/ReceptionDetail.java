@@ -6,12 +6,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import org.hibernate.envers.Audited;
-
 import com.cspinformatique.kubik.model.product.Product;
 
 @Entity
-@Audited
 public class ReceptionDetail {
 	private Integer id;
 	private Reception reception;

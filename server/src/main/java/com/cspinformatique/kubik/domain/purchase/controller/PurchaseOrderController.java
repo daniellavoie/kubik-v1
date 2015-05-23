@@ -57,9 +57,11 @@ public class PurchaseOrderController {
 		return "purchase/order/orders";
 	}
 
-	@RequestMapping("/initialize")
-	public void initializeNonCalculatedOrders() {
-		this.purchaseOrderService.initializeNonCalculatedOrders();
+	@RequestMapping("/fixSubmitedDate")
+	public String fixSubmitedDate() {
+		this.purchaseOrderService.fixSubmitedDate();
+		
+		return "purchase/order/orders";
 	}
 
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)

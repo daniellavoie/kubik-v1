@@ -205,8 +205,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	@Override
-	public void initializeNonCalculatedOrders() {
-		this.save(this.purchaseOrderRepository.findByTotalAmountTaxOut(0d));
+	public void fixSubmitedDate() {
+		List<PurchaseOrder> purchaseOrders = this.purchaseOrderRepository.findByStatus(Status.SUBMITED);
+		
+		for(PurchaseOrder purchaseOrder : purchaseOrders){
+			purchaseOrder.setSubmitedDate(purchaseOrder.getDate());
+		}
+		
+		this.purchaseOrderRepository.save(purchaseOrders);
 	}
 
 	@Override
@@ -232,7 +238,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 					purchaseOrder.setId(this.generateId());
 				}
 
+				
+				
 				if (purchaseOrder.getStatus().equals(Status.SUBMITED)) {
+					if (purchaseOrder.getSubmitedDate() == null) {
+						purchaseOrder.setSubmitedDate(new Date());
+					}
+					
 					// Checks if the reception needs to be generated.
 					if (purchaseOrder.getReception() == null) {
 						purchaseOrder.setReception(this

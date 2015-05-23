@@ -6,13 +6,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import org.hibernate.envers.Audited;
-
 import com.cspinformatique.kubik.model.product.Product;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
-@Audited
 public class PurchaseOrderDetail {
 	private Integer id;
 	private PurchaseOrder purchaseOrder;
