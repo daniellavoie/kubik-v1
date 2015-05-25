@@ -1,4 +1,4 @@
-package com.cspinformatique.kubik.domain.purchase.model;
+package com.cspinformatique.kubik.model.purchase;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;

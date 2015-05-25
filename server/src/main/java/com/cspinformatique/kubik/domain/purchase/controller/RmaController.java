@@ -23,11 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.cspinformatique.kubik.domain.purchase.model.Rma;
-import com.cspinformatique.kubik.domain.purchase.model.RmaDetail;
 import com.cspinformatique.kubik.domain.purchase.service.RmaService;
 import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.jasper.service.ReportService;
+import com.cspinformatique.kubik.model.purchase.Rma;
+import com.cspinformatique.kubik.model.purchase.RmaDetail;
 
 @Controller
 @RequestMapping("/rma")

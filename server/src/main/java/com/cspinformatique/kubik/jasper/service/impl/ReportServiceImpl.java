@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import com.cspinformatique.kubik.domain.purchase.model.Rma;
 import com.cspinformatique.kubik.jasper.service.ReportService;
+import com.cspinformatique.kubik.model.purchase.Rma;
 import com.cspinformatique.kubik.model.sales.Invoice;
 
 @Service

@@ -1,4 +1,4 @@
-package com.cspinformatique.kubik.domain.purchase.model;
+package com.cspinformatique.kubik.model.purchase;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

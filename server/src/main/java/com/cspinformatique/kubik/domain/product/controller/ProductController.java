@@ -1,5 +1,8 @@
 package com.cspinformatique.kubik.domain.product.controller;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,16 +17,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cspinformatique.kubik.domain.product.service.ProductService;
+import com.cspinformatique.kubik.domain.product.service.ProductStatsService;
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
-import com.cspinformatique.kubik.domain.purchase.model.Reception;
-import com.cspinformatique.kubik.domain.purchase.model.ReceptionDetail;
-import com.cspinformatique.kubik.domain.purchase.model.Rma;
-import com.cspinformatique.kubik.domain.purchase.model.RmaDetail;
 import com.cspinformatique.kubik.domain.purchase.service.ReceptionDetailService;
 import com.cspinformatique.kubik.domain.purchase.service.RmaDetailService;
 import com.cspinformatique.kubik.domain.sales.service.CustomerCreditDetailService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceDetailService;
 import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.ProductStats;
+import com.cspinformatique.kubik.model.purchase.Reception;
+import com.cspinformatique.kubik.model.purchase.ReceptionDetail;
+import com.cspinformatique.kubik.model.purchase.Rma;
+import com.cspinformatique.kubik.model.purchase.RmaDetail;
 import com.cspinformatique.kubik.model.sales.CustomerCredit;
 import com.cspinformatique.kubik.model.sales.CustomerCreditDetail;
 import com.cspinformatique.kubik.model.sales.InvoiceDetail;
@@ -43,6 +48,9 @@ public class ProductController {
 
 	@Autowired
 	private InvoiceDetailService invoiceDetailService;
+
+	@Autowired
+	private ProductStatsService productsStatsService;
 
 	@Autowired
 	private ReceptionDetailService receptionDetailService;
@@ -66,6 +74,24 @@ public class ProductController {
 	@RequestMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Product findOne(@PathVariable int id) {
 		return this.productService.findOne(id);
+	}
+
+	@RequestMapping(value = "/{id}/productStats", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ProductStats findProductStats(@PathVariable int id,
+			@RequestParam(required = false) Date startDate,
+			@RequestParam(required = false) Date endDate) {
+		if (startDate == null) {
+			startDate = new Date(0);
+		}
+		if (endDate == null) {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.YEAR, 1000);
+
+			endDate = cal.getTime();
+		}
+
+		return this.productsStatsService
+				.findByProductId(id, startDate, endDate);
 	}
 
 	@RequestMapping(params = "card", produces = MediaType.TEXT_HTML_VALUE)
@@ -130,12 +156,10 @@ public class ProductController {
 			@RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
 			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
-		return this.receptionDetailService
-				.findByProductAndReceptionStatus(this.productService
-						.findOne(productId), Reception.Status.CLOSED,
-						new PageRequest(page, resultPerPage,
-								direction != null ? direction : Direction.ASC,
-								sortBy));
+		return this.receptionDetailService.findByProductAndReceptionStatus(
+				this.productService.findOne(productId),
+				Reception.Status.CLOSED, new PageRequest(page, resultPerPage,
+						direction != null ? direction : Direction.ASC, sortBy));
 	}
 
 	@RequestMapping(value = "/{productId}/rma", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -145,11 +169,9 @@ public class ProductController {
 			@RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
 			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
-		return this.rmaDetailService
-				.findByProductAndRmaStatus(this.productService
-						.findOne(productId), Rma.Status.SHIPPED,
-						new PageRequest(page, resultPerPage,
-								direction != null ? direction : Direction.ASC,
-								sortBy));
+		return this.rmaDetailService.findByProductAndRmaStatus(
+				this.productService.findOne(productId), Rma.Status.SHIPPED,
+				new PageRequest(page, resultPerPage,
+						direction != null ? direction : Direction.ASC, sortBy));
 	}
 }

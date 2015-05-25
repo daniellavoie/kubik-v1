@@ -20,20 +20,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.product.service.ProductService;
-import com.cspinformatique.kubik.domain.purchase.model.DiscountType;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrderDetail;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseSession;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseSessionDetail;
-import com.cspinformatique.kubik.domain.purchase.model.Reception;
-import com.cspinformatique.kubik.domain.purchase.model.Reception.Status;
-import com.cspinformatique.kubik.domain.purchase.model.ReceptionDetail;
 import com.cspinformatique.kubik.domain.purchase.repository.ReceptionRepository;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseSessionService;
 import com.cspinformatique.kubik.domain.purchase.service.ReceptionService;
 import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.purchase.DiscountType;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrderDetail;
+import com.cspinformatique.kubik.model.purchase.PurchaseSession;
+import com.cspinformatique.kubik.model.purchase.PurchaseSessionDetail;
+import com.cspinformatique.kubik.model.purchase.Reception;
+import com.cspinformatique.kubik.model.purchase.ReceptionDetail;
+import com.cspinformatique.kubik.model.purchase.Reception.Status;
 
 @Service
 @Transactional

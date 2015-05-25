@@ -18,14 +18,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.product.service.ProductService;
-import com.cspinformatique.kubik.domain.purchase.model.DeliveryDateType;
-import com.cspinformatique.kubik.domain.purchase.model.DiscountType;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrderDetail;
-import com.cspinformatique.kubik.domain.purchase.model.Reception;
-import com.cspinformatique.kubik.domain.purchase.model.ReceptionDetail;
-import com.cspinformatique.kubik.domain.purchase.model.ShippingPackage;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder.Status;
 import com.cspinformatique.kubik.domain.purchase.repository.PurchaseOrderRepository;
 import com.cspinformatique.kubik.domain.purchase.service.DilicomOrderService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderDetailService;
@@ -33,6 +25,14 @@ import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.domain.purchase.service.ReceptionService;
 import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.product.Supplier;
+import com.cspinformatique.kubik.model.purchase.DeliveryDateType;
+import com.cspinformatique.kubik.model.purchase.DiscountType;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrderDetail;
+import com.cspinformatique.kubik.model.purchase.Reception;
+import com.cspinformatique.kubik.model.purchase.ReceptionDetail;
+import com.cspinformatique.kubik.model.purchase.ShippingPackage;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder.Status;
 
 @Service
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {

@@ -11,12 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import com.cspinformatique.kubik.domain.purchase.model.Rma;
-import com.cspinformatique.kubik.domain.purchase.model.Rma.Status;
-import com.cspinformatique.kubik.domain.purchase.model.RmaDetail;
 import com.cspinformatique.kubik.domain.purchase.repository.RmaRepository;
 import com.cspinformatique.kubik.domain.purchase.service.RmaService;
 import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
+import com.cspinformatique.kubik.model.purchase.Rma;
+import com.cspinformatique.kubik.model.purchase.RmaDetail;
+import com.cspinformatique.kubik.model.purchase.Rma.Status;
 
 @Service
 public class RmaServiceImpl implements RmaService {

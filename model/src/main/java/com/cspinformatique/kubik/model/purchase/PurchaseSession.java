@@ -1,4 +1,4 @@
-package com.cspinformatique.kubik.domain.purchase.model;
+package com.cspinformatique.kubik.model.purchase;
 
 import java.util.Date;
 import java.util.List;

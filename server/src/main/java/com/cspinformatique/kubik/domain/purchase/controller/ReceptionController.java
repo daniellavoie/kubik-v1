@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cspinformatique.kubik.domain.purchase.model.Reception;
 import com.cspinformatique.kubik.domain.purchase.service.ReceptionService;
+import com.cspinformatique.kubik.model.purchase.Reception;
 
 @Controller
 @RequestMapping("/reception")

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.cspinformatique.kubik.domain.purchase.model.Rma;
+import com.cspinformatique.kubik.model.purchase.Rma;
 
 public interface RmaRepository extends JpaRepository<Rma, Integer>{
 	@Query("SELECT id FROM Rma rma WHERE id > :id")

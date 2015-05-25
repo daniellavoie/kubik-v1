@@ -1,4 +1,4 @@
-package com.cspinformatique.kubik.model.security;
+package com.cspinformatique.kubik.model.purchase;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -6,17 +6,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class User {
+public class ShippingPackage {
 	private Integer id;
-	private String name;
+	private String number;
 	
-	public User(){
+	public ShippingPackage(){
 		
 	}
 	
-	public User(Integer id, String name){
+	public ShippingPackage(Integer id, String number){
 		this.id = id;
-		this.name = name;
+		this.number = number;
 	}
 
 	@Id
@@ -29,11 +29,11 @@ public class User {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getNumber() {
+		return number;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setNumber(String number) {
+		this.number = number;
 	}
 }

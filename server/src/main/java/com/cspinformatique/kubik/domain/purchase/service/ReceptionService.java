@@ -2,8 +2,8 @@ package com.cspinformatique.kubik.domain.purchase.service;
 
 import org.springframework.data.domain.Pageable;
 
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
-import com.cspinformatique.kubik.domain.purchase.model.Reception;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
+import com.cspinformatique.kubik.model.purchase.Reception;
 
 public interface ReceptionService {
 	Iterable<Reception> findAll(Pageable pageable);

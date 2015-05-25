@@ -9,7 +9,8 @@ app.controller("SessionController", function($scope, $http){
 	}
 	
 	$scope.loadSessions = function(){
-		var params = {	page : $scope.page,
+		var params = {	status : $scope.user.preferences.purchaseSession.status, 
+						page : $scope.page,
 						resultPerPage : $scope.resultPerPage,
 						sortBy : $scope.sortBy,
 						direction : $scope.direction};
@@ -18,6 +19,14 @@ app.controller("SessionController", function($scope, $http){
 			$scope.sessionsPage = sessionsPage;
 		});
 	};
+	
+	$scope.loadUserAndSessions = function(){
+		$http.get("user").success(function(user){
+			$scope.user = user;
+			
+			$scope.loadSessions();
+		})
+	}
 	
 	$scope.newSession = function(){
 		$http.post("purchaseSession", {}).success(function(session){
@@ -29,10 +38,23 @@ app.controller("SessionController", function($scope, $http){
 		window.location.href = "purchaseSession/" + id;
 	};
 	
+	$scope.updateStatus = function(status){		
+		var statusIndex = $scope.user.preferences.purchaseSession.status.indexOf(status);
+		if(statusIndex != -1){
+			$scope.user.preferences.purchaseSession.status.splice(statusIndex, 1);
+		}else{
+			$scope.user.preferences.purchaseSession.status.push(status);
+		}
+		
+		$http.post("user", $scope.user);
+		
+		$scope.loadSessions();
+	};
+	
 	$scope.page = 0;
 	$scope.resultPerPage = 50;
 	$scope.sortBy = "openDate";
 	$scope.direction = "DESC";
 	
-	$scope.loadSessions();
+	$scope.loadUserAndSessions();
 });

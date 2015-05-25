@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.product.service.ProductService;
+import com.cspinformatique.kubik.domain.purchase.service.RestockService;
 import com.cspinformatique.kubik.domain.sales.repository.InvoiceRepository;
 import com.cspinformatique.kubik.domain.sales.repository.InvoiceStatusRepository;
 import com.cspinformatique.kubik.domain.sales.service.CashRegisterSessionService;
@@ -32,9 +33,9 @@ import com.cspinformatique.kubik.model.sales.CashRegisterSession;
 import com.cspinformatique.kubik.model.sales.Invoice;
 import com.cspinformatique.kubik.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.model.sales.InvoiceStatus;
+import com.cspinformatique.kubik.model.sales.InvoiceStatus.Types;
 import com.cspinformatique.kubik.model.sales.InvoiceTaxAmount;
 import com.cspinformatique.kubik.model.sales.Payment;
-import com.cspinformatique.kubik.model.sales.InvoiceStatus.Types;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -55,6 +56,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	@Autowired
 	private ProductService productService;
+	
+	@Autowired
+	private RestockService restockService;
 	
 	private void calculateInvoiceAmounts(Invoice invoice) {
 		HashMap<Double, InvoiceTaxAmount> totalTaxesAmounts = new HashMap<Double, InvoiceTaxAmount>();
@@ -360,6 +364,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 	private void updateInventory(Invoice invoice) {
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			this.productInventoryService.updateInventory(detail.getProduct());
+			
+			this.restockService.restockProduct(detail.getProduct(), detail.getQuantity());
 		}
 	}
 

@@ -39,7 +39,7 @@ public class ProductStatsController {
 			endDate = cal.getTime();
 		}
 
-		return this.productStatsService.findProductStats(startDate, endDate,
+		return this.productStatsService.findAll(startDate, endDate,
 				new PageRequest(page, resultPerPage, new Sort(Direction.DESC,
 						"sold")));
 	}

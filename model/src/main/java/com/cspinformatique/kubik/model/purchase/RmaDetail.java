@@ -1,4 +1,4 @@
-package com.cspinformatique.kubik.domain.purchase.model;
+package com.cspinformatique.kubik.model.purchase;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,20 +12,19 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
-public class PurchaseSessionDetail {
+public class RmaDetail {
 	private int id;
-	private PurchaseSession purchaseSession;
+	private Rma rma;
 	private Product product;
 	private double quantity;
 	
-	public PurchaseSessionDetail(){
+	public RmaDetail(){
 		
 	}
 
-	public PurchaseSessionDetail(int id, PurchaseSession purchaseSession,
-			Product product, double quantity) {
+	public RmaDetail(int id, Rma rma, Product product, double quantity) {
 		this.id = id;
-		this.purchaseSession = purchaseSession;
+		this.rma = rma;
 		this.product = product;
 		this.quantity = quantity;
 	}
@@ -41,12 +40,12 @@ public class PurchaseSessionDetail {
 	}
 
 	@ManyToOne
-	public PurchaseSession getPurchaseSession() {
-		return purchaseSession;
+	public Rma getRma() {
+		return rma;
 	}
 
-	public void setPurchaseSession(PurchaseSession purchaseSession) {
-		this.purchaseSession = purchaseSession;
+	public void setRma(Rma rma) {
+		this.rma = rma;
 	}
 
 	@ManyToOne

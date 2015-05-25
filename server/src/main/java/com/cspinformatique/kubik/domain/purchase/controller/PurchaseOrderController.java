@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
 
 @Controller
 @RequestMapping("/purchaseOrder")

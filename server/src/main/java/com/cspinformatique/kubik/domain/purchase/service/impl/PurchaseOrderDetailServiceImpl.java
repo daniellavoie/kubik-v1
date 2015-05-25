@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder.Status;
 import com.cspinformatique.kubik.domain.purchase.repository.PurchaseOrderDetailRepository;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderDetailService;
 import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder.Status;
 
 @Service
 public class PurchaseOrderDetailServiceImpl implements

@@ -22,7 +22,6 @@ import com.cspinformatique.kubik.domain.dilicom.service.ImageService;
 import com.cspinformatique.kubik.domain.product.repository.ProductRepository;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder.Status;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.model.product.AvailabilityCode;
 import com.cspinformatique.kubik.model.product.BarcodeType;
@@ -31,6 +30,7 @@ import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.product.ProductType;
 import com.cspinformatique.kubik.model.product.ReturnType;
 import com.cspinformatique.kubik.model.product.Supplier;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder.Status;
 
 @Service
 public class ProductServiceImpl implements ProductService, InitializingBean {

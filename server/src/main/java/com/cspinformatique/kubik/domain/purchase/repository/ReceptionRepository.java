@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
-import com.cspinformatique.kubik.domain.purchase.model.Reception;
-import com.cspinformatique.kubik.domain.purchase.model.Reception.Status;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
+import com.cspinformatique.kubik.model.purchase.Reception;
+import com.cspinformatique.kubik.model.purchase.Reception.Status;
 
 public interface ReceptionRepository extends
 		PagingAndSortingRepository<Reception, Integer> {

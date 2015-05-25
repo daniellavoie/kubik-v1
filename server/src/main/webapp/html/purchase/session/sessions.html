@@ -43,7 +43,16 @@
 						<tr class="text-center">
 							<th>Date de création</th>
 							<th>Date de fermeture</th>
-							<th>Status</th>
+							<th>
+								<div class="btn-group">
+  									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Statut</button>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="#" ng-click="updateStatus('DRAFT')"><span ng-class="{true : 'label label-info', false : 'label label-default'}[user.preferences.purchaseSession.status.indexOf('DRAFT') != -1]">Brouillon</span></a></li>
+										<li><a href="#" ng-click="updateStatus('SUBMITED')"><span ng-class="{true : 'label label-info', false : 'label label-default'}[user.preferences.purchaseSession.status.indexOf('SUBMITED') != -1]">Soumis</span></a></li>
+										<li><a href="#" ng-click="updateStatus('CANCELED')"><span ng-class="{true : 'label label-info', false : 'label label-default'}[user.preferences.purchaseSession.status.indexOf('CANCELED') != -1]">Annulé</span></a></li>
+									</ul>
+								</div>
+							</th>
 							<th>Date de livraison min.</th>
 							<th>Date de livraison max.</th>
 							<th>Produits</th>

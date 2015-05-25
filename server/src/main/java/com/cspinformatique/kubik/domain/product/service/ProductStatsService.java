@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import com.cspinformatique.kubik.model.product.ProductStats;
 
 public interface ProductStatsService {
-	Page<ProductStats> findProductStats(Date startDate, Date endDate,
+	ProductStats findByProductId(int productId, Date startDate, Date endDate);
+	
+	Page<ProductStats> findAll(Date startDate, Date endDate,
 			Pageable pageable);
 }

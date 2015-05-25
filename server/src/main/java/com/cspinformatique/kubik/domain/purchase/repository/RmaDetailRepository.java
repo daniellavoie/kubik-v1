@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.cspinformatique.kubik.domain.purchase.model.Rma.Status;
-import com.cspinformatique.kubik.domain.purchase.model.RmaDetail;
 import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.purchase.RmaDetail;
+import com.cspinformatique.kubik.model.purchase.Rma.Status;
 
 public interface RmaDetailRepository extends JpaRepository<RmaDetail, Integer> {
 	@Query("SELECT rmaDetail FROM RmaDetail rmaDetail WHERE rmaDetail.product = :product AND rmaDetail.rma.status = :status" )

@@ -134,7 +134,7 @@ public class ProductStatsRepositoryMysqlImpl implements ProductStatsRepository {
 	}
 
 	@Override
-	public Page<ProductStats> findProductStats(Date startDate, Date endDate,
+	public Page<ProductStats> findAll(Date startDate, Date endDate,
 			Pageable pageable) {
 		String query = SQL_SELECT_PRODUCT_STATS;
 
@@ -177,6 +177,27 @@ public class ProductStatsRepositoryMysqlImpl implements ProductStatsRepository {
 						Long.class, startDate, endDate, startDate, endDate,
 						startDate, endDate, startDate, endDate, startDate,
 						endDate));
+	}
+
+	public ProductStats findByProductId(int productId, Date startDate,
+			Date endDate) {
+		String query = SQL_SELECT_PRODUCT_STATS + "\nWHERE\n"
+				+ "	product.id = ?";
+
+		return this.jdbcTemplate.queryForObject(
+				query,
+				new RowMapper<ProductStats>() {
+					@Override
+					public ProductStats mapRow(ResultSet rs, int rowNum)
+							throws SQLException {
+						return new ProductStats(productRepository.findOne(rs
+								.getInt("productId")), rs.getDouble("ordered"),
+								rs.getDouble("received"), rs.getDouble("sold"),
+								rs.getDouble("returned"), rs
+										.getDouble("refunded"));
+					}
+				}, startDate, endDate, startDate, endDate, startDate, endDate,
+				startDate, endDate, startDate, endDate, productId);
 	}
 
 }

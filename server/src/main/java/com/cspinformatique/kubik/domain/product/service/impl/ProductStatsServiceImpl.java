@@ -17,10 +17,15 @@ public class ProductStatsServiceImpl implements ProductStatsService {
 	private ProductStatsRepository productStatsRepository;
 
 	@Override
-	public Page<ProductStats> findProductStats(Date startDate, Date endDate,
+	public Page<ProductStats> findAll(Date startDate, Date endDate,
 			Pageable pageable) {
-		return productStatsRepository.findProductStats(startDate, endDate,
+		return productStatsRepository.findAll(startDate, endDate,
 				pageable);
+	}
+	
+	@Override
+	public ProductStats findByProductId(int productId, Date startDate, Date endDate){
+		return this.productStatsRepository.findByProductId(productId, startDate, endDate);
 	}
 
 }

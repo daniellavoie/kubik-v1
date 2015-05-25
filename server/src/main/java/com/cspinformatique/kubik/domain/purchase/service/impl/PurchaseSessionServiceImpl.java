@@ -4,29 +4,32 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.product.service.ProductService;
-import com.cspinformatique.kubik.domain.purchase.model.NotationCode;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrderDetail;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseSession;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseSessionDetail;
-import com.cspinformatique.kubik.domain.purchase.model.ShippingMode;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseSession.Status;
 import com.cspinformatique.kubik.domain.purchase.repository.PurchaseSessionRepository;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseSessionDetailService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseSessionService;
 import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.product.Supplier;
+import com.cspinformatique.kubik.model.purchase.NotationCode;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrderDetail;
+import com.cspinformatique.kubik.model.purchase.PurchaseSession;
+import com.cspinformatique.kubik.model.purchase.PurchaseSessionDetail;
+import com.cspinformatique.kubik.model.purchase.ShippingMode;
+import com.cspinformatique.kubik.model.purchase.PurchaseSession.Status;
 
 @Service
 public class PurchaseSessionServiceImpl implements PurchaseSessionService {
@@ -43,6 +46,44 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 	private PurchaseSessionRepository purchaseSessionRepository;
 
 	@Override
+	public PurchaseSession addProductToNewestPurchaseSession(Product product,
+			double quantity) {
+		PurchaseSession purchaseSession = null;
+		Page<PurchaseSession> purchaseSessionPage = this
+				.findByStatus(Status.DRAFT, new PageRequest(0, 1,
+						Direction.DESC, "openDate"));
+
+		if (purchaseSessionPage.getTotalElements() > 0) {
+			purchaseSession = purchaseSessionPage.getContent().get(0);
+		} else {
+			purchaseSession = new PurchaseSession(null, null, null,
+					new ArrayList<PurchaseSessionDetail>(), Status.DRAFT,
+					new Date(), null, null);
+		}
+
+		PurchaseSessionDetail purchaseSessionDetail = null;
+		for (PurchaseSessionDetail existingDetail : purchaseSession
+				.getDetails()) {
+			if (existingDetail.getProduct().getId().intValue() == product
+					.getId().intValue()) {
+				purchaseSessionDetail = existingDetail;
+			}
+		}
+
+		if (purchaseSessionDetail == null) {
+			purchaseSessionDetail = new PurchaseSessionDetail(0,
+					purchaseSession, product, 0d);
+
+			purchaseSession.getDetails().add(purchaseSessionDetail);
+		}
+
+		purchaseSessionDetail.setQuantity(purchaseSessionDetail.getQuantity()
+				+ quantity);
+
+		return this.save(purchaseSession);
+	}
+
+	@Override
 	public Iterable<PurchaseSession> findAll() {
 		return this.purchaseSessionRepository.findAll();
 	}
@@ -54,6 +95,11 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 
 	@Override
 	public Page<PurchaseSession> findByStatus(Status status, Pageable pageable) {
+		return this.purchaseSessionRepository.findByStatus(status, pageable);
+	}
+
+	@Override
+	public Page<PurchaseSession> findByStatus(List<Status> status, Pageable pageable) {
 		return this.purchaseSessionRepository.findByStatus(status, pageable);
 	}
 
@@ -97,15 +143,15 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 						ShippingMode.USUAL_METHOD, NotationCode.USUAL_RULE,
 						new Date(), maxDeliveryDate,
 						new ArrayList<PurchaseOrderDetail>(),
-						PurchaseOrder.Status.DRAFT, false, false, 0f, 0d, purchaseSession, null);
+						PurchaseOrder.Status.DRAFT, false, false, 0f, 0d,
+						purchaseSession, null);
 
 				purchaseOrders.put(supplier.getEan13(), order);
 			}
-			
+
 			order.getDetails().add(
 					new PurchaseOrderDetail(null, order, detail.getProduct(),
-							detail.getQuantity(), 0f, 0f, null,
-							0d, 0d));
+							detail.getQuantity(), 0f, 0f, null, 0d, 0d));
 		}
 
 		this.purchaseOrderService.save(purchaseOrders.values());

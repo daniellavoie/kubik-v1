@@ -1,4 +1,4 @@
-package com.cspinformatique.kubik.domain.purchase.model;
+package com.cspinformatique.kubik.model.purchase;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,33 +7,34 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import com.cspinformatique.kubik.model.product.Product;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
-public class PurchaseOrderDetail {
+public class ReceptionDetail {
 	private Integer id;
-	private PurchaseOrder purchaseOrder;
+	private Reception reception;
 	private Product product;
-	private double quantity;
+	private double quantityToReceive;
+	private double quantityReceived;
 
 	private float discount;
 	private float discountApplied;
 	private DiscountType discountType;
 	private double unitPriceTaxOut;
 	private double totalAmountTaxOut;
-
-	public PurchaseOrderDetail() {
-
+	
+	public ReceptionDetail(){
+		
 	}
 
-	public PurchaseOrderDetail(Integer id, PurchaseOrder purchaseOrder,
-			Product product, double quantity, float discount,
+	public ReceptionDetail(Integer id, Reception reception, Product product,
+			double quantityToReceive, double quantityReceived, float discount,
 			float discountApplied, DiscountType discountType,
 			double unitPriceTaxOut, double totalAmountTaxOut) {
 		this.id = id;
-		this.purchaseOrder = purchaseOrder;
+		this.reception = reception;
 		this.product = product;
-		this.quantity = quantity;
+		this.quantityToReceive = quantityToReceive;
+		this.quantityReceived = quantityReceived;
 		this.discount = discount;
 		this.discountApplied = discountApplied;
 		this.discountType = discountType;
@@ -42,7 +43,7 @@ public class PurchaseOrderDetail {
 	}
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	public Integer getId() {
 		return id;
 	}
@@ -52,13 +53,12 @@ public class PurchaseOrderDetail {
 	}
 
 	@ManyToOne
-	@JsonBackReference
-	public PurchaseOrder getPurchaseOrder() {
-		return purchaseOrder;
+	public Reception getReception() {
+		return reception;
 	}
 
-	public void setPurchaseOrder(PurchaseOrder purchaseOrder) {
-		this.purchaseOrder = purchaseOrder;
+	public void setReception(Reception reception) {
+		this.reception = reception;
 	}
 
 	@ManyToOne
@@ -70,12 +70,20 @@ public class PurchaseOrderDetail {
 		this.product = product;
 	}
 
-	public double getQuantity() {
-		return quantity;
+	public double getQuantityToReceive() {
+		return quantityToReceive;
 	}
 
-	public void setQuantity(double quantity) {
-		this.quantity = quantity;
+	public void setQuantityToReceive(double quantityToReceive) {
+		this.quantityToReceive = quantityToReceive;
+	}
+
+	public double getQuantityReceived() {
+		return quantityReceived;
+	}
+
+	public void setQuantityReceived(double quantityReceived) {
+		this.quantityReceived = quantityReceived;
 	}
 
 	public float getDiscount() {

@@ -12,7 +12,8 @@
 <!-- 	<logger name="org.springframework.web" level="DEBUG" /> -->
 <!-- 	<logger name="org.hibernate.SQL" level="TRACE" /> -->
 <!-- 	<logger name="org.hibernate.tool.hbm2ddl" level="DEBUG" /> -->
-	<logger name="com.cspinformatique.kubik.domain.accounting" level="DEBUG" />
+<!-- 	<logger name="com.cspinformatique.kubik.domain.accounting" level="DEBUG" /> -->
+<!-- 		<logger name="org.springframework.security" level="DEBUG" /> -->
 
 	<root level="info">
 		<appender-ref ref="STDOUT" />

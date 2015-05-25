@@ -22,9 +22,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.stereotype.Service;
 
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrderDetail;
 import com.cspinformatique.kubik.domain.purchase.service.DilicomOrderService;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrderDetail;
 
 @Service
 public class DilicomOrderServiceImpl implements DilicomOrderService {

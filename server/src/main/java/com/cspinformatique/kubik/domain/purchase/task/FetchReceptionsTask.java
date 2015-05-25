@@ -25,12 +25,6 @@ import org.springframework.stereotype.Component;
 
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
-import com.cspinformatique.kubik.domain.purchase.model.DeliveryDateType;
-import com.cspinformatique.kubik.domain.purchase.model.PurchaseOrder;
-import com.cspinformatique.kubik.domain.purchase.model.Reception;
-import com.cspinformatique.kubik.domain.purchase.model.Reception.Status;
-import com.cspinformatique.kubik.domain.purchase.model.ReceptionDetail;
-import com.cspinformatique.kubik.domain.purchase.model.ShippingPackage;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.domain.purchase.service.ReceptionService;
 import com.cspinformatique.kubik.domain.purchase.task.exception.InvalidReceptionDetailException;
@@ -41,6 +35,12 @@ import com.cspinformatique.kubik.domain.purchase.task.exception.PurchaseOrderRec
 import com.cspinformatique.kubik.domain.purchase.task.exception.ReceptionAlreadyReceivedException;
 import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.product.Supplier;
+import com.cspinformatique.kubik.model.purchase.DeliveryDateType;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
+import com.cspinformatique.kubik.model.purchase.Reception;
+import com.cspinformatique.kubik.model.purchase.ReceptionDetail;
+import com.cspinformatique.kubik.model.purchase.ShippingPackage;
+import com.cspinformatique.kubik.model.purchase.Reception.Status;
 
 @Component
 public class FetchReceptionsTask implements InitializingBean {
