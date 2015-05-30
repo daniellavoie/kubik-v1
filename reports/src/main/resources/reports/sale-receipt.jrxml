@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-04-18T15:51:03 -->
+<!-- 2015-05-30T12:22:09 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sale-receipt" pageWidth="226" pageHeight="842" columnWidth="22" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="0e5f4531-9672-428b-94c4-e9a87ed6b5d0">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
@@ -12,7 +12,7 @@
 	<queryString language="SQL">
 		<![CDATA[select
 	paid_date,
-	user.name as userName,
+	user.username as userName,
 	total_tax_less_amount,
 	total_amount,
 	amount_returned,
@@ -28,7 +28,9 @@ WHERE
 	<field name="paid_date" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="userName" class="java.lang.String"/>
+	<field name="userName" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="total_tax_less_amount" class="java.lang.Double">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
