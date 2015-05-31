@@ -196,6 +196,10 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 			$scope.searchProduct();
 		}
 	};
+	
+	$scope.showOrderForm = function(){
+		window.open($scope.order.id + "/report", "Bon de commande", "pdf");
+	}
 
 	$scope.kubikProductCard = new KubikProductCard();
 	

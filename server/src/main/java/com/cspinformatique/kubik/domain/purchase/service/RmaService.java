@@ -16,7 +16,5 @@ public interface RmaService {
 	
 	double findProductQuantityReturnedToSupplier(int productId);
 	
-	
-	
 	Rma save(Rma rma);
 }

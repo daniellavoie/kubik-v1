@@ -166,11 +166,13 @@
 			
 			<div ng-if="order.status == 'DRAFT'">
 				<button ng-click="confirmCancelOrder()" type="button" class="btn btn-danger">Annuler la commande</button>
-				<button ng-click="confirmSubmitOrder()" type="button" class="btn btn-primary">Confirmer la commande</button>
+				<button ng-click="confirmSubmitOrder()" type="button" class="btn btn-default">Confirmer la commande</button>
 			</div>
 			
 			<div ng-if="order.status == 'SUBMITED'">
-				<button ng-click="submitOrderAndSendToDilicom()" type="button" class="btn btn-primary">Envoyer à Dilicom</button>
+				<button ng-if="!order.sentToDilicom" ng-click="submitOrderAndSendToDilicom()" type="button" class="btn btn-default">Envoyer à Dilicom</button>
+				<button ng-click="showOrderForm()" type="button" class="btn btn-default">Bon de commande</button>
+				
 			</div>
 			
 			<div class="confirm-submit modal fade">

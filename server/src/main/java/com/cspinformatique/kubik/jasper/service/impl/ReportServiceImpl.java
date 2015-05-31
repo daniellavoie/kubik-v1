@@ -15,6 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.jasper.service.ReportService;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
 import com.cspinformatique.kubik.model.purchase.Rma;
 import com.cspinformatique.kubik.model.sales.Invoice;
 
@@ -23,6 +24,23 @@ public class ReportServiceImpl implements ReportService {
 	@Autowired
 	private DataSource dataSource;
 
+	public JasperPrint generatePurchaseOrderReport(PurchaseOrder purchaseOrder){
+		try {
+			HashMap<String, Object> reportParameters = new HashMap<String, Object>();
+
+			reportParameters.put("PURCHASE_ORDER_ID", purchaseOrder.getId());
+			reportParameters.put("SUPPLIER_NAME", purchaseOrder.getSupplier().getName());
+			reportParameters.put("SUPPLIER_ADDRESS", purchaseOrder.getSupplier().getAddress());
+			reportParameters.put("SUPPLIER_ACCOUNT_NUMBER", purchaseOrder.getSupplier().getAccountNumber());
+
+			return JasperFillManager.fillReport(new ClassPathResource(
+					"reports/order-form.jasper").getInputStream(),
+					reportParameters, dataSource.getConnection());
+		} catch (JRException | SQLException | IOException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+	
 	@Override
 	public JasperPrint generateReceiptReport(Invoice invoice) {
 		try {
