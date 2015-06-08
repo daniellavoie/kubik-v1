@@ -154,7 +154,9 @@ public class PurchaseSessionServiceImpl implements PurchaseSessionService {
 							detail.getQuantity(), 0f, 0f, null, 0d, 0d));
 		}
 
-		this.purchaseOrderService.save(purchaseOrders.values());
+		for(PurchaseOrder purchaseOrder : purchaseOrders.values()){
+			this.purchaseOrderService.save(purchaseOrder);
+		}
 	}
 
 	@Override

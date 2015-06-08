@@ -222,6 +222,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	@Override
+	@Transactional
 	public PurchaseOrder save(PurchaseOrder purchaseOrder) {
 		return this.save(Arrays.asList(new PurchaseOrder[] { purchaseOrder }))
 				.iterator().next();
@@ -237,8 +238,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 				if (purchaseOrder.getId() == 0) {
 					purchaseOrder.setId(this.generateId());
 				}
-
-				
 				
 				if (purchaseOrder.getStatus().equals(Status.SUBMITED)) {
 					if (purchaseOrder.getSubmitedDate() == null) {
