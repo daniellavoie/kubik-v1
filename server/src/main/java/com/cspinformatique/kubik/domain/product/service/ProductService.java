@@ -24,6 +24,8 @@ public interface ProductService {
 	
 	Set<String> getProductIdsCache();
 	
+	void mergeProduct(Product sourceProduct, Product targetProduct);
+	
 	Product save(Product product);
 	
 	Page<Product> search(String query, Pageable pageable);

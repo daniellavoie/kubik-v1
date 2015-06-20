@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.domain.sales.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +19,20 @@ public class InvoiceDetailServiceImpl implements InvoiceDetailService {
 	private InvoiceDetailRepository invoiceDetailRepository;
 
 	@Override
+	public List<InvoiceDetail> findByProduct(Product product){
+		return this.invoiceDetailRepository.findByProduct(product);
+	}
+	
+	@Override
 	public Page<InvoiceDetail> findByProductAndInvoiceStatus(Product product,
 			InvoiceStatus status, Pageable pageable) {
 		return this.invoiceDetailRepository.findByProductAndInvoiceStatus(
 				product, status, pageable);
+	}
+	
+	@Override
+	public InvoiceDetail save(InvoiceDetail invoiceDetail){
+		return this.invoiceDetailRepository.save(invoiceDetail);
 	}
 
 }

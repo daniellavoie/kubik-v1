@@ -1,4 +1,5 @@
 var app = angular.module("KubikCustomersPage", []);
+
 var kubikCustomerSearch = new KubikCustomerSearch({
 	app : app,
 	customerUrl : "customer"

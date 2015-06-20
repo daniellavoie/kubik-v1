@@ -22,7 +22,15 @@ import com.cspinformatique.kubik.domain.dilicom.service.ImageService;
 import com.cspinformatique.kubik.domain.product.repository.ProductRepository;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
+import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderDetailService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
+import com.cspinformatique.kubik.domain.purchase.service.PurchaseSessionDetailService;
+import com.cspinformatique.kubik.domain.purchase.service.ReceptionDetailService;
+import com.cspinformatique.kubik.domain.purchase.service.RestockService;
+import com.cspinformatique.kubik.domain.purchase.service.RmaDetailService;
+import com.cspinformatique.kubik.domain.sales.service.CustomerCreditDetailService;
+import com.cspinformatique.kubik.domain.sales.service.InvoiceDetailService;
+import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.model.product.AvailabilityCode;
 import com.cspinformatique.kubik.model.product.BarcodeType;
 import com.cspinformatique.kubik.model.product.PriceType;
@@ -31,6 +39,13 @@ import com.cspinformatique.kubik.model.product.ProductType;
 import com.cspinformatique.kubik.model.product.ReturnType;
 import com.cspinformatique.kubik.model.product.Supplier;
 import com.cspinformatique.kubik.model.purchase.PurchaseOrder.Status;
+import com.cspinformatique.kubik.model.purchase.PurchaseOrderDetail;
+import com.cspinformatique.kubik.model.purchase.PurchaseSessionDetail;
+import com.cspinformatique.kubik.model.purchase.ReceptionDetail;
+import com.cspinformatique.kubik.model.purchase.Restock;
+import com.cspinformatique.kubik.model.purchase.RmaDetail;
+import com.cspinformatique.kubik.model.sales.CustomerCreditDetail;
+import com.cspinformatique.kubik.model.sales.InvoiceDetail;
 
 @Service
 public class ProductServiceImpl implements ProductService, InitializingBean {
@@ -38,14 +53,38 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 			.getLogger(ProductServiceImpl.class);
 
 	@Autowired
+	private CustomerCreditDetailService customerCreditDetailService;
+	
+	@Autowired
 	private ImageService imageService;
+	
+	@Autowired
+	private InvoiceDetailService invoiceDetailService;
+	
+	@Autowired
+	private ProductInventoryService productInventoryService;
 
 	@Autowired
 	private ProductRepository productRepository;
 
 	@Autowired
+	private PurchaseOrderDetailService purchaseOrderDetailService;
+	
+	@Autowired
 	private PurchaseOrderService purchaseOrderService;
+	
+	@Autowired
+	private PurchaseSessionDetailService purchaseSessionDetailService;
 
+	@Autowired
+	private ReceptionDetailService receptionDetailService;
+
+	@Autowired
+	private RestockService restockService;
+	
+	@Autowired
+	private RmaDetailService rmaDetailService;
+	
 	@Autowired
 	private SupplierService supplierService;
 
@@ -190,6 +229,58 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	public Set<String> getProductIdsCache() {
 		return this.productIdsCache;
 	};
+	
+	@Override
+	@Transactional
+	public void mergeProduct(Product sourceProduct, Product targetProduct){
+		for(PurchaseSessionDetail purchaseSessionDetail : this.purchaseSessionDetailService.findByProduct(sourceProduct)){
+			purchaseSessionDetail.setProduct(targetProduct);
+			
+			this.purchaseSessionDetailService.save(purchaseSessionDetail);
+		}
+		
+		for(PurchaseOrderDetail purchaseOrderDetail : this.purchaseOrderDetailService.findByProduct(sourceProduct)){
+			purchaseOrderDetail.setProduct(targetProduct);
+			
+			this.purchaseOrderDetailService.save(purchaseOrderDetail);
+		}
+		
+		for(ReceptionDetail receptionDetail : this.receptionDetailService.findByProduct(sourceProduct)){
+			receptionDetail.setProduct(targetProduct);
+			
+			this.receptionDetailService.save(receptionDetail);
+		}
+		
+		for(RmaDetail rmaDetail : this.rmaDetailService.findByProduct(sourceProduct)){
+			rmaDetail.setProduct(targetProduct);
+			
+			this.rmaDetailService.save(rmaDetail);
+		}
+		
+		for(Restock restock : this.restockService.findByProduct(sourceProduct)){
+			restock.setProduct(targetProduct);
+			
+			this.restockService.save(restock);
+		}
+		
+		for(CustomerCreditDetail customerCreditDetail : this.customerCreditDetailService.findByProduct(sourceProduct)){
+			customerCreditDetail.setProduct(targetProduct);
+			
+			this.customerCreditDetailService.save(customerCreditDetail);
+		}
+		
+		for(InvoiceDetail invoiceDetail : this.invoiceDetailService.findByProduct(sourceProduct)){
+			invoiceDetail.setProduct(targetProduct);
+			
+			this.invoiceDetailService.save(invoiceDetail);
+		}
+		
+		this.productInventoryService.deleteByProduct(sourceProduct);
+		
+		this.productInventoryService.updateInventory(targetProduct);
+		
+		this.productRepository.delete(sourceProduct);
+	}
 
 	@Override
 	@Transactional

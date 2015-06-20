@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.domain.purchase.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +16,11 @@ import com.cspinformatique.kubik.model.purchase.Reception.Status;
 @Service
 public class ReceptionDetailServiceImpl implements ReceptionDetailService {
 	@Autowired private ReceptionDetailRepository receptionDetailRepository;
+	
+	@Override
+	public List<ReceptionDetail> findByProduct(Product product){
+		return this.receptionDetailRepository.findByProduct(product);
+	}
 	
 	@Override
 	public Page<ReceptionDetail> findByProductAndReceptionStatus(

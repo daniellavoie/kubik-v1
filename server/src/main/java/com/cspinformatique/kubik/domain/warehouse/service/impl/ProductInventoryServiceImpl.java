@@ -26,6 +26,11 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 	@Autowired private RmaService rmaService;
 	
 	@Override
+	public void deleteByProduct(Product product){
+		this.productInventoyRepository.delete(this.findByProduct(product));
+	}
+	
+	@Override
 	public ProductInventory findByProduct(Product product) {
 		ProductInventory productInventory = this.productInventoyRepository.findByProduct(product);
 

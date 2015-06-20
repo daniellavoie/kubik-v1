@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.domain.purchase.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,6 +12,8 @@ import com.cspinformatique.kubik.model.purchase.Restock.Status;
 public interface RestockService {
 	
 	Long countByStatus(Status status);
+	
+	List<Restock> findByProduct(Product product);
 	
 	Page<Restock> findByStatus(Status status, Pageable pageable);
 	

@@ -1,6 +1,7 @@
 package com.cspinformatique.kubik.domain.purchase.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,11 @@ public class RestockServiceImpl implements RestockService {
 	@Override
 	public Long countByStatus(Status status) {
 		return this.restockRepository.countByStatus(status);
+	}
+	
+	@Override
+	public List<Restock> findByProduct(Product product){
+		return this.restockRepository.findByProduct(product);
 	}
 
 	@Override

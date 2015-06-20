@@ -11,6 +11,8 @@ import com.cspinformatique.kubik.model.purchase.PurchaseSession.Status;
 public interface PurchaseSessionDetailRepository extends
 		JpaRepository<PurchaseSessionDetail, Integer> {
 
+	Iterable<PurchaseSessionDetail> findByProduct(Product product);
+	
 	@Query("SELECT purchaseSession FROM PurchaseSessionDetail detail WHERE detail.product = ?")
 	Iterable<PurchaseSession> findPurchaseOrdersByProduct(Product product);
 	

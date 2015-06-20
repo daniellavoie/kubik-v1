@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.domain.sales.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +14,9 @@ import com.cspinformatique.kubik.model.sales.CustomerCreditDetail;
 
 public interface CustomerCreditDetailRepository extends
 		JpaRepository<CustomerCreditDetail, Integer> {
+	
+	List<CustomerCreditDetail> findByProduct(Product product);
+	
 	@Query("SELECT detail FROM CustomerCreditDetail detail WHERE detail.product = :product AND detail.customerCredit.status = :status")
 	Page<CustomerCreditDetail> findByProductAndInvoiceStatus(
 			@Param("product") Product product, @Param("status") Status status,

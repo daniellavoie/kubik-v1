@@ -94,32 +94,6 @@ public class ProductController {
 				.findByProductId(id, startDate, endDate);
 	}
 
-	@RequestMapping(params = "card", produces = MediaType.TEXT_HTML_VALUE)
-	public String getProductCardPage() {
-		return "product/product-card :: product-card";
-	}
-
-	@RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
-	public String getProductsPage() {
-		return "product/products-page";
-	}
-
-	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Product save(@RequestBody Product product) {
-		return this.productService.save(product);
-	}
-
-	@RequestMapping(method = RequestMethod.GET, params = "search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<Product> search(@RequestParam String query,
-			@RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "50") Integer resultPerPage,
-			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
-		return this.productService.search(query, new PageRequest(page,
-				resultPerPage, direction != null ? direction : Direction.ASC,
-				sortBy));
-	}
-
 	@RequestMapping(value = "/{productId}/customerCredit", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Page<CustomerCreditDetail> findProductCustomerCredits(
 			@PathVariable("productId") int productId,
@@ -173,5 +147,36 @@ public class ProductController {
 				this.productService.findOne(productId), Rma.Status.SHIPPED,
 				new PageRequest(page, resultPerPage,
 						direction != null ? direction : Direction.ASC, sortBy));
+	}
+
+	@RequestMapping(params = "card", produces = MediaType.TEXT_HTML_VALUE)
+	public String getProductCardPage() {
+		return "product/product-card :: product-card";
+	}
+
+	@RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
+	public String getProductsPage() {
+		return "product/products-page";
+	}
+	
+	@RequestMapping(value = "/{productId}", params = {"targetProductId", "mergeProduct"})
+	public void mergeProducts(@PathVariable int productId, @RequestParam int targetProductId){
+		this.productService.mergeProduct(this.findOne(productId), this.findOne(targetProductId));
+	}
+
+	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Product save(@RequestBody Product product) {
+		return this.productService.save(product);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = "search", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Page<Product> search(@RequestParam String query,
+			@RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "50") Integer resultPerPage,
+			@RequestParam(required = false) Direction direction,
+			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
+		return this.productService.search(query, new PageRequest(page,
+				resultPerPage, direction != null ? direction : Direction.ASC,
+				sortBy));
 	}
 }

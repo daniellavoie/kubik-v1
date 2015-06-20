@@ -13,6 +13,9 @@ import com.cspinformatique.kubik.model.purchase.PurchaseOrder.Status;
 
 public interface PurchaseOrderDetailRepository extends
 		JpaRepository<PurchaseOrderDetail, Integer> {
+	
+	List<PurchaseOrderDetail> findByProduct(Product product);
+	
 	@Query("SELECT purchaseOrder FROM PurchaseOrderDetail detail WHERE detail.product = :product")
 	List<PurchaseOrder> findPurchaseOrdersByProduct(
 			@Param("product") Product product);
