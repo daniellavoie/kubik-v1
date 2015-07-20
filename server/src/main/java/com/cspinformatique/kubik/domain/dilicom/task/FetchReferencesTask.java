@@ -23,9 +23,9 @@ import com.cspinformatique.kubik.config.BatchConfiguration;
 import com.cspinformatique.kubik.domain.dilicom.batch.service.JobExecutionService;
 
 @Component
-public class FetchDilicomTask implements InitializingBean {
+public class FetchReferencesTask implements InitializingBean {
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(FetchDilicomTask.class);
+			.getLogger(FetchReferencesTask.class);
 
 	@Autowired
 	private SessionFactory<FTPFile> dilicomFtpSessionFactory;

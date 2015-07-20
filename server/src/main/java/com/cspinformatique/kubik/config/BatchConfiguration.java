@@ -15,7 +15,6 @@ import com.cspinformatique.kubik.domain.dilicom.batch.reader.DilicomReferenceRea
 import com.cspinformatique.kubik.domain.dilicom.batch.writer.DilicomReferenceWriter;
 import com.cspinformatique.kubik.domain.dilicom.model.Reference;
 import com.cspinformatique.kubik.domain.dilicom.model.ReferenceDTO;
-import com.cspinformatique.kubik.domain.dilicom.service.ReferenceService;
 
 @Configuration
 @EnableBatchProcessing
@@ -23,9 +22,6 @@ public class BatchConfiguration {
 	public static final String IMPORT_DILICOM_REFERENCES_JOB = "importDilicomReferencesJob";
 
 	public static final String NOTIFICATION_FILE_INTEGRATION_STEP = "notificationFileIntegrationStep";
-
-	@Autowired
-	private ReferenceService referenceService;
 
 	@Autowired
 	private DilicomReferenceReader dilicomReferenceReader;

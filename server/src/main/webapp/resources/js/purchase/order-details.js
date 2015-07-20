@@ -145,7 +145,7 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 	};
 	
 	$scope.submitOrderAndSendToDilicom = function(){
-		$scope.order.dilicomOrder = true;
+		$scope.order.dilicomOrder = {creationDate : new Date(), status : "PENDING", purchaseOrder : $scope.order};
 		
 		$scope.submitOrder();
 	}

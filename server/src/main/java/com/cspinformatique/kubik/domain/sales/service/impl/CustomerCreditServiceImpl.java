@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.sales.repository.CustomerCreditRepository;
 import com.cspinformatique.kubik.domain.sales.service.CustomerCreditService;
-import com.cspinformatique.kubik.domain.sales.service.CustomerService;
 import com.cspinformatique.kubik.domain.sales.service.DailyReportService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.domain.sales.service.PaymentMethodService;
@@ -27,19 +26,16 @@ import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryServic
 import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.sales.Customer;
 import com.cspinformatique.kubik.model.sales.CustomerCredit;
+import com.cspinformatique.kubik.model.sales.CustomerCredit.Status;
 import com.cspinformatique.kubik.model.sales.CustomerCreditDetail;
 import com.cspinformatique.kubik.model.sales.Invoice;
 import com.cspinformatique.kubik.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.model.sales.InvoiceTaxAmount;
-import com.cspinformatique.kubik.model.sales.CustomerCredit.Status;
 
 @Service
 public class CustomerCreditServiceImpl implements CustomerCreditService {
 	@Autowired
 	private CustomerCreditRepository customerCreditRepository;
-
-	@Autowired
-	private CustomerService customerService;
 
 	@Autowired
 	private DailyReportService dailyReportService;

@@ -170,7 +170,8 @@
 			</div>
 			
 			<div ng-if="order.status == 'SUBMITED'">
-				<button ng-if="!order.sentToDilicom" ng-click="submitOrderAndSendToDilicom()" type="button" class="btn btn-default">Envoyer à Dilicom</button>
+				<button ng-if="!order.dilicomOrder == null" ng-click="submitOrderAndSendToDilicom()" type="button" class="btn btn-default">Envoyer à Dilicom</button>
+				<a ng-if="!order.dilicomOrder != null" th:href="@{/dilicomOrder}"><button type="button" class="btn btn-default">Commandes Dilicom</button></a>
 				<button ng-click="showOrderForm()" type="button" class="btn btn-default">Bon de commande</button>
 				
 			</div>

@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 
+import com.cspinformatique.kubik.model.dilicom.DilicomOrder;
 import com.cspinformatique.kubik.model.product.Supplier;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -36,8 +37,7 @@ public class PurchaseOrder {
 	private Date maxDeliveryDate;
 	private List<PurchaseOrderDetail> details;
 	private Status status;
-	private boolean dilicomOrder;
-	private boolean sentToDilicom;
+	private DilicomOrder dilicomOrder;
 
 	private float discount;
 	private double totalAmountTaxOut;
@@ -53,7 +53,7 @@ public class PurchaseOrder {
 			Date submitedDate, String operationCode, ShippingMode shippingMode,
 			NotationCode notationCode, Date minDeliveryDate,
 			Date maxDeliveryDate, List<PurchaseOrderDetail> details,
-			Status status, boolean dilicomOrder, boolean sentToDilicom, float discount,
+			Status status, DilicomOrder dilicomOrder, float discount,
 			double totalAmountTaxOut, PurchaseSession purchaseSession, Reception reception) {
 		this.id = id;
 		this.supplier = supplier;
@@ -67,7 +67,6 @@ public class PurchaseOrder {
 		this.details = details;
 		this.status = status;
 		this.dilicomOrder = dilicomOrder;
-		this.sentToDilicom = sentToDilicom;
 		this.discount = discount;
 		this.totalAmountTaxOut = totalAmountTaxOut;
 		this.purchaseSession = purchaseSession;
@@ -171,20 +170,13 @@ public class PurchaseOrder {
 		this.status = status;
 	}
 
-	public boolean isDilicomOrder() {
+	@OneToOne(cascade = CascadeType.ALL)
+	public DilicomOrder getDilicomOrder() {
 		return dilicomOrder;
 	}
 
-	public void setDilicomOrder(boolean dilicomOrder) {
+	public void setDilicomOrder(DilicomOrder dilicomOrder) {
 		this.dilicomOrder = dilicomOrder;
-	}
-
-	public boolean isSentToDilicom() {
-		return sentToDilicom;
-	}
-
-	public void setSentToDilicom(boolean sentToDilicom) {
-		this.sentToDilicom = sentToDilicom;
 	}
 
 	public float getDiscount() {

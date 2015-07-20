@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.cspinformatique.kubik.model.proxy.Proxy;
 import com.cspinformatique.kubik.proxy.repository.ProxyRepository;
@@ -14,9 +13,6 @@ import com.cspinformatique.kubik.proxy.service.ProxyService;
 public class ProxyServiceImpl implements ProxyService {
 	@Autowired
 	private ProxyRepository proxyRepository;
-
-	@Autowired
-	private RestTemplate restTemplate;
 
 	@Override
 	public void delete(int id) {

@@ -9,8 +9,8 @@ import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
 import com.cspinformatique.kubik.model.purchase.PurchaseOrder.Status;
 
 public interface PurchaseOrderRepository extends
-		JpaRepository<PurchaseOrder, Long> {
-
+		JpaRepository<PurchaseOrder, Long>, PurchaseOrderRepositoryCustom {
+	
 	List<PurchaseOrder> findByStatus(Status status);
 
 	List<PurchaseOrder> findBySupplierAndStatus(Supplier supplier, Status status);

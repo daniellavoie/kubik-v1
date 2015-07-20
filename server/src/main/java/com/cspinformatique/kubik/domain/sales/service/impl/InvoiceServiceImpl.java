@@ -24,7 +24,6 @@ import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.purchase.service.RestockService;
 import com.cspinformatique.kubik.domain.sales.repository.InvoiceRepository;
 import com.cspinformatique.kubik.domain.sales.repository.InvoiceStatusRepository;
-import com.cspinformatique.kubik.domain.sales.service.CashRegisterSessionService;
 import com.cspinformatique.kubik.domain.sales.service.DailyReportService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
@@ -39,8 +38,6 @@ import com.cspinformatique.kubik.model.sales.Payment;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
-	@Autowired
-	private CashRegisterSessionService cashRegisterSessionService;
 
 	@Autowired
 	private DailyReportService dailyReportService;

@@ -14,7 +14,6 @@ import com.cspinformatique.kubik.domain.dilicom.model.ReferenceNotification;
 import com.cspinformatique.kubik.domain.dilicom.model.ReferenceNotification.Status;
 import com.cspinformatique.kubik.domain.dilicom.repository.jpa.ReferenceNotificationRepository;
 import com.cspinformatique.kubik.domain.dilicom.service.ReferenceNotificationService;
-import com.cspinformatique.kubik.domain.dilicom.service.ReferenceService;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.model.product.Product;
 
@@ -26,9 +25,6 @@ public class ReferenceNotificationServiceImpl implements
 
 	@Autowired
 	private ProductService productService;
-
-	@Autowired
-	private ReferenceService referenceService;
 
 	@Override
 	public Long countByStatus(Status status){

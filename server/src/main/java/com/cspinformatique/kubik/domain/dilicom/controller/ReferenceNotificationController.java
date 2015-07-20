@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.cspinformatique.kubik.domain.dilicom.model.ReferenceNotification;
 import com.cspinformatique.kubik.domain.dilicom.model.ReferenceNotification.Status;
 import com.cspinformatique.kubik.domain.dilicom.service.ReferenceNotificationService;
-import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.model.product.Product;
 
 @Controller
@@ -26,10 +25,7 @@ import com.cspinformatique.kubik.model.product.Product;
 public class ReferenceNotificationController {
 	@Autowired
 	private ReferenceNotificationService referenceNotificationService;
-
-	@Autowired
-	private ProductService productService;
-
+	
 	@RequestMapping(value = "/{status}/count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Long countByStatus(@PathVariable Status status) {
 		return this.referenceNotificationService.countByStatus(status);

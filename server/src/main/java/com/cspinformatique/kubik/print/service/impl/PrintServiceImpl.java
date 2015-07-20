@@ -7,24 +7,16 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.cspinformatique.kubik.model.print.ReceiptPrintJob;
 import com.cspinformatique.kubik.model.sales.Invoice;
 import com.cspinformatique.kubik.print.repository.PrintJobRepository;
 import com.cspinformatique.kubik.print.service.PrintService;
-import com.cspinformatique.kubik.proxy.service.ProxyService;
 
 @Service
 public class PrintServiceImpl implements PrintService {
 	@Autowired
 	private PrintJobRepository printJobRepository;
-
-	@Autowired
-	private ProxyService proxyService;
-
-	@Autowired
-	private RestTemplate restTemplate;
 
 	private Map<Integer, ReceiptPrintJob> receiptPrintJobs;
 
