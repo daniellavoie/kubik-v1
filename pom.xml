@@ -42,4 +42,10 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<scm>
+		<url>https://github.com/daniellavoie/Kubik</url>
+		<connection>scm:git:ssh://git@github.com:daniellavoie/Kubik.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:daniellavoie/Kubik.git</developerConnection>
+	</scm>
 </project>
