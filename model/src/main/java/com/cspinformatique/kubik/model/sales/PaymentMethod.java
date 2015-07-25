@@ -3,7 +3,10 @@ package com.cspinformatique.kubik.model.sales;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.hibernate.envers.Audited;
+
 @Entity
+@Audited
 public class PaymentMethod {
 	public enum Types{
 		CASH, CARD, CHECK, CREDIT

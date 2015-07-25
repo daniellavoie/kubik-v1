@@ -15,13 +15,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
 import com.cspinformatique.kubik.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
-@Table(indexes=@Index(columnList="paidDate"))
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@Audited
+@Table(indexes = @Index(columnList = "paidDate") )
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
 public class Invoice {
 	private Integer id;
 	private String number;
@@ -51,14 +55,12 @@ public class Invoice {
 
 	}
 
-	public Invoice(Integer id, String number, User user, InvoiceStatus status,
-			Customer customer, Date date, Date cancelDate, Date invoiceDate,
-			Date paidDate, Date refundDate, Double totalTaxLessAmount,
-			Double rebateAmount, Double rebatePercent,
-			Map<Double, InvoiceTaxAmount> taxesAmounts, Double totalTaxAmount,
-			Double totalAmount, Double totalAmountRebateOut,
-			List<Payment> payments, Double amountPaid, Double amountReturned,
-			CashRegisterSession cashRegisterSession, List<InvoiceDetail> details) {
+	public Invoice(Integer id, String number, User user, InvoiceStatus status, Customer customer, Date date,
+			Date cancelDate, Date invoiceDate, Date paidDate, Date refundDate, Double totalTaxLessAmount,
+			Double rebateAmount, Double rebatePercent, Map<Double, InvoiceTaxAmount> taxesAmounts,
+			Double totalTaxAmount, Double totalAmount, Double totalAmountRebateOut, List<Payment> payments,
+			Double amountPaid, Double amountReturned, CashRegisterSession cashRegisterSession,
+			List<InvoiceDetail> details) {
 		this.id = id;
 		this.number = number;
 		this.user = user;
@@ -102,6 +104,7 @@ public class Invoice {
 	}
 
 	@ManyToOne
+	@NotAudited
 	public User getUser() {
 		return user;
 	}
@@ -120,6 +123,7 @@ public class Invoice {
 	}
 
 	@ManyToOne
+	@NotAudited
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -264,6 +268,7 @@ public class Invoice {
 	}
 
 	@ManyToOne
+	@NotAudited
 	public CashRegisterSession getCashRegisterSession() {
 		return cashRegisterSession;
 	}

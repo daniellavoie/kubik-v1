@@ -10,11 +10,15 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
 import com.cspinformatique.kubik.model.product.Product;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
+@Audited
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class InvoiceDetail {
 	private Integer id;
@@ -66,6 +70,7 @@ public class InvoiceDetail {
 	}
 
 	@ManyToOne
+	@NotAudited
 	public Product getProduct() {
 		return product;
 	}

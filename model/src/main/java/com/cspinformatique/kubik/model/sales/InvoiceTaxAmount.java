@@ -5,7 +5,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.envers.Audited;
+
 @Entity
+@Audited
 public class InvoiceTaxAmount {
 	private Integer id;
 	private Double taxRate;

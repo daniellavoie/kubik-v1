@@ -10,7 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.hibernate.envers.Audited;
+
 @Entity
+@Audited
 public class DailyReport {
 	private int id;
 	private Date date;
