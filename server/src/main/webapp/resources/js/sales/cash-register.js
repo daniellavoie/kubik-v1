@@ -127,7 +127,7 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 			$scope.searchInProgress = false;
 			
 			
-			if($scope.invoice == null || $scope.invoice.status.type == "CANCELED"){
+			if($scope.invoice == null || $scope.invoice.status.type == "CANCELED" || $scope.invoice.status.type == "PAID"){
 				$scope.showInvoice(invoices[0]);
 			}else{
 				var invoice = $scope.lookupInvoice($scope.invoice, invoices);
@@ -184,7 +184,7 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 		$scope.loadInvoices(function(invoices){
 			var existingInvoice = $scope.lookupInvoice($scope.invoice, invoices);
 			
-			if(existingInvoice != null && $scope.invoice.modificationDate == existingInvoice.modificationDate){
+			if(existingInvoice != null && Math.round($scope.invoice.modificationDate / 1000) == Math.round(existingInvoice.modificationDate / 1000)){
 				$http.post("invoice", $scope.invoice).success(function(invoice){
 					$scope.invoice = invoice;
 					
