@@ -18,6 +18,28 @@
 		
 		<div ng-app="KubikInvoicesPage" ng-cloak ng-controller="KubikInvoicesPageController as view"  class="container text-center">
 			<h1>Factures</h1>
+			
+			<div class="row">
+				<div class="col-sm-4 col-sm-offset-4">
+					<div class="input-group">
+						<input 
+							type="text"
+							class="search-invoice form-control" 
+							ng-model="invoice.number" 
+							placeholder="Entrer un numéro de facture" 
+							ng-keyup="searchInvoiceKeyPressed($event)"
+						/>
+	     				<span class="input-group-btn">
+							<button class="btn btn-default" ng-click="searchInvoice()">Ouvrir</button>
+						</span>
+					</div>
+				</div>
+			</div>
+		
+			<div class="search-error alert alert-warning alert-dismissible" role="alert" ng-if="error != null">
+				<button type="button" class="close" ng-click="hideErrors()"><span aria-hidden="true">&times;</span></button>
+				{{error}}
+			</div>
 	
 			<ul class="pager row text-center">
 				<li class="col-md-2">

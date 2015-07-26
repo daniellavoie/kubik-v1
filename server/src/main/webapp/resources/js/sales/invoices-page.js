@@ -8,6 +8,10 @@ app.controller("KubikInvoicesPageController", function($scope, $http, $timeout){
 		$scope.loadInvoices();
 	}
 	
+	$scope.hideErrors = function(){
+		$scope.error = null;
+	}
+	
 	$scope.loadInvoices = function(){
 		var params = {	page : $scope.page,
 						resultPerPage : $scope.resultPerPage,
@@ -31,6 +35,25 @@ app.controller("KubikInvoicesPageController", function($scope, $http, $timeout){
 		location.href = "invoice/" + invoice.id;
 	}
 	
+	$scope.searchInvoice = function(){
+		$http.get("/invoice?number=" + $scope.invoice.number).success(function(invoice){
+			if(invoice == ""){
+				$scope.error = "Aucune facture retrouvée pour le numéro " + $scope.invoice.number;
+				
+				$(".search-invoice").select();
+				
+				return;
+			}
+			window.location.href = "/invoice/" + invoice.id;
+		});
+	};
+	
+	$scope.searchInvoiceKeyPressed = function($event){
+		if($event.keyCode == 13){
+			$scope.searchInvoice();
+		}
+	};
+	
 	$scope.kubikCustomerCard = new KubikCustomerCard({customerUrl : "customer", customerSaved : function(){
 		$scope.loadInvoices();
 	}});
@@ -40,5 +63,8 @@ app.controller("KubikInvoicesPageController", function($scope, $http, $timeout){
 	$scope.sortBy = "paidDate";
 	$scope.direction = "DESC";
 	
+	$scope.invoice = {};
 	$scope.loadInvoices();
+
+	$(".search-invoice").select();
 });

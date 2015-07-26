@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.1.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-05-30T12:22:09 -->
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2015-07-26T17:03:43 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sale-receipt" pageWidth="226" pageHeight="842" columnWidth="22" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="0e5f4531-9672-428b-94c4-e9a87ed6b5d0">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="mm"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik Database"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik"/>
 	<parameter name="INVOICE_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[7]]></defaultValueExpression>
 	</parameter>
@@ -53,9 +53,9 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="173">
+		<band height="192">
 			<textField>
-				<reportElement x="0" y="86" width="186" height="13" uuid="e1574ae1-8f66-4413-afd9-5427a8cd937f"/>
+				<reportElement x="0" y="109" width="186" height="13" uuid="e1574ae1-8f66-4413-afd9-5427a8cd937f"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[DATEFORMAT($F{paid_date}, "dd-MM-YYYY HH:mm")]]></textFieldExpression>
 			</textField>
@@ -67,25 +67,31 @@ WHERE
 				<imageExpression><![CDATA["reports/images/Logo-OK-noir.png"]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="0" y="112" width="186" height="14" uuid="8c5d2352-4314-416b-93dd-354279da0cee"/>
+				<reportElement x="0" y="135" width="186" height="14" uuid="8c5d2352-4314-416b-93dd-354279da0cee"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[La Dimension Fantastique]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="140" width="186" height="14" uuid="6ef9e2ef-78fb-46f1-83c1-dd865d276923"/>
+				<reportElement x="0" y="163" width="186" height="14" uuid="6ef9e2ef-78fb-46f1-83c1-dd865d276923"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Tél. : 09 82 42 23 21]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="126" width="186" height="14" uuid="a1044044-bb56-4500-b573-8f8bb85db8e9"/>
+				<reportElement x="0" y="149" width="186" height="14" uuid="a1044044-bb56-4500-b573-8f8bb85db8e9"/>
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[contact@dimensionfantastique.com]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="99" width="186" height="13" uuid="a2df5e08-cdf3-464c-aee5-0d51b433a71f"/>
+				<reportElement x="0" y="122" width="186" height="13" uuid="a2df5e08-cdf3-464c-aee5-0d51b433a71f"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA["Facture " + $F{number}]]></textFieldExpression>
 			</textField>
+			<componentElement>
+				<reportElement x="53" y="79" width="90" height="21" uuid="4c3ea6c0-806c-4535-9fdb-746d6c0db72b"/>
+				<jr:Codabar xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA[$F{number}]]></jr:codeExpression>
+				</jr:Codabar>
+			</componentElement>
 		</band>
 	</pageHeader>
 	<detail>
