@@ -62,11 +62,17 @@
 							</td>
 							<td>{{invoice.details.length}}</td>
 							<td>{{invoice.totalAmount | currency : '&euro;'}}</td>
-							<td> 
-								<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CARD'" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
-								<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CASH'" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
-								<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CHECK'" title="Chèque - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
-								<span ng-repeat="payment in invoice.payments" ng-if="payment.paymentMethod.type == 'CREDIT'" title="Avoir - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
+							<td>
+								<span ng-repeat="payment in invoice.payments">
+									<span ng-switch="payment.paymentMethod.type">
+										<span ng-switch-when="CARD" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+										<span ng-switch-when="CASH" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
+										<span ng-switch-when="CHECK" title="Chèque - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
+										<span ng-switch-when="CREDIT" title="Avoir - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
+										<span ng-switch-when="KADEOS" title="Chèque Kadéos - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
+										<span ng-switch-when="LIRE" title="Chèque Lire - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
+									</span>
+								</span>
 							</td>
 							<td>{{invoice.status.description}}</td>
 						</tr>

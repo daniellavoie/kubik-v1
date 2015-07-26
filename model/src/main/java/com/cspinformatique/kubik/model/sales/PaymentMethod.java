@@ -9,7 +9,7 @@ import org.hibernate.envers.Audited;
 @Audited
 public class PaymentMethod {
 	public enum Types{
-		CASH, CARD, CHECK, CREDIT
+		CASH, CARD, CHECK, CREDIT, KADEOS, LIRE
 	}
 	
 	private String type;
