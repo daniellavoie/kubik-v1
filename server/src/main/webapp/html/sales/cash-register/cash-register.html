@@ -232,6 +232,22 @@
 				</div>
 			</div>
 		
+			<div class="invoice-closed-modal alert modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div class="alert alert-warning">
+								Cette facture a été modifié par un autre utilisateur.
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		
 			<div th:replace="sales/customer/customers-modal :: customers-modal"></div>
 		
 			<div th:replace="product/products-modal :: products-modal"></div>

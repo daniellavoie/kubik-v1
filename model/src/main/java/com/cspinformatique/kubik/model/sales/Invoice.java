@@ -48,6 +48,7 @@ public class Invoice {
 	private Double amountPaid;
 	private Double amountReturned;
 	private CashRegisterSession cashRegisterSession;
+	private Date modificationDate;
 
 	private List<InvoiceDetail> details;
 
@@ -59,7 +60,7 @@ public class Invoice {
 			Date cancelDate, Date invoiceDate, Date paidDate, Date refundDate, Double totalTaxLessAmount,
 			Double rebateAmount, Double rebatePercent, Map<Double, InvoiceTaxAmount> taxesAmounts,
 			Double totalTaxAmount, Double totalAmount, Double totalAmountRebateOut, List<Payment> payments,
-			Double amountPaid, Double amountReturned, CashRegisterSession cashRegisterSession,
+			Double amountPaid, Double amountReturned, CashRegisterSession cashRegisterSession, Date modificationDate,
 			List<InvoiceDetail> details) {
 		this.id = id;
 		this.number = number;
@@ -82,6 +83,7 @@ public class Invoice {
 		this.amountPaid = amountPaid;
 		this.amountReturned = amountReturned;
 		this.cashRegisterSession = cashRegisterSession;
+		this.modificationDate = modificationDate;
 		this.details = details;
 	}
 
@@ -275,5 +277,13 @@ public class Invoice {
 
 	public void setCashRegisterSession(CashRegisterSession cashRegisterSession) {
 		this.cashRegisterSession = cashRegisterSession;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 }

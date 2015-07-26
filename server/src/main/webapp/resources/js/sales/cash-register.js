@@ -22,7 +22,7 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	});
 	
 	$scope.$on("saleOver", function(){
-		$scope.loadInvoices();
+		$scope.refreshInvoices();
 	});
 	
 	$scope.addOneProduct = function(product){
@@ -83,43 +83,29 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 		return $scope.invoice.id == invoice.id;
 	}
 	
-	$scope.loadInvoices = function(){
+	$scope.loadInvoices = function(callbackFn){
 		$http.get("cashRegister/session/invoice").success(function(invoices){
-			$scope.invoices = invoices;
-			
-			$scope.searchInProgress = false;
-			
-			if($scope.invoice == null){
-				$scope.showInvoice(invoices[0]);
-			}else{
-				var invoiceFound = false;
-				for(var invoiceIndex in invoices){
-					var invoice = invoices[invoiceIndex];
-					
-					if(invoice.id == $scope.invoice.id){
-						$scope.showInvoice(invoice);
-						invoiceFound = true;
-					}
-				}
-				
-				if(!invoiceFound){
-					$scope.showInvoice(invoices[0]);
-				}
-			}
-			
-			$timeout(function(){
-				if($scope.inputIdToFocus != undefined){
-					$("#" + $scope.inputIdToFocus).focus();
-				}
-			})
+			callbackFn(invoices);
 		});
 	};
+	
+	$scope.lookupInvoice = function(invoice, invoices){
+		for(var invoiceIndex in invoices){
+			var invoice = invoices[invoiceIndex];
+			
+			if(invoice.id == $scope.invoice.id){
+				return invoice;
+			}
+		}
+		
+		return null;
+	}
 	
 	$scope.newInvoice = function(){
 		$http.get("cashRegister/session/invoice?new").success(function(invoice){
 			$scope.invoice = invoice;
 			
-			$scope.loadInvoices();
+			$scope.refreshInvoices();
 		});
 	};
 	
@@ -133,6 +119,38 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	    
 		$scope.invoiceChangedTimer = setTimeout($scope.saveInvoice, 1000);
 	}
+	
+	$scope.refreshInvoices = function(callbackFn){
+		$scope.loadInvoices(function(invoices){
+			$scope.invoices = invoices;
+			
+			$scope.searchInProgress = false;
+			
+			
+			if($scope.invoice == null || $scope.invoice.status.type == "CANCELED"){
+				$scope.showInvoice(invoices[0]);
+			}else{
+				var invoice = $scope.lookupInvoice($scope.invoice, invoices);
+				
+				if(invoice == null){
+					$scope.warnInvoiceClosed();
+					$scope.showInvoice(invoices[0]);
+				}else{
+					$scope.showInvoice(invoice);
+				}
+			}
+			
+			if(callbackFn != undefined){
+				callbackFn();
+			}
+			
+			$timeout(function(){
+				if($scope.inputIdToFocus != undefined){
+					$("#" + $scope.inputIdToFocus).focus();
+				}
+			})
+		});
+	};
 	
 	$scope.removeCustomerFromInvoice = function(){
 		$scope.invoice.customer = null;
@@ -163,8 +181,20 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 			};
 		}
 		
-		$http.post("invoice", $scope.invoice).success(function(){
-			$scope.loadInvoices();
+		$scope.loadInvoices(function(invoices){
+			var existingInvoice = $scope.lookupInvoice($scope.invoice, invoices);
+			
+			if(existingInvoice != null && $scope.invoice.modificationDate == existingInvoice.modificationDate){
+				$http.post("invoice", $scope.invoice).success(function(invoice){
+					$scope.invoice = invoice;
+					
+					$scope.refreshInvoices();
+				});	
+			}else{
+				$scope.warnInvoiceClosed();
+				
+				$scope.refreshInvoices();
+			}
 		});
 	};
 	
@@ -202,9 +232,10 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	}
 	
 	$scope.showInvoice = function(invoice){
+		$scope.invoice = invoice;
+		
 		$timeout(function(){
-			$scope.invoice = invoice;
-			
+		
 			$(".invoice-tabs > li").removeClass("active");
 			$("#invoice-tab-" + invoice.id).addClass("active");
 			
@@ -223,8 +254,15 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 		}
 	}
 	
+	$scope.warnInvoiceClosed = function(){
+		$(".invoice-closed-modal").modal();
+		$(".payment-modal").modal("hide");
+		
+		kubikProductSearch.closeSearchModal();
+	}
+	
 	$scope.kubikProductCard = new KubikProductCard({productUrl : "product", productSaved : function(){
-		$scope.loadInvoices();
+		$scope.refreshInvoices();
 	}});
 	
 	// this.modal && htmlTemplateUrl != undefined && this.$container != undefined
@@ -255,7 +293,7 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	});
 	
 	$scope.focusEan13Input = true;
-	$scope.loadInvoices();
+	$scope.refreshInvoices();
 	
 	$(".ean13-input").focus();
 });
