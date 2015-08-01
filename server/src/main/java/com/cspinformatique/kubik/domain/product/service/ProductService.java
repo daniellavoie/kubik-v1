@@ -7,11 +7,14 @@ import org.springframework.data.domain.Pageable;
 
 import com.cspinformatique.kubik.domain.dilicom.model.Reference;
 import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.SubCategory;
 import com.cspinformatique.kubik.model.product.Supplier;
 
 public interface ProductService {
 	Product buildProductFromReference(Reference reference);
 
+	int countBySubCategory(SubCategory subCategory);
+	
 	Iterable<Product> findByEan13(String ean13);
 	
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
@@ -21,6 +24,8 @@ public interface ProductService {
 	Page<Product> findAll(Pageable pageable);
 	
 	Product findOne(int id);
+	
+	Product findRandomBySubCategory(SubCategory subCategory);
 	
 	Set<String> getProductIdsCache();
 	

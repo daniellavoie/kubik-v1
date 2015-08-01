@@ -6,14 +6,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
 
 import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.SubCategory;
 import com.cspinformatique.kubik.model.product.Supplier;
 
 public interface ProductRepository extends
 		PagingAndSortingRepository<Product, Integer> {
-	@Query("SELECT id FROM Product WHERE dilicomReference = ?")
+	int countBySubCategory(SubCategory subCategory);
+	
+	@Query("SELECT id FROM Product WHERE dilicomReference = ?1")
 	List<Integer> findIdByDilicomReference(boolean dilicomReference);
 
 	Iterable<Product> findByEan13(String ean13);
@@ -22,6 +24,9 @@ public interface ProductRepository extends
 
 	Iterable<Product> findBySupplier(Supplier supplier);
 
-	@Query("SELECT product FROM Product product WHERE ean13 LIKE :query OR extendedLabel LIKE :query OR publisher LIKE :query OR collection LIKE :query OR author LIKE :query OR isbn LIKE :query")
-	Page<Product> search(@Param("query") String query, Pageable pageable);
+	@Query("SELECT product FROM Product product WHERE subCategory is null ORDER BY RAND()")
+	Page<Product> findRandomWithoutSubCategory(Pageable pageable);
+	
+	@Query("SELECT product FROM Product product WHERE ean13 LIKE ?1 OR extendedLabel LIKE ?1 OR publisher LIKE ?1 OR collection LIKE ?1 OR author LIKE ?1 OR isbn LIKE ?1")
+	Page<Product> search(String query, Pageable pageable);
 }

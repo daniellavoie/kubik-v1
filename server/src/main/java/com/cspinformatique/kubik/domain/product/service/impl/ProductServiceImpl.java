@@ -21,6 +21,7 @@ import com.cspinformatique.kubik.domain.dilicom.model.Reference;
 import com.cspinformatique.kubik.domain.dilicom.service.ImageService;
 import com.cspinformatique.kubik.domain.product.repository.ProductRepository;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
+import com.cspinformatique.kubik.domain.product.service.SubCategoryService;
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderDetailService;
 import com.cspinformatique.kubik.domain.purchase.service.PurchaseOrderService;
@@ -37,6 +38,7 @@ import com.cspinformatique.kubik.model.product.PriceType;
 import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.product.ProductType;
 import com.cspinformatique.kubik.model.product.ReturnType;
+import com.cspinformatique.kubik.model.product.SubCategory;
 import com.cspinformatique.kubik.model.product.Supplier;
 import com.cspinformatique.kubik.model.purchase.PurchaseOrder.Status;
 import com.cspinformatique.kubik.model.purchase.PurchaseOrderDetail;
@@ -84,6 +86,9 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	
 	@Autowired
 	private RmaDetailService rmaDetailService;
+	
+	@Autowired
+	private SubCategoryService subCategoryService;
 	
 	@Autowired
 	private SupplierService supplierService;
@@ -165,7 +170,12 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 						.parseByCode(reference.getBarcodeType()) : null,
 				reference.getMainReference(),
 				reference.getSecondaryReference(),
-				reference.getReferencesCount(), 0f, null, true);
+				reference.getReferencesCount(), 0f, null, true, null);
+	}
+	
+	@Override
+	public int countBySubCategory(SubCategory subCategory){
+		return this.productRepository.countBySubCategory(subCategory);
 	}
 
 	@Override
@@ -201,6 +211,17 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 		this.calculateImageEncryptedKey(product);
 
 		return product;
+	}
+	
+	@Override
+	public Product findRandomBySubCategory(SubCategory subCategory){
+		Page<Product> result = productRepository.findRandomWithoutSubCategory(new PageRequest(0, 1));
+		
+		if(result.getContent().size() == 0){
+			return null;
+		}
+		
+		return result.getContent().get(0);
 	}
 
 	private void calculateImageEncryptedKey(Product product) {
@@ -315,6 +336,10 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 		// Saves the product.
 		product = this.productRepository.save(product);
 
+		if(product.getSubCategory() != null){
+			subCategoryService.save(product.getSubCategory());
+		}
+		
 		if (updatePurchaseOrders) {
 			this.purchaseOrderService.save(this.purchaseOrderService
 					.findByProductAndStatus(product, Status.DRAFT));

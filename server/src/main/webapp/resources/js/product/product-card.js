@@ -28,6 +28,14 @@ window.KubikProductCard.prototype.init = function(){
 			$scope.endEditMode();
 		};
 		
+		$scope.categoryChanged = function(){
+			$scope.subCategories = $scope.category.subCategories;
+			
+			if($scope.product.subCategory == undefined){
+				$scope.product.subCategory = $scope.subCategories[0];
+			}
+		};
+		
 		$scope.changeInventoryTab = function(tabClassName){
 			if($scope.inventoryTab != tabClassName){
 				$scope.inventoryTab = tabClassName;
@@ -62,12 +70,30 @@ window.KubikProductCard.prototype.init = function(){
 			return null;
 		};
 		
+		$scope.loadCategory = function(categoryId){
+			$http.get("/category/" + categoryId).success(function(category){
+				$scope.category = category;
+				
+				$scope.subCategories = category.subCategories;
+			});
+		}
+		
 		$scope.loadInventoryTabs = function(){
 			for(var inventoryTabIndex in $scope.inventoryTabs){
 				var searchParams = $scope.inventoryTabs[inventoryTabIndex].searchParams;
 				
 				$scope.loadInventoryTab(inventoryTabIndex, searchParams.page, searchParams.resultPerPage, searchParams.sortBy, searchParams.direction);
 			}
+		}
+		
+		$scope.loadSubCategory = function(id, success){
+			$http.get("/subCategory/" + id).success(function(subCategory){
+				$scope.subCategory = subCategory;
+				
+				if(success != undefined){
+					success();
+				}
+			});
 		}
 		
 		$scope.modify = function(){
@@ -102,6 +128,8 @@ window.KubikProductCard.prototype.init = function(){
 				}
 				
 				$("#product-supplier-" + supplier.id).attr("SELECTED", "SELECTED");
+				
+				$scope.$apply();
 			});
 			
 			$scope.refreshModalBackdrop();
@@ -111,6 +139,12 @@ window.KubikProductCard.prototype.init = function(){
 			$scope.product = product;
 			$scope.productTab = "product";
 			$scope.inventoryTab = "reception";
+			
+			if($scope.product.subCategory != undefined){
+				$scope.loadSubCategory($scope.product.subCategory.id != undefined ? $scope.product.subCategory.id : $scope.product.subCategory, function(){
+					$scope.loadCategory($scope.subCategory.category.id);
+				});
+			}
 
 			$timeout(function(){
 				kubikProductCard.$modal = kubikProductCard.$modalContainer.find(".modal").modal({
@@ -137,9 +171,13 @@ window.KubikProductCard.prototype.init = function(){
 		$scope.save = function(){
 			$scope.product.datePublished = $(".date-published").datepicker("getDate");
 			$scope.product.publishEndDate = $(".publish-end-date").datepicker("getDate");
-			
+		
 			if(!$scope.product.dilicomReference){
 				$scope.product.supplier = $scope.getSupplier($("select.product-supplier").val());
+			}
+			
+			if($scope.subCategory != null){
+				$scope.product.subCategory = {id : $scope.subCategory.id};
 			}
 			
 			$http.post(kubikProductCard.productUrl, $scope.product).success(function(product){
@@ -149,6 +187,10 @@ window.KubikProductCard.prototype.init = function(){
 					kubikProductCard.productSaved(product);
 				}
 			})
+		};
+		
+		$scope.subCategoryChanged = function(){
+			$scope.loadSubCategory($scope.subCategory.id);
 		};
 		
 		$.get("/company").success(function(company){
@@ -196,9 +238,14 @@ window.KubikProductCard.prototype.init = function(){
 			});
 		}
 		
+
+		$http.get("/category").success(function(categories){
+			$scope.categories = categories;
+		});
+		
 		$http.get("/supplier").success(function(suppliers){
 			$scope.suppliers = suppliers;
-		});
+		});		
 	});
 	
 	$.get(

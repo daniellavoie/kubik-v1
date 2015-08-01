@@ -13,9 +13,9 @@ public interface PurchaseSessionDetailRepository extends
 
 	Iterable<PurchaseSessionDetail> findByProduct(Product product);
 	
-	@Query("SELECT purchaseSession FROM PurchaseSessionDetail detail WHERE detail.product = ?")
+	@Query("SELECT purchaseSession FROM PurchaseSessionDetail detail WHERE detail.product = ?1")
 	Iterable<PurchaseSession> findPurchaseOrdersByProduct(Product product);
 	
-	@Query("SELECT purchaseSession FROM PurchaseSessionDetail detail WHERE detail.product = ? AND detail.purchaseSession.status = ?")
+	@Query("SELECT purchaseSession FROM PurchaseSessionDetail detail WHERE detail.product = ?1 AND detail.purchaseSession.status = ?2")
 	Iterable<PurchaseSession> findPurchaseOrdersByProductAndStatus(Product product, Status status);
 }

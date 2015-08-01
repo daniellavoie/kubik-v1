@@ -1,0 +1,114 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+	<head>
+		<title>La Dimension Fantastique - Catégorie de produits</title>
+		
+		<link th:replace="util/import :: head">
+		<link rel="stylesheet" type="text/css" th:href="@{/css/product/category.css}" />
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="KubikProductCategory" ng-controller="KubikProductCategoryController" ng-cloak="" class="container">
+			<h1>Catégorie {{category.name}}</h1>
+
+			<div class="form-horizontal">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Nom</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" placeholder="Nom de la catégorie" ng-model="category.name">
+					</div>
+				</div>
+			</div>
+			
+			<div>
+				<h3>Sous catégories&nbsp;<button class="btn btn-primary btn-xs" ng-click="addSubCategory()">Ajouter</button></h3>
+				<table ng-if="category.subCategories.length != 0" class="panel panel-default table table-hover table-condensed text-center">
+					<thead>
+						<tr>
+							<th>Nom</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr ng-repeat="subCategory in category.subCategories" ng-click="editSubCategory(subCategory)">
+							<td>{{subCategory.name}}</td>
+							<td>
+								<span class="btn btn-primary btn-xs glyphicon glyphicon-remove" ng-click="confirmDeleteSubCategory(subCategory, $event)"></span>
+							</td>
+						<tr>
+					</tbody>
+				</table>
+				
+				<table ng-if="category.subCategories.length == 0" class="panel panel-default table table-condensed text-center">
+					<thead>
+						<tr>
+							<th>Nom</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Aucune sous catégorie</td>
+							<td>&nbsp;</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-8 col-sm-offset-2 text-center">
+					<div ng-if="completed" class="alert alert-success">
+						<button type="button" class="close" ng-click="hideAlerts()"><span aria-hidden="true">&times;</span></button>
+						Sauvegarde complétée.
+					</div>
+				</div>
+				<div class="col-sm-2 text-right">
+					<button ng-if="saving" class="btn btn-primary" disabled="disabled">Enregistrer</button>
+					<button ng-if="!saving" class="btn btn-primary" ng-click="save()">Enregistrer</button>	
+				</div>
+			</div>
+		
+			<div class="confirm-delete-sub-category-modal modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div class="form-group">
+								Êtes-vous sûr de vouloir supprimer la sous catégorie {{subCategory.name}} ?
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger" ng-click="deleteSubCategory(subCategory)">Oui</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<div class="edit-sub-category-modal modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div class="form-group">
+							    <label class="control-label">Nom</label>
+							    <input type="text" class="form-control" placeholder="Nom de la sous catégorie" ng-model="subCategory.name">
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/product/category.js}"></script>
+	</body>
+</html>

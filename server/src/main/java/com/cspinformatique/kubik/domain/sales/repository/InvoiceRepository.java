@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
 
 import com.cspinformatique.kubik.model.sales.CashRegisterSession;
 import com.cspinformatique.kubik.model.sales.Invoice;
@@ -31,16 +30,16 @@ public interface InvoiceRepository extends
 	
 	Page<Invoice> findByStatusAndNumberIsNotNull(InvoiceStatus status, Pageable pageable);
 
-	@Query("SELECT invoiceDetail FROM Invoice invoice, InvoiceDetail invoiceDetail where invoice = invoiceDetail.invoice AND invoice.id = :invoiceId AND invoiceDetail.product.ean13 = :ean13")
+	@Query("SELECT invoiceDetail FROM Invoice invoice, InvoiceDetail invoiceDetail where invoice = invoiceDetail.invoice AND invoice.id = ?1 AND invoiceDetail.product.ean13 = ?2")
 	InvoiceDetail findDetailByInvoiceIdAndProductEan13(
-			@Param("invoiceId") int invoiceId, @Param("ean13") String ean13);
+			int invoiceId, String ean13);
 
-	@Query("SELECT id FROM Invoice invoice WHERE id > :id")
-	Page<Integer> findIdByIdGreaterThan(@Param("id") int id, Pageable pageable);
+	@Query("SELECT id FROM Invoice invoice WHERE id > ?1")
+	Page<Integer> findIdByIdGreaterThan(int id, Pageable pageable);
 
-	@Query("SELECT id FROM Invoice invoice WHERE id < :id")
-	Page<Integer> findIdByIdLessThan(@Param("id") int id, Pageable pageable);
+	@Query("SELECT id FROM Invoice invoice WHERE id < ?1")
+	Page<Integer> findIdByIdLessThan(int id, Pageable pageable);
 	
-	@Query("SELECT sum(detail.quantity) FROM InvoiceDetail detail WHERE detail.product.id = :productId AND detail.invoice.status.type = 'PAID'")
-	Double findProductQuantityPurchased(@Param("productId") int productId);
+	@Query("SELECT sum(detail.quantity) FROM InvoiceDetail detail WHERE detail.product.id = ?1 AND detail.invoice.status.type = 'PAID'")
+	Double findProductQuantityPurchased(int productId);
 }

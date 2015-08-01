@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
 
 import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
 import com.cspinformatique.kubik.model.purchase.Reception;
@@ -16,6 +15,6 @@ public interface ReceptionRepository extends
 
 	Page<Reception> findByStatus(Status status, Pageable pageable);
 	
-	@Query("SELECT sum(detail.quantityReceived) FROM ReceptionDetail detail WHERE detail.product.id = :productId AND detail.reception.status = 'CLOSED'")
-	Double findProductQuantityReceived(@Param("productId") int productId);
+	@Query("SELECT sum(detail.quantityReceived) FROM ReceptionDetail detail WHERE detail.product.id = ?1 AND detail.reception.status = 'CLOSED'")
+	Double findProductQuantityReceived(int productId);
 }

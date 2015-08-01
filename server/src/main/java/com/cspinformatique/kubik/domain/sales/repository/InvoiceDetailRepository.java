@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.sales.InvoiceDetail;
@@ -17,8 +16,8 @@ public interface InvoiceDetailRepository extends
 	
 	List<InvoiceDetail> findByProduct(Product product);
 	
-	@Query("SELECT detail FROM InvoiceDetail detail WHERE detail.product = :product AND detail.invoice.status = :status")
+	@Query("SELECT detail FROM InvoiceDetail detail WHERE detail.product = ?1 AND detail.invoice.status = ?2")
 	Page<InvoiceDetail> findByProductAndInvoiceStatus(
-			@Param("product") Product product, @Param("status") InvoiceStatus status,
+			Product product, InvoiceStatus status,
 			Pageable pageable);
 }

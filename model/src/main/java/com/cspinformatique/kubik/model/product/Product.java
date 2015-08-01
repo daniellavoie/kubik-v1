@@ -69,6 +69,8 @@ public class Product {
 	private boolean dilicomReference;
 
 	private ProductInventory productInventory;
+	
+	private SubCategory subCategory;
 
 	public Product() {
 
@@ -91,7 +93,7 @@ public class Product {
 			String replacedByEan13, Boolean orderableByUnit,
 			BarcodeType barcodeType, Boolean mainReference,
 			Boolean secondaryReference, Integer referencesCount,
-			float discount, String imageEncryptedKey, boolean dilicomReference) {
+			float discount, String imageEncryptedKey, boolean dilicomReference, SubCategory subCategory) {
 		this.id = id;
 		this.ean13 = ean13;
 		this.supplier = supplier;
@@ -139,6 +141,7 @@ public class Product {
 		this.discount = discount;
 		this.imageEncryptedKey = imageEncryptedKey;
 		this.dilicomReference = dilicomReference;
+		this.subCategory = subCategory;
 	}
 
 	@Id
@@ -537,5 +540,14 @@ public class Product {
 
 	public void setProductInventory(ProductInventory productInventory) {
 		this.productInventory = productInventory;
+	}
+
+	@ManyToOne
+	public SubCategory getSubCategory() {
+		return subCategory;
+	}
+
+	public void setSubCategory(SubCategory subCategory) {
+		this.subCategory = subCategory;
 	}
 }
