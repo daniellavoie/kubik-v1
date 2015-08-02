@@ -1,6 +1,7 @@
 package com.cspinformatique.kubik.domain.product.service.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -34,6 +35,7 @@ import com.cspinformatique.kubik.domain.sales.service.InvoiceDetailService;
 import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.model.product.AvailabilityCode;
 import com.cspinformatique.kubik.model.product.BarcodeType;
+import com.cspinformatique.kubik.model.product.Category;
 import com.cspinformatique.kubik.model.product.PriceType;
 import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.product.ProductType;
@@ -174,8 +176,33 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	}
 	
 	@Override
+	public int countByCategory(Category category){
+		return this.productRepository.countByCategory(category);
+	}
+	
+	@Override
 	public int countBySubCategory(SubCategory subCategory){
 		return this.productRepository.countBySubCategory(subCategory);
+	}
+	
+	@Override
+	public void deleteProductCategory(Category category){
+		List<Product> products = this.findByCategory(category); 
+		for(Product product : products){
+			product.setSubCategory(null);			
+		}
+		
+		this.productRepository.save(products);
+	}
+	
+	@Override
+	public List<Product> findByCategory(Category category) {
+		return productRepository.findByCategory(category);
+	}
+	
+	@Override
+	public List<Product> findBySubCategory(SubCategory subCategory) {
+		return productRepository.findBySubCategory(subCategory);
 	}
 
 	@Override

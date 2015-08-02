@@ -12,20 +12,34 @@ app.controller("KubikProductCategoryController", function($scope, $http){
 		
 		$scope.editSubCategory(subCategory);
 	};
-	
+
 	$scope.confirmDeleteSubCategory = function(subCategory, $event){
 		$event.stopPropagation();
 		
-		$scope.subCategory = subCategory;
-		
-		$(".confirm-delete-sub-category-modal").modal();
+		$http.get("/product?subCategory=" + subCategory.id).success(function(productCount){
+			$scope.subCategory = subCategory;
+			$scope.productCount = productCount;
+			
+			$(".confirm-delete-sub-category-modal").modal();
+			
+		});
 	};
 	
 	$scope.deleteSubCategory = function(subCategory){
+		$scope.loading = true;
+		
 		$scope.category.subCategories.splice($scope.category.subCategories.indexOf(subCategory), 1);
 		
-		$(".confirm-delete-sub-category-modal").modal("hide");
-	};
+		$scope.save(function(){
+			$http.delete("/subCategory/" + subCategory.id).success(function(){
+				$(".confirm-delete-sub-category-modal").modal("hide");
+				
+				$scope.loadCategory();
+			}).finally(function(){
+				$scope.loading = false;
+			});
+		});
+	}
 	
 	$scope.editSubCategory = function(subCategory){		
 		$scope.subCategory = subCategory;
@@ -44,7 +58,7 @@ app.controller("KubikProductCategoryController", function($scope, $http){
 		});
 	};
 	
-	$scope.save = function(){
+	$scope.save = function(success){
 		$scope.hideAlerts();
 		
 		$scope.saving = true;
@@ -52,7 +66,11 @@ app.controller("KubikProductCategoryController", function($scope, $http){
 		$http.post("/category", $scope.category).success(function(category){
 			$scope.category = category;
 			
-			$scope.completed = true;			
+			$scope.completed = true;
+			
+			if(success != undefined){
+				success();
+			}
 		}).error(function(){
 			$scope.error = true;
 		}).finally(function(){

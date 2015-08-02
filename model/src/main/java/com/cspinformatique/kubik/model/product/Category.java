@@ -13,14 +13,14 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id", scope=Category.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Category.class)
 public class Category {
 	private int id;
 	private String name;
 	private List<SubCategory> subCategories;
-	
-	public Category(){
-		
+
+	public Category() {
+
 	}
 
 	public Category(int id, String name, List<SubCategory> subCategories) {
@@ -47,7 +47,7 @@ public class Category {
 		this.name = name;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL)
 	public List<SubCategory> getSubCategories() {
 		return subCategories;
 	}

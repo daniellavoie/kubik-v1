@@ -7,13 +7,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import com.cspinformatique.kubik.model.product.Category;
 import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.product.SubCategory;
 import com.cspinformatique.kubik.model.product.Supplier;
 
 public interface ProductRepository extends
 		PagingAndSortingRepository<Product, Integer> {
+	@Query("SELECT count(1) FROM Product WHERE subCategory.category = ?1")
+	int countByCategory(Category category);
+	
 	int countBySubCategory(SubCategory subCategory);
+	
+	@Query("FROM Product WHERE subCategory.category = ?1")
+	List<Product> findByCategory(Category category);
+	
+	List<Product> findBySubCategory(SubCategory subCategory);
 	
 	@Query("SELECT id FROM Product WHERE dilicomReference = ?1")
 	List<Integer> findIdByDilicomReference(boolean dilicomReference);

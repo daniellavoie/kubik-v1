@@ -8,7 +8,9 @@ import org.springframework.data.domain.Pageable;
 import com.cspinformatique.kubik.model.product.Category;
 
 public interface CategoryService {
-
+	
+	void delete(int id);
+	
 	List<Category> findAll();
 	
 	Page<Category> findAll(Pageable pageable);

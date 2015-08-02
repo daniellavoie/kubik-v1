@@ -78,12 +78,22 @@
 			<div class="confirm-delete-sub-category-modal modal fade">
 				<div class="modal-dialog">
 					<div class="modal-content">
-						<div class="modal-body">
-							<div class="form-group">
-								Êtes-vous sûr de vouloir supprimer la sous catégorie {{subCategory.name}} ?
-							</div>
+						<div class="modal-body text-center">
+							<p ng-if="productCount != 0">
+								{{productCount}} 
+								<span ng-if="productCount == 1">produit perdra sa  catégorisation</span>
+								<span ng-if="productCount != 1">produits perdront leur catégorisation.</span>
+							</p>
+							 
+							<p>Êtes-vous sûr de vouloir supprimer la catégorie {{subCategory.name}} ?</p>
 						</div>
-						<div class="modal-footer">
+						<div ng-if="loading" class="modal-footer">
+							<img th:src="@{/img/loading-small.gif}" />
+							<button type="button" class="btn btn-danger" disabled="disabled">Oui</button>
+							<button type="button" class="btn btn-default" disabled="disabled">Fermer</button>
+						</div>
+						
+						<div ng-if="!loading" class="modal-footer">
 							<button type="button" class="btn btn-danger" ng-click="deleteSubCategory(subCategory)">Oui</button>
 							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
 						</div>

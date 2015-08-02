@@ -9,11 +9,21 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.product.repository.CategoryRepository;
 import com.cspinformatique.kubik.domain.product.service.CategoryService;
+import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.model.product.Category;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
 	@Autowired private CategoryRepository categoryRepository;
+	
+	@Autowired private ProductService productService;
+	
+	@Override
+	public void delete(int id){
+		this.productService.deleteProductCategory(this.findOne(id));
+		
+		categoryRepository.delete(id);
+	}
 	
 	@Override
 	public List<Category> findAll(){

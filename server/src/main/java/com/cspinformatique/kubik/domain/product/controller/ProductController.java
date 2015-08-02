@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cspinformatique.kubik.domain.product.service.CategoryService;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.product.service.ProductStatsService;
 import com.cspinformatique.kubik.domain.product.service.SubCategoryService;
@@ -38,6 +39,9 @@ import com.cspinformatique.kubik.model.sales.InvoiceStatus;
 @Controller
 @RequestMapping("/product")
 public class ProductController {
+	@Autowired
+	private CategoryService categoryService;
+	
 	@Autowired
 	private ProductService productService;
 
@@ -62,6 +66,11 @@ public class ProductController {
 	@Autowired
 	private RmaDetailService rmaDetailService;
 
+	@RequestMapping(method = RequestMethod.GET, params = "category", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Integer countByCategory(@RequestParam Integer category) {
+		return productService.countByCategory(category != null ? categoryService.findOne(category) : null);
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, params = "subCategory", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Integer countBySubCategory(@RequestParam Integer subCategory) {
 		return productService.countBySubCategory(subCategory != null ? subCategoryService.findOne(subCategory) : null);
