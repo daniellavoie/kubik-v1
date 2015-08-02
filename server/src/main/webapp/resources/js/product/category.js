@@ -7,7 +7,7 @@ app.controller("KubikProductCategoryController", function($scope, $http){
 			$scope.category.subCategories = [];
 		}
 		
-		var subCategory = { category : {id : $scope.category.id}};
+		var subCategory = { category : $scope.category.id};
 		$scope.category.subCategories.push(subCategory);
 		
 		$scope.editSubCategory(subCategory);
