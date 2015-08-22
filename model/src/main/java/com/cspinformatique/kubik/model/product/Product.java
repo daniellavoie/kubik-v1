@@ -69,31 +69,26 @@ public class Product {
 	private boolean dilicomReference;
 
 	private ProductInventory productInventory;
-	
-	private SubCategory subCategory;
+
+	private Category category;
+
+	private Long broadleafId;
 
 	public Product() {
 
 	}
 
-	public Product(Integer id, String ean13, Supplier supplier,
-			AvailabilityCode availabilityCode, PriceType priceType,
-			Double priceTaxIn, Boolean schoolbook, Double tvaRate1,
-			Double priceTaxOut1, Double tvaRate2, Double priceTaxOut2,
-			Double tvaRate3, Double priceTaxOut3, Double purchasePriceTaxOut,
-			ReturnType returnType, Boolean availableForOrder,
-			Date datePublished, ProductType productType, Date publishEndDate,
-			String standardLabel, String cashRegisterLabel, Integer thickness,
-			Integer width, Integer height, Integer weight,
-			String extendedLabel, String publisher, String collection,
-			String author, String publisherPresentation, String isbn,
-			String supplierReference, String collectionReference, String theme,
-			String publisherIsnb, Boolean replacesAReference,
-			Boolean replacedByAReference, String replacesEan13,
-			String replacedByEan13, Boolean orderableByUnit,
-			BarcodeType barcodeType, Boolean mainReference,
-			Boolean secondaryReference, Integer referencesCount,
-			float discount, String imageEncryptedKey, boolean dilicomReference, SubCategory subCategory) {
+	public Product(Integer id, String ean13, Supplier supplier, AvailabilityCode availabilityCode, PriceType priceType,
+			Double priceTaxIn, Boolean schoolbook, Double tvaRate1, Double priceTaxOut1, Double tvaRate2,
+			Double priceTaxOut2, Double tvaRate3, Double priceTaxOut3, Double purchasePriceTaxOut,
+			ReturnType returnType, Boolean availableForOrder, Date datePublished, ProductType productType,
+			Date publishEndDate, String standardLabel, String cashRegisterLabel, Integer thickness, Integer width,
+			Integer height, Integer weight, String extendedLabel, String publisher, String collection, String author,
+			String publisherPresentation, String isbn, String supplierReference, String collectionReference,
+			String theme, String publisherIsnb, Boolean replacesAReference, Boolean replacedByAReference,
+			String replacesEan13, String replacedByEan13, Boolean orderableByUnit, BarcodeType barcodeType,
+			Boolean mainReference, Boolean secondaryReference, Integer referencesCount, float discount,
+			String imageEncryptedKey, boolean dilicomReference, Category category) {
 		this.id = id;
 		this.ean13 = ean13;
 		this.supplier = supplier;
@@ -141,7 +136,7 @@ public class Product {
 		this.discount = discount;
 		this.imageEncryptedKey = imageEncryptedKey;
 		this.dilicomReference = dilicomReference;
-		this.subCategory = subCategory;
+		this.category = category;
 	}
 
 	@Id
@@ -543,11 +538,19 @@ public class Product {
 	}
 
 	@ManyToOne
-	public SubCategory getSubCategory() {
-		return subCategory;
+	public Category getCategory() {
+		return category;
 	}
 
-	public void setSubCategory(SubCategory subCategory) {
-		this.subCategory = subCategory;
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public Long getBroadleafId() {
+		return broadleafId;
+	}
+
+	public void setBroadleafId(Long broadleafId) {
+		this.broadleafId = broadleafId;
 	}
 }

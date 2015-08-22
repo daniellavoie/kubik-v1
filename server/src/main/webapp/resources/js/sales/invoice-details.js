@@ -1,4 +1,9 @@
 var app = angular.module("KubikInvoiceDetails", []);
+var kubikProductCard = new KubikProductCard({
+	app : app,
+	productUrl : "../product"
+});
+
 var invoiceId = window.location.pathname.split("/")[2];
 
 app.controller("KubikInvoiceDetailsController", function($scope, $http, $timeout){
@@ -45,8 +50,8 @@ app.controller("KubikInvoiceDetailsController", function($scope, $http, $timeout
 		if(invoiceId == "") customerCreditId = null;
 		$scope.previousInvoice = invoiceId;
 	});
-
-	$scope.kubikProductCard = new KubikProductCard({productUrl : "../product"});
+	
+	$scope.kubikProductCard = kubikProductCard;
 	
 	$scope.loadInvoice();
 });

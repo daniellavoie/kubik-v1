@@ -15,164 +15,166 @@
 	<body >
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center" ng-cloak ng-app="KubikPurchaseSessionDetails" ng-controller="SessionDetailsController as view">
-			<h1>Préparation de commande </h1>
-			
-			<div class="header form-inline">
-				<div class="form-group">
-					<label>Statut : </label>
-					<span ng-if="session.status == 'DRAFT'" class="label label-info">Brouillon</span>
-					<span ng-if="session.status == 'SUBMITED'" class="label label-success">Soumis</span>
-					<span ng-if="session.status == 'CANCELED'" class="label label-danger">Annulé</span>
-				</div>
+		<div class="container" ng-cloak ng-app="KubikPurchaseSessionDetails" ng-controller="SessionDetailsController as view">
+			<div class="text-center">
+				<h1>Préparation de commande </h1>
 				
-				<div class="minDeliveryDate form-group">
-					<label>Date de livraison min. :</label>
-					<input 
-						ng-model="session.minDeliveryDate" 
-						type="text" 
-						class="date form-control"
-						placeholder="dd/MM/yyyy" 
-					/>
-				</div>
-				
-				<div class="maxDeliveryDate form-group">
-					<label>Date de livraison max :</label>
-					<input 
-						ng-model="session.maxDeliveryDate"
-						type="text" 
-						class="date form-control"
-						placeholder="dd/MM/yyyy"	
-					/>
-				</div>
-			</div>
-			
-			<div class="table-responsive">
-				<table class="panel panel-default table table-striped table-condensed">
-					<thead class="panel-heading">
-						<tr>
-							<th>Produit</th>
-							<th>Disponibilité</th>
-							<th>Fournisseur</th>
-							<th>Quantité</th>
-							<th>&nbsp;</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="detail in session.details">
-							<td>
-								<a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
-							<td>{{detail.product.availabilityCode}}</td>
-							<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
-							<td>
-								<input
-									ng-if="session.status != 'SUBMITED'" 
-									ng-model="detail.quantity"
-									id="detail-{{detail.id}}"
-									ng-keyup="quantityChanged($event)"
-									class="quantity" 
-									type="number"
-									min="1" 
-									max="99999" 
-								/>
-								<span ng-if="session.status == 'SUBMITED'">{{detail.quantity}}</span>
-							</td>
-								
-							<td>
-								<button
-									ng-if="session.status != 'SUBMITED'"
-									ng-click="deleteDetail(detail)" 
-									type="button" 
-									class="btn btn-warning btn-xs"
-								>
-									<span class="glyphicon glyphicon-trash"></span>
-								</button>
-								&nbsp;
-							</td>
-						</tr>
-						
-						<tr ng-if="session.details.length == 0">
-							<td colspan="5">
-								Aucun produit dans la commande.
-							</td>
-						</tr>
-					</tbody>
+				<div class="header form-inline">
+					<div class="form-group">
+						<label>Statut : </label>
+						<span ng-if="session.status == 'DRAFT'" class="label label-info">Brouillon</span>
+						<span ng-if="session.status == 'SUBMITED'" class="label label-success">Soumis</span>
+						<span ng-if="session.status == 'CANCELED'" class="label label-danger">Annulé</span>
+					</div>
 					
-					<tfoot ng-if="session.status == 'DRAFT'">
-						<tr>
-							<td colspan="5 container">
-								<div class="col-sm-4">
-									<input ng-keyup="searchProductKeyUp($event)" ng-model="search.ean13" type="text" placeholder="Ean13" class="ean13 form-control">
-								</div>
-								<div class="col-sm-3">
-									<button class="btn btn-success form-control" ng-click="kubikProductSearch.openSearchModal()">Recherche produit</button>
-								</div>
-								<div class="col-sm-3">
-									<button class="btn btn-warning form-control" ng-click="kubikReferenceSearch.openSearchModal()">Recherche Dilicom</button>
-								</div>
-							</td>
-						</tr>
-					</tfoot>
-				</table>
-			</div>
-			
-			<div ng-if="session.status == 'DRAFT'">
-				<button ng-click="confirmCancelSession()" type="button" class="btn btn-danger">Annuler la préparation</button>
-				<button ng-click="confirmSubmitSession()" type="button" class="btn btn-primary">Générer les commandes</button>
-			</div>
-			
-			<div class="confirm-submit modal fade">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-body">
-							<p>Etes-vous sûr de générer les commandes fournisseurs ?</p>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-							<button ng-click="submitSession()" type="button" class="btn btn-primary">Générer les commandes</button>
-						</div>
+					<div class="minDeliveryDate form-group">
+						<label>Date de livraison min. :</label>
+						<input 
+							ng-model="session.minDeliveryDate" 
+							type="text" 
+							class="date form-control"
+							placeholder="dd/MM/yyyy" 
+						/>
+					</div>
+					
+					<div class="maxDeliveryDate form-group">
+						<label>Date de livraison max :</label>
+						<input 
+							ng-model="session.maxDeliveryDate"
+							type="text" 
+							class="date form-control"
+							placeholder="dd/MM/yyyy"	
+						/>
 					</div>
 				</div>
-			</div>
-			
-			<div class="confirm-cancel modal fade">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-body">
-							<p>Etes-vous sûr de vouloir annuler la préparation de la commande ?</p>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
-							<button ng-click="cancelSession()" type="button" class="btn btn-danger">Annuler la préparation</button>
-						</div>
-					</div>
+				
+				<div class="table-responsive">
+					<table class="panel panel-default table table-striped table-condensed">
+						<thead class="panel-heading">
+							<tr>
+								<th>Produit</th>
+								<th>Disponibilité</th>
+								<th>Fournisseur</th>
+								<th>Quantité</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="detail in session.details">
+								<td>
+									<a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
+								<td>{{detail.product.availabilityCode}}</td>
+								<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
+								<td>
+									<input
+										ng-if="session.status != 'SUBMITED'" 
+										ng-model="detail.quantity"
+										id="detail-{{detail.id}}"
+										ng-keyup="quantityChanged($event)"
+										class="quantity" 
+										type="number"
+										min="1" 
+										max="99999" 
+									/>
+									<span ng-if="session.status == 'SUBMITED'">{{detail.quantity}}</span>
+								</td>
+									
+								<td>
+									<button
+										ng-if="session.status != 'SUBMITED'"
+										ng-click="deleteDetail(detail)" 
+										type="button" 
+										class="btn btn-warning btn-xs"
+									>
+										<span class="glyphicon glyphicon-trash"></span>
+									</button>
+									&nbsp;
+								</td>
+							</tr>
+							
+							<tr ng-if="session.details.length == 0">
+								<td colspan="5">
+									Aucun produit dans la commande.
+								</td>
+							</tr>
+						</tbody>
+						
+						<tfoot ng-if="session.status == 'DRAFT'">
+							<tr>
+								<td colspan="5 container">
+									<div class="col-sm-4">
+										<input ng-keyup="searchProductKeyUp($event)" ng-model="search.ean13" type="text" placeholder="Ean13" class="ean13 form-control">
+									</div>
+									<div class="col-sm-3">
+										<button class="btn btn-success form-control" ng-click="kubikProductSearch.openSearchModal()">Recherche produit</button>
+									</div>
+									<div class="col-sm-3">
+										<button class="btn btn-warning form-control" ng-click="kubikReferenceSearch.openSearchModal()">Recherche Dilicom</button>
+									</div>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
 				</div>
-			</div>
-			
-			<div class="redirection-modal modal fade">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-body">
-							<p>Préparation de commande mise-à-jour.</p>
-							<p>
-								<button ng-click="redirectToPurchaseOrders()" type="button" class="btn btn-default" data-dismiss="modal">Voir les commandes</button>
-								<button ng-click="redirectToPurchaseSessions()" type="button" class="btn btn-default" data-dismiss="modal">Voir les préparations</button>
-							</p>
-						</div>
-					</div>
+				
+				<div ng-if="session.status == 'DRAFT'">
+					<button ng-click="confirmCancelSession()" type="button" class="btn btn-danger">Annuler la préparation</button>
+					<button ng-click="confirmSubmitSession()" type="button" class="btn btn-primary">Générer les commandes</button>
 				</div>
-			</div>
-		
-			<div class="product-not-found alert modal fade">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-body">
-							<div class="alert alert-danger">
-								Aucune produit retrouvé pour l'ean13 {{search.typedEan13}}.
+				
+				<div class="confirm-submit modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<p>Etes-vous sûr de générer les commandes fournisseurs ?</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+								<button ng-click="submitSession()" type="button" class="btn btn-primary">Générer les commandes</button>
 							</div>
 						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+					</div>
+				</div>
+				
+				<div class="confirm-cancel modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<p>Etes-vous sûr de vouloir annuler la préparation de la commande ?</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
+								<button ng-click="cancelSession()" type="button" class="btn btn-danger">Annuler la préparation</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="redirection-modal modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<p>Préparation de commande mise-à-jour.</p>
+								<p>
+									<button ng-click="redirectToPurchaseOrders()" type="button" class="btn btn-default" data-dismiss="modal">Voir les commandes</button>
+									<button ng-click="redirectToPurchaseSessions()" type="button" class="btn btn-default" data-dismiss="modal">Voir les préparations</button>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			
+				<div class="product-not-found alert modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="alert alert-danger">
+									Aucune produit retrouvé pour l'ean13 {{search.typedEan13}}.
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -182,8 +184,6 @@
 		
 			<div th:replace="dilicom/references-modal :: references-modal"></div>
 		</div>
-		
-		<div class="product-card"></div>
 		
 		<div class="reference-card"></div>
 		

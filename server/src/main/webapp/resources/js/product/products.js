@@ -34,13 +34,12 @@ window.KubikProductSearch = function(options){
 };
 
 window.KubikProductSearch.prototype.init = function(){
-	var kubikProductSearch = this;
-	
-	if(this.app == undefined){
-		this.app = angular.module("KubikProductSearch", []); 
-	}
-
+	var kubikProductSearch = this;	
 	this.app.controller("KubikProductSearchController", function($scope, $http, $timeout){
+		$scope.$on("openProductCard", function(event, product){
+			$scope.kubikProductCard.openCard(product);
+		})
+		
 		$scope.$on("search", function(event){
 			$scope.search();
 		});
@@ -116,6 +115,16 @@ window.KubikProductSearch.prototype.init = function(){
 		});
 		
 		kubikProductSearch.$scope = $scope;
+		
+		$scope.kubikProductCard = kubikProductSearch.kubikProductCard;
+		$scope.kubikProductCard.productSaved = function(){
+			$scope.$broadcast("search");
+		};
+	});
+	
+	this.kubikProductCard = new KubikProductCard({
+		app : kubikProductSearch.app,
+		productUrl : "/product"
 	});
 };
 
@@ -136,5 +145,4 @@ window.KubikProductSearch.prototype.openSearchModal = function(searchQuery){
 			KubikProductSearch.$scope.search();	
 		}
 	});
-	
 };

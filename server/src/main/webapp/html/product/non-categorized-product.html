@@ -14,80 +14,65 @@
 	<body>
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="KubikNonCategorizedProduct" ng-controller="KubikNonCategorizedProductController" ng-cloak="" class="container text-center">
-			<h1>Produit non catégorisé</h1>
-
-			<div class="form-horizontal">
-				<div class="form-group">
-					<label class="col-sm-4 control-label">Ean13</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{product.ean13}}</p>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label class="col-sm-4 control-label">Titre</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{product.extendedLabel}}</p>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label class="col-sm-4 control-label">Titre court</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{product.standardLabel}}</p>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label class="col-sm-4 control-label">Titre caisse</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{product.cashRegisterLabel}}</p>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label class="col-sm-4 control-label">Auteur</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{product.author}}</p>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label class="col-sm-4 control-label">Date de publication</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{product.datePublished | date}}</p>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label class="col-sm-4 control-label">Catégorie</label>
-					<div class="col-sm-8">
-						<select 
-							class="form-control" 
-							ng-model="category"
-							ng-change="categoryChanged()"
-							ng-options="category.name for category in categories track by category.id" 
-						></select>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label class="col-sm-4 control-label">Sous catégorie</label>
-					<div class="col-sm-8">
-						<select 
-							class="form-control" 
-							ng-change="subCategoryChanged()" 
-							ng-options="subCategory.name for subCategory in subCategories track by subCategory.id" 
-							ng-model="product.subCategory"
-						></select>
-					</div>
-				</div>
+		<div ng-app="KubikNonCategorizedProduct" ng-controller="KubikNonCategorizedProductController" ng-cloak="" class="container">
+			<div class="row text-center">
+				<h1>Produit non catégorisé</h1>
 			</div>
 			
-			<div>
+			<div class="row">
+				<div class="col-lg-6 text-center">
+		
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-4 control-label">Ean13</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{product.ean13}}</p>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-sm-4 control-label">Titre</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{product.extendedLabel}}</p>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-sm-4 control-label">Titre court</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{product.standardLabel}}</p>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-sm-4 control-label">Titre caisse</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{product.cashRegisterLabel}}</p>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-sm-4 control-label">Auteur</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{product.author}}</p>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-sm-4 control-label">Date de publication</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{product.datePublished | date}}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			
+				<div class="col-lg-6" th:include="product/categories-standalone :: categories-standalone"></div>
+			
+			</div>
+			
+			<div class="pass row text-center">
 				<button class="btn btn-default" ng-click="pass()">Passer</button>
-				<button class="btn btn-primary" ng-click="save()">Enregister</button>
 			</div>
 		</div>
 		

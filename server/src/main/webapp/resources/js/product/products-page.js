@@ -4,14 +4,6 @@ var kubikProductSearch = new KubikProductSearch({
 	productUrl : "product"
 });
 
-app.controller("KubikProductsPageController", function($scope, $http, $timeout){
-	$scope.$on("openProductCard", function(event, product){
-		$scope.kubikProductCard.openCard(product);
-	})
-	
+app.controller("KubikProductsPageController", function($scope, $http, $timeout){	
 	$scope.kubikProductSearch = kubikProductSearch;
-	
-	$scope.kubikProductCard = new KubikProductCard({productUrl : "product", productSaved : function(){
-		$scope.$broadcast("search");
-	}});
 });

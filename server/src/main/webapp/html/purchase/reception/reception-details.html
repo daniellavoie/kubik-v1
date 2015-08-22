@@ -15,174 +15,176 @@
 	<body >
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center" ng-cloak ng-app="KubikReceptionDetails" ng-controller="KubikReceptionDetailsController as view">
-			<h1>Réception fournisseur</h1>
-			
-			<div class="table-responsive">
-				<table class="panel panel-default table table-condensed">
-					<thead class="panel-heading">
-						<tr class="text-center">
-							<th>Fournisseur</th>
-							<th>Commande</th>
-							<th>Status</th>
-							<th>Mode livraison</th>
-							<th>Type de date de livraison</th>
-							<th>Date de livraison</th>
-							<th>Date réception</th>
-							<th>Remise</th>
-							<th>Produits</th>
-							<th>Quantité</th>
-							<th>Prix HT</th>
-							<th>Colis</th>
-						</tr>
-					</thead>
-					
-					<tbody>
-						<tr>
-							<td><a href="#" ng-click="kubikSupplierCard.openCard(reception.supplier)">{{reception.supplier.name}}</a></td>
-							<td><a th:href="@{/purchaseOrder/{{reception.purchaseOrder.id}}}">{{reception.purchaseOrder.id}}</a></td>
-							<td>
-								<span ng-if="reception.status == 'STANDBY'" class="label label-default">En attente</span>
-								<span ng-if="reception.status == 'SHIPPED'" class="label label-primary">Expédiée</span>
-								<span ng-if="reception.status == 'CLOSED'" class="label label-success">Fermée</span>
-								<span ng-if="reception.status == 'CANCELED'" class="label label-danger">Annulée</span>
-							</td>
-							<td>{{reception.shippingMode}}</td>
-							<td>{{reception.deliveryDateType}}</td>
-							<td>{{reception.deliveryDate | date : "short"}}</td>
-							<td>{{reception.dateReceived | date : "short"}}</td>
-							<td>
-								<input 
-									id="reception-detail-{{detail.id}}"	
-									ng-if="reception.editable"
-									ng-model="reception.discount"
-									ng-keyup="receptionChanged($event)"
-									class="quantity form-control"
-									type="number"
-									min="0" 
-									max="100" 
-									step="0.1"
-								/>
-								<span ng-if="!reception.editable">{{reception.discount}}</span>
-							</td>
-							<td>{{reception.details.length}}</td>
-							<td>{{calculateReceptionQuantity(reception)}}</td>
-							<td>{{reception.totalAmountTaxOut | currency : '&euro;'}}</td>
-							<td><a href="#"  data-toggle="modal" data-target=".shiping-packages-modal">{{reception.shippingPackages.length}}</a></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			
-			<div class="table-responsive">
-				<table class="panel panel-default table table-striped table-condensed">
-					<thead class="panel-heading">
-						<tr>
-							<th>Ean13</th>
-							<th>Produit</th>
-							<th>Remise</th>
-							<th>Qté commandé</th>
-							<th>Qté reçu</th>
-							<th>Remise retenue</th>
-							<th>Prix unitaire HT</th>
-							<th>Prix HT</th>
-						</tr>
-					</thead>
-					<tbody class="reception-details">
-						<tr ng-repeat="detail in reception.details">
-							<td>{{detail.product.ean13}}</td>
-							<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a>
-							</td>
-							<td>
-								<input 
-									id="reception-detail-discount-{{detail.id}}"	
-									ng-if="reception.editable && (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)"
-									ng-model="detail.discount"
-									ng-keyup="receptionChanged($event)"
-									ng-click="receptionChanged($event)"
-									class="quantity form-control"
-									type="number"
-									min="0" 
-									max="100" 
-									step="0.1"
-								/>
-								<span ng-if="!reception.editable && detail.product.purchasePriceTaxOut != 0 && detail.product.purchasePriceTaxOut != null" >{{detail.discount}}</span>
-							</td>
-							<td>{{detail.quantityToReceive}}</td>
-							<td>
-								<input 
-									id="detail-{{detail.id}}"
-									ng-if="reception.editable"
-									ng-model="detail.quantityReceived"
-									ng-click="receptionChanged($event)"
-									ng-keyup="receptionChanged($event)"
-									class="quantity form-control" 
-									type="number"
-									min="1" 
-									max="99999" 
-								/>
-								<span ng-if="!reception.editable">{{detail.quantityReceived}}</span>
-							</td>
-							<td><span title="{{detail.discountType.description}}">{{detail.discountApplied}} %</span></td>
-							<td class="unitPriceTaxOut">
-								<input
-									ng-if="reception.editable && (detail.product.purchasePriceTaxOut != 0 && detail.product.purchasePriceTaxOut != null)"
-									class="form-control " 
-									ng-keyup="receptionChanged($event)"
-									ng-model="detail.unitPriceTaxOut"
-								/>
-								<span ng-if="!reception.editable || (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)">
-									{{detail.unitPriceTaxOut | currency : '&euro;'}}
-								</span>
-							</td>						
-							<td>{{detail.totalAmountTaxOut | currency : '&euro;'}}</td>
-						</tr>
+		<div class="container" ng-cloak ng-app="KubikReceptionDetails" ng-controller="KubikReceptionDetailsController">
+			<div class="text-center">
+				<h1>Réception fournisseur</h1>
+				
+				<div class="table-responsive">
+					<table class="panel panel-default table table-condensed">
+						<thead class="panel-heading">
+							<tr class="text-center">
+								<th>Fournisseur</th>
+								<th>Commande</th>
+								<th>Status</th>
+								<th>Mode livraison</th>
+								<th>Type de date de livraison</th>
+								<th>Date de livraison</th>
+								<th>Date réception</th>
+								<th>Remise</th>
+								<th>Produits</th>
+								<th>Quantité</th>
+								<th>Prix HT</th>
+								<th>Colis</th>
+							</tr>
+						</thead>
 						
-						<tr ng-if="reception.details.length == 0">
-							<td colspan="3">
-								Aucun produit dans la commande.
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			
-			<div ng-if="reception.editable">
-				<button ng-click="confirmReceptionValidation()" type="button" class="btn btn-primary">Confirmer la réception</button>
-			</div>
-			
-			<div class="confirm-validation modal fade">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-body">
-							<p>Etes-vous sûr de vouloir valider cette reception ?</p>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-							<button ng-click="validateReception()" type="button" class="btn btn-primary">Valider la réception</button>
+						<tbody>
+							<tr>
+								<td><a href="#" ng-click="kubikSupplierCard.openCard(reception.supplier)">{{reception.supplier.name}}</a></td>
+								<td><a th:href="@{/purchaseOrder/{{reception.purchaseOrder.id}}}">{{reception.purchaseOrder.id}}</a></td>
+								<td>
+									<span ng-if="reception.status == 'STANDBY'" class="label label-default">En attente</span>
+									<span ng-if="reception.status == 'SHIPPED'" class="label label-primary">Expédiée</span>
+									<span ng-if="reception.status == 'CLOSED'" class="label label-success">Fermée</span>
+									<span ng-if="reception.status == 'CANCELED'" class="label label-danger">Annulée</span>
+								</td>
+								<td>{{reception.shippingMode}}</td>
+								<td>{{reception.deliveryDateType}}</td>
+								<td>{{reception.deliveryDate | date : "short"}}</td>
+								<td>{{reception.dateReceived | date : "short"}}</td>
+								<td>
+									<input 
+										id="reception-detail-{{detail.id}}"	
+										ng-if="reception.editable"
+										ng-model="reception.discount"
+										ng-keyup="receptionChanged($event)"
+										class="quantity form-control"
+										type="number"
+										min="0" 
+										max="100" 
+										step="0.1"
+									/>
+									<span ng-if="!reception.editable">{{reception.discount}}</span>
+								</td>
+								<td>{{reception.details.length}}</td>
+								<td>{{calculateReceptionQuantity(reception)}}</td>
+								<td>{{reception.totalAmountTaxOut | currency : '&euro;'}}</td>
+								<td><a href="#"  data-toggle="modal" data-target=".shiping-packages-modal">{{reception.shippingPackages.length}}</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<div class="table-responsive">
+					<table class="panel panel-default table table-striped table-condensed">
+						<thead class="panel-heading">
+							<tr>
+								<th>Ean13</th>
+								<th>Produit</th>
+								<th>Remise</th>
+								<th>Qté commandé</th>
+								<th>Qté reçu</th>
+								<th>Remise retenue</th>
+								<th>Prix unitaire HT</th>
+								<th>Prix HT</th>
+							</tr>
+						</thead>
+						<tbody class="reception-details">
+							<tr ng-repeat="detail in reception.details">
+								<td>{{detail.product.ean13}}</td>
+								<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a>
+								</td>
+								<td>
+									<input 
+										id="reception-detail-discount-{{detail.id}}"	
+										ng-if="reception.editable && (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)"
+										ng-model="detail.discount"
+										ng-keyup="receptionChanged($event)"
+										ng-click="receptionChanged($event)"
+										class="quantity form-control"
+										type="number"
+										min="0" 
+										max="100" 
+										step="0.1"
+									/>
+									<span ng-if="!reception.editable && detail.product.purchasePriceTaxOut != 0 && detail.product.purchasePriceTaxOut != null" >{{detail.discount}}</span>
+								</td>
+								<td>{{detail.quantityToReceive}}</td>
+								<td>
+									<input 
+										id="detail-{{detail.id}}"
+										ng-if="reception.editable"
+										ng-model="detail.quantityReceived"
+										ng-click="receptionChanged($event)"
+										ng-keyup="receptionChanged($event)"
+										class="quantity form-control" 
+										type="number"
+										min="1" 
+										max="99999" 
+									/>
+									<span ng-if="!reception.editable">{{detail.quantityReceived}}</span>
+								</td>
+								<td><span title="{{detail.discountType.description}}">{{detail.discountApplied}} %</span></td>
+								<td class="unitPriceTaxOut">
+									<input
+										ng-if="reception.editable && (detail.product.purchasePriceTaxOut != 0 && detail.product.purchasePriceTaxOut != null)"
+										class="form-control " 
+										ng-keyup="receptionChanged($event)"
+										ng-model="detail.unitPriceTaxOut"
+									/>
+									<span ng-if="!reception.editable || (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)">
+										{{detail.unitPriceTaxOut | currency : '&euro;'}}
+									</span>
+								</td>						
+								<td>{{detail.totalAmountTaxOut | currency : '&euro;'}}</td>
+							</tr>
+							
+							<tr ng-if="reception.details.length == 0">
+								<td colspan="3">
+									Aucun produit dans la commande.
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<div ng-if="reception.editable">
+					<button ng-click="confirmReceptionValidation()" type="button" class="btn btn-primary">Confirmer la réception</button>
+				</div>
+				
+				<div class="confirm-validation modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<p>Etes-vous sûr de vouloir valider cette reception ?</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+								<button ng-click="validateReception()" type="button" class="btn btn-primary">Valider la réception</button>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			
-			<div class="redirection-modal modal fade">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-body">
-							<p>Reception validée.</p>
-							<p>
-								<button ng-click="redirectToPurchaseOrders()" type="button" class="btn btn-default" data-dismiss="modal">Voir les commandes</button>
-								<button ng-click="redirectToReceptions()" type="button" class="btn btn-default" data-dismiss="modal">Voir les réceptions</button>
-							</p>
+				
+				<div class="redirection-modal modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<p>Reception validée.</p>
+								<p>
+									<button ng-click="redirectToPurchaseOrders()" type="button" class="btn btn-default" data-dismiss="modal">Voir les commandes</button>
+									<button ng-click="redirectToReceptions()" type="button" class="btn btn-default" data-dismiss="modal">Voir les réceptions</button>
+								</p>
+							</div>
 						</div>
 					</div>
 				</div>
+				
+				<div th:include="purchase/reception/shipping-packages :: shipping-packages"></div>
 			</div>
-			
-			<div th:include="purchase/reception/shipping-packages :: shipping-packages"></div>
-		</div>
 		
-		<div class="product-card"></div>
+			<div th:replace="product/product-card :: product-card"></div>
+		</div>
 		
 		<div class="supplier-card"></div>
 		

@@ -23,6 +23,7 @@ app.controller("KubikProductsStatsController", function($scope, $http, $timeout)
 	};
 
 	$scope.kubikProductCard = new KubikProductCard({
+		app : app,
 		productSaved : function(){
 			$scope.loadOrder();
 		}, 

@@ -15,126 +15,128 @@
 	<body >
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center" ng-app="KubikInvoiceDetails" ng-controller="KubikInvoiceDetailsController as view" ng-cloak>
-			<div  class="row">
-				<h1 class="col-sm-2">
-					<button ng-if="previousInvoice != null" ng-click="changeInvoice(previousInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
-				</h1>
-				<h1 class="col-sm-8"k>Facture {{invoice.number}}</h1>
-				<h1 class="col-sm-2">
-					<button ng-if="next != null" ng-click="changeInvoice(nextInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
-				</h1>
-			</div>
-			
-			<div class="table-responsive">
-				<table class="invoices table table-condensed panel panel-default">
-					<thead>
-						<tr>
-							<th>Numéro</th>
-							<th>Date</th>
-							<th>Client</th>
-							<th>Produits</th>
-							<th>Remise</th>
-							<th>Montant</th>
-							<th>Paiements</th>
-							<th>Statut</th>				
-						</tr>
-					</thead>
-					
-					<tbody>
-						<tr>
-							<td>{{invoice.number}}</td>
-							<td>{{invoice.paidDate | date : "short"}}</td>
-							<td ng-if="invoice.customer != null">
-								<a href="#" ng-click="kubikCustomerCard.openCard(invoice.customer)">
-									<span ng-if="invoice.customer.company == null">{{invoice.customer.firstName}} {{invoice.customer.lastName}}</span>
-									<span ng-if="invoice.customer.company != null">{{invoice.customer.company}}</span>
-								</a>
-							</td>
-							<td ng-if="invoice.customer == null">
-								Anonyme
-							</td>
-							<td>{{invoice.details.length}}</td>
-							<td>{{invoice.rebateAmount | currency : '&euro;'}}</td>
-							<td>{{invoice.totalAmount | currency : '&euro;'}}</td>
-							<td>
-								<span ng-repeat="payment in invoice.payments">
-									<span ng-switch="payment.paymentMethod.type">
-										<span ng-switch-when="CARD" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
-										<span ng-switch-when="CASH" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
-										<span ng-switch-when="CHECK" title="Chèque - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
-										<span ng-switch-when="CREDIT" title="Avoir - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
-										<span ng-switch-when="KADEOS" title="Chèque Kadéos - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
-										<span ng-switch-when="LIRE" title="Chèque Lire - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
-									</span>
-								</span>
-							</td>
-							<td>{{invoice.status.description}}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			
-			<div class="table-responsive">
-				<table class="panel panel-default table table-striped table-condensed">
-					<thead class="panel-heading">
-						<tr>
-							<th>Ean13</th>
-							<th>Produit</th>
-							<th>Prix TTC</th>
-							<th>Taxe</th>
-							<th>Quantité</th>
-							<th>Montant</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="detail in invoice.details">
-							<td>{{detail.product.ean13}}</td>
-							<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a></td>
-							<td>{{detail.unitPrice | currency : '&euro;'}}
-							<td>
-								<div ng-repeat="taxAmount in invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
-							</td>
-							<td>{{detail.quantity}}</td>						
-							<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			
-			<button ng-click="printReceipt()" type="button" class="btn btn-primary">Imprimer le reçu</button>
-			
-			<button ng-click="openReceipt()" type="button" class="btn btn-primary">Afficher le reçu</button>
-			
-			<div class="refund-modal modal fade">
-				<div class="modal-dialog modal-sm">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h4 class="modal-title">Remboursement</h4>
-						</div>
+		<div class="container" ng-app="KubikInvoiceDetails" ng-controller="KubikInvoiceDetailsController as view" ng-cloak>
+			<div class="text-center">
+				<div  class="row">
+					<h1 class="col-sm-2">
+						<button ng-if="previousInvoice != null" ng-click="changeInvoice(previousInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
+					</h1>
+					<h1 class="col-sm-8"k>Facture {{invoice.number}}</h1>
+					<h1 class="col-sm-2">
+						<button ng-if="next != null" ng-click="changeInvoice(nextInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
+					</h1>
+				</div>
+				
+				<div class="table-responsive">
+					<table class="invoices table table-condensed panel panel-default">
+						<thead>
+							<tr>
+								<th>Numéro</th>
+								<th>Date</th>
+								<th>Client</th>
+								<th>Produits</th>
+								<th>Remise</th>
+								<th>Montant</th>
+								<th>Paiements</th>
+								<th>Statut</th>				
+							</tr>
+						</thead>
 						
-						<div class="modal-body text-center">
-							<div class="form-group"> 
-								<label>Paiements enregistrés</label>
-								<p ng-if="invoice.payments.length == 0" class="form-control-static">Aucun</p>
-								<p ng-if="invoice.payments.length != 0" ng-repeat="payment in invoice.payments" class="form-control-static">
-									{{payment.paymentMethod.description}} : {{payment.amount | currency : '&euro;'}}	
-								</p>
-							</div>
-							<div class="form-group"> 
-								<label>Montant à rembourser</label>
-								
-								<p class="form-control-static">{{invoice.totalAmount | currency : '&euro;'}}</p>
+						<tbody>
+							<tr>
+								<td>{{invoice.number}}</td>
+								<td>{{invoice.paidDate | date : "short"}}</td>
+								<td ng-if="invoice.customer != null">
+									<a href="#" ng-click="kubikCustomerCard.openCard(invoice.customer)">
+										<span ng-if="invoice.customer.company == null">{{invoice.customer.firstName}} {{invoice.customer.lastName}}</span>
+										<span ng-if="invoice.customer.company != null">{{invoice.customer.company}}</span>
+									</a>
+								</td>
+								<td ng-if="invoice.customer == null">
+									Anonyme
+								</td>
+								<td>{{invoice.details.length}}</td>
+								<td>{{invoice.rebateAmount | currency : '&euro;'}}</td>
+								<td>{{invoice.totalAmount | currency : '&euro;'}}</td>
+								<td>
+									<span ng-repeat="payment in invoice.payments">
+										<span ng-switch="payment.paymentMethod.type">
+											<span ng-switch-when="CARD" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+											<span ng-switch-when="CASH" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
+											<span ng-switch-when="CHECK" title="Chèque - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
+											<span ng-switch-when="CREDIT" title="Avoir - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
+											<span ng-switch-when="KADEOS" title="Chèque Kadéos - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
+											<span ng-switch-when="LIRE" title="Chèque Lire - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
+										</span>
+									</span>
+								</td>
+								<td>{{invoice.status.description}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<div class="table-responsive">
+					<table class="panel panel-default table table-striped table-condensed">
+						<thead class="panel-heading">
+							<tr>
+								<th>Ean13</th>
+								<th>Produit</th>
+								<th>Prix TTC</th>
+								<th>Taxe</th>
+								<th>Quantité</th>
+								<th>Montant</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="detail in invoice.details">
+								<td>{{detail.product.ean13}}</td>
+								<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a></td>
+								<td>{{detail.unitPrice | currency : '&euro;'}}
+								<td>
+									<div ng-repeat="taxAmount in invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
+								</td>
+								<td>{{detail.quantity}}</td>						
+								<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<button ng-click="printReceipt()" type="button" class="btn btn-primary">Imprimer le reçu</button>
+				
+				<button ng-click="openReceipt()" type="button" class="btn btn-primary">Afficher le reçu</button>
+				
+				<div class="refund-modal modal fade">
+					<div class="modal-dialog modal-sm">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title">Remboursement</h4>
 							</div>
 							
-							<button ng-click="refund()" type="button" class="btn btn-danger form-control" data-dismiss="modal">Rembourser</button>
+							<div class="modal-body text-center">
+								<div class="form-group"> 
+									<label>Paiements enregistrés</label>
+									<p ng-if="invoice.payments.length == 0" class="form-control-static">Aucun</p>
+									<p ng-if="invoice.payments.length != 0" ng-repeat="payment in invoice.payments" class="form-control-static">
+										{{payment.paymentMethod.description}} : {{payment.amount | currency : '&euro;'}}	
+									</p>
+								</div>
+								<div class="form-group"> 
+									<label>Montant à rembourser</label>
+									
+									<p class="form-control-static">{{invoice.totalAmount | currency : '&euro;'}}</p>
+								</div>
+								
+								<button ng-click="refund()" type="button" class="btn btn-danger form-control" data-dismiss="modal">Rembourser</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 		
-		<div class="product-card"></div>
+			<div th:replace="product/product-card :: product-card"></div>
+		</div>
 		
 		<div class="customer-card"></div>
 		

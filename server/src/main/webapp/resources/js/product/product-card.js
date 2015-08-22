@@ -6,6 +6,7 @@ window.KubikProductCard = function(options){
 		options.$modalContainer = $(".product-card");
 	}
 	
+	this.app = app;
 	this.$modalContainer = options.$modalContainer;
 	this.productUrl = options.productUrl;
 	this.productSaved = options.productSaved;
@@ -15,8 +16,7 @@ window.KubikProductCard = function(options){
 
 window.KubikProductCard.prototype.init = function(){
 	var kubikProductCard = this;
-	
-	this.app = angular.module("KubikProductCard", []);
+	var kubikProductCategories;
 	
 	this.app.controller("KubikProductCardController", function($scope, $http, $timeout){
 		kubikProductCard.$modalScope = $scope;
@@ -26,14 +26,6 @@ window.KubikProductCard.prototype.init = function(){
 			$scope.product = $scope.originalProduct;
 			
 			$scope.endEditMode();
-		};
-		
-		$scope.categoryChanged = function(){
-			$scope.subCategories = $scope.category.subCategories;
-			
-			if($scope.product.subCategory == undefined){
-				$scope.product.subCategory = $scope.subCategories[0];
-			}
 		};
 		
 		$scope.changeInventoryTab = function(tabClassName){
@@ -70,30 +62,12 @@ window.KubikProductCard.prototype.init = function(){
 			return null;
 		};
 		
-		$scope.loadCategory = function(categoryId){
-			$http.get("/category/" + categoryId).success(function(category){
-				$scope.category = category;
-				
-				$scope.subCategories = category.subCategories;
-			});
-		}
-		
 		$scope.loadInventoryTabs = function(){
 			for(var inventoryTabIndex in $scope.inventoryTabs){
 				var searchParams = $scope.inventoryTabs[inventoryTabIndex].searchParams;
 				
 				$scope.loadInventoryTab(inventoryTabIndex, searchParams.page, searchParams.resultPerPage, searchParams.sortBy, searchParams.direction);
 			}
-		}
-		
-		$scope.loadSubCategory = function(id, success){
-			$http.get("/subCategory/" + id).success(function(subCategory){
-				$scope.subCategory = subCategory;
-				
-				if(success != undefined){
-					success();
-				}
-			});
 		}
 		
 		$scope.modify = function(){
@@ -139,15 +113,9 @@ window.KubikProductCard.prototype.init = function(){
 			$scope.product = product;
 			$scope.productTab = "product";
 			$scope.inventoryTab = "reception";
-			
-			if($scope.product.subCategory != undefined){
-				$scope.loadSubCategory($scope.product.subCategory.id != undefined ? $scope.product.subCategory.id : $scope.product.subCategory, function(){
-					$scope.loadCategory($scope.subCategory.category.id);
-				});
-			}
 
 			$timeout(function(){
-				kubikProductCard.$modal = kubikProductCard.$modalContainer.find(".modal").modal({
+				kubikProductCard.$modal = kubikProductCard.$modalContainer.find(".kubikProductCard").modal({
 					backdrop : "static",
 					keyboard : false
 				});
@@ -176,10 +144,6 @@ window.KubikProductCard.prototype.init = function(){
 				$scope.product.supplier = $scope.getSupplier($("select.product-supplier").val());
 			}
 			
-			if($scope.subCategory != null){
-				$scope.product.subCategory = {id : $scope.subCategory.id};
-			}
-			
 			$http.post(kubikProductCard.productUrl, $scope.product).success(function(product){
 				$scope.product = product;
 				$scope.endEditMode();
@@ -187,10 +151,6 @@ window.KubikProductCard.prototype.init = function(){
 					kubikProductCard.productSaved(product);
 				}
 			})
-		};
-		
-		$scope.subCategoryChanged = function(){
-			$scope.loadSubCategory($scope.subCategory.id);
 		};
 		
 		$.get("/company").success(function(company){
@@ -236,28 +196,26 @@ window.KubikProductCard.prototype.init = function(){
 			$http.get(kubikProductCard.productUrl + "/" + $scope.product.id + "/" + tabName + "?" + $.param($scope.inventoryTabs[tabName].searchParams)).success(function(searchResult){
 				$scope.inventoryTabs[tabName].result = searchResult;
 			});
-		}
-		
-
-		$http.get("/category").success(function(categories){
-			$scope.categories = categories;
-		});
+		};
 		
 		$http.get("/supplier").success(function(suppliers){
 			$scope.suppliers = suppliers;
-		});		
+		});
+
+		$scope.kubikProductCategories = kubikProductCategories;
+		$scope.kubikProductCategories.categorySelectedCallback = function(category){
+			$scope.product.category = category;
+			
+			$scope.kubikProductCategories.closeModal();
+		};
 	});
 	
-	$.get(
-		"/product?card", 
-		function(productCardHtml) {
-			kubikProductCard.$modalContainer.html(productCardHtml);
-			
-		    angular.bootstrap($(".kubikProductCard")[0],['KubikProductCard']);
-		}, 
-		"html"
-	);
-
+	kubikProductCategories = new KubikProductCategories({
+		app : this.app,
+		$modal : $(".categories-modal"),
+		categoriesUrl : "/category",
+		categorySelectedCallback : {}
+	});
 };
 
 window.KubikProductCard.prototype.openCard = function(product){

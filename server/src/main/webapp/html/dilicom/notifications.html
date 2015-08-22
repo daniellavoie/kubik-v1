@@ -148,7 +148,7 @@
 			</div>
 		</div>
 		
-		<div class="product-card"></div>
+		<div th:replace="product/product-card :: product-card"></div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/dilicom/notifications.js}"></script>

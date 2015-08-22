@@ -3,6 +3,7 @@ package com.cspinformatique.kubik.model.product;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,16 +18,18 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 public class Category {
 	private int id;
 	private String name;
-	private List<SubCategory> subCategories;
+	private boolean rootCategory;
+	private List<Category> childCategories;
 
 	public Category() {
 
 	}
 
-	public Category(int id, String name, List<SubCategory> subCategories) {
+	public Category(int id, String name, boolean rootCategory, List<Category> childCategories) {
 		this.id = id;
 		this.name = name;
-		this.subCategories = subCategories;
+		this.rootCategory = rootCategory;
+		this.childCategories = childCategories;
 	}
 
 	@Id
@@ -38,7 +41,8 @@ public class Category {
 	public void setId(int id) {
 		this.id = id;
 	}
-
+	
+	@Column(unique=true)
 	public String getName() {
 		return name;
 	}
@@ -47,12 +51,20 @@ public class Category {
 		this.name = name;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL)
-	public List<SubCategory> getSubCategories() {
-		return subCategories;
+	public boolean isRootCategory() {
+		return rootCategory;
 	}
 
-	public void setSubCategories(List<SubCategory> subCategories) {
-		this.subCategories = subCategories;
+	public void setRootCategory(boolean rootCategory) {
+		this.rootCategory = rootCategory;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	public List<Category> getChildCategories() {
+		return childCategories;
+	}
+
+	public void setChildCategories(List<Category> childCategories) {
+		this.childCategories = childCategories;
 	}
 }

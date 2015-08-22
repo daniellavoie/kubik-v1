@@ -1,4 +1,9 @@
 var app = angular.module("KubikRmaDetails", []);
+var kubikProductCard = new KubikProductCard({
+	app : app,
+	productUrl : "../product"
+}); 
+
 var rmaId = window.location.pathname.split("/")[2];
 
 app.controller("KubikRmaDetailsController", function($scope, $http, $timeout){
@@ -143,7 +148,7 @@ app.controller("KubikRmaDetailsController", function($scope, $http, $timeout){
 	$scope.error = {};
 	$scope.detail = {product : {}};
 
-	$scope.kubikProductCard = new KubikProductCard({productUrl : "../product"});
+	$scope.kubikProductCard = kubikProductCard;
 	
 	$scope.loadRma();
 });

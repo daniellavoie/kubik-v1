@@ -150,13 +150,6 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 		$scope.submitOrder();
 	}
 
-	$scope.kubikProductCard = new KubikProductCard({
-		productSaved : function(){
-			$scope.loadOrder();
-		}, 
-		productUrl : "../product"
-	});
-
 	$scope.kubikSupplierCard = new KubikSupplierCard({
 		supplierSaved : function(){
 			$scope.loadOrder();
@@ -207,6 +200,8 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 		
 		$scope.kubikProductSearch.closeSearchModal();
 	};
+
+	$scope.kubikProductCard = $scope.kubikProductSearch.kubikProductCard;
 	
 	$scope.search = {};
 	$scope.loadOrder();

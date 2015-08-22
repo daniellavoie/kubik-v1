@@ -145,7 +145,7 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 					$(".product-not-found").modal("hide");
 					
 					if (products.length > 1){
-						$scope.kubikProductSearch.openSearchModal($scope.search.typedEan13);
+						$scope.kubikProductSearch.kubikProductSearch.openSearchModal($scope.search.typedEan13);
 					}else{
 						$scope.addOneProduct(products[0]);
 					}
@@ -197,11 +197,10 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 		});
 	};
 
-	$scope.kubikProductCard = new KubikProductCard();
-
 	$scope.kubikReferenceCard = new KubikReferenceCard();
 	
 	$scope.kubikProductSearch = kubikProductSearch;
+	$scope.kubikProductCard = kubikProductSearch.kubikProductCard;
 	$scope.kubikProductSearch.productSelected = function(product){
 		$scope.addOneProduct(product);
 		

@@ -1,5 +1,9 @@
 var app = angular.module("KubikReceptionDetails", []);
 var receptionId = window.location.pathname.split("/")[2];
+var kubikProductCard = new KubikProductCard({
+	app : app, 
+	productUrl : "../product"
+});
 
 app.controller("KubikReceptionDetailsController", function($scope, $http, $timeout){
 	$scope.calculateReceptionQuantity = function(reception){
@@ -78,9 +82,10 @@ app.controller("KubikReceptionDetailsController", function($scope, $http, $timeo
 		});
 	};
 
-	$scope.kubikProductCard = new KubikProductCard({productUrl : "../product"});
+	$scope.kubikProductCard = kubikProductCard;
 
 	$scope.kubikSupplierCard = new KubikSupplierCard({
+		app : app,
 		supplierSaved : function(){
 			$scope.loadReception();
 		}, 

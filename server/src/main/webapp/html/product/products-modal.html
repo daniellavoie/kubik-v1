@@ -14,7 +14,7 @@
 						</div>
 						
 						<div class="modal-body">
-							<div th:include="product/products :: products"></div>
+							<div th:include="product/products-list :: products-list"></div>
 						</div>
 						
 						<div class="modal-footer">
@@ -28,6 +28,8 @@
 					</div>
 				</div>
 			</div>
+			
+			<div th:replace="product/product-card :: product-card"></div>
 		</div>
 	</body>
 

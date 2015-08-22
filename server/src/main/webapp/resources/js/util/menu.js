@@ -5,8 +5,8 @@ app.controller("KubikMenuController", function($scope, $http){
 		$scope.notificationCount = notificationCount;
 	});
 	
-	$http.get("/product?subCategory").success(function(productsWithoutSubCategory){
-		$scope.productsWithoutSubCategory = productsWithoutSubCategory;
+	$http.get("/product?category").success(function(productsWithoutCategory){
+		$scope.productsWithoutCategory = productsWithoutCategory;
 	});
 	
 	$http.get("/restock/OPEN/count").success(function(restockCount){

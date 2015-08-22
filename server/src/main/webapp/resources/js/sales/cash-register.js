@@ -17,7 +17,7 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 		$scope.openCustomerCard(customer, event);
 	});
 	
-	$scope.$on("openProductCard", function(product){
+	$scope.$on("openProductCard", function(event, product){
 		$scope.kubikProductCard.openCard(product);
 	});
 	
@@ -261,10 +261,6 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 		kubikProductSearch.closeSearchModal();
 	}
 	
-	$scope.kubikProductCard = new KubikProductCard({productUrl : "product", productSaved : function(){
-		$scope.refreshInvoices();
-	}});
-	
 	// this.modal && htmlTemplateUrl != undefined && this.$container != undefined
 	$scope.kubikCustomerSearch = kukikCustomerSearch;
 	$scope.kubikCustomerSearch.customerSelected = function(customer){
@@ -279,6 +275,7 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 	$scope.kubikProductSearch.productSelected = function(product){
 		$scope.addOneProduct(product);
 	};
+	$scope.kubikProductCard = $scope.kubikProductSearch.kubikProductCard;
 	
 	$scope.kubikCustomerCard = new KubikCustomerCard({
 		customerUrl : "customer", 

@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import com.cspinformatique.kubik.domain.dilicom.model.Reference;
 import com.cspinformatique.kubik.model.product.Category;
 import com.cspinformatique.kubik.model.product.Product;
-import com.cspinformatique.kubik.model.product.SubCategory;
 import com.cspinformatique.kubik.model.product.Supplier;
 
 public interface ProductService {
@@ -17,17 +16,11 @@ public interface ProductService {
 
 	int countByCategory(Category category);
 	
-	int countBySubCategory(SubCategory subCategory);
-	
-	void deleteProductCategory(Category category);
-	
 	Iterable<Product> findByEan13(String ean13);
 	
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
 
 	List<Product> findByCategory(Category category);
-
-	List<Product> findBySubCategory(SubCategory subCategory);
 	
 	Iterable<Product> findBySupplier(Supplier supplier);
 	
@@ -35,13 +28,15 @@ public interface ProductService {
 	
 	Product findOne(int id);
 	
-	Product findRandomBySubCategory(SubCategory subCategory);
+	Product findRandomByCategory(Category category);
 	
 	Set<String> getProductIdsCache();
 	
 	void mergeProduct(Product sourceProduct, Product targetProduct);
 	
 	Product save(Product product);
+	
+	Product save(Product product, boolean skipBroadleafNotification);
 	
 	Page<Product> search(String query, Pageable pageable);
 }

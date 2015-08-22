@@ -15,8 +15,8 @@
 	<body>
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="KubikCashRegister" ng-cloak ng-controller="KubikCashRegisterController as view">
-			<div class="container text-center">
+		<div class="container" ng-app="KubikCashRegister" ng-cloak ng-controller="KubikCashRegisterController as view">
+			<div class="text-center">
 				<h1>Caisse enregistreuse</h1>
 				
 				<ul class="invoice-tabs nav nav-tabs">
@@ -257,8 +257,6 @@
 		
 			<div th:replace="product/products-modal :: products-modal"></div>
 		</div>
-		
-		<div class="product-card"></div>
 		
 		<div class="customer-card"></div>
 		

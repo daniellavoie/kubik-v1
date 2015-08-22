@@ -25,16 +25,22 @@ import com.cspinformatique.kubik.model.product.Category;
 public class CategoryController {
 	@Autowired
 	private CategoryService categoryService;
-	
+
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value= "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void delete(@PathVariable int id){
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void delete(@PathVariable int id) {
 		categoryService.delete(id);
 	}
-	
+
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@RequestMapping(value = "/{id}/product", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void deleteProductCategories(@PathVariable int id) {
+		categoryService.deleteProductCategories(categoryService.findOne(id));
+	}
+
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Category> findAll(){
-		return categoryService.findAll();
+	public @ResponseBody List<Category> findRootCategories() {
+		return categoryService.findByRootCategory(true);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "page", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -50,9 +56,15 @@ public class CategoryController {
 		return categoryService.findOne(id);
 	}
 
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(method = RequestMethod.GET, params = "newName", produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String generateNewName() {
+		return categoryService.generateNewName();
+	}
+
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public String getCategoriesPage() {
-		return "product/categories";
+		return "product/categories-page";
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)

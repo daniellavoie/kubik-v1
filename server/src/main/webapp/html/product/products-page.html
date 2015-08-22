@@ -15,13 +15,11 @@
 	<body>
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="KubikProductsPage" ng-controller="KubikProductsPageController as view"  class="container text-center">
-			<h1>Produits</h1>
+		<div ng-app="KubikProductsPage" ng-controller="KubikProductsPageController as view"  class="container">
+			<h1 class="text-center">Produits</h1>
 						
-			<div th:replace="product/products :: products"></div>
+			<div th:replace="product/products-standalone :: products-standalone"></div>
 		</div>
-		
-		<div class="product-card"></div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/product/products-page.js}"></script>

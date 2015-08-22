@@ -61,12 +61,12 @@
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 								Produits<span class="caret"></span>
-								<span ng-cloak ng-if="productsWithoutSubCategory > 0" class="glyphicon glyphicon glyphicon-exclamation-sign"></span>	
+								<span ng-cloak ng-if="productsWithoutCategory > 0" class="glyphicon glyphicon glyphicon-exclamation-sign"></span>	
 							</a>
 							<ul class="dropdown-menu" role="menu">
 								<li><a th:href="@{/product}">Produits</a></li>
 								<li><a th:href="@{/category}">Catégories de produits</a></li>
-								<li><a th:href="@{/product?subCategory&random}">Produits non catégorisés <span ng-cloak class="badge">{{productsWithoutSubCategory}}</span></a></li>
+								<li><a th:href="@{/product?category&random}">Produits non catégorisés <span ng-cloak class="badge">{{productsWithoutCategory}}</span></a></li>
     							<li class="divider"></li>
 								<li><a th:href="@{/supplier}">Fournisseurs</a></li>
     							<li class="divider"></li>

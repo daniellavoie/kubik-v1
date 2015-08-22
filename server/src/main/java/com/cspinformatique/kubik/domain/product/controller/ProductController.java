@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cspinformatique.kubik.domain.product.service.CategoryService;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.product.service.ProductStatsService;
-import com.cspinformatique.kubik.domain.product.service.SubCategoryService;
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
 import com.cspinformatique.kubik.domain.purchase.service.ReceptionDetailService;
 import com.cspinformatique.kubik.domain.purchase.service.RmaDetailService;
@@ -46,9 +45,6 @@ public class ProductController {
 	private ProductService productService;
 
 	@Autowired
-	private SubCategoryService subCategoryService;
-
-	@Autowired
 	private SupplierService supplierService;
 
 	@Autowired
@@ -69,11 +65,6 @@ public class ProductController {
 	@RequestMapping(method = RequestMethod.GET, params = "category", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Integer countByCategory(@RequestParam Integer category) {
 		return productService.countByCategory(category != null ? categoryService.findOne(category) : null);
-	}
-	
-	@RequestMapping(method = RequestMethod.GET, params = "subCategory", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Integer countBySubCategory(@RequestParam Integer subCategory) {
-		return productService.countBySubCategory(subCategory != null ? subCategoryService.findOne(subCategory) : null);
 	}
 
 	@RequestMapping(params = "ean13", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -149,14 +140,14 @@ public class ProductController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = { "random",
-			"subCategory" }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Product findRandomBySubCategory(@RequestParam Integer subCategory) {
+			"category" }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Product findRandomByCategory(@RequestParam Integer category) {
 		return productService
-				.findRandomBySubCategory(subCategory != null ? subCategoryService.findOne(subCategory) : null);
+				.findRandomByCategory(category != null ? categoryService.findOne(category) : null);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = { "random",
-			"subCategory" }, produces = MediaType.TEXT_HTML_VALUE)
+			"category" }, produces = MediaType.TEXT_HTML_VALUE)
 	public String getNonCategorizedProductsPage(){
 		return "product/non-categorized-product";
 	}

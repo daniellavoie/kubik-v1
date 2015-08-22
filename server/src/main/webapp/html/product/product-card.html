@@ -4,9 +4,9 @@
 	xmlns:th="http://www.thymeleaf.org">
 
 <body>
-	<div th:fragment="product-card" th:remove="tag">
+	<div th:fragment="product-card" class="product-card">
 		<div class="kubikProductCard autoModal modal fade">
-			<div class="modal-dialog modal-lg" ng-controller="KubikProductCardController as view">
+			<div class="modal-dialog modal-lg" ng-controller="KubikProductCardController">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -148,28 +148,14 @@
 							<div class="form-group">
 								<label class="col-sm-6 control-label">Catégorie</label>
 								<div class="col-sm-6">
-									<p ng-if="!editMode" class="form-control-static">{{subCategory.category.name}}</p>
-									<select 
-										class="form-control" 
-										ng-model="category"
-										ng-change="categoryChanged()"
-										ng-class="{true : 'hidden'}[!editMode]"
-										ng-options="category.name for category in categories track by category.id" 
-									><option value="">Sélectionner une catégorie</option></select>
-								</div>
-							</div>
-							
-							<div class="form-group">
-								<label class="col-sm-6 control-label">Sous catégorie</label>
-								<div class="col-sm-6">
-									<p ng-if="!editMode" class="form-control-static">{{subCategory.name}}</p>
-									<select 
-										class="form-control" 
-										ng-model="subCategory" 
-										ng-change="subCategoryChanged()"
-										ng-class="{true : 'hidden'}[!editMode]"
-										ng-options="subCategory.name for subCategory in subCategories track by subCategory.id" 
-									><option value="">Sélectionner une sous catégorie</option></select>
+									<p class="form-control-static">
+										{{product.category.name}}
+										<button 
+											ng-if="editMode" 
+											class="btn btn-xs btn-default" 
+											ng-click="kubikProductCategories.openModal()"
+										><span class="glyphicon glyphicon-edit"></span></button>
+									</p>
 								</div>
 							</div>
 						</div>
@@ -512,10 +498,12 @@
 							class="closeModal btn btn-default" 
 							data-dismiss="modal"
 						>Fermer</button>
+					</div>
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
+		
+		<div th:replace="product/categories-modal :: categories-modal"></div>
 	</div>
 </body>
-
 </html>
