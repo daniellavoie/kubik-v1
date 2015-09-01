@@ -122,7 +122,17 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 	
 	$scope.saveOrder = function(success){
 		$scope.loading=true;
-		$http.post(".", $scope.order).success(function(){
+		
+		angular.forEach($scope.order.details, cleanDetailCategory);
+		
+		$http.post(".", $scope.order).success(orderSaved);
+		
+		function cleanDetailCategory(detail, index){
+			detail.product.category = null;
+		}
+		
+		function orderSaved(order){
+			$scope.order = order;
 			$scope.loading=false;
 			$scope.$broadcast("orderSaved");
 			
@@ -131,7 +141,7 @@ app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $t
 			if(success != undefined){
 				success();
 			}
-		});
+		}
 	};
 	
 	$scope.submitOrder = function(){

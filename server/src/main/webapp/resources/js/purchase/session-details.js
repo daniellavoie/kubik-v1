@@ -119,9 +119,19 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 	};
 	
 	$scope.saveSession = function(success){
-		$scope.loading=true;
+		$scope.loading = true;
 
-		$http.post(".", $scope.session).success(function(){
+		angular.forEach($scope.session.details, cleanDetailCategory);
+		
+		$http.post(".", $scope.session).success(sessionSaved);
+		
+		function cleanDetailCategory(detail, index){
+			detail.product.category = null;
+		}
+		
+		function sessionSaved(session){
+			$scope.session = session;
+			
 			$scope.$broadcast("sessionSaved");
 			
 			$scope.loadSession();
@@ -129,7 +139,7 @@ app.controller("SessionDetailsController", function($scope, $http, $timeout){
 			if(success != undefined){
 				success();
 			}
-		});
+		}
 	};
 	
 	$scope.searchProduct = function(){

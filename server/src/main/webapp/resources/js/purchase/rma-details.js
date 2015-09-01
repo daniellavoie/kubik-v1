@@ -106,11 +106,19 @@ app.controller("KubikRmaDetailsController", function($scope, $http, $timeout){
 	$scope.saveRma = function(){
 		$scope.showLoading();
 		
-		$http.post(".", $scope.rma).finally(function(){
+		angular.forEach($scope.rma.details, cleanDetailCategory);
+		
+		$http.post(".", $scope.rma).finally(saveCompleted);
+		
+		function cleanDetailCategory(detail, index){
+			detail.product.category = null;
+		}
+		
+		function saveCompleted(){
 			$scope.hideLoading();
 			
 			$scope.loadRma();
-		});
+		}
 	};
 	
 	$scope.showLoading = function(){
