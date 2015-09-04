@@ -90,6 +90,10 @@ app.controller("KubikCustomerCreditDetailsController", function($scope, $http, $
 	$scope.saveCustomerCredit = function(){
 		$scope.showLoading();
 		
+		angular.forEach($scope.customerCredit.details, function(detail, index){
+			detail.product.category = null;
+		});
+		
 		$http.post(".", $scope.customerCredit).finally(function(){
 			$scope.hideLoading();
 			
