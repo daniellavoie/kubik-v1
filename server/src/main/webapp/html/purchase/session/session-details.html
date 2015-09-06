@@ -70,6 +70,7 @@
 										ng-if="session.status != 'SUBMITED'" 
 										ng-model="detail.quantity"
 										id="detail-{{detail.id}}"
+										ng-click="quantityChanged($event)"
 										ng-keyup="quantityChanged($event)"
 										class="quantity" 
 										type="number"

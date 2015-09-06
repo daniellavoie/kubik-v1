@@ -57,6 +57,7 @@
 										id="reception-detail-{{detail.id}}"	
 										ng-if="reception.editable"
 										ng-model="reception.discount"
+										ng-click="receptionChanged($event)"
 										ng-keyup="receptionChanged($event)"
 										class="quantity form-control"
 										type="number"
