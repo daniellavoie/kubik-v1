@@ -34,10 +34,10 @@ window.KubikProductCard.prototype.init = function(){
 			}
 		};
 		
-		$scope.changePage = function(tabName, page){
-			$scope.searchParams.page = page;
+		$scope.changePage = function(page){
+			$scope.inventoryTabs[$scope.inventoryTab].searchParams.page = page;
 			
-			$scope.loadInventoryTab(tabName);
+			$scope.loadInventoryTab($scope.inventoryTab);
 		}
 		
 		$scope.endEditMode = function(){
@@ -62,11 +62,15 @@ window.KubikProductCard.prototype.init = function(){
 			return null;
 		};
 		
+		$scope.loadInventoryTab = function(tabName){			
+			$http.get(kubikProductCard.productUrl + "/" + $scope.product.id + "/" + tabName + "?" + $.param($scope.inventoryTabs[tabName].searchParams)).success(function(searchResult){
+				$scope.inventoryTabs[tabName].result = searchResult;
+			});
+		};
+		
 		$scope.loadInventoryTabs = function(){
 			for(var inventoryTabIndex in $scope.inventoryTabs){
-				var searchParams = $scope.inventoryTabs[inventoryTabIndex].searchParams;
-				
-				$scope.loadInventoryTab(inventoryTabIndex, searchParams.page, searchParams.resultPerPage, searchParams.sortBy, searchParams.direction);
+				$scope.loadInventoryTab(inventoryTabIndex);
 			}
 		}
 		
@@ -186,17 +190,6 @@ window.KubikProductCard.prototype.init = function(){
 										sortBy : "rma.shippedDate",
 										direction : "DESC"  }
 									}};
-		
-		$scope.loadInventoryTab = function(tabName, page, resultPerPage, orderBy, direction){
-			$scope.inventoryTabs[tabName].searchParams = {	page : page,
-															resultPerPage : resultPerPage,
-															sortBy : orderBy,
-															direction : direction};
-			
-			$http.get(kubikProductCard.productUrl + "/" + $scope.product.id + "/" + tabName + "?" + $.param($scope.inventoryTabs[tabName].searchParams)).success(function(searchResult){
-				$scope.inventoryTabs[tabName].result = searchResult;
-			});
-		};
 		
 		$http.get("/supplier").success(function(suppliers){
 			$scope.suppliers = suppliers;

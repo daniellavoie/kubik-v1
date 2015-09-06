@@ -40,7 +40,7 @@ import com.cspinformatique.kubik.model.sales.InvoiceStatus;
 public class ProductController {
 	@Autowired
 	private CategoryService categoryService;
-	
+
 	@Autowired
 	private ProductService productService;
 
@@ -112,11 +112,11 @@ public class ProductController {
 	@RequestMapping(value = "/{productId}/invoice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Page<InvoiceDetail> findProductInvoices(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
-			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
+			@RequestParam(defaultValue = "DESC") Direction direction,
+			@RequestParam(defaultValue = "invoice.paidDate") String sortBy) {
 		return this.invoiceDetailService.findByProductAndInvoiceStatus(this.productService.findOne(productId),
 				new InvoiceStatus(InvoiceStatus.Types.PAID.name(), null),
-				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
+				new PageRequest(page, resultPerPage, direction, sortBy));
 	}
 
 	@RequestMapping(value = "/{productId}/reception", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -142,13 +142,11 @@ public class ProductController {
 	@RequestMapping(method = RequestMethod.GET, params = { "random",
 			"category" }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Product findRandomByCategory(@RequestParam Integer category) {
-		return productService
-				.findRandomByCategory(category != null ? categoryService.findOne(category) : null);
+		return productService.findRandomByCategory(category != null ? categoryService.findOne(category) : null);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = { "random",
-			"category" }, produces = MediaType.TEXT_HTML_VALUE)
-	public String getNonCategorizedProductsPage(){
+	@RequestMapping(method = RequestMethod.GET, params = { "random", "category" }, produces = MediaType.TEXT_HTML_VALUE)
+	public String getNonCategorizedProductsPage() {
 		return "product/non-categorized-product";
 	}
 
