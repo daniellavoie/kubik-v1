@@ -59,7 +59,7 @@ public class DilicomOrderStringConverter {
 		// Fifth line.
 		++lineNumber;
 		stringBuffer.append("E" + lineNumberFormat.format(lineNumber)
-				+ purchaseOrder.getShippingMode().getCode() + "0   "
+				+ purchaseOrder.getShippingMode().getCode() + "0    "
 				+ dateFormat.format(purchaseOrder.getMinDeliveryDate())
 				+ dateFormat.format(purchaseOrder.getMaxDeliveryDate())
 				+ "\n");
