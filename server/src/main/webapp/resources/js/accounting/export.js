@@ -22,7 +22,7 @@ app.controller("KubikAccountingExportsController", function($scope, $http, $time
 		$scope.invalidType = false;
 		$scope.invalidSeparator = false;
 		
-		if($scope.export.startDate == undefined || $scope.export.endDate == undefined){
+		if($scope.export.type != "accounts" && ($scope.export.startDate == undefined || $scope.export.endDate == undefined)){
 			$scope.invalidDates = true;
 			return;
 		}

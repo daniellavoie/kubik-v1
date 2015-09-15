@@ -19,11 +19,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.cspinformatique.kubik.domain.accounting.model.Account;
 import com.cspinformatique.kubik.domain.accounting.model.Entry;
 import com.cspinformatique.kubik.domain.accounting.model.EntryComparator;
 import com.cspinformatique.kubik.domain.accounting.service.EntryService;
 import com.cspinformatique.kubik.domain.sales.service.CustomerCreditService;
+import com.cspinformatique.kubik.domain.sales.service.CustomerService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
+import com.cspinformatique.kubik.model.sales.Customer;
 import com.cspinformatique.kubik.model.sales.CustomerCredit;
 import com.cspinformatique.kubik.model.sales.CustomerCreditDetail;
 import com.cspinformatique.kubik.model.sales.Invoice;
@@ -35,8 +38,7 @@ import com.cspinformatique.kubik.model.sales.PaymentMethod;
 
 @Service
 public class EntryServiceImpl implements EntryService, InitializingBean {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(EntryServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EntryServiceImpl.class);
 
 	private static final String ANONYMUS_CLIENT = "ANONYME";
 	private static final String CUSTOMER_ACCOUNT_PREFIX = "411";
@@ -46,6 +48,9 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 
 	@Autowired
 	private CustomerCreditService customerCreditService;
+
+	@Autowired
+	private CustomerService customerService;
 
 	@Autowired
 	private InvoiceService invoiceService;
@@ -61,25 +66,40 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 		this.entryComparator = new EntryComparator();
 	}
 
+	@Override
+	public List<Account> generateAccounts() {
+		List<Account> accounts = new ArrayList<>();
+
+		Pageable pageable = new PageRequest(0, 50);
+		Page<Customer> customersPage = null;
+		do {
+			customersPage = customerService.findAll(pageable);
+			for (Customer customer : customersPage.getContent()) {
+				accounts.add(new Account(getCustomerAccount(customer),
+						customer.getFirstName() + " " + customer.getLastName()));
+			}
+
+			pageable = pageable.next();
+		} while (customersPage.hasNext());
+
+		return accounts;
+	}
+
 	private Entry generateCustomerCreditEntry(CustomerCredit customerCredit) {
-		return new Entry(customerCredit.getCompleteDate(), "rt",
-				this.getCustomerAccount(customerCredit), "F"
-						+ customerCredit.getInvoice().getNumber(),
-				StringUtils.stripAccents("RETOUR "
-						+ this.getCustomerName(customerCredit, 14)), 0d,
+		return new Entry(customerCredit.getCompleteDate(), "rt", this.getCustomerAccount(customerCredit),
+				"F" + customerCredit.getInvoice().getNumber(),
+				StringUtils.stripAccents("RETOUR " + this.getCustomerName(customerCredit, 14)), 0d,
 				customerCredit.getTotalAmount(), "E");
 	}
 
 	private Entry generateCustomerDebitEntry(Invoice invoice) {
 		String customerName = this.getCustomerName(invoice, 16);
 
-		Entry customerDebitEntry = new Entry(invoice.getPaidDate(), "vt",
-				this.getCustomerAccount(invoice), "F" + invoice.getNumber(),
-				StringUtils.stripAccents("VENTE " + customerName),
-				invoice.getTotalAmount(), 0d, "E");
+		Entry customerDebitEntry = new Entry(invoice.getPaidDate(), "vt", this.getCustomerAccount(invoice),
+				"F" + invoice.getNumber(), StringUtils.stripAccents("VENTE " + customerName), invoice.getTotalAmount(),
+				0d, "E");
 
-		LOGGER.debug("Generating a new debit entry for invoice "
-				+ invoice.getId() + " to customer account "
+		LOGGER.debug("Generating a new debit entry for invoice " + invoice.getId() + " to customer account "
 				+ customerDebitEntry.getAccount() + ".");
 
 		return customerDebitEntry;
@@ -90,43 +110,33 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 
 		HashMap<Double, Double> productAccountAmounts = new HashMap<Double, Double>();
 		for (InvoiceDetail invoiceDetail : invoice.getDetails()) {
-			Double productsAmount = productAccountAmounts.get(invoiceDetail
-					.getProduct().getTvaRate1());
+			Double productsAmount = productAccountAmounts.get(invoiceDetail.getProduct().getTvaRate1());
 			if (productsAmount == null) {
 				productsAmount = 0d;
 			}
 			productsAmount += invoiceDetail.getTotalTaxLessAmount();
 
-			LOGGER.debug("Product " + invoiceDetail.getProduct().getId()
-					+ " assigned to tax account "
+			LOGGER.debug("Product " + invoiceDetail.getProduct().getId() + " assigned to tax account "
 					+ invoiceDetail.getProduct().getTvaRate1());
 
-			productAccountAmounts.put(invoiceDetail.getProduct().getTvaRate1(),
-					productsAmount);
+			productAccountAmounts.put(invoiceDetail.getProduct().getTvaRate1(), productsAmount);
 		}
 
-		for (java.util.Map.Entry<Double, Double> productAmountEntry : productAccountAmounts
-				.entrySet()) {
-			String productAccountSufix = decimalFormat.format(
-					productAmountEntry.getKey()).replace(
-					decimalFormatSymbols.getDecimalSeparator() + "", "");
+		for (java.util.Map.Entry<Double, Double> productAmountEntry : productAccountAmounts.entrySet()) {
+			String productAccountSufix = decimalFormat.format(productAmountEntry.getKey())
+					.replace(decimalFormatSymbols.getDecimalSeparator() + "", "");
 
-			productAccountSufix = productAccountSufix.substring(
-					productAccountSufix.length() - 2,
+			productAccountSufix = productAccountSufix.substring(productAccountSufix.length() - 2,
 					productAccountSufix.length());
 
-			String productAccount = PRODUCT_ACCOUNT_PREFIX
-					+ productAccountSufix;
+			String productAccount = PRODUCT_ACCOUNT_PREFIX + productAccountSufix;
 
-			Entry productAccountCreditEntry = new Entry(invoice.getPaidDate(),
-					"vt", productAccount, "F" + invoice.getNumber(),
-					StringUtils.stripAccents("VENTE "
-							+ this.getCustomerName(invoice, 16)), 0d,
-					productAmountEntry.getValue(), "E");
+			Entry productAccountCreditEntry = new Entry(invoice.getPaidDate(), "vt", productAccount,
+					"F" + invoice.getNumber(), StringUtils.stripAccents("VENTE " + this.getCustomerName(invoice, 16)),
+					0d, productAmountEntry.getValue(), "E");
 
-			LOGGER.debug("Generating a credit entry for invoice "
-					+ invoice.getId() + " to product account " + productAccount
-					+ ".");
+			LOGGER.debug("Generating a credit entry for invoice " + invoice.getId() + " to product account "
+					+ productAccount + ".");
 
 			entries.add(productAccountCreditEntry);
 		}
@@ -134,33 +144,27 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 		return entries;
 	}
 
-	private List<Entry> generateProductAccountDebitEntries(
-			CustomerCredit customerCredit) {
+	private List<Entry> generateProductAccountDebitEntries(CustomerCredit customerCredit) {
 		List<Entry> entries = new ArrayList<Entry>();
 		HashMap<Double, Double> productAccountAmounts = new HashMap<Double, Double>();
-		for (CustomerCreditDetail customerCreditDetail : customerCredit
-				.getDetails()) {
-			Double productsAmount = productAccountAmounts
-					.get(customerCreditDetail.getProduct().getTvaRate1());
+		for (CustomerCreditDetail customerCreditDetail : customerCredit.getDetails()) {
+			Double productsAmount = productAccountAmounts.get(customerCreditDetail.getProduct().getTvaRate1());
 			if (productsAmount == null) {
 				productsAmount = 0d;
 			}
 			productsAmount += customerCreditDetail.getTotalTaxLessAmount();
 
-			productAccountAmounts.put(customerCreditDetail.getProduct()
-					.getTvaRate1(), productsAmount);
+			productAccountAmounts.put(customerCreditDetail.getProduct().getTvaRate1(), productsAmount);
 		}
 
-		for (java.util.Map.Entry<Double, Double> productAmountEntry : productAccountAmounts
-				.entrySet()) {
-			entries.add(new Entry(customerCredit.getCompleteDate(), "rt",
-					PRODUCT_ACCOUNT_PREFIX
-							+ decimalFormat.format(productAmountEntry.getKey())
-									.replace(".", "").substring(0, 2), "F"
-							+ customerCredit.getInvoice().getNumber(),
-					StringUtils.stripAccents("RETOUR "
-							+ this.getCustomerName(customerCredit, 14)),
-					productAmountEntry.getValue(), 0d, "E"));
+		for (java.util.Map.Entry<Double, Double> productAmountEntry : productAccountAmounts.entrySet()) {
+			entries.add(
+					new Entry(customerCredit.getCompleteDate(), "rt",
+							PRODUCT_ACCOUNT_PREFIX + decimalFormat.format(productAmountEntry.getKey()).replace(".", "")
+									.substring(0, 2),
+							"F" + customerCredit.getInvoice().getNumber(),
+							StringUtils.stripAccents("RETOUR " + this.getCustomerName(customerCredit, 14)),
+							productAmountEntry.getValue(), 0d, "E"));
 		}
 
 		return entries;
@@ -170,22 +174,18 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 	public List<Entry> generateSaleJournalEntries(Date startDate, Date endDate) {
 		Page<Invoice> invoicePage = null;
 		List<Entry> entries = new ArrayList<Entry>();
-		Pageable pageRequest = new PageRequest(0, 100, Direction.ASC,
-				"paidDate");
+		Pageable pageRequest = new PageRequest(0, 100, Direction.ASC, "paidDate");
 
 		do {
-			invoicePage = this.invoiceService.findByPaidDateBetweenAndStatus(
-					startDate, endDate, new InvoiceStatus(
-							InvoiceStatus.Types.PAID.toString(), null),
-					pageRequest);
+			invoicePage = this.invoiceService.findByPaidDateBetweenAndStatus(startDate, endDate,
+					new InvoiceStatus(InvoiceStatus.Types.PAID.toString(), null), pageRequest);
 
 			for (Invoice invoice : invoicePage.getContent()) {
 				// Generates a debit entry for the customer.
 				entries.add(this.generateCustomerDebitEntry(invoice));
 
 				// Generates a credit entry for each product account.
-				entries.addAll(this
-						.generateProductAccountCreditEntries(invoice));
+				entries.addAll(this.generateProductAccountCreditEntries(invoice));
 
 				// Generate a credit entry for each TVA rate.
 				entries.addAll(this.generateTaxAcountCreditEntries(invoice));
@@ -197,48 +197,40 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 		Page<CustomerCredit> customerCreditPage = null;
 		pageRequest = new PageRequest(0, 100, Direction.ASC, "completeDate");
 		do {
-			customerCreditPage = this.customerCreditService
-					.findByCompleteDateBetweenAndStatus(startDate, endDate,
-							CustomerCredit.Status.COMPLETED, pageRequest);
+			customerCreditPage = this.customerCreditService.findByCompleteDateBetweenAndStatus(startDate, endDate,
+					CustomerCredit.Status.COMPLETED, pageRequest);
 
-			for (CustomerCredit customerCredit : customerCreditPage
-					.getContent()) {
+			for (CustomerCredit customerCredit : customerCreditPage.getContent()) {
 				// Generates a credit entry for the customer.
 				entries.add(this.generateCustomerCreditEntry(customerCredit));
 
 				// Generates a debit entry for each product account.
-				entries.addAll(this
-						.generateProductAccountDebitEntries(customerCredit));
+				entries.addAll(this.generateProductAccountDebitEntries(customerCredit));
 
 				// Generate a debit entry for each TVA rate.
 				entries.addAll(generateTaxAccountDebitEntries(customerCredit));
 			}
 
 			pageRequest = pageRequest.next();
-		} while (customerCreditPage != null
-				&& customerCreditPage.getContent().size() != 0);
+		} while (customerCreditPage != null && customerCreditPage.getContent().size() != 0);
 
 		Collections.sort(entries, this.entryComparator);
 
 		return entries;
 	}
 
-	private List<Entry> generateTaxAccountDebitEntries(
-			CustomerCredit customerCredit) {
+	private List<Entry> generateTaxAccountDebitEntries(CustomerCredit customerCredit) {
 		List<Entry> entries = new ArrayList<Entry>();
-		for (InvoiceTaxAmount invoiceTaxAmount : customerCredit
-				.getTaxesAmounts().values()) {
+		for (InvoiceTaxAmount invoiceTaxAmount : customerCredit.getTaxesAmounts().values()) {
 			decimalFormat.format(invoiceTaxAmount.getTaxRate()).substring(0, 2);
 
-			entries.add(new Entry(customerCredit.getCompleteDate(), "rt",
-					TAX_ACCOUNT_PREFIX
-							+ decimalFormat
-									.format(invoiceTaxAmount.getTaxRate())
-									.replace(".", "").substring(0, 2), "F"
-							+ customerCredit.getInvoice().getNumber(),
-					StringUtils.stripAccents("RETOUR "
-							+ this.getCustomerName(customerCredit, 14)),
-					invoiceTaxAmount.getTaxAmount(), 0d, "E"));
+			entries.add(
+					new Entry(customerCredit.getCompleteDate(), "rt",
+							TAX_ACCOUNT_PREFIX + decimalFormat.format(invoiceTaxAmount.getTaxRate()).replace(".", "")
+									.substring(0, 2),
+							"F" + customerCredit.getInvoice().getNumber(),
+							StringUtils.stripAccents("RETOUR " + this.getCustomerName(customerCredit, 14)),
+							invoiceTaxAmount.getTaxAmount(), 0d, "E"));
 		}
 
 		return entries;
@@ -247,66 +239,46 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 	private List<Entry> generateTaxAcountCreditEntries(Invoice invoice) {
 		List<Entry> entries = new ArrayList<Entry>();
 
-		for (InvoiceTaxAmount invoiceTaxAmount : invoice.getTaxesAmounts()
-				.values()) {
+		for (InvoiceTaxAmount invoiceTaxAmount : invoice.getTaxesAmounts().values()) {
 			decimalFormat.format(invoiceTaxAmount.getTaxRate()).substring(0, 2);
 
 			entries.add(new Entry(invoice.getPaidDate(), "vt",
 					TAX_ACCOUNT_PREFIX
-							+ decimalFormat
-									.format(invoiceTaxAmount.getTaxRate())
-									.replace(".", "").substring(0, 2), "F"
-							+ invoice.getNumber(), StringUtils
-							.stripAccents("VENTE "
-									+ this.getCustomerName(invoice, 16)), 0d,
-					invoiceTaxAmount.getTaxAmount(), "E"));
+							+ decimalFormat.format(invoiceTaxAmount.getTaxRate()).replace(".", "").substring(0, 2),
+					"F" + invoice.getNumber(), StringUtils.stripAccents("VENTE " + this.getCustomerName(invoice, 16)),
+					0d, invoiceTaxAmount.getTaxAmount(), "E"));
 		}
 
 		return entries;
 	}
 
 	@Override
-	public List<Entry> generateTreasuryJournalEntries(Date startDate,
-			Date endDate) {
+	public List<Entry> generateTreasuryJournalEntries(Date startDate, Date endDate) {
 		Page<Invoice> invoicePage = null;
 		List<Entry> entries = new ArrayList<Entry>();
-		Pageable pageRequest = new PageRequest(0, 100, Direction.ASC,
-				"paidDate");
+		Pageable pageRequest = new PageRequest(0, 100, Direction.ASC, "paidDate");
 
 		do {
-			invoicePage = this.invoiceService.findByPaidDateBetweenAndStatus(
-					startDate, endDate, new InvoiceStatus(
-							InvoiceStatus.Types.PAID.toString(), null),
-					pageRequest);
+			invoicePage = this.invoiceService.findByPaidDateBetweenAndStatus(startDate, endDate,
+					new InvoiceStatus(InvoiceStatus.Types.PAID.toString(), null), pageRequest);
 
 			// CHEQUE, ESPECE, CARTE
 			for (Invoice invoice : invoicePage.getContent()) {
 				for (Payment payment : invoice.getPayments()) {
-					if (!payment.getPaymentMethod().getType()
-							.equals(PaymentMethod.Types.CREDIT.name())) {
+					if (!payment.getPaymentMethod().getType().equals(PaymentMethod.Types.CREDIT.name())) {
 						// Generates a debit entry for the sales account.
-						entries.add(new Entry(
-								invoice.getPaidDate(),
-								"op",
-								SALES_ACCOUNT_PREFIX
-										+ payment.getPaymentMethod()
-												.getAccountingCode(),
-								"F" + invoice.getNumber(),
-								"REGLEMENT "
-										+ this.getCustomerName(invoice, 14),
-								payment.getPaymentMethod().getType()
-										.equals(PaymentMethod.Types.CASH) ? payment
-										.getAmount()
-										- invoice.getAmountReturned() : payment
-										.getAmount(), 0d, "E"));
+						entries.add(new Entry(invoice.getPaidDate(), "op",
+								SALES_ACCOUNT_PREFIX + payment.getPaymentMethod().getAccountingCode(),
+								"F" + invoice.getNumber(), "REGLEMENT " + this.getCustomerName(invoice, 14),
+								payment.getPaymentMethod().getType().equals(PaymentMethod.Types.CASH)
+										? payment.getAmount() - invoice.getAmountReturned() : payment.getAmount(),
+								0d, "E"));
 
 						// Generates a credit entry for the customer account.
-						entries.add(new Entry(invoice.getPaidDate(), "op", this
-								.getCustomerAccount(invoice), "F"
-								+ invoice.getNumber(), StringUtils
-								.stripAccents("REGLEMENT "
-										+ this.getCustomerName(invoice, 16)),
-								0d, payment.getAmount(), "E"));
+						entries.add(new Entry(invoice.getPaidDate(), "op", this.getCustomerAccount(invoice),
+								"F" + invoice.getNumber(),
+								StringUtils.stripAccents("REGLEMENT " + this.getCustomerName(invoice, 16)), 0d,
+								payment.getAmount(), "E"));
 					}
 				}
 			}
@@ -318,57 +290,47 @@ public class EntryServiceImpl implements EntryService, InitializingBean {
 		pageRequest = new PageRequest(0, 100, Direction.ASC, "completeDate");
 
 		do {
-			customerCreditPage = this.customerCreditService
-					.findByCompleteDateBetweenAndStatus(startDate, endDate,
-							CustomerCredit.Status.COMPLETED, pageRequest);
+			customerCreditPage = this.customerCreditService.findByCompleteDateBetweenAndStatus(startDate, endDate,
+					CustomerCredit.Status.COMPLETED, pageRequest);
 
 			// CHEQUE, ESPECE, CARTE
-			for (CustomerCredit customerCredit : customerCreditPage
-					.getContent()) {
-				if (!customerCredit.getPaymentMethod().getType()
-						.equals(PaymentMethod.Types.CREDIT.name())) {
+			for (CustomerCredit customerCredit : customerCreditPage.getContent()) {
+				if (!customerCredit.getPaymentMethod().getType().equals(PaymentMethod.Types.CREDIT.name())) {
 					// Generates a credit entry for the sales account.
-					entries.add(new Entry(
-							customerCredit.getCompleteDate(),
-							"op",
-							SALES_ACCOUNT_PREFIX
-									+ customerCredit.getPaymentMethod()
-											.getAccountingCode(),
+					entries.add(new Entry(customerCredit.getCompleteDate(), "op",
+							SALES_ACCOUNT_PREFIX + customerCredit.getPaymentMethod().getAccountingCode(),
 							"F" + customerCredit.getInvoice().getNumber(),
-							StringUtils.stripAccents("REMB."
-									+ this.getCustomerName(customerCredit, 16)),
-							0d, customerCredit.getTotalAmount(), "E"));
+							StringUtils.stripAccents("REMB." + this.getCustomerName(customerCredit, 16)), 0d,
+							customerCredit.getTotalAmount(), "E"));
 
 					// Generates a debit entry for the customer account.
-					entries.add(new Entry(
-							customerCredit.getCompleteDate(),
-							"op",
-							this.getCustomerAccount(customerCredit),
-							"F" + customerCredit.getInvoice().getNumber(),
-							StringUtils.stripAccents("REMB. "
-									+ this.getCustomerName(customerCredit, 16)),
+					entries.add(new Entry(customerCredit.getCompleteDate(), "op",
+							this.getCustomerAccount(customerCredit), "F" + customerCredit.getInvoice().getNumber(),
+							StringUtils.stripAccents("REMB. " + this.getCustomerName(customerCredit, 16)),
 							customerCredit.getTotalAmount(), 0d, "E"));
 				}
 			}
 
 			pageRequest = pageRequest.next();
-		} while (customerCreditPage != null
-				&& customerCreditPage.getContent().size() != 0);
+		} while (customerCreditPage != null && customerCreditPage.getContent().size() != 0);
 
 		Collections.sort(entries, this.entryComparator);
 
 		return entries;
 	}
 
-	private String getCustomerAccount(Invoice invoice) {
+	private String getCustomerAccount(Customer customer) {
 		String customerAccount = CUSTOMER_ACCOUNT_PREFIX + "9999";
 
-		if (invoice.getCustomer() != null) {
-			customerAccount = CUSTOMER_ACCOUNT_PREFIX
-					+ String.format("%04d", invoice.getCustomer().getId());
+		if (customer != null) {
+			customerAccount = CUSTOMER_ACCOUNT_PREFIX + String.format("%04d", customer.getId());
 		}
 
 		return customerAccount;
+	}
+
+	private String getCustomerAccount(Invoice invoice) {
+		return getCustomerAccount(invoice.getCustomer());
 	}
 
 	private String getCustomerAccount(CustomerCredit customerCredit) {

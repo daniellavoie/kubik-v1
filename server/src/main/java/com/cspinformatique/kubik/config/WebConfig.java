@@ -15,15 +15,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.cspinformatique.kubik.domain.accounting.converter.AccountsMessageConverter;
 import com.cspinformatique.kubik.domain.accounting.converter.EntryMessageConverter;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 	@Override
-	public void configureMessageConverters(
-			List<HttpMessageConverter<?>> converters) {
+	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+		AccountsMessageConverter accountsMessageConverter = new AccountsMessageConverter();
 		EntryMessageConverter entryMessageConverter = new EntryMessageConverter();
 
+		converters.add(accountsMessageConverter);
 		converters.add(entryMessageConverter);
 	}
 
@@ -31,28 +33,24 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	public EmbeddedServletContainerCustomizer servletContainerCustomizer() {
 		return new EmbeddedServletContainerCustomizer() {
 			@Override
-			public void customize(
-					ConfigurableEmbeddedServletContainer servletContainer) {
+			public void customize(ConfigurableEmbeddedServletContainer servletContainer) {
 				MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
 				mappings.add("html", "text/html;charset=utf-8");
 				servletContainer.setMimeMappings(mappings);
 
 				((TomcatEmbeddedServletContainerFactory) servletContainer)
 						.addConnectorCustomizers(new TomcatConnectorCustomizer() {
-							@Override
-							public void customize(Connector connector) {
-								AbstractHttp11Protocol<?> httpProtocol = (AbstractHttp11Protocol<?>) connector
-										.getProtocolHandler();
-								httpProtocol.setCompression("on");
-								httpProtocol.setCompressionMinSize(256);
-								String mimeTypes = httpProtocol
-										.getCompressableMimeTypes();
-								String mimeTypesWithJson = mimeTypes + ","
-										+ MediaType.APPLICATION_JSON_VALUE;
-								httpProtocol
-										.setCompressableMimeTypes(mimeTypesWithJson);
-							}
-						});
+					@Override
+					public void customize(Connector connector) {
+						AbstractHttp11Protocol<?> httpProtocol = (AbstractHttp11Protocol<?>) connector
+								.getProtocolHandler();
+						httpProtocol.setCompression("on");
+						httpProtocol.setCompressionMinSize(256);
+						String mimeTypes = httpProtocol.getCompressableMimeTypes();
+						String mimeTypesWithJson = mimeTypes + "," + MediaType.APPLICATION_JSON_VALUE;
+						httpProtocol.setCompressableMimeTypes(mimeTypesWithJson);
+					}
+				});
 			}
 		};
 	}

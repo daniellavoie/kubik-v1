@@ -21,36 +21,39 @@
 			
 			<div>
 				<div class="row">
-					<div class="col-sm-3 col-sm-offset-3">
-						<h4>Début</h4>
-						<div><input class="date form-control" ng-model="export.startDate" placeholder="dd/MM/yyyy" type="text"></div>
-					</div>
-					<div class="col-sm-3">
-						<h4>Fin</h4>
-						<div><input class="date form-control" ng-model="export.endDate" placeholder="dd/MM/yyyy" type="text"></div>
-					</div>
-				</div>
-				
-				<div class="row">
 					<h4>Type d'export</h4>
 					<div class="btn-group" role="group">
-						<button type="button" class="btn btn-default" ng-click="changeExportType('sales')">Ventes</button>
-						<button type="button" class="btn btn-default" ng-click="changeExportType('treasury')">Trésorerie</button>
+						<button type="button" class="btn btn-default" ng-class="{active: export.type == 'accounts'}" ng-click="changeExportType('accounts')">Comptes</button>
+						<button type="button" class="btn btn-default" ng-class="{active: export.type == 'sales'}" ng-click="changeExportType('sales')">Ventes</button>
+						<button type="button" class="btn btn-default" ng-class="{active: export.type == 'treasury'}" ng-click="changeExportType('treasury')">Trésorerie</button>
 					</div>
 				</div>
 				
-				<div class="row">
-					<h4 class="col-sm-2 col-sm-offset-5">Séparateur CSV :</h4>
-				</div>
-				
-				<div class="row text-center">
-					<div class="col-sm-2 col-sm-offset-5">
-						<input class="separator form-control" type="text" size="1" ng-model="export.separator"/>
+				<div ng-if="export.type != null">
+					<div class="row" ng-if="export.type != 'accounts'">
+						<div class="col-sm-3 col-sm-offset-3">
+							<h4>Début</h4>
+							<div><input class="date form-control" ng-model="export.startDate" placeholder="dd/MM/yyyy" type="text"></div>
+						</div>
+						<div class="col-sm-3">
+							<h4>Fin</h4>
+							<div><input class="date form-control" ng-model="export.endDate" placeholder="dd/MM/yyyy" type="text"></div>
+						</div>
 					</div>
-				</div>
-	
-				<div class="row">
-					<button ng-click="executeExport()" class="btn btn-primary col-sm-2 col-sm-offset-5">Exporter</button>
+					
+					<div class="row">
+						<h4 class="col-sm-2 col-sm-offset-5">Séparateur CSV :</h4>
+					</div>
+					
+					<div class="row text-center">
+						<div class="col-sm-2 col-sm-offset-5">
+							<input class="separator form-control" type="text" size="1" ng-model="export.separator"/>
+						</div>
+					</div>
+		
+					<div class="row">
+						<button ng-click="executeExport()" class="btn btn-primary col-sm-2 col-sm-offset-5">Exporter</button>
+					</div>
 				</div>
 			</div>
 			

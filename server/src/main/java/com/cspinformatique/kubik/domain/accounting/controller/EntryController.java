@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cspinformatique.kubik.domain.accounting.model.AccountsExports;
 import com.cspinformatique.kubik.domain.accounting.model.EntriesExport;
 import com.cspinformatique.kubik.domain.accounting.service.EntryService;
 
@@ -23,25 +24,24 @@ public class EntryController {
 		return "accounting/export";
 	}
 
+	@RequestMapping(value = "/accounts", produces = "text/csv; charset=utf-8")
+	public @ResponseBody AccountsExports exportAccountsEntries(@RequestParam String separator) {
+		return new AccountsExports(entryService.generateAccounts(), "COMPTES", separator);
+	}
+
 	@RequestMapping(value = "/sales", produces = "text/csv; charset=utf-8")
 	public @ResponseBody EntriesExport exportSalesEntries(
 			@RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date startDate,
-			@RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date endDate,
-			@RequestParam String separator) {
-		return new EntriesExport(startDate, endDate,
-				entryService.generateSaleJournalEntries(startDate, endDate),
+			@RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date endDate, @RequestParam String separator) {
+		return new EntriesExport(startDate, endDate, entryService.generateSaleJournalEntries(startDate, endDate),
 				"VENTES", separator);
 	}
 
 	@RequestMapping(value = "/treasury", produces = "text/csv; charset=utf-8")
 	public @ResponseBody EntriesExport exportTreasuryEntries(
 			@RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date startDate,
-			@RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date endDate,
-			@RequestParam String separator) {
-		return new EntriesExport(
-				startDate,
-				endDate,
-				entryService.generateTreasuryJournalEntries(startDate, endDate),
+			@RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date endDate, @RequestParam String separator) {
+		return new EntriesExport(startDate, endDate, entryService.generateTreasuryJournalEntries(startDate, endDate),
 				"TRESORERIE", separator);
 	}
 }
