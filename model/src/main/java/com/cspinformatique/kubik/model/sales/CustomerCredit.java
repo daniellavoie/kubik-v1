@@ -21,27 +21,25 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class CustomerCredit {
 	public enum Status {
-		OPEN, COMPLETED, CANCELED
+		CANCELED, COMPLETED, OPEN
 	};
 
-	private Integer id;
-	private String number;
-	private Invoice invoice;
-	private Customer customer;
-	private List<CustomerCreditDetail> details;
-	private Status status;
-	private Date date;
-	private Date cancelDate;
+	private Date cancelDate;	
 	private Date completeDate;
-	
+	private Customer customer;
+	private Date date;
+	private List<CustomerCreditDetail> details;
+	private Integer id;
+	private Invoice invoice;
+	private String number;
 	private PaymentMethod paymentMethod;
-
 	private Double rebateAmount;
+	private Status status;
 	private Map<Double, InvoiceTaxAmount> taxesAmounts;
-	private Double totalTaxLessAmount;
-	private Double totalTaxAmount;
 	private Double totalAmount;
 	private Double totalAmountRebateOut;
+	private Double totalTaxAmount;
+	private Double totalTaxLessAmount;
 
 	public CustomerCredit() {
 
@@ -71,31 +69,12 @@ public class CustomerCredit {
 		this.totalAmountRebateOut = totalAmountRebateOut;
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public Integer getId() {
-		return id;
+	public Date getCancelDate() {
+		return cancelDate;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getNumber() {
-		return number;
-	}
-
-	public void setNumber(String number) {
-		this.number = number;
-	}
-
-	@ManyToOne
-	public Invoice getInvoice() {
-		return invoice;
-	}
-
-	public void setInvoice(Invoice invoice) {
-		this.invoice = invoice;
+	public Date getCompleteDate() {
+		return completeDate;
 	}
 
 	@ManyToOne
@@ -103,8 +82,8 @@ public class CustomerCredit {
 		return customer;
 	}
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public Date getDate() {
+		return date;
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -112,41 +91,19 @@ public class CustomerCredit {
 		return details;
 	}
 
-	public void setDetails(List<CustomerCreditDetail> details) {
-		this.details = details;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	public Integer getId() {
+		return id;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public Status getStatus() {
-		return status;
+	@ManyToOne
+	public Invoice getInvoice() {
+		return invoice;
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public Date getCancelDate() {
-		return cancelDate;
-	}
-
-	public void setCancelDate(Date cancelDate) {
-		this.cancelDate = cancelDate;
-	}
-
-	public Date getCompleteDate() {
-		return completeDate;
-	}
-
-	public void setCompleteDate(Date completeDate) {
-		this.completeDate = completeDate;
+	public String getNumber() {
+		return number;
 	}
 
 	@ManyToOne
@@ -154,16 +111,13 @@ public class CustomerCredit {
 		return paymentMethod;
 	}
 
-	public void setPaymentMethod(PaymentMethod paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
-
 	public Double getRebateAmount() {
 		return rebateAmount;
 	}
 
-	public void setRebateAmount(Double rebateAmount) {
-		this.rebateAmount = rebateAmount;
+	@Enumerated(EnumType.STRING)
+	public Status getStatus() {
+		return status;
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -171,39 +125,83 @@ public class CustomerCredit {
 		return taxesAmounts;
 	}
 
-	public void setTaxesAmounts(Map<Double, InvoiceTaxAmount> taxesAmounts) {
-		this.taxesAmounts = taxesAmounts;
-	}
-
-	public Double getTotalTaxLessAmount() {
-		return totalTaxLessAmount;
-	}
-
-	public void setTotalTaxLessAmount(Double totalTaxLessAmount) {
-		this.totalTaxLessAmount = totalTaxLessAmount;
-	}
-
-	public Double getTotalTaxAmount() {
-		return totalTaxAmount;
-	}
-
-	public void setTotalTaxAmount(Double totalTaxAmount) {
-		this.totalTaxAmount = totalTaxAmount;
-	}
-
 	public Double getTotalAmount() {
 		return totalAmount;
-	}
-
-	public void setTotalAmount(Double totalAmount) {
-		this.totalAmount = totalAmount;
 	}
 
 	public Double getTotalAmountRebateOut() {
 		return totalAmountRebateOut;
 	}
 
+	public Double getTotalTaxAmount() {
+		return totalTaxAmount;
+	}
+
+	public Double getTotalTaxLessAmount() {
+		return totalTaxLessAmount;
+	}
+
+	public void setCancelDate(Date cancelDate) {
+		this.cancelDate = cancelDate;
+	}
+
+	public void setCompleteDate(Date completeDate) {
+		this.completeDate = completeDate;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setDetails(List<CustomerCreditDetail> details) {
+		this.details = details;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public void setInvoice(Invoice invoice) {
+		this.invoice = invoice;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
+	public void setRebateAmount(Double rebateAmount) {
+		this.rebateAmount = rebateAmount;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public void setTaxesAmounts(Map<Double, InvoiceTaxAmount> taxesAmounts) {
+		this.taxesAmounts = taxesAmounts;
+	}
+
+	public void setTotalAmount(Double totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+
 	public void setTotalAmountRebateOut(Double totalAmountRebateOut) {
 		this.totalAmountRebateOut = totalAmountRebateOut;
+	}
+
+	public void setTotalTaxAmount(Double totalTaxAmount) {
+		this.totalTaxAmount = totalTaxAmount;
+	}
+
+	public void setTotalTaxLessAmount(Double totalTaxLessAmount) {
+		this.totalTaxLessAmount = totalTaxLessAmount;
 	}
 }

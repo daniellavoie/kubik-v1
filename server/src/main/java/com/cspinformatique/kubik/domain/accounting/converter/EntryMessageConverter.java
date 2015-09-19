@@ -3,7 +3,6 @@ package com.cspinformatique.kubik.domain.accounting.converter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
@@ -24,14 +23,12 @@ public class EntryMessageConverter extends
 
 	private SimpleDateFormat exportDateFormat;
 	private SimpleDateFormat fileDateFormat;
-	private DecimalFormat decimalFormat;
 
 	public EntryMessageConverter() {
 		super(MEDIA_TYPE);
 
 		exportDateFormat = new SimpleDateFormat("d/M/yyyy");
 		fileDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-		decimalFormat = new DecimalFormat("0.00");
 	}
 
 	@Override
@@ -74,9 +71,9 @@ public class EntryMessageConverter extends
 					+ separator
 					+ entry.getDescription()
 					+ separator
-					+ decimalFormat.format(entry.getDebit())
+					+ entriesExport.getDecimalFormat().format(entry.getDebit())
 					+ separator
-					+ decimalFormat.format(entry.getCredit())
+					+ entriesExport.getDecimalFormat().format(entry.getCredit())
 					+ separator
 					+ entry.getCurrency() + "\n");
 		}

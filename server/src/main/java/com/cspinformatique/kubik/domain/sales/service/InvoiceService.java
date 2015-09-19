@@ -12,6 +12,8 @@ import com.cspinformatique.kubik.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.model.sales.InvoiceStatus;
 
 public interface InvoiceService {
+	void calculateInvoiceTaxes(Invoice invoice);
+	
 	InvoiceDetail findDetailByInvoiceIdAndProductEan13(int invoiceId, String ean13);
 	
 	Iterable<Invoice> findInvoiceByCashRegisterSessionAndInDraft(CashRegisterSession session);
@@ -40,6 +42,8 @@ public interface InvoiceService {
 	double findProductQuantitySold(int productId);
 	
 	void initializeInvoiceNumbers();
+	
+	void recalculateInvoiceTaxes();
 	
 	Invoice save(Invoice invoice);
 }

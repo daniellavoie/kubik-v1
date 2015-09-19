@@ -40,7 +40,7 @@ app.controller("KubikAccountingExportsController", function($scope, $http, $time
 		location.href = "entry/" + $scope.export.type + "?" + $.param($scope.export);
 	};
 	
-	$scope.export = {separator : ","};
+	$scope.export = {separator : ";", decimalSeparator : ","};
 
 	$(".date").datepicker({format : 'dd/mm/yyyy'});
 });

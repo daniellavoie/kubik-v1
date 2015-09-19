@@ -314,10 +314,10 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 			if(customerCredit.getStatus().equals(Status.COMPLETED) && customerCredit.getCompleteDate() == null){
 				customerCredit.setCompleteDate(new Date());
 				customerCreditCompleted = true;
-			}
-			
-			if(customerCredit.getNumber() == null){
-				customerCredit.setNumber(this.generateCustomerCreditNumber());
+				
+				if(customerCredit.getNumber() == null){
+					customerCredit.setNumber(this.generateCustomerCreditNumber());
+				}
 			}
 		}
 		

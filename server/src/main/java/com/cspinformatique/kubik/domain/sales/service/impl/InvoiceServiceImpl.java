@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -182,6 +183,52 @@ public class InvoiceServiceImpl implements InvoiceService {
 		invoice.setAmountPaid(amountPaid);
 		invoice.setAmountReturned(invoice.getAmountPaid() - invoice.getTotalAmount());
 	}
+	
+	@Override
+	public void calculateInvoiceTaxes(Invoice invoice){
+		Map<Double, Double> taxableAmounts = new HashMap<>();
+		
+		for(InvoiceDetail detail : invoice.getDetails()){
+			Double tvaRate = detail.getProduct().getTvaRate1();
+			Double taxableAmount = taxableAmounts.get(tvaRate);
+			
+			if(taxableAmount == null) taxableAmount = 0d;
+			
+			taxableAmount += detail.getTotalAmount();
+			
+			taxableAmounts.put(tvaRate, taxableAmount);
+			
+			InvoiceTaxAmount detailTaxAmount = detail.getTaxesAmounts().get(tvaRate);
+			if(detailTaxAmount == null){
+				detailTaxAmount = new InvoiceTaxAmount(null, tvaRate, 0d);
+				detail.getTaxesAmounts().put(tvaRate, detailTaxAmount);
+			}
+			
+			double taxAmount = detail.getTotalAmount() * (tvaRate / 100);
+			detailTaxAmount.setTaxAmount(taxAmount);
+			detail.setTotalTaxLessAmount(detail.getTotalAmount() - taxAmount);
+		}
+		
+		Double totalTaxAmount = 0d;
+		for(Entry<Double, Double> taxableAmountEntry : taxableAmounts.entrySet()){
+			Double tvaRate = taxableAmountEntry.getKey();
+			Double taxableAmount = taxableAmountEntry.getValue();
+			
+			InvoiceTaxAmount invoiceTaxAmount = invoice.getTaxesAmounts().get(tvaRate);
+
+			if (invoiceTaxAmount == null) {
+				invoiceTaxAmount = new InvoiceTaxAmount(null, tvaRate, 0d);
+				invoice.getTaxesAmounts().put(tvaRate, invoiceTaxAmount);
+			}
+
+			double taxAmount = taxableAmount * (tvaRate / 100);
+			invoiceTaxAmount.setTaxAmount(Precision.round(taxAmount, 2));
+			totalTaxAmount += taxAmount;
+		}
+		
+		invoice.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));
+		invoice.setTotalTaxLessAmount(invoice.getTotalAmount() - invoice.getTotalTaxAmount());
+	}
 
 	@Override
 	public InvoiceDetail findDetailByInvoiceIdAndProductEan13(int invoiceId, String ean13) {
@@ -328,6 +375,22 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 			pageRequest = pageRequest.next();
 		} while (page != null && page.getContent().size() != 0);
+	}
+
+	public void recalculateInvoiceTaxes() {
+		Page<Invoice> invoicePage;
+		Pageable pageRequest = new PageRequest(0, 50);
+		do {
+			invoicePage = this.findAll(pageRequest);
+			
+			for(Invoice invoice : invoicePage.getContent()){
+				this.calculateInvoiceTaxes(invoice);
+			}
+			
+			pageRequest = pageRequest.next();
+			
+			this.invoiceRepository.save(invoicePage.getContent());
+		} while(invoicePage.hasNext());
 	}
 
 	private void updateInventory(Invoice invoice) {
