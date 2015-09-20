@@ -60,12 +60,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService, Initializ
 	public void afterPropertiesSet() throws Exception {
 		for (long purchaseOrderId : this.purchaseOrderRepository.findIdsWithDilicomOrders()) {
 			PurchaseOrder purchaseOrder = this.findOne(purchaseOrderId);
-			
+
 			DilicomOrder dilicomOrder = new DilicomOrder(0, purchaseOrder, new Date(), new Date(), new Date(),
 					new Date(), DilicomOrder.Status.SHIPPED, null, null, null);
-			
+
 			purchaseOrder.setDilicomOrder(dilicomOrder);
-			
+
 			this.purchaseOrderRepository.save(purchaseOrder);
 		}
 	}
@@ -182,7 +182,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService, Initializ
 		Reception reception = new Reception(null, purchaseOrder.getSupplier(), purchaseOrder.getShippingMode(),
 				new Date(), null, DeliveryDateType.SOONEST, purchaseOrder.getMinDeliveryDate(), purchaseOrder,
 				new ArrayList<ReceptionDetail>(), Reception.Status.STANDBY, new ArrayList<ShippingPackage>(),
-				purchaseOrder.getDiscount(), purchaseOrder.getTotalAmountTaxOut(), false);
+				purchaseOrder.getDiscount(), purchaseOrder.getTotalAmountTaxOut(), false, null);
 
 		for (PurchaseOrderDetail detail : purchaseOrder.getDetails()) {
 			reception.getDetails()

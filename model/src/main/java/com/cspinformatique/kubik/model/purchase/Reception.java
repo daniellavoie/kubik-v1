@@ -42,6 +42,7 @@ public class Reception {
 	private float discount;
 	private double totalAmountTaxOut;
 	private boolean editable;
+	private Date shippedDate;
 	
 	public Reception(){
 		
@@ -52,7 +53,7 @@ public class Reception {
 			DeliveryDateType deliveryDateType, Date deliveryDate,
 			PurchaseOrder purchaseOrder, List<ReceptionDetail> details,
 			Status status, List<ShippingPackage> shippingPackages,
-			float discount, double totalAmountTaxOut, boolean editable) {
+			float discount, double totalAmountTaxOut, boolean editable, Date shippedDate) {
 		this.id = id;
 		this.supplier = supplier;
 		this.shippingMode = shippingMode;
@@ -67,6 +68,7 @@ public class Reception {
 		this.discount = discount;
 		this.totalAmountTaxOut = totalAmountTaxOut;
 		this.editable = editable;
+		this.shippedDate = shippedDate;
 	}
 
 	@Id
@@ -189,5 +191,13 @@ public class Reception {
 
 	public void setEditable(boolean editable) {
 		this.editable = editable;
+	}
+
+	public Date getShippedDate() {
+		return shippedDate;
+	}
+
+	public void setShippedDate(Date shippedDate) {
+		this.shippedDate = shippedDate;
 	}
 }

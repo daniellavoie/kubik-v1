@@ -29,8 +29,7 @@ import com.cspinformatique.kubik.model.dilicom.DilicomOrder.Status;
 
 @Service
 public class DilicomOrderServiceImpl implements DilicomOrderService {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DilicomOrderServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DilicomOrderServiceImpl.class);
 	@Autowired
 	private DilicomOrderRepository dilicomOrderRepository;
 
@@ -54,30 +53,32 @@ public class DilicomOrderServiceImpl implements DilicomOrderService {
 	public DilicomOrderServiceImpl() {
 		this.fileDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 	}
-	
+
 	@Override
-	public Page<DilicomOrder> findAll(Pageable pageable){
+	public Page<DilicomOrder> findAll(Pageable pageable) {
 		return this.dilicomOrderRepository.findAll(pageable);
 	}
 
 	@Override
 	@Transactional
 	public DilicomOrder save(DilicomOrder dilicomOrder) {
+		if (dilicomOrder.getStatus().equals(Status.SHIPPED) && dilicomOrder.getValidationDate() == null) {
+			dilicomOrder.setValidationDate(new Date());
+		}
+
 		return this.dilicomOrderRepository.save(dilicomOrder);
 	}
 
 	private void sendDilicomOrder(DilicomOrder dilicomOrder) {
 		try {
 			String filename = this.fileDateFormat.format(new Date());
-			
-			dilicomOrder.setRemoteFilename("."
-					+ filename);
 
-			dilicomOrder.setRemoteFileContent(this.dilicomOrderStringConverter
-					.convertToString(dilicomOrder.getPurchaseOrder()));
+			dilicomOrder.setRemoteFilename("." + filename);
 
-			String remoteFileName = remoteDirectory + "/"
-					+ dilicomOrder.getRemoteFilename();
+			dilicomOrder.setRemoteFileContent(
+					this.dilicomOrderStringConverter.convertToString(dilicomOrder.getPurchaseOrder()));
+
+			String remoteFileName = remoteDirectory + "/" + dilicomOrder.getRemoteFilename();
 
 			FTPClient client = new FTPClient();
 			try {
@@ -85,13 +86,12 @@ public class DilicomOrderServiceImpl implements DilicomOrderService {
 
 				client.login(ftpUsername, ftpPassword);
 
-				client.storeFile(remoteFileName, new ByteArrayInputStream(
-						dilicomOrder.getRemoteFileContent().getBytes()));
+				client.storeFile(remoteFileName,
+						new ByteArrayInputStream(dilicomOrder.getRemoteFileContent().getBytes()));
 
 				int dotIndex = remoteFileName.lastIndexOf(".");
 
-				String renamedFilename = remoteFileName.substring(0, dotIndex)
-						+ remoteFileName.substring(dotIndex + 1);
+				String renamedFilename = remoteFileName.substring(0, dotIndex) + remoteFileName.substring(dotIndex + 1);
 
 				client.rename(remoteFileName, renamedFilename);
 
@@ -107,19 +107,16 @@ public class DilicomOrderServiceImpl implements DilicomOrderService {
 				do {
 					processed = true;
 					for (FTPFile ftpFile : client.listFiles(remoteDirectory)) {
-						if ((remoteDirectory + "/" + ftpFile.getName()).equals(
-								dilicomOrder.getRemoteFilename())) {
+						if ((remoteDirectory + "/" + ftpFile.getName()).equals(dilicomOrder.getRemoteFilename())) {
 							processed = false;
 							break;
 						}
 					}
 
 					if (!processed && new DateTime().isAfter(timeoutTime)) {
-						throw new DilicomOrderProcessTimeoutException(
-								"Order file "
-										+ dilicomOrder.getRemoteFilename()
-										+ " has not been process by Dilicom after 5 minutes");
-					} else if(!processed) {
+						throw new DilicomOrderProcessTimeoutException("Order file " + dilicomOrder.getRemoteFilename()
+								+ " has not been process by Dilicom after 5 minutes");
+					} else if (!processed) {
 						Thread.sleep(1000);
 					}
 
@@ -139,13 +136,10 @@ public class DilicomOrderServiceImpl implements DilicomOrderService {
 				}
 			}
 		} catch (RuntimeException runtimeEx) {
-			LOGGER.error(
-					"Error while processing dilicom order "
-							+ dilicomOrder.getId(), runtimeEx);
+			LOGGER.error("Error while processing dilicom order " + dilicomOrder.getId(), runtimeEx);
 
 			dilicomOrder.setStatus(Status.ERROR);
-			dilicomOrder.setErrorMessage(ExceptionUtils
-					.getStackTrace(runtimeEx));
+			dilicomOrder.setErrorMessage(ExceptionUtils.getStackTrace(runtimeEx));
 
 			this.save(dilicomOrder);
 		}
@@ -153,8 +147,7 @@ public class DilicomOrderServiceImpl implements DilicomOrderService {
 
 	@Override
 	public void sendPendingDilicomOrders() {
-		for (DilicomOrder dilicomOrder : this.dilicomOrderRepository
-				.findByStatus(Status.PENDING)) {
+		for (DilicomOrder dilicomOrder : this.dilicomOrderRepository.findByStatus(Status.PENDING)) {
 			this.sendDilicomOrder(dilicomOrder);
 		}
 	}

@@ -44,8 +44,7 @@ import com.cspinformatique.kubik.model.purchase.Reception.Status;
 
 @Component
 public class FetchReceptionsTask implements InitializingBean {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(FetchReceptionsTask.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FetchReceptionsTask.class);
 
 	@Autowired
 	private ProductService productService;
@@ -97,11 +96,9 @@ public class FetchReceptionsTask implements InitializingBean {
 		if (!receptionsDirectory.exists())
 			receptionsDirectory.mkdirs();
 
-		ftpInboundFileSynchronizer = new FtpInboundFileSynchronizer(
-				sessionFactory);
+		ftpInboundFileSynchronizer = new FtpInboundFileSynchronizer(sessionFactory);
 
-		ftpInboundFileSynchronizer
-				.setFilter(new FtpSimplePatternFileListFilter("EXP*"));
+		ftpInboundFileSynchronizer.setFilter(new FtpSimplePatternFileListFilter("EXP*"));
 
 		ftpInboundFileSynchronizer.setRemoteDirectory(remoteDirectory);
 		ftpInboundFileSynchronizer.setDeleteRemoteFiles(cleanFiles);
@@ -111,13 +108,12 @@ public class FetchReceptionsTask implements InitializingBean {
 	@Scheduled(fixedDelay = 1000 * 60 * 60)
 	public void fetchDilicomFiles() {
 		// Fetch files from remote FTP server.
-		ftpInboundFileSynchronizer
-				.synchronizeToLocalDirectory(receptionsDirectory);
+		ftpInboundFileSynchronizer.synchronizeToLocalDirectory(receptionsDirectory);
 
 		// Process files in local directory.
 		for (File file : receptionsDirectory.listFiles()) {
 			this.processFile(file);
-			
+
 			this.archiveFile(file);
 		}
 
@@ -129,8 +125,7 @@ public class FetchReceptionsTask implements InitializingBean {
 
 			FileUtils.moveFileToDirectory(file, archiveDirectory, true);
 		} catch (IOException ioEx) {
-			LOGGER.error("Error while arhiving file " + file.getAbsolutePath()
-					+ ".", ioEx);
+			LOGGER.error("Error while arhiving file " + file.getAbsolutePath() + ".", ioEx);
 		}
 	}
 
@@ -158,18 +153,15 @@ public class FetchReceptionsTask implements InitializingBean {
 				LOGGER.trace("Processing line : " + line);
 
 				if (line.startsWith("A")) {
-					supplier = this.supplierService
-							.generateSupplierIfNotFound(line.substring(14, 27));
+					supplier = this.supplierService.generateSupplierIfNotFound(line.substring(14, 27));
 
 					creationDate = dateFormat.parse(line.substring(35, 41));
 
-					deliveryDateType = DeliveryDateType.parseByType(line
-							.substring(54, 57));
+					deliveryDateType = DeliveryDateType.parseByType(line.substring(54, 57));
 
 					deliveryDate = dateFormat.parse(line.substring(57, 63));
 				} else if (!skipReception && line.startsWith("K")) {
-					reception.getShippingPackages().add(
-							new ShippingPackage(null, line.substring(4, 22)));
+					reception.getShippingPackages().add(new ShippingPackage(null, line.substring(4, 22)));
 				} else if (line.startsWith("R")) {
 					// New reception encountered.
 					skipReception = false;
@@ -180,18 +172,22 @@ public class FetchReceptionsTask implements InitializingBean {
 					}
 
 					try {
-						reception = this.loadAndUpdateReception(line, supplier,
-								creationDate, deliveryDate, deliveryDateType);
+						String shippingType = line.subSequence(1, 4).toString();
+
+						if ("023".equals(shippingType)) {
+							reception = this.loadAndUpdateReception(line, supplier, creationDate, deliveryDate,
+									deliveryDateType);
+						} else {
+							LOGGER.info("Skipping reception. Shipping type defined to " + shippingType);
+							skipReception = true;
+						}
 					} catch (Exception ex) {
 						if (ex instanceof PurchaseOrderNotFoundException) {
-							LOGGER.info("Reception "
-									+ file.getName()
+							LOGGER.info("Reception " + file.getName()
 									+ " skipped since no purchase order were found for id "
-									+ ((PurchaseOrderNotFoundException) ex)
-											.getPurchaseOrderId() + ".");
+									+ ((PurchaseOrderNotFoundException) ex).getPurchaseOrderId() + ".");
 						} else if (ex instanceof ReceptionAlreadyReceivedException) {
-							LOGGER.info(((ReceptionAlreadyReceivedException) ex)
-									.getReceptionId()
+							LOGGER.info(((ReceptionAlreadyReceivedException) ex).getReceptionId()
 									+ " has already been received. Shipping notification will be ignored.");
 						} else {
 							LOGGER.error(ex.getMessage(), ex);
@@ -205,11 +201,10 @@ public class FetchReceptionsTask implements InitializingBean {
 				if (!skipReception && line.startsWith("L")) {
 					try {
 						this.updateReceptionDetail(line, reception);
-					} catch (InvalidReceptionDetailException invalidReceptionDetailException) {
+					} catch (Exception ex) {
 						skipReception = true;
-						LOGGER.error(
-								"Error while generating reception detail from line "
-										+ line, invalidReceptionDetailException);
+						
+						LOGGER.error("Error while generating reception detail from line " + line, ex);
 					}
 				}
 			}
@@ -226,12 +221,9 @@ public class FetchReceptionsTask implements InitializingBean {
 		}
 	}
 
-	private Reception loadAndUpdateReception(String line, Supplier supplier,
-			Date creationDate, Date deliveryDate,
-			DeliveryDateType deliveryDateType)
-			throws PurchaseOrderNotFoundException,
-			PurchaseOrderReceptionNotFoundException,
-			InvalidReceptionSupplierException {
+	private Reception loadAndUpdateReception(String line, Supplier supplier, Date creationDate, Date deliveryDate,
+			DeliveryDateType deliveryDateType) throws PurchaseOrderNotFoundException,
+					PurchaseOrderReceptionNotFoundException, InvalidReceptionSupplierException {
 		// Loads the purchase order linked with the reception.
 
 		String purchaseOrderIdString = line.substring(17, 25);
@@ -242,8 +234,7 @@ public class FetchReceptionsTask implements InitializingBean {
 			throw new PurchaseOrderNotFoundException(purchaseOrderIdString);
 		}
 
-		PurchaseOrder purchaseOrder = this.purchaseOrderService
-				.findOne(purchaseOrderId);
+		PurchaseOrder purchaseOrder = this.purchaseOrderService.findOne(purchaseOrderId);
 
 		if (purchaseOrder == null) {
 			throw new PurchaseOrderNotFoundException(purchaseOrderIdString);
@@ -260,8 +251,7 @@ public class FetchReceptionsTask implements InitializingBean {
 		}
 
 		if (!reception.getSupplier().getId().equals(supplier.getId())) {
-			throw new InvalidReceptionSupplierException(reception.getSupplier()
-					.getId(), supplier.getId());
+			throw new InvalidReceptionSupplierException(reception.getSupplier().getId(), supplier.getId());
 		}
 
 		reception.getShippingPackages().clear();
@@ -280,42 +270,35 @@ public class FetchReceptionsTask implements InitializingBean {
 	private void updateReceptionDetail(String line, Reception reception) {
 		String productEan13 = line.substring(5, 18);
 
-		Product product = this.productService.findByEan13AndSupplier(
-				productEan13, reception.getSupplier());
+		Product product = this.productService.findByEan13AndSupplier(productEan13, reception.getSupplier());
 
 		if (product == null) {
-			throw new ProductNotFoundException(productEan13, reception
-					.getSupplier().getEan13());
+			throw new ProductNotFoundException(productEan13, reception.getSupplier().getEan13());
 		}
 
 		double quantity;
 		String quantityString = line.substring(18, 27);
 
 		try {
-			quantity = quantityNumberFormat.parse(
-					quantityString.subSequence(0, 6) + "."
-							+ quantityString.substring(6)).doubleValue();
+			quantity = quantityNumberFormat.parse(quantityString.subSequence(0, 6) + "." + quantityString.substring(6))
+					.doubleValue();
 		} catch (Exception ex) {
-			throw new InvalidReceptionDetailException(
-					"Quantity could not be parsed properly from " + line, ex);
+			throw new InvalidReceptionDetailException("Quantity could not be parsed properly from " + line, ex);
 		}
 
 		float discount = 0f;
 		String discountString = line.substring(51, 56);
 		try {
-			discount = quantityNumberFormat.parse(
-					discountString.subSequence(0, 3) + "."
-							+ discountString.substring(3)).floatValue();
+			discount = quantityNumberFormat.parse(discountString.subSequence(0, 3) + "." + discountString.substring(3))
+					.floatValue();
 		} catch (Exception ex) {
-			throw new InvalidReceptionDetailException(
-					"Discount could not be parsed properly from " + line, ex);
+			throw new InvalidReceptionDetailException("Discount could not be parsed properly from " + line, ex);
 		}
 
 		ReceptionDetail detail = null;
 		for (ReceptionDetail existingDetail : reception.getDetails()) {
 			if (existingDetail.getProduct().getId() == product.getId()) {
-				existingDetail.setQuantityReceived(existingDetail
-						.getQuantityToReceive() + quantity);
+				existingDetail.setQuantityReceived(existingDetail.getQuantityReceived() + quantity);
 				existingDetail.setDiscount(discount);
 
 				detail = existingDetail;
@@ -323,8 +306,7 @@ public class FetchReceptionsTask implements InitializingBean {
 		}
 
 		if (detail == null) {
-			detail = new ReceptionDetail(null, reception, product, quantity,
-					0d, 0f, 0f, null, 0d, 0d);
+			detail = new ReceptionDetail(null, reception, product, quantity, 0d, 0f, 0f, null, 0d, 0d);
 
 			reception.getDetails().add(detail);
 		}
