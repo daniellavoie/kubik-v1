@@ -132,7 +132,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 				}
 
 				double detailTotalTaxAmount = 0d;
-				double detailTaxLessAmount = product.getPriceTaxIn() * quantity;
+				double detailTaxLessAmount = product.getPriceTaxIn() * quantity - rebateAmount;
 				for (InvoiceTaxAmount taxAmount : detail.getTaxesAmounts().values()) {
 					double amount = taxAmount.getTaxAmount();
 					double taxRate = taxAmount.getTaxRate();
