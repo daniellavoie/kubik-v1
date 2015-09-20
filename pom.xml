@@ -14,7 +14,7 @@
 	<groupId>com.cspinformatique.kubik</groupId>
 	<artifactId>kubik</artifactId>
 
-	<version>1.7.8</version>
+	<version>1.7.9</version>
 
 	<packaging>pom</packaging>
 
