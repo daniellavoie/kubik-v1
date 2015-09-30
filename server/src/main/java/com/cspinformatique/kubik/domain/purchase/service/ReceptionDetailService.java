@@ -6,8 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.cspinformatique.kubik.model.product.Product;
-import com.cspinformatique.kubik.model.purchase.ReceptionDetail;
 import com.cspinformatique.kubik.model.purchase.Reception.Status;
+import com.cspinformatique.kubik.model.purchase.ReceptionDetail;
 
 public interface ReceptionDetailService {
 	List<ReceptionDetail> findByProduct(Product product);
