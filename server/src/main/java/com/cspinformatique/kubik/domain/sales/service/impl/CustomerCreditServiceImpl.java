@@ -281,9 +281,9 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 				new PageRequest(0, 1, Direction.DESC, "completeDate"));
 
 		if (page.getContent().size() > 0 && page.getContent().get(0).getNumber() != null) {
-			return String.format("%09d", Long.valueOf(page.getContent().get(0).getNumber()) + 1);
+			return String.format("%10d", Long.valueOf(page.getContent().get(0).getNumber()) + 1);
 		} else {
-			return String.format("%09d", 1);
+			return String.format("%10d", 1);
 		}
 	}
 
