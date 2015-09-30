@@ -27,26 +27,39 @@ public class InvoiceServiceImplIT {
 	@Test
 	@Transactional
 	public void calculateInvoiceAmountsTest() {
-		Invoice invoice = invoiceService.findOne(286);
+		Invoice invoice = invoiceService.findOne(1983);
 
-		invoice.setTaxesAmounts(null);
-		invoice.setTotalAmount(0d);
+		invoice.getTaxesAmounts().clear();
 		invoice.setTotalTaxAmount(0d);
 		invoice.setTotalTaxLessAmount(0d);
+
+		invoiceService.calculateInvoiceTaxes(invoice);
 
 		BigDecimal totalTaxAmount = new BigDecimal(0d);
 		BigDecimal totalTaxLessAmount = new BigDecimal(0d);
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			totalTaxAmount = totalTaxAmount.add(new BigDecimal(detail.getTotalTaxAmount()));
-			totalTaxLessAmount = totalTaxLessAmount.add(new BigDecimal(detail.getTotalTaxAmount()));
+			totalTaxLessAmount = totalTaxLessAmount.add(new BigDecimal(detail.getTotalTaxLessAmount()));
 		}
 
-		invoiceService.calculateInvoiceTaxes(invoice);
+		Assert.assertTrue("Total amount for invoice 1983 was " + invoice.getTotalAmount() + " expected 44.45.",
+				invoice.getTotalAmount() == 44.45d);
+		Assert.assertTrue("Total tax amount for invoice 286 should equals 2.44.",
+				Precision.round(totalTaxAmount.doubleValue(), 2) == 2.44d);
+		Assert.assertTrue("Total tax less amount for invoice 286 should equals 42.01.",
+				Precision.round(totalTaxLessAmount.doubleValue(), 2) == 42.01d);
 
-		Assert.assertTrue("Total amount for invoice 286 should equals 29.", invoice.getTotalAmount() == 29d);
-		Assert.assertTrue("Total tax amount for invoice 286 should equals 1.6.",
-				Precision.round(totalTaxAmount.doubleValue(), 2) == 1.6d);
-		Assert.assertTrue("Total tax less amount for invoice 286 should equals .",
-				Precision.round(totalTaxLessAmount.doubleValue(), 2) == 1.6d);
+	}
+
+	@Test
+	@Transactional
+	public void validateInvoicesRebates() {
+		Invoice invoice = invoiceService.findOne(2948);
+
+		Assert.assertTrue(
+				"Rebate amount " + invoice.getRebateAmount() + " doesn not match " + invoice.getRebatePercent()
+						+ " % rebate for a total amount of " + invoice.getTotalAmount() + ".",
+				invoice.getRebateAmount() == Precision
+						.round((invoice.getTotalAmount() * (invoice.getRebatePercent() / 100)), 2));
 	}
 }

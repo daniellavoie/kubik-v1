@@ -14,8 +14,6 @@ import org.apache.commons.math3.util.Precision;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationContextLoader;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,16 +25,14 @@ import com.cspinformatique.kubik.domain.accounting.model.Entry;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { KubikTest.class }, loader = SpringApplicationContextLoader.class)
 public class EntryServiceImplIT {
-	private static final Logger LOGGER = LoggerFactory.getLogger(EntryServiceImplIT.class);
-
 	@Autowired
 	EntryServiceImpl entryServiceImpl;
 
 	@Test
 	@Transactional
 	public void generateSaleJournalEntriesTest() {
-		Date startDate = Date.from(LocalDate.of(2015, 02, 01).atStartOfDay(ZoneId.systemDefault()).toInstant());
-		Date endDate = Date.from(LocalDate.of(2015, 03, 01).atStartOfDay(ZoneId.systemDefault()).toInstant());
+		Date startDate = Date.from(LocalDate.of(2015, 2, 01).atStartOfDay(ZoneId.systemDefault()).toInstant());
+		Date endDate = Date.from(LocalDate.of(2015, 9, 01).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 		List<Entry> entries = entryServiceImpl.generateSaleJournalEntries(startDate, endDate);
 
@@ -67,8 +63,6 @@ public class EntryServiceImplIT {
 			double totalCredit = Precision.round(credit.doubleValue(), 2);
 			double totalDebit = Precision.round(debit.doubleValue(), 2);
 			if (totalCredit != totalDebit) {
-				LOGGER.warn("Invoice " + invoiceNumber + " does not balance. Credit : " + totalCredit + " | Debit : "
-						+ totalDebit);
 				unbalancingInvoices.add(invoiceNumber);
 			}
 		}

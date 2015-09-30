@@ -13,15 +13,17 @@ public class InvoiceTaxAmount {
 	private Integer id;
 	private Double taxRate;
 	private Double taxAmount;
+	private Double taxableAmount;
 	
 	public InvoiceTaxAmount(){
 		
 	}
 
-	public InvoiceTaxAmount(Integer id, Double taxRate, Double taxAmount) {
+	public InvoiceTaxAmount(Integer id, Double taxRate, Double taxAmount, Double taxableAmount) {
 		this.id = id;
 		this.taxRate = taxRate;
 		this.taxAmount = taxAmount;
+		this.taxableAmount = taxableAmount;
 	}
 
 	@Id
@@ -48,5 +50,13 @@ public class InvoiceTaxAmount {
 
 	public void setTaxAmount(Double taxAmount) {
 		this.taxAmount = taxAmount;
+	}
+
+	public Double getTaxableAmount() {
+		return taxableAmount;
+	}
+
+	public void setTaxableAmount(Double taxableAmount) {
+		this.taxableAmount = taxableAmount;
 	}
 }

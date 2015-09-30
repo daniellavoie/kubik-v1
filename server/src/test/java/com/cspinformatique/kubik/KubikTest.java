@@ -10,7 +10,7 @@ import org.springframework.context.annotation.FilterType;
 
 import com.cspinformatique.kubik.config.ReportConfig;
 
-@ComponentScan(excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = ReportConfig.class) )
+@ComponentScan(basePackages = "com.cspinformatique.kubik", excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = ReportConfig.class) )
 @EnableAutoConfiguration(exclude = { ThymeleafAutoConfiguration.class, ElasticsearchAutoConfiguration.class,
 		ElasticsearchRepositoriesAutoConfiguration.class })
 public class KubikTest {

@@ -1,51 +1,41 @@
 package com.cspinformatique.kubik.model.sales;
 
-import java.util.Map;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.cspinformatique.kubik.model.product.Product;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
 public class CustomerCreditDetail {
 	private Integer id;
 	private CustomerCredit customerCredit;
 	private Product product;
 	private double quantity;
 	private double maxQuantity;
-	private Map<Double, InvoiceTaxAmount> taxesAmounts;
 	private Double unitPrice;
 	private Double totalAmount;
-	private Double totalTaxAmount;
-	private Double totalTaxLessAmount;
-	
-	public CustomerCreditDetail(){
-		
+
+	public CustomerCreditDetail() {
+
 	}
 
-	public CustomerCreditDetail(Integer id, CustomerCredit customerCredit,
-			Product product, double quantity, double maxQuantity,
-			Map<Double, InvoiceTaxAmount> taxesAmounts, Double unitPrice,
-			Double totalAmount, Double totalTaxAmount, Double totalTaxLessAmount) {
+	public CustomerCreditDetail(Integer id, CustomerCredit customerCredit, Product product, double quantity,
+			double maxQuantity, Double unitPrice, Double totalAmount) {
 		this.id = id;
 		this.customerCredit = customerCredit;
 		this.product = product;
 		this.quantity = quantity;
 		this.maxQuantity = maxQuantity;
-		this.taxesAmounts = taxesAmounts;
 		this.unitPrice = unitPrice;
 		this.totalAmount = totalAmount;
-		this.totalTaxAmount = totalTaxAmount;
-		this.totalTaxLessAmount = totalTaxLessAmount;
 	}
 
 	@Id
@@ -92,15 +82,6 @@ public class CustomerCreditDetail {
 		this.maxQuantity = maxQuantity;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
-	public Map<Double, InvoiceTaxAmount> getTaxesAmounts() {
-		return taxesAmounts;
-	}
-
-	public void setTaxesAmounts(Map<Double, InvoiceTaxAmount> taxesAmounts) {
-		this.taxesAmounts = taxesAmounts;
-	}
-
 	public Double getUnitPrice() {
 		return unitPrice;
 	}
@@ -115,21 +96,5 @@ public class CustomerCreditDetail {
 
 	public void setTotalAmount(Double totalAmount) {
 		this.totalAmount = totalAmount;
-	}
-
-	public Double getTotalTaxAmount() {
-		return totalTaxAmount;
-	}
-
-	public void setTotalTaxAmount(Double totalTaxAmount) {
-		this.totalTaxAmount = totalTaxAmount;
-	}
-
-	public Double getTotalTaxLessAmount() {
-		return totalTaxLessAmount;
-	}
-
-	public void setTotalTaxLessAmount(Double totalTaxLessAmount) {
-		this.totalTaxLessAmount = totalTaxLessAmount;
 	}
 }

@@ -1,14 +1,12 @@
 package com.cspinformatique.kubik.model.sales;
 
-import java.util.Map;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -19,35 +17,38 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Audited
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
 public class InvoiceDetail {
 	private Integer id;
 	private Invoice invoice;
 	private Product product;
 	private Double quantity;
-	private Map<Double, InvoiceTaxAmount> taxesAmounts;
+	private InvoiceTaxAmount taxAmount;
 	private Double unitPrice;
 	private Double totalAmount;
+	private Double totalTaxableAmount;
 	private Double totalTaxAmount;
 	private Double totalTaxLessAmount;
+	private Double totalRebateAmount;
 
 	public InvoiceDetail() {
 
 	}
 
-	public InvoiceDetail(Integer id, Invoice invoice, Product product,
-			Double quantity, Map<Double, InvoiceTaxAmount> taxesAmounts,
-			Double unitPrice, Double totalAmount, Double totalTaxAmount,
-			Double totalTaxLessAmount) {
+	public InvoiceDetail(Integer id, Invoice invoice, Product product, Double quantity, Double totalTaxableAmount,
+			InvoiceTaxAmount taxAmount, Double unitPrice, Double totalAmount, Double totalTaxAmount,
+			Double totalTaxLessAmount, Double totalRebateAmount) {
 		this.id = id;
 		this.invoice = invoice;
 		this.product = product;
 		this.quantity = quantity;
-		this.taxesAmounts = taxesAmounts;
+		this.totalTaxableAmount = totalTaxableAmount;
+		this.taxAmount = taxAmount;
 		this.unitPrice = unitPrice;
 		this.totalAmount = totalAmount;
 		this.totalTaxAmount = totalTaxAmount;
 		this.totalTaxLessAmount = totalTaxLessAmount;
+		this.totalRebateAmount = totalRebateAmount;
 	}
 
 	@Id
@@ -87,13 +88,21 @@ public class InvoiceDetail {
 		this.quantity = quantity;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
-	public Map<Double, InvoiceTaxAmount> getTaxesAmounts() {
-		return taxesAmounts;
+	public Double getTotalTaxableAmount() {
+		return totalTaxableAmount;
 	}
 
-	public void setTaxesAmounts(Map<Double, InvoiceTaxAmount> taxesAmounts) {
-		this.taxesAmounts = taxesAmounts;
+	public void setTotalTaxableAmount(Double totalTaxableAmount) {
+		this.totalTaxableAmount = totalTaxableAmount;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	public InvoiceTaxAmount getTaxAmount() {
+		return taxAmount;
+	}
+
+	public void setTaxAmount(InvoiceTaxAmount taxAmount) {
+		this.taxAmount = taxAmount;
 	}
 
 	public Double getUnitPrice() {
@@ -126,5 +135,13 @@ public class InvoiceDetail {
 
 	public void setTotalTaxLessAmount(Double totalSubAmount) {
 		this.totalTaxLessAmount = totalSubAmount;
+	}
+
+	public Double getTotalRebateAmount() {
+		return totalRebateAmount;
+	}
+
+	public void setTotalRebateAmount(Double totalRebateAmount) {
+		this.totalRebateAmount = totalRebateAmount;
 	}
 }

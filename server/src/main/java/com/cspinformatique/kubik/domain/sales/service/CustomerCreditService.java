@@ -34,5 +34,7 @@ public interface CustomerCreditService {
 	
 	Integer findPrevious(int customerCreditId);
 	
+	void recalculateCustomerCreditsTaxes();
+	
 	CustomerCredit save(CustomerCredit customerCredit);
 }

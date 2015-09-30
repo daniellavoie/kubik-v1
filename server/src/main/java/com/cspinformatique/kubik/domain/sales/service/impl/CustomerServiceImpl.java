@@ -13,9 +13,11 @@ import com.cspinformatique.kubik.model.sales.Customer;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
+	private static final String CUSTOMER_ACCOUNT_PREFIX = "411";
+	
 	@Autowired
 	private CustomerRepository customerRepository;
-
+	
 	@Override
 	public Iterable<Customer> findAll() {
 		return this.customerRepository.findAll();
@@ -29,6 +31,17 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customer findOne(int id) {
 		return this.customerRepository.findOne(id);
+	}
+
+	@Override
+	public String getCustomerAccount(Customer customer) {
+		String customerAccount = CUSTOMER_ACCOUNT_PREFIX + "99999";
+
+		if (customer != null) {
+			customerAccount = CUSTOMER_ACCOUNT_PREFIX + String.format("%05d", customer.getId());
+		}
+
+		return customerAccount;
 	}
 
 	@Override

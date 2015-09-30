@@ -1,9 +1,9 @@
 package com.cspinformatique.kubik.domain.sales.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -59,119 +59,121 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 	}
 
 	private void calculateAmounts(CustomerCredit customerCredit) {
-		HashMap<Double, InvoiceTaxAmount> totalTaxesAmounts = new HashMap<Double, InvoiceTaxAmount>();
 
 		double totalAmount = 0d;
-		double totalTaxLessAmount = 0d;
-		double totalTaxAmount = 0d;
 		double totalRebateAmount = 0d;
 
-		Invoice invoice = this.invoiceService.findOne(customerCredit
-				.getInvoice().getId());
+		Invoice invoice = this.invoiceService.findOne(customerCredit.getInvoice().getId());
 
 		if (invoice == null) {
-			throw new RuntimeException("Invoice "
-					+ customerCredit.getInvoice().getId()
-					+ " could not be found.");
+			throw new RuntimeException("Invoice " + customerCredit.getInvoice().getId() + " could not be found.");
 		}
 
 		if (customerCredit.getDetails() != null) {
 			for (CustomerCreditDetail detail : customerCredit.getDetails()) {
-				Product product = productService.findOne(detail.getProduct()
-						.getId());
-
 				double quantity = detail.getQuantity();
 
-				InvoiceDetail invoiceDetail = this.findInvoiceDetail(invoice,
-						detail);
+				InvoiceDetail invoiceDetail = this.findInvoiceDetail(invoice, detail);
 
 				if (invoiceDetail == null) {
-					throw new RuntimeException(
-							"Invoice detail could not be found for product "
-									+ detail.getProduct().getId()
-									+ " in invoice " + invoice.getId() + ".");
+					throw new RuntimeException("Invoice detail could not be found for product "
+							+ detail.getProduct().getId() + " in invoice " + invoice.getId() + ".");
 				}
 
-				// Builds the tax rates / amounts map.
-				Map<Double, InvoiceTaxAmount> detailTaxesAmounts = new HashMap<Double, InvoiceTaxAmount>();
-
-				for (InvoiceTaxAmount invoiceTaxAmount : invoiceDetail
-						.getTaxesAmounts().values()) {
-					InvoiceTaxAmount creditTaxAmount = detailTaxesAmounts
-							.get(invoiceTaxAmount.getTaxRate());
-
-					if (creditTaxAmount == null) {
-						creditTaxAmount = new InvoiceTaxAmount(null,
-								invoiceTaxAmount.getTaxRate(), 0d);
-					}
-
-					creditTaxAmount.setTaxAmount(creditTaxAmount.getTaxAmount()
-							+ Precision.round(
-									invoiceTaxAmount.getTaxAmount()
-											/ invoiceDetail.getQuantity()
-											* detail.getQuantity(), 2));
-
-					detailTaxesAmounts.put(creditTaxAmount.getTaxRate(),
-							creditTaxAmount);
-				}
-				
+				// Calculate rebate amount for detail.
 				double rebateAmount = 0d;
-				if(invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d){
+				if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d) {
 					rebateAmount = invoiceDetail.getUnitPrice() * (invoice.getRebatePercent() / 100);
-				} else if(invoice.getRebateAmount() != null && invoice.getRebateAmount().doubleValue() != 0d){
-					rebateAmount = invoice.getRebateAmount();
-				}				
+				}
+
+				// Increment total rebate amount.
 				totalRebateAmount += rebateAmount;
 
 				// Calculates customer credit details amounts
 				detail.setUnitPrice(invoiceDetail.getUnitPrice());
 				detail.setTotalAmount(invoiceDetail.getUnitPrice() * quantity);
 
-				if (detail.getTaxesAmounts() != null) {
-					detail.getTaxesAmounts().clear();
-					detail.getTaxesAmounts().putAll(detailTaxesAmounts);
-				} else {
-					detail.setTaxesAmounts(detailTaxesAmounts);
-				}
-
-				double detailTotalTaxAmount = 0d;
-				double detailTaxLessAmount = product.getPriceTaxIn() * quantity;
-				for (InvoiceTaxAmount taxAmount : detail.getTaxesAmounts()
-						.values()) {
-					double amount = taxAmount.getTaxAmount();
-					double taxRate = taxAmount.getTaxRate();
-
-					detailTaxLessAmount -= amount;
-					detailTotalTaxAmount += amount;
-
-					InvoiceTaxAmount creditTaxAmount = totalTaxesAmounts
-							.get(taxRate);
-					if (creditTaxAmount == null) {
-						creditTaxAmount = new InvoiceTaxAmount(null, taxRate,
-								0d);
-					}
-
-					creditTaxAmount.setTaxAmount(creditTaxAmount.getTaxAmount()
-							+ detailTotalTaxAmount);
-
-					totalTaxesAmounts.put(taxRate, creditTaxAmount);
-				}
-
-				detail.setTotalTaxAmount(detailTotalTaxAmount);
-				detail.setTotalTaxLessAmount(detailTaxLessAmount);
-
 				// Increment customer credit totals amount.
 				totalAmount += detail.getTotalAmount();
-				totalTaxAmount += detailTotalTaxAmount;
-				totalTaxLessAmount += detailTaxLessAmount;
 			}
 		}
 
-		customerCredit.setRebateAmount(Precision.round(totalRebateAmount, 2));
+		totalRebateAmount = Precision.round(totalRebateAmount, 2);
+		customerCredit.setRebateAmount(totalRebateAmount);
 		customerCredit.setTotalAmount(Precision.round(totalAmount - totalRebateAmount, 2));
-		customerCredit.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));
-		customerCredit.setTotalTaxLessAmount(Precision.round(
-				totalTaxLessAmount, 2));
+
+		this.calculateTaxesAmounts(customerCredit);
+	}
+
+	private void calculateTaxesAmounts(CustomerCredit customerCredit) {
+		HashMap<Double, InvoiceTaxAmount> totalTaxesAmounts = new HashMap<Double, InvoiceTaxAmount>();
+
+		BigDecimal totalTaxableAmount = new BigDecimal(0d);
+		BigDecimal totalTaxAmount = new BigDecimal(0d);
+
+		Invoice invoice = this.invoiceService.findOne(customerCredit.getInvoice().getId());
+
+		if (invoice == null) {
+			throw new RuntimeException("Invoice " + customerCredit.getInvoice().getId() + " could not be found.");
+		}
+
+		for (InvoiceTaxAmount invoiceTaxAmount : customerCredit.getTaxesAmounts().values()) {
+			invoiceTaxAmount.setTaxAmount(0d);
+			invoiceTaxAmount.setTaxableAmount(0d);
+		}
+
+		if (customerCredit.getDetails() != null) {
+			for (CustomerCreditDetail detail : customerCredit.getDetails()) {
+				Product product = productService.findOne(detail.getProduct().getId());
+
+				double quantity = detail.getQuantity();
+
+				// Calculate rebate amount for detail.
+				BigDecimal rebateAmount = new BigDecimal(0d);
+				if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d) {
+					rebateAmount = new BigDecimal(detail.getUnitPrice())
+							.multiply(new BigDecimal(invoice.getRebatePercent()).divide(new BigDecimal(100)));
+				}
+
+				BigDecimal detailTotalAmount = new BigDecimal(detail.getUnitPrice()).multiply(new BigDecimal(quantity))
+						.subtract(rebateAmount);
+				BigDecimal detailTaxAmount = detailTotalAmount
+						.multiply((new BigDecimal(product.getTvaRate1()).divide(new BigDecimal(100))));
+				BigDecimal detailTaxableAmount = detailTotalAmount.subtract(detailTaxAmount);
+
+				// Increment taxes total amounts.
+				totalTaxAmount = totalTaxAmount.add(detailTaxAmount);
+				totalTaxableAmount = totalTaxableAmount.add(detailTaxableAmount);
+
+				// Increment customer credit taxes amounts.
+				InvoiceTaxAmount invoiceTaxAmount = customerCredit.getTaxesAmounts().get(product.getTvaRate1());
+				if (invoiceTaxAmount == null) {
+					invoiceTaxAmount = new InvoiceTaxAmount(0, product.getTvaRate1(), 0d, 0d);
+				} else if (invoiceTaxAmount.getTaxableAmount() == null) {
+					invoiceTaxAmount.setTaxableAmount(0d);
+				}
+				invoiceTaxAmount.setTaxableAmount(
+						detailTaxableAmount.add(new BigDecimal(invoiceTaxAmount.getTaxableAmount())).doubleValue());
+				invoiceTaxAmount.setTaxAmount(
+						detailTaxAmount.add(new BigDecimal(invoiceTaxAmount.getTaxAmount())).doubleValue());
+
+				totalTaxesAmounts.put(product.getTvaRate1(), invoiceTaxAmount);
+			}
+		}
+
+		for (InvoiceTaxAmount invoiceTaxAmount : customerCredit.getTaxesAmounts().values()) {
+			BigDecimal totalAmount = new BigDecimal(invoiceTaxAmount.getTaxableAmount())
+					.add(new BigDecimal(invoiceTaxAmount.getTaxAmount()));
+			double roundedTaxAmount = Precision.round(invoiceTaxAmount.getTaxAmount(), 2);
+
+			invoiceTaxAmount.setTaxAmount(roundedTaxAmount);
+			invoiceTaxAmount
+					.setTaxableAmount(Precision.round(new BigDecimal(Precision.round(totalAmount.doubleValue(), 2))
+							.subtract(new BigDecimal(roundedTaxAmount)).doubleValue(), 2));
+		}
+
+		customerCredit.setTotalTaxAmount(Precision.round(totalTaxAmount.doubleValue(), 2));
+		customerCredit.setTotalTaxLessAmount(Precision.round(totalTaxableAmount.doubleValue(), 2));
 
 		if (customerCredit.getTaxesAmounts() != null) {
 			customerCredit.getTaxesAmounts().clear();
@@ -193,35 +195,32 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 
 	@Override
 	public List<CustomerCredit> findByCompleteDate(Date date) {
-		return this.customerCreditRepository
-				.findByCompleteDateBetweenAndStatus(
-						LocalDate.fromDateFields(date).toDateTimeAtStartOfDay()
-								.toDate(), LocalDate.fromDateFields(date)
-								.plusDays(1).toDate(), Status.COMPLETED);
+		return this.customerCreditRepository.findByCompleteDateBetweenAndStatus(
+				LocalDate.fromDateFields(date).toDateTimeAtStartOfDay().toDate(),
+				LocalDate.fromDateFields(date).plusDays(1).toDate(), Status.COMPLETED);
 	}
 
 	@Override
-	public Page<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate, Date endDate, Status status, Pageable pageable){
+	public Page<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate, Date endDate, Status status,
+			Pageable pageable) {
 		return this.customerCreditRepository.findByCompleteDateBetweenAndStatus(startDate, endDate, status, pageable);
 	}
-	
+
 	@Override
 	public List<CustomerCredit> findByInvoice(Invoice invoice) {
 		return this.customerCreditRepository.findByInvoice(invoice);
 	}
-	
+
 	@Override
-	public Page<CustomerCredit> findByStatusAndNumberIsNotNull(Status status, Pageable pageable){
+	public Page<CustomerCredit> findByStatusAndNumberIsNotNull(Status status, Pageable pageable) {
 		return this.customerCreditRepository.findByStatusAndNumberIsNotNull(status, pageable);
 	}
 
 	@Override
 	public Double findCustomerCreditAvailable(Customer customer) {
-		Double customerCreditReceived = this.customerCreditRepository
-				.findCustomerCredit(customer);
+		Double customerCreditReceived = this.customerCreditRepository.findCustomerCredit(customer);
 
-		Double customerCreditUsed = this.customerCreditRepository
-				.findCustomerCreditUsed(customer);
+		Double customerCreditUsed = this.customerCreditRepository.findCustomerCreditUsed(customer);
 
 		return Precision.round((customerCreditReceived != null ? customerCreditReceived : 0d)
 				- (customerCreditUsed != null ? customerCreditUsed : 0d), 2);
@@ -231,23 +230,21 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 	public CustomerCredit findOne(int id) {
 		return this.customerCreditRepository.findOne(id);
 	}
-	
+
 	@Override
-	public double findProductQuantityReturnedByCustomer(int productId){
+	public double findProductQuantityReturnedByCustomer(int productId) {
 		Double result = this.customerCreditRepository.findProductQuantityReturnedByCustomer(productId);
-		
-		if(result == null){
+
+		if (result == null) {
 			return 0d;
 		}
-		
+
 		return result;
 	}
 
-	private InvoiceDetail findInvoiceDetail(Invoice invoice,
-			CustomerCreditDetail customerCreditDetail) {
+	private InvoiceDetail findInvoiceDetail(Invoice invoice, CustomerCreditDetail customerCreditDetail) {
 		for (InvoiceDetail detail : invoice.getDetails()) {
-			if (detail.getProduct().getId()
-					.equals(customerCreditDetail.getProduct().getId())) {
+			if (detail.getProduct().getId().equals(customerCreditDetail.getProduct().getId())) {
 				return detail;
 			}
 		}
@@ -257,9 +254,8 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 
 	@Override
 	public Integer findNext(int customerCreditId) {
-		Page<Integer> result = this.customerCreditRepository
-				.findIdByIdGreaterThan(customerCreditId, new PageRequest(0, 1,
-						Direction.ASC, "id"));
+		Page<Integer> result = this.customerCreditRepository.findIdByIdGreaterThan(customerCreditId,
+				new PageRequest(0, 1, Direction.ASC, "id"));
 
 		if (result.getContent().size() == 0) {
 			return null;
@@ -270,9 +266,8 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 
 	@Override
 	public Integer findPrevious(int customerCreditId) {
-		Page<Integer> result = this.customerCreditRepository
-				.findIdByIdLessThan(customerCreditId, new PageRequest(0, 1,
-						Direction.DESC, "id"));
+		Page<Integer> result = this.customerCreditRepository.findIdByIdLessThan(customerCreditId,
+				new PageRequest(0, 1, Direction.DESC, "id"));
 
 		if (result.getContent().size() == 0) {
 			return null;
@@ -282,21 +277,43 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 	}
 
 	private String generateCustomerCreditNumber() {
-		Page<CustomerCredit> page = this.findByStatusAndNumberIsNotNull(CustomerCredit.Status.COMPLETED, new PageRequest(0, 1, Direction.DESC, "completeDate"));
+		Page<CustomerCredit> page = this.findByStatusAndNumberIsNotNull(CustomerCredit.Status.COMPLETED,
+				new PageRequest(0, 1, Direction.DESC, "completeDate"));
 
 		if (page.getContent().size() > 0 && page.getContent().get(0).getNumber() != null) {
 			return String.format("%09d", Long.valueOf(page.getContent().get(0).getNumber()) + 1);
-		}else{
+		} else {
 			return String.format("%09d", 1);
 		}
 	}
 
 	@Override
+	public void recalculateCustomerCreditsTaxes() {
+		Page<CustomerCredit> customerCreditPage;
+		Pageable pageRequest = new PageRequest(0, 50);
+		do {
+			customerCreditPage = customerCreditRepository.findAll(pageRequest);
+
+			for (CustomerCredit invoice : customerCreditPage.getContent()) {
+				// this.calculateInvoiceRebatePercent(invoice);
+				this.calculateTaxesAmounts(invoice);
+			}
+
+			pageRequest = pageRequest.next();
+
+			customerCreditRepository.save(customerCreditPage.getContent());
+		} while (customerCreditPage.hasNext());
+	}
+
+	@Override
 	@Transactional
 	public CustomerCredit save(CustomerCredit customerCredit) {
+		if (customerCredit.getTaxesAmounts() == null) {
+			customerCredit.setTaxesAmounts(new HashMap<>());
+		}
+
 		if (customerCredit.getPaymentMethod() == null) {
-			customerCredit.setPaymentMethod(paymentMethodService
-					.findOne("CREDIT"));
+			customerCredit.setPaymentMethod(paymentMethodService.findOne("CREDIT"));
 		}
 
 		if (customerCredit.getDate() == null) {
@@ -307,51 +324,42 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 
 		boolean customerCreditCompleted = false;
 		if (customerCredit.getId() != null) {
-			if(customerCredit.getStatus().equals(Status.CANCELED) && customerCredit.getCancelDate() == null){
+			if (customerCredit.getStatus().equals(Status.CANCELED) && customerCredit.getCancelDate() == null) {
 				customerCredit.setCancelDate(new Date());
 			}
-			
-			if(customerCredit.getStatus().equals(Status.COMPLETED) && customerCredit.getCompleteDate() == null){
+
+			if (customerCredit.getStatus().equals(Status.COMPLETED) && customerCredit.getCompleteDate() == null) {
 				customerCredit.setCompleteDate(new Date());
 				customerCreditCompleted = true;
-				
-				if(customerCredit.getNumber() == null){
+
+				if (customerCredit.getNumber() == null) {
 					customerCredit.setNumber(this.generateCustomerCreditNumber());
 				}
 			}
 		}
-		
+
 		// Validate that other credit has the same customer.
-		List<CustomerCredit> existingCredits = this
-				.findByInvoice(customerCredit.getInvoice());
+		List<CustomerCredit> existingCredits = this.findByInvoice(customerCredit.getInvoice());
 
 		if (!existingCredits.isEmpty()) {
 			CustomerCredit exitingCredit = existingCredits.get(0);
-			if (!customerCredit.getCustomer().getId()
-					.equals(customerCredit.getCustomer().getId())) {
-				throw new RuntimeException(
-						"Could not link invoice "
-								+ customerCredit.getInvoice()
-										.getNumber()
-								+ " to customer "
-								+ customerCredit.getCustomer()
-										.getId()
-								+ " as it is already linked to customer "
-								+ exitingCredit.getCustomer()
-										.getId());
+			if (!customerCredit.getCustomer().getId().equals(customerCredit.getCustomer().getId())) {
+				throw new RuntimeException("Could not link invoice " + customerCredit.getInvoice().getNumber()
+						+ " to customer " + customerCredit.getCustomer().getId()
+						+ " as it is already linked to customer " + exitingCredit.getCustomer().getId());
 			}
 		}
 
 		customerCredit = this.customerCreditRepository.save(customerCredit);
-		
+
 		this.customerCreditRepository.flush();
-		
-		if(customerCreditCompleted){
+
+		if (customerCreditCompleted) {
 			this.updateInventory(customerCredit);
 
 			this.dailyReportService.generateDailyReport(new Date());
 		}
-		
+
 		return customerCredit;
 	}
 }

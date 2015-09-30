@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.cspinformatique.kubik.domain.sales.service.CustomerCreditService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceStatusService;
 import com.cspinformatique.kubik.domain.sales.service.PaymentService;
@@ -34,6 +35,10 @@ import net.sf.jasperreports.engine.JasperExportManager;
 @Controller
 @RequestMapping("/invoice")
 public class InvoiceController {
+	
+	@Autowired
+	private CustomerCreditService customerCreditService;
+	
 	@Autowired
 	private InvoiceService invoiceService;
 
@@ -51,7 +56,8 @@ public class InvoiceController {
 
 	@RequestMapping(value = "/init", method = RequestMethod.GET)
 	public void init() {
-		this.invoiceService.recalculateInvoiceTaxes();
+		invoiceService.recalculateInvoiceTaxes();
+		customerCreditService.recalculateCustomerCreditsTaxes();
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)

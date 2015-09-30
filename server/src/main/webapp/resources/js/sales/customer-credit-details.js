@@ -28,7 +28,7 @@ app.controller("KubikCustomerCreditDetailsController", function($scope, $http, $
 				$http.get(
 					"../invoice/" + $scope.customerCredit.invoice.id + "/detail/product/ean13/" + $scope.detail.product.ean13
 				).success(function(invoiceDetail){
-					$scope.customerCredit.details.push({product : invoiceDetail.product, quantity : 1, maxQuantity : invoiceDetail.quantity});
+					$scope.customerCredit.details.push({product : { id :  invoiceDetail.product.id}, quantity : 1, maxQuantity : invoiceDetail.quantity});
 					
 					$scope.saveCustomerCredit();
 				}).error(function(){
@@ -93,6 +93,8 @@ app.controller("KubikCustomerCreditDetailsController", function($scope, $http, $
 		angular.forEach($scope.customerCredit.details, function(detail, index){
 			detail.product.category = null;
 		});
+		
+		$scope.customerCredit.invoice = {id : $scope.customerCredit.invoice.id};
 		
 		$http.post(".", $scope.customerCredit).finally(function(){
 			$scope.hideLoading();
