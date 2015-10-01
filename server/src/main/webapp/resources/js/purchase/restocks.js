@@ -35,6 +35,8 @@ app.controller("KubikRestocksController", function($scope, $http){
 	$scope.validateRestock = function(status, openNextRestock){
 		$scope.restock.status = status;
 		
+		$scope.restock.product.category = null;
+		
 		$http.post("restock/", $scope.restock).success(function(){
 			$scope.loadRestocks(function(){
 				if(openNextRestock != undefined && openNextRestock && $scope.restocksPage.content.length > 0){
