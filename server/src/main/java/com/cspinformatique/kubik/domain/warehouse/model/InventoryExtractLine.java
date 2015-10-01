@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class InventoryExtractLine {
 	private String ean13;
+	private String label;
 	private double quantity;
 	private BigDecimal purchasePrice;
 	private BigDecimal purchaseValue;
@@ -14,9 +15,10 @@ public class InventoryExtractLine {
 
 	}
 
-	public InventoryExtractLine(String ean13, double quantity, BigDecimal purchasePrice, BigDecimal purchaseValue,
+	public InventoryExtractLine(String ean13, String label, double quantity, BigDecimal purchasePrice, BigDecimal purchaseValue,
 			BigDecimal taxLessPrice, BigDecimal taxLessValue) {
 		this.ean13 = ean13;
+		this.label = label;
 		this.quantity = quantity;
 		this.purchasePrice = purchasePrice;
 		this.purchaseValue = purchaseValue;
@@ -30,6 +32,14 @@ public class InventoryExtractLine {
 
 	public void setEan13(String ean13) {
 		this.ean13 = ean13;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public double getQuantity() {

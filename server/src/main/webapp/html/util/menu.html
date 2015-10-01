@@ -80,9 +80,18 @@
 								<span ng-cloak ng-if="notificationCount > 0" class="glyphicon glyphicon glyphicon-exclamation-sign"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
-							<li><a th:href="@{/dilicomOrder}">Commandes</a></li>
-							<li><a th:href="@{/reference}">Références</a></li>
-							<li><a th:href="@{/notification}">Mises à jour <span ng-cloak class="badge">{{notificationCount}}</span></a></li>
+								<li><a th:href="@{/dilicomOrder}">Commandes</a></li>
+								<li><a th:href="@{/reference}">Références</a></li>
+								<li><a th:href="@{/notification}">Mises à jour <span ng-cloak class="badge">{{notificationCount}}</span></a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								Magasin<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a th:href="@{/productInventory}">Inventaire</a></li>
 							</ul>
 						</li>
 					</ul>

@@ -17,16 +17,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import com.cspinformatique.kubik.domain.accounting.converter.AccountsMessageConverter;
 import com.cspinformatique.kubik.domain.accounting.converter.EntryMessageConverter;
+import com.cspinformatique.kubik.domain.warehouse.converter.InventoryExtractConverter;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-		AccountsMessageConverter accountsMessageConverter = new AccountsMessageConverter();
-		EntryMessageConverter entryMessageConverter = new EntryMessageConverter();
-
-		converters.add(accountsMessageConverter);
-		converters.add(entryMessageConverter);
+		converters.add(new AccountsMessageConverter());
+		converters.add(new EntryMessageConverter());
+		converters.add(new InventoryExtractConverter());
 	}
 
 	@Bean

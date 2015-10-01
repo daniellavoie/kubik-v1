@@ -1,0 +1,57 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Export Inventaire</title>
+		
+		<link th:replace="util/import :: head">
+		<link rel="stylesheet" type="text/css" th:href="@{/css/warehouse/export-product-inventory.css}" />
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="Kubik" ng-cloak ng-controller="ExportProductInventoryCtrl as exportProductInventoryCtrl" class="container text-center">
+			<h1>Export Inventaire</h1>
+			
+			<div>
+				<div class="row">
+					<h4 class="col-sm-2 col-sm-offset-5">Séparateur CSV :</h4>
+				</div>
+				
+				<div class="row text-center">
+					<div class="col-sm-2 col-sm-offset-5">
+						<input class="separator form-control" type="text" size="1" ng-model="exportProductInventoryCtrl.export.separator"/>
+					</div>
+				</div>
+				
+				<div class="row">
+					<h4 class="col-sm-2 col-sm-offset-5">Séparateur de décimale :</h4>
+				</div>
+				
+				<div class="row text-center">
+					<div class="col-sm-2 col-sm-offset-5">
+						<input class="separator form-control" type="text" size="1" ng-model="exportProductInventoryCtrl.export.decimalSeparator"/>
+					</div>
+				</div>
+	
+				<div class="row">
+					<button ng-click="exportProductInventoryCtrl.executeExport()" class="btn btn-primary col-sm-2 col-sm-offset-5">Exporter</button>
+				</div>
+			</div>
+			
+			<div ng-if="exportProductInventoryCtrl.invalidSeparator" class="alert alert-warning">
+				<button type="button" class="close" ng-click="exportProductInventoryCtrl.closeInvalidSeparatorAlert()"><span aria-hidden="true">&times;</span></button>
+				Aucun séparateur csv définit
+			</div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/export-product-inventory.js}"></script>
+	</body>
+</html>

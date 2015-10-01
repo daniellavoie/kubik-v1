@@ -1,7 +1,9 @@
 package com.cspinformatique.kubik.domain.warehouse.service.impl;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -18,6 +20,7 @@ import com.cspinformatique.kubik.domain.purchase.service.ReceptionService;
 import com.cspinformatique.kubik.domain.purchase.service.RmaService;
 import com.cspinformatique.kubik.domain.sales.service.CustomerCreditService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
+import com.cspinformatique.kubik.domain.warehouse.model.InventoryExtract;
 import com.cspinformatique.kubik.domain.warehouse.model.InventoryExtractLine;
 import com.cspinformatique.kubik.domain.warehouse.repository.ProductInventoryRepository;
 import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
@@ -95,9 +98,9 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 	}
 
 	@Override
-	public List<InventoryExtractLine> generateInventoryExtraction() {
+	public InventoryExtract generateInventoryExtraction(String separator, DecimalFormat decimalFormat) {
 		List<InventoryExtractLine> extract = new ArrayList<>();
-		
+
 		for (Integer productId : findProductIdWithInventory()) {
 			Product product = productService.findOne(productId);
 			ProductInventory productInventory = findByProduct(product);
@@ -120,13 +123,13 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 				priceTaxLess = new BigDecimal(product.getPriceTaxIn()).subtract(taxAmount);
 			}
 
-			extract.add(new InventoryExtractLine(product.getEan13(), productInventory.getQuantityOnHand(),
-					purchasePrice, purchasePrice.multiply(new BigDecimal(productInventory.getQuantityOnHand())),
-					priceTaxLess, priceTaxLess.multiply(new BigDecimal(productInventory.getQuantityOnHand()))));
-
+			extract.add(new InventoryExtractLine(product.getEan13(), product.getExtendedLabel(),
+					productInventory.getQuantityOnHand(), purchasePrice,
+					purchasePrice.multiply(new BigDecimal(productInventory.getQuantityOnHand())), priceTaxLess,
+					priceTaxLess.multiply(new BigDecimal(productInventory.getQuantityOnHand()))));
 		}
 
-		return extract;
+		return new InventoryExtract(new Date(), separator, decimalFormat, extract);
 	}
 
 	@Override
