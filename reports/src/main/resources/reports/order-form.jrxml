@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2015-10-04T14:52:04 -->
+<!-- 2015-10-04T21:10:58 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="order-form" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik Database"/>
 	<subDataset name="RmaDetailsDataset" uuid="854e152c-1c7d-4b0f-98a1-b9eda11e2bc8">
@@ -175,20 +175,21 @@ WHERE
 				<reportElement key="" x="0" y="0" width="555" height="30" uuid="81ec2afe-25fd-4c62-bf47-c89452a90621"/>
 				<textField>
 					<reportElement x="0" y="0" width="100" height="30" uuid="19eb4597-6805-4965-ae18-493deec34994"/>
-					<textElement textAlignment="Center"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{ean13}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="100" y="0" width="270" height="30" uuid="93324501-8b74-4d44-9a66-0738ead36865"/>
+					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{extended_label}]]></textFieldExpression>
 				</textField>
 				<textField pattern="0">
 					<reportElement x="370" y="0" width="67" height="30" uuid="9d4778eb-415c-4fe4-b9de-cd3e8807e466"/>
-					<textElement textAlignment="Center"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
 				</textField>
 				<componentElement>
-					<reportElement x="437" y="0" width="116" height="30" uuid="466bf702-67e3-4408-949f-969fd4d0ac15"/>
+					<reportElement x="437" y="3" width="116" height="21" uuid="466bf702-67e3-4408-949f-969fd4d0ac15"/>
 					<jr:EAN13 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<jr:codeExpression><![CDATA[$F{ean13}]]></jr:codeExpression>
 					</jr:EAN13>
