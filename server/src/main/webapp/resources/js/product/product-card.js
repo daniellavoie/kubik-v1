@@ -114,22 +114,32 @@ window.KubikProductCard.prototype.init = function(){
 		}
 		
 		$scope.openCard = function(product){
-			$scope.product = product;
-			$scope.productTab = "product";
-			$scope.inventoryTab = "reception";
-
-			$timeout(function(){
-				kubikProductCard.$modal = kubikProductCard.$modalContainer.find(".kubikProductCard").modal({
-					backdrop : "static",
-					keyboard : false
+			if(product.id == undefined){
+				showProductCard(product);
+			}else{
+				$http.get("/product/" + product.id).success(function(product){
+					showProductCard(product);
 				});
-				
-				if(product.id == undefined){
-					$scope.modify();
-				}else{
-					$scope.loadInventoryTabs();
-				}
-			});
+			}
+			
+			function showProductCard(product){				
+				$scope.product = product;
+				$scope.productTab = "product";
+				$scope.inventoryTab = "reception";
+
+				$timeout(function(){
+					kubikProductCard.$modal = kubikProductCard.$modalContainer.find(".kubikProductCard").modal({
+						backdrop : "static",
+						keyboard : false
+					});
+					
+					if(product.id == undefined){
+						$scope.modify();
+					}else{
+						$scope.loadInventoryTabs();
+					}
+				});
+			}
 		}
 		
 		$scope.refreshModalBackdrop = function(){
