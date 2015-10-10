@@ -11,6 +11,16 @@ app.controller("KubikInvoiceDetailsController", function($scope, $http, $timeout
 		location.href = invoiceId;
 	};
 	
+	$scope.changePaymentMethod = function(payment, paymentMethodType){
+		payment.paymentMethod.type = paymentMethodType;
+		
+		$http.post("/invoice", $scope.invoice).success(changePaymentMethodSuccess);
+		
+		function changePaymentMethodSuccess(invoice){
+			$scope.invoice = invoice;
+		}
+	}
+	
 	$scope.confirmRefund = function(){
 		$(".refund-modal").modal();
 	};

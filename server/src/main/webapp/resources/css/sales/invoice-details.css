@@ -1,0 +1,23 @@
+.invoice-header .dropdown > div:HOVER{
+	cursor: pointer;
+}
+
+.invoice-header .dropdown-menu {
+	width: 200px;
+}
+
+.invoice-header .dropdown-menu > span{
+	padding: 10px;
+	padding-right: 0px;
+	
+	font-size: 12px;
+}
+
+.invoice-header .dropdown-menu > span:hover{
+	background-color: #E6E6FA;
+	cursor: pointer;
+}
+
+.invoice-header{
+	padding-bottom: 30px;
+}

@@ -27,7 +27,7 @@
 					</h1>
 				</div>
 				
-				<div class="table-responsive">
+				<div class="invoice-header table-responsive">
 					<table class="invoices table table-condensed panel panel-default">
 						<thead>
 							<tr>
@@ -59,16 +59,23 @@
 								<td>{{invoice.rebateAmount | currency : '&euro;'}}</td>
 								<td>{{invoice.totalAmount | currency : '&euro;'}}</td>
 								<td>
-									<span ng-repeat="payment in invoice.payments">
-										<span ng-switch="payment.paymentMethod.type">
-											<span ng-switch-when="CARD" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
-											<span ng-switch-when="CASH" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
-											<span ng-switch-when="CHECK" title="Chèque - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
-											<span ng-switch-when="CREDIT" title="Avoir - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
-											<span ng-switch-when="KADEOS" title="Chèque Kadéos - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
-											<span ng-switch-when="LIRE" title="Chèque Lire - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
-										</span>
-									</span>
+									<div ng-repeat="payment in invoice.payments" class="{{invoice.status.type == 'PAID' ? 'dropdown' : ''}}">
+										<div ng-switch="payment.paymentMethod.type">
+											<span data-toggle="dropdown" ng-switch-when="CARD" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+											<span data-toggle="dropdown" ng-switch-when="CASH" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
+											<span data-toggle="dropdown" ng-switch-when="CHECK" title="Chèque - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
+											<span data-toggle="dropdown" ng-switch-when="CREDIT" title="Avoir - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
+											<span data-toggle="dropdown" ng-switch-when="KADEOS" title="Chèque Kadéos - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
+											<span data-toggle="dropdown" ng-switch-when="LIRE" title="Chèque Lire - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
+											<div ng-if="invoice.status.type == 'PAID'" class="dropdown-menu" role="menu">
+												<span title="Carte" ng-click="changePaymentMethod(payment, 'CARD')" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+												<span title="Espèces" ng-click="changePaymentMethod(payment, 'CASH')" class="glyphicon glyphicon-euro">&nbsp;</span>
+												<span title="Chèque" ng-click="changePaymentMethod(payment, 'CHECK')" class="glyphicon glyphicon-edit">&nbsp;</span>
+												<span title="Chèque Kadéos" ng-click="changePaymentMethod(payment, 'KADEOS')" class="glyphicon glyphicon-edit">&nbsp;</span>
+												<span title="Chèque Lire" ng-click="changePaymentMethod(payment, 'LIRE')" class="glyphicon glyphicon-edit">&nbsp;</span>
+											</div>
+										</div>
+									</div>
 								</td>
 								<td>{{invoice.status.description}}</td>
 							</tr>
