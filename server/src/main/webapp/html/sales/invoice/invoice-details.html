@@ -19,11 +19,11 @@
 			<div class="text-center">
 				<div  class="row">
 					<h1 class="col-sm-2">
-						<button ng-if="previousInvoice != null" ng-click="invoiceDetailsCtrl.changeInvoice(invoiceDetailsCtrl.previousInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
+						<button ng-if="invoiceDetailsCtrl.previousInvoice != null" ng-click="invoiceDetailsCtrl.changeInvoice(invoiceDetailsCtrl.previousInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
 					</h1>
 					<h1 class="col-sm-8"k>Facture {{invoiceDetailsCtrl.invoice.number}}</h1>
 					<h1 class="col-sm-2">
-						<button ng-if="next != null" ng-click="invoiceDetailsCtrl.changeInvoice(invoiceDetailsCtrl.nextInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
+						<button ng-if="invoiceDetailsCtrl.nextInvoice != null" ng-click="invoiceDetailsCtrl.changeInvoice(invoiceDetailsCtrl.nextInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
 					</h1>
 				</div>
 				
