@@ -11,18 +11,18 @@
 		<link th:replace="util/import :: head">
 	</head>
 	
-	<body >
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container" ng-cloak ng-app="KubikRmaDetails" ng-controller="KubikRmaDetailsController as view">
+		<div class="container" ng-cloak ng-controller="RmaDetailsCtrl as rmaDetailsCtrl">
 			<div class="text-center">
 				<div  class="row">
 					<h1 class="col-sm-2">
-						<button ng-if="previousRma != null" ng-click="changeRma(previousRma)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
+						<button ng-if="rmaDetailsCtrl.previousRma != null" ng-click="rmaDetailsCtrl.changeRma(rmaDetailsCtrl.previousRma)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
 					</h1>
-					<h1 class="col-sm-8"k>Retour fournisseur {{rma.id}}</h1>
+					<h1 class="col-sm-8"k>Retour fournisseur {{rmaDetailsCtrl.rma.id}}</h1>
 					<h1 class="col-sm-2">
-						<button ng-if="nextRma != null" ng-click="changeRma(nextRma)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
+						<button ng-if="rmaDetailsCtrl.nextRma != null" ng-click="rmaDetailsCtrl.changeRma(rmaDetailsCtrl.nextRma)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
 					</h1>
 				</div>
 				
@@ -42,17 +42,17 @@
 						
 						<tbody>
 							<tr>
-								<td>{{rma.id}}</td>
-								<td><a href="#" ng-click="openSupplierCard(rma.supplier, $event)">{{rma.supplier.name}}</a></td>
-								<td>{{rma.openDate | date : "short"}}</td>
-								<td>{{rma.shippedDate | date : "short"}}</td>
+								<td>{{rmaDetailsCtrl.rma.id}}</td>
+								<td><a href="#" ng-click="rmaDetailsCtrl.openSupplierCard($event, rmaDetailsCtrl.rma.supplier)">{{rmaDetailsCtrl.rma.supplier.name}}</a></td>
+								<td>{{rmaDetailsCtrl.rma.openDate | date : "short"}}</td>
+								<td>{{rmaDetailsCtrl.rma.shippedDate | date : "short"}}</td>
 								<td>
-									<span ng-if="rma.status == 'OPEN'" class="label label-info">Ouvert</span>
-									<span ng-if="rma.status == 'CANCELED'" class="label label-danger">Annulé</span>
-									<span ng-if="rma.status == 'SHIPPED'" class="label label-danger">Expédié</span>
+									<span ng-if="rmaDetailsCtrl.rma.status == 'OPEN'" class="label label-info">Ouvert</span>
+									<span ng-if="rmaDetailsCtrl.rma.status == 'CANCELED'" class="label label-danger">Annulé</span>
+									<span ng-if="rmaDetailsCtrl.rma.status == 'SHIPPED'" class="label label-danger">Expédié</span>
 								</td>
-								<td>{{rma.details.length}}</td>
-								<td>{{calculateRmaQuantity(rma)}}</td>
+								<td>{{rmaDetailsCtrl.rma.details.length}}</td>
+								<td>{{rmaDetailsCtrl.calculateRmaQuantity(rma)}}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -68,15 +68,15 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="detail in rma.details">
+							<tr ng-repeat="detail in rmaDetailsCtrl.rma.details">
 								<td>{{detail.product.ean13}}</td>
-								<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a></td>
+								<td><a href="#" ng-click="rmaDetailsCtrl.openProductCard($event, detail.product)">{{detail.product.standardLabel}}</a></td>
 								
-								<td ng-if="rma.status == 'OPEN'">
+								<td ng-if="rmaDetailsCtrl.rma.status == 'OPEN'">
 									<input 
 										id="detail-{{detail.id}}"
-										ng-focus="focus($event)"
-										ng-change="rmaChanged($event)"
+										ng-focus="rmaDetailsCtrl.focus($event)"
+										ng-change="rmaDetailsCtrl.rmaChanged($event)"
 										ng-model="detail.quantity"
 										class="quantity form-control" 
 										type="number"
@@ -85,9 +85,9 @@
 									/>
 								</td>	
 								
-								<td ng-if="rma.status != 'OPEN'">{{detail.quantity}}</td>								
+								<td ng-if="rmaDetailsCtrl.rma.status != 'OPEN'">{{detail.quantity}}</td>								
 							</tr>
-							<tr ng-if="rma.details.length == 0">
+							<tr ng-if="rmaDetailsCtrl.rma.details.length == 0">
 								<td colspan="7">Aucun produit saisi pour le retour fournisseur</td>
 							</tr>
 						</tbody>
@@ -100,15 +100,15 @@
 											placeholder="Ean13" 
 											type="text" 
 											class="form-control" 
-											ng-focus="focus($event)"
-											ng-keyup="addProduct($event)" 
-											ng-model="detail.product.ean13"
+											ng-focus="rmaDetailsCtrl.focus($event)"
+											ng-keyup="rmaDetailsCtrl.addProduct($event)" 
+											ng-model="rmaDetailsCtrl.detail.product.ean13"
 										/>
 									</div>
 									<div class="col-sm-9 alerts">
 										<img class="loading hidden" th:src="@{/img/loading.gif}">
-										<div ng-if="error.productNotFound" class="product-not-found alert alert-warning" role="alert">
-											<button type="button" class="close" ng-click="error.productNotFound = false" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+										<div ng-if="rmaDetailsCtrl.error.productNotFound" class="product-not-found alert alert-warning" role="alert">
+											<button type="button" class="close" ng-click="rmaDetailsCtrl.error.productNotFound = false" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 											Produit non associé au fournisseur
 										</div>
 									</div>
@@ -119,18 +119,18 @@
 				</div>
 				
 				<div>
-					<button ng-if="rma.status == 'OPEN'" ng-click="cancel()" type="button" class="btn btn-danger">Annuler</button>
+					<button ng-if="rmaDetailsCtrl.rma.status == 'OPEN'" ng-click="rmaDetailsCtrl.cancel()" type="button" class="btn btn-danger">Annuler</button>
 					
-					<button ng-if="rma.status == 'OPEN'" ng-click="validate()" type="button" class="btn btn-primary">Valider</button>
+					<button ng-if="rmaDetailsCtrl.rma.status == 'OPEN'" ng-click="rmaDetailsCtrl.validate()" type="button" class="btn btn-primary">Valider</button>
 				
-					<button ng-click="print()" type="button" class="btn btn-primary">Imprimer</button>
+					<button ng-click="rmaDetailsCtrl.print()" type="button" class="btn btn-primary">Imprimer</button>
 				</div>
 			</div>
 		
 			<div th:replace="product/product-card :: product-card"></div>
-		</div>
 		
-		<div class="supplier-card"></div>
+			<div th:replace="product/supplier-card :: supplier-card"></div>
+		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		

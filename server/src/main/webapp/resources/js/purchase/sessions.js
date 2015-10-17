@@ -1,60 +1,72 @@
-var app = angular.module("sessions", []);
-
-app.controller("SessionController", function($scope, $http){
+(function(){
+	angular
+		.module("Kubik")
+		.controller("SessionCtrl", SessionCtrl);
 	
-	$scope.changePage = function(page){
-		$scope.page = page;
+	function SessionCtrl($scope, $http){
+		var vm = this;
+
+		vm.page = 0;
+		vm.resultPerPage = 50;
+		vm.sortBy = "openDate";
+		vm.direction = "DESC";
 		
-		$scope.loadSessions();
-	}
-	
-	$scope.loadSessions = function(){
-		var params = {	status : $scope.user.preferences.purchaseSession.status, 
-						page : $scope.page,
-						resultPerPage : $scope.resultPerPage,
-						sortBy : $scope.sortBy,
-						direction : $scope.direction};
-
-		$http.get("purchaseSession?" + $.param(params)).success(function(sessionsPage){
-			$scope.sessionsPage = sessionsPage;
-		});
-	};
-	
-	$scope.loadUserAndSessions = function(){
-		$http.get("user").success(function(user){
-			$scope.user = user;
+		vm.changePage = changePage;
+		vm.loadSessions = loadSessions;
+		vm.loadUserAndSessions = loadUserAndSessions;
+		vm.newSession = newSession;
+		vm.openSession = openSession;
+		vm.updateStatus = updateStatus;
+		
+		loadUserAndSessions();
+		
+		function changePage(page){
+			vm.page = page;
 			
-			$scope.loadSessions();
-		})
-	}
-	
-	$scope.newSession = function(){
-		$http.post("purchaseSession", {}).success(function(session){
-			$scope.openSession(session.id);
-		});
-	};
-	
-	$scope.openSession = function(id){
-		window.location.href = "purchaseSession/" + id;
-	};
-	
-	$scope.updateStatus = function(status){		
-		var statusIndex = $scope.user.preferences.purchaseSession.status.indexOf(status);
-		if(statusIndex != -1){
-			$scope.user.preferences.purchaseSession.status.splice(statusIndex, 1);
-		}else{
-			$scope.user.preferences.purchaseSession.status.push(status);
+			vm.loadSessions();
 		}
 		
-		$http.post("user", $scope.user);
+		function loadSessions(){
+			var params = {	status : vm.user.preferences.purchaseSession.status, 
+							page : vm.page,
+							resultPerPage : vm.resultPerPage,
+							sortBy : vm.sortBy,
+							direction : vm.direction};
+
+			$http.get("purchaseSession?" + $.param(params)).success(function(sessionsPage){
+				vm.sessionsPage = sessionsPage;
+			});
+		};
 		
-		$scope.loadSessions();
-	};
-	
-	$scope.page = 0;
-	$scope.resultPerPage = 50;
-	$scope.sortBy = "openDate";
-	$scope.direction = "DESC";
-	
-	$scope.loadUserAndSessions();
-});
+		function loadUserAndSessions(){
+			$http.get("user").success(function(user){
+				vm.user = user;
+				
+				vm.loadSessions();
+			})
+		}
+		
+		function newSession(){
+			$http.post("purchaseSession", {}).success(function(session){
+				vm.openSession(session.id);
+			});
+		};
+		
+		function openSession(id){
+			window.location.href = "purchaseSession/" + id;
+		};
+		
+		function updateStatus(status){		
+			var statusIndex = vm.user.preferences.purchaseSession.status.indexOf(status);
+			if(statusIndex != -1){
+				vm.user.preferences.purchaseSession.status.splice(statusIndex, 1);
+			}else{
+				vm.user.preferences.purchaseSession.status.push(status);
+			}
+			
+			$http.post("user", vm.user);
+			
+			vm.loadSessions();
+		};
+	}
+})();

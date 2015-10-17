@@ -11,18 +11,18 @@
 						<div class="modal-body">
 							<div class="form-group">
 							    <label class="control-label">Nom</label>
-							    <input type="text" class="form-control" placeholder="Nom de la catégorie" ng-model="category.name">
+							    <input type="text" class="form-control" placeholder="Nom de la catégorie" ng-model="productCategoriesCtrl.category.name">
 							</div>
 						</div>
 	
-						<div ng-if="error != null" class="alert alert-warning alert-dismissible" role="alert">
-							<button type="button" class="close" ng-click="hideError()"><span>&times;</span></button>
-							{{error}}
+						<div ng-if="productCategoriesCtrl.error != null" class="alert alert-warning alert-dismissible" role="alert">
+							<button type="button" class="close" ng-click="productCategoriesCtrl.hideError()"><span>&times;</span></button>
+							{{productCategoriesCtrl.error}}
 						</div>
 					
 						<div class="modal-footer">
-							<button type="button" ng-click="cancelEditCategory()" class="btn btn-default">Annuler</button>
-							<button type="button" ng-click="saveCategory()" class="btn btn-primary">Enregistrer</button>
+							<button type="button" ng-click="productCategoriesCtrl.cancelEditCategory()" class="btn btn-default">Annuler</button>
+							<button type="button" ng-click="productCategoriesCtrl.saveCategory()" class="btn btn-primary">Enregistrer</button>
 						</div>
 					</div>
 				</div>
@@ -32,28 +32,28 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-body">
-							<p ng-if="productCount != 0">
-								{{productCount}} 
-								<span ng-if="productCount == 1">produit perdra sa  catégorisation</span>
-								<span ng-if="productCount != 1">produits perdront leur catégorisation.</span>
+							<p ng-if="productCategoriesCtrl.productCount != 0">
+								{{productCategoriesCtrl.productCount}} 
+								<span ng-if="productCategoriesCtrl.productCount == 1">produit perdra sa  catégorisation</span>
+								<span ng-if="productCategoriesCtrl.productCount != 1">produits perdront leur catégorisation.</span>
 							</p>
 							 
-							<p>Êtes-vous sûr de vouloir supprimer la catégorie {{category.name}} ?</p>
+							<p>Êtes-vous sûr de vouloir supprimer la catégorie {{productCategoriesCtrl.category.name}} ?</p>
 	
-							<div ng-if="error != null" class="alert alert-warning alert-dismissible" role="alert">
-								<button type="button" class="close" ng-click="hideError()"><span>&times;</span></button>
+							<div ng-if="productCategoriesCtrl.error != null" class="alert alert-warning alert-dismissible" role="alert">
+								<button type="button" class="close" ng-click="productCategoriesCtrl.hideError()"><span>&times;</span></button>
 								{{error}}
 							</div>
 						</div>
 						
-						<div ng-if="loading" class="modal-footer">
+						<div ng-if="productCategoriesCtrl.loading" class="modal-footer">
 							<img th:src="@{/img/loading-small.gif}" />
 							<button type="button" class="btn btn-danger" disabled="disabled">Oui</button>
 							<button type="button" class="btn btn-default" disabled="disabled">Fermer</button>
 						</div>
 						
-						<div ng-if="!loading" class="modal-footer">
-							<button type="button" class="btn btn-danger" ng-click="deleteCategory(category)">Oui</button>
+						<div ng-if="!productCategoriesCtrl.loading" class="modal-footer">
+							<button type="button" class="btn btn-danger" ng-click="productCategoriesCtrl.deleteCategory(productCategoriesCtrl.category)">Oui</button>
 							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
 						</div>
 					</div>

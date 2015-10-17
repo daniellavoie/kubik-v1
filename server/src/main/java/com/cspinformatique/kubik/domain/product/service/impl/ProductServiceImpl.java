@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.cspinformatique.kubik.domain.broadleaf.service.BroadleafNotificationService;
 import com.cspinformatique.kubik.domain.dilicom.model.Reference;
@@ -186,7 +187,16 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Override
 	public Product findByEan13AndSupplier(String ean13, Supplier supplier) {
-		return this.productRepository.findByEan13AndSupplier(ean13, supplier);
+		Assert.notNull(ean13);
+		Assert.notNull(supplier);
+
+		try {
+			return this.productRepository.findByEan13AndSupplier(ean13, supplier);
+		} catch (RuntimeException runtimeEx) {
+			LOGGER.error("Error while querying ean13 " + ean13 + " for supplier " + supplier.getId());
+
+			throw runtimeEx;
+		}
 	}
 
 	@Override
@@ -207,13 +217,13 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 	public Product findRandomByCategory(Category category) {
 		Page<Product> result = null;
 		Pageable pageable = new PageRequest(0, 1);
-		
+
 		if (category == null) {
 			result = productRepository.findRandomWithoutCategory(pageable);
 		} else {
 			result = productRepository.findRandomByCategory(category, pageable);
 		}
-		
+
 		if (result.getContent().size() == 0) {
 			return null;
 		}

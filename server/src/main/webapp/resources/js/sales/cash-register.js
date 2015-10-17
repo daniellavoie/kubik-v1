@@ -1,215 +1,284 @@
-var app = angular.module("KubikCashRegister", []);
-var kukikCustomerSearch = new KubikCustomerSearch({
-	app : app,
-	customerUrl : "customer",
-	modal : true,
-	$container : $(".customers-modal")
-});
+(function(){
+	var INVOICE_URL = "/invoice";
+	
+	angular
+		.module("Kubik")
+		.controller("CashRegisterCtrl", CashRegisterCtrl);
+	
+	function CashRegisterCtrl($scope, $http, $timeout){
+		var vm = this;
+		
+		vm.focusEan13Input = true;
+		
+		vm.addCustomerToInvoice = addCustomerToInvoice;
+		vm.addOneProduct = addOneProduct;
+		vm.cancelInvoice = cancelInvoice;
+		vm.checkoutInvoice = checkoutInvoice;
+		vm.confirmCancelInvoice = confirmCancelInvoice;
+		vm.invoiceChanged = invoiceChanged;
+		vm.isSelectedInvoice = isSelectedInvoice;
+		vm.loadInvoices = loadInvoices;
+		vm.lookupInvoice = lookupInvoice;
+		vm.newInvoice = newInvoice;
+		vm.openCustomerCard = openCustomerCard;
+		vm.openCustomerSearch = openCustomerSearch;
+		vm.openProductCard = openProductCard;
+		vm.openProductSearch = openProductSearch;
+		vm.refreshInvoices = refreshInvoices;
+		vm.removeCustomerFromInvoice = removeCustomerFromInvoice;
+		vm.removeInvoiceDetail = removeInvoiceDetail;
+		vm.saveInvoice = saveInvoice;
+		vm.searchProductKeyUp = searchProductKeyUp;
+		vm.searchProduct = searchProduct;
+		vm.showInvoice = showInvoice;
+		vm.warnInvoiceClosed = warnInvoiceClosed;
+		
+		refreshInvoices();
+		$(".ean13-input").focus();
+		
+		$scope.$on("customerSaved", function($event, customer){
+			vm.addCustomerToInvoice(customer);
+		});
+		
+		$scope.$on("customerSelected", function($event, customer){
+			vm.addCustomerToInvoice(customer);
+		});
+		
+		$scope.$on("productSelected", function($event, product){
+			vm.addOneProduct(product);
+		});
+		
+		$scope.$on("saleOver", function($event){
+			vm.refreshInvoices();
+		});
+		
+		function addCustomerToInvoice(customer){
+			vm.invoice.customer = customer;
+			
+			vm.saveInvoice();
 
-var kubikProductSearch = new KubikProductSearch({
-	app : app,
-	modal : $(".products-modal"),
-	productUrl : "product"
-});
-
-app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
-	$scope.$on("openCustomerCard", function(event, customer){
-		$scope.openCustomerCard(customer, event);
-	});
-	
-	$scope.$on("openProductCard", function(event, product){
-		$scope.kubikProductCard.openCard(product);
-	});
-	
-	$scope.$on("saleOver", function(){
-		$scope.refreshInvoices();
-	});
-	
-	$scope.addOneProduct = function(product){
-		// Checks if the product is already found within the invoice.
-		var productInInvoice = false;
-		for(var detailIndex in $scope.invoice.details){
-			var detail = $scope.invoice.details[detailIndex];
+			$scope.$broadcast("closeCustomerCard");
+			$scope.$broadcast("closeCustomerSearchModal");
+		}
+		
+		function addOneProduct(product){
+			// Checks if the product is already found within the invoice.
+			var productInInvoice = false;
 			
-			if(detail.product.ean13 == product.ean13 && detail.product.supplier.ean13 == product.supplier.ean13){
-				detail.quantity += 1;
-				productInInvoice = true;
+			for(var detailIndex in vm.invoice.details){
+				var detail = vm.invoice.details[detailIndex];
 				
-				break;
-			}
-		}
-		
-		if(!productInInvoice){
-			$scope.invoice.details.push({
-				invoice : {id : $scope.invoice.id},
-				product : {
-					id : product.id,
-					ean13 : product.ean13,
-					supplier : {
-						id : product.supplier.id
-					}
-				},
-				quantity : 1
-			});	
-		}
-		
-		$scope.saveInvoice();
-	};
-	
-	$scope.cancelInvoice = function(){
-		$scope.invoice.status = {type : "CANCELED"};
-		
-		$scope.saveInvoice();
-		
-		$(".confirm-cancel").modal("hide");
-	};
-	
-	$scope.checkoutInvoice = function(){
-		$scope.$broadcast("checkoutInvoice", $scope.invoice);
-	};
-	
-	$scope.confirmCancelInvoice = function(){
-		$(".confirm-cancel").modal({
-			backdrop : "static",
-			keyboard : "false"
-		});
-	};
-	
-	$scope.isSelectedInvoice = function(invoice){
-		if($scope.invoice == undefined){
-			return false;
-		}
-		
-		return $scope.invoice.id == invoice.id;
-	}
-	
-	$scope.loadInvoices = function(callbackFn){
-		$http.get("cashRegister/session/invoice").success(function(invoices){
-			callbackFn(invoices);
-		});
-	};
-	
-	$scope.lookupInvoice = function(invoice, invoices){
-		for(var invoiceIndex in invoices){
-			var invoice = invoices[invoiceIndex];
-			
-			if(invoice.id == $scope.invoice.id){
-				return invoice;
-			}
-		}
-		
-		return null;
-	}
-	
-	$scope.newInvoice = function(){
-		$http.get("cashRegister/session/invoice?new").success(function(invoice){
-			$scope.invoice = invoice;
-			
-			$scope.refreshInvoices();
-		});
-	};
-	
-	$scope.openCustomerCard = function(customer){
-		$scope.kubikCustomerCard.openCard(customer);
-	};
-	
-	$scope.invoiceChanged = function($event){
-		$scope.inputIdToFocus = $event.target.id;
-		if($scope.invoiceChangedTimer != undefined) clearTimeout($scope.invoiceChangedTimer);
-	    
-		$scope.invoiceChangedTimer = setTimeout($scope.saveInvoice, 1000);
-	}
-	
-	$scope.refreshInvoices = function(callbackFn){
-		$scope.loadInvoices(function(invoices){
-			$scope.invoices = invoices;
-			
-			$scope.searchInProgress = false;
-			
-			
-			if($scope.invoice == null || $scope.invoice.status.type == "CANCELED" || $scope.invoice.status.type == "PAID"){
-				$scope.showInvoice(invoices[0]);
-			}else{
-				var invoice = $scope.lookupInvoice($scope.invoice, invoices);
-				
-				if(invoice == null){
-					$scope.warnInvoiceClosed();
-					$scope.showInvoice(invoices[0]);
-				}else{
-					$scope.showInvoice(invoice);
-				}
-			}
-			
-			if(callbackFn != undefined){
-				callbackFn();
-			}
-			
-			$timeout(function(){
-				if($scope.inputIdToFocus != undefined){
-					$("#" + $scope.inputIdToFocus).focus();
-				}
-			})
-		});
-	};
-	
-	$scope.removeCustomerFromInvoice = function(){
-		$scope.invoice.customer = null;
-		
-		$scope.saveInvoice();
-	};
-	
-	$scope.removeInvoiceDetail = function(invoiceDetail){
-		for(var detailIndex in $scope.invoice.details){
-			if($scope.invoice.details[detailIndex].id == invoiceDetail.id){
-				$scope.invoice.details.splice(detailIndex, 1);
-				
-				break;
-			}
-		}
-		
-		$scope.saveInvoice();
-	};
-	
-	$scope.saveInvoice = function(){
-		for(var detailIndex in $scope.invoice.details){
-			var detail = $scope.invoice.details[detailIndex];
-						
-			detail.product = {
-				id : detail.product.id,
-				ean13 : detail.product.ean13,
-				supplier : {id : detail.product.supplier.id}
-			};
-		}
-		
-		$scope.loadInvoices(function(invoices){
-			var existingInvoice = $scope.lookupInvoice($scope.invoice, invoices);
-			
-			if(existingInvoice != null && Math.round($scope.invoice.modificationDate / 1000) == Math.round(existingInvoice.modificationDate / 1000)){
-				$http.post("invoice", $scope.invoice).success(function(invoice){
-					$scope.invoice = invoice;
+				if(detail.product.ean13 == product.ean13 && detail.product.supplier.ean13 == product.supplier.ean13){
+					detail.quantity += 1;
+					productInInvoice = true;
 					
-					$scope.refreshInvoices();
-				});	
-			}else{
-				$scope.warnInvoiceClosed();
-				
-				$scope.refreshInvoices();
+					break;
+				}
 			}
-		});
-	};
-	
-	$scope.searchProductKeyUp = function($event){
-		if($event.keyCode == 13){
-			$scope.searchProduct();
+			
+			if(!productInInvoice){
+				vm.invoice.details.push({
+					invoice : {id : vm.invoice.id},
+					product : {
+						id : product.id,
+						ean13 : product.ean13,
+						supplier : {
+							id : product.supplier.id
+						}
+					},
+					quantity : 1
+				});	
+			}
+			
+			vm.saveInvoice();
 		}
-	};
-	
-	$scope.searchProduct = function(){
-		$scope.typedEan13 = $scope.ean13;
 		
-		if($scope.typedEan13 != "" && !$scope.searchInProgress){
-			$scope.searchInProgress = true;
-			$http.get("product?ean13=" + $scope.typedEan13).success(function(products){
+		function cancelInvoice(){
+			vm.invoice.status = {type : "CANCELED"};
+			
+			vm.saveInvoice();
+			
+			$(".confirm-cancel").modal("hide");
+		}
+		
+		function checkoutInvoice(){
+			$scope.$broadcast("checkoutInvoice", vm.invoice);
+		}
+		
+		function confirmCancelInvoice(){
+			$(".confirm-cancel").modal({
+				backdrop : "static",
+				keyboard : "false"
+			});
+		}
+		
+		function invoiceChanged($event){
+			vm.inputIdToFocus = $event.target.id;
+			if(vm.invoiceChangedTimer != undefined) clearTimeout(vm.invoiceChangedTimer);
+		    
+			vm.invoiceChangedTimer = setTimeout(vm.saveInvoice, 1000);
+		}
+		
+		function isSelectedInvoice(invoice){
+			if(vm.invoice == undefined){
+				return false;
+			}
+			
+			return vm.invoice.id == invoice.id;
+		}
+		
+		function loadInvoices(callbackFn){
+			$http.get("cashRegister/session/invoice").success(callbackFn);
+		}
+
+		function lookupInvoice(invoice, invoices){
+			for(var invoiceIndex in invoices){
+				var invoice = invoices[invoiceIndex];
+				
+				if(invoice.id == vm.invoice.id){
+					return invoice;
+				}
+			}
+			
+			return null;
+		}
+
+		function newInvoice(){
+			$http.get("cashRegister/session/invoice?new").success(newInvoiceLoadSuccess);
+			
+			function newInvoiceLoadSuccess(invoice){
+				vm.invoice = invoice;
+				
+				vm.refreshInvoices();
+			}
+		}
+		
+		function openCustomerCard($event, customer){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openCustomerCard", customer);
+		}
+		
+		function openCustomerSearch($event, customer){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openCustomerSearchModal");
+		}
+		
+		function openProductCard($event, product){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openProductCard", product);
+		}
+		
+		function openProductSearch($event){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openProductSearchModal");
+		}
+		
+		function refreshInvoices(callbackFn){
+			vm.loadInvoices(function(invoices){
+				vm.invoices = invoices;
+				
+				vm.searchInProgress = false;
+				
+				
+				if(vm.invoice == null || vm.invoice.status.type == "CANCELED" || vm.invoice.status.type == "PAID"){
+					vm.showInvoice(invoices[0]);
+				}else{
+					var invoice = vm.lookupInvoice(vm.invoice, invoices);
+					
+					if(invoice == null){
+						vm.warnInvoiceClosed();
+						vm.showInvoice(invoices[0]);
+					}else{
+						vm.showInvoice(invoice);
+					}
+				}
+				
+				if(callbackFn != undefined){
+					callbackFn();
+				}
+				
+				$timeout(function(){
+					if(vm.inputIdToFocus != undefined){
+						$("#" + vm.inputIdToFocus).focus();
+					}
+				})
+			});
+		}
+		
+		function removeCustomerFromInvoice(){
+			vm.invoice.customer = null;
+			
+			vm.saveInvoice();
+		}
+		
+		function removeInvoiceDetail(invoiceDetail){
+			for(var detailIndex in vm.invoice.details){
+				if(vm.invoice.details[detailIndex].id == invoiceDetail.id){
+					vm.invoice.details.splice(detailIndex, 1);
+					
+					break;
+				}
+			}
+			
+			vm.saveInvoice();
+		}
+		
+		function saveInvoice(){
+			for(var detailIndex in vm.invoice.details){
+				var detail = vm.invoice.details[detailIndex];
+							
+				detail.product = {
+					id : detail.product.id,
+					ean13 : detail.product.ean13,
+					supplier : {id : detail.product.supplier.id}
+				};
+			}
+			
+			vm.loadInvoices(loadInvoiceSuccess);
+			
+			function loadInvoiceSuccess(invoices){
+				var existingInvoice = vm.lookupInvoice(vm.invoice, invoices);
+				
+				if(existingInvoice != null && Math.round(vm.invoice.modificationDate / 1000) == Math.round(existingInvoice.modificationDate / 1000)){
+					$http.post(INVOICE_URL, vm.invoice).success(saveInvoiceSuccess);
+				}else{
+					vm.warnInvoiceClosed();
+					
+					vm.refreshInvoices();
+				}
+				
+				function saveInvoiceSuccess(invoice){
+					vm.invoice = invoice;
+					
+					vm.refreshInvoices();
+				} 
+			}
+		}
+		
+		function searchProductKeyUp($event){
+			if($event.keyCode == 13){
+				vm.searchProduct();
+			}
+		}
+		
+		function searchProduct(){
+			vm.typedEan13 = vm.ean13;
+			
+			if(vm.typedEan13 != "" && !vm.searchInProgress){
+				vm.searchInProgress = true;
+				
+				$http.get("product?ean13=" + vm.typedEan13)
+					.success(searchProductSuccess)
+					.finally(searchProductCompleted);
+
+				vm.ean13 = "";
+			}
+			
+			function searchProductSuccess(products){
 				// Check if a product was found
 				if(products.length == 0){
 					// Show a warning explaining that the product does not exists.
@@ -218,205 +287,204 @@ app.controller("KubikCashRegisterController", function($scope, $http, $timeout){
 					$(".product-not-found").modal("hide");
 					
 					if (products.length > 1){
-						$scope.kubikProductSearch.openSearchModal($scope.typedEan13);
+						vm.kubikProductSearch.openSearchModal(vm.typedEan13);
 					}else{
-						$scope.addOneProduct(products[0]);
+						vm.addOneProduct(products[0]);
 					}
 				}
-			}).finally(function(){
-				$scope.searchInProgress = false;
-			});
-
-			$scope.ean13 = "";
-		}
-	}
-	
-	$scope.showInvoice = function(invoice){
-		$scope.invoice = invoice;
-		
-		$timeout(function(){
-		
-			$(".invoice-tabs > li").removeClass("active");
-			$("#invoice-tab-" + invoice.id).addClass("active");
-			
-			if(invoice.details.length == 0){
-				$(".checkout").attr("disabled", "disabled");
-			}else{
-				$(".checkout").removeAttr("disabled");
 			}
-		});
-		
-		// Load customer credit amount.
-		if(invoice.customer != null){
-			$http.get("customer/" + invoice.customer.id + "/customerCreditAmount").success(function(customerCreditAmount){
-				$scope.customerCreditAmount = customerCreditAmount;
-			});
-		}
-	}
-	
-	$scope.warnInvoiceClosed = function(){
-		$(".invoice-closed-modal").modal();
-		$(".payment-modal").modal("hide");
-		
-		kubikProductSearch.closeSearchModal();
-	}
-	
-	// this.modal && htmlTemplateUrl != undefined && this.$container != undefined
-	$scope.kubikCustomerSearch = kukikCustomerSearch;
-	$scope.kubikCustomerSearch.customerSelected = function(customer){
-		$scope.invoice.customer = customer;
 			
-		$scope.saveInvoice();
-		
-		$scope.kubikCustomerSearch.closeSearchModal();
-	};
-	
-	$scope.kubikProductSearch = kubikProductSearch;
-	$scope.kubikProductSearch.productSelected = function(product){
-		$scope.addOneProduct(product);
-	};
-	$scope.kubikProductCard = $scope.kubikProductSearch.kubikProductCard;
-	
-	$scope.kubikCustomerCard = new KubikCustomerCard({
-		customerUrl : "customer", 
-		customerSaved : function(customer){
-			$scope.invoice.customer = customer;
-			
-			$scope.saveInvoice();
-			
-			$scope.kubikCustomerCard.closeCard();
-			$scope.kubikCustomerSearch.closeSearchModal();
-		}
-	});
-	
-	$scope.focusEan13Input = true;
-	$scope.refreshInvoices();
-	
-	$(".ean13-input").focus();
-});
-
-app.controller("KubikPaymentController", function($scope, $http, $timeout){
-	$scope.$on("checkoutInvoice", function(event, invoice){
-		invoice.payments = [];
-		
-		$scope.invoice = invoice;		
-		$scope.amountLeft = invoice.totalAmount;
-			
-		// Open the modal.
-		$(".payment-modal").modal({
-			backdrop : "static",
-			keyboard : "false"
-		}).on("shown.bs.modal", function(){
-			$(".payment-amount").focus();
-		});
-	});
-	
-	$scope.$on("newPaymentMethod", function(event, paymentMethod){
-		$scope.paymentMethod = paymentMethod;
-
-		$scope.$broadcast("inactivatePaymentMethodStep");
-		$scope.$broadcast("activePaymentAmountStep");
-	});
-	
-	$scope.amountKeyPressed = function(event){
-		if((event.keycode >= 48 && event.keycode <= 57) || (event.keycode >= 96 && event.keycode <= 105)){
-			if($scope.amount == 0){
-				$scope.amount = "";
+			function searchProductCompleted(){
+				vm.searchInProgress = false;
 			}
-		}else if(event.keycode == 188 || event.keycode == 190){
-			$scope.dotEntered = true;
-		}else{
-			return false;
-		}
-	};
-	
-	$scope.closeSale = function(){
-		$(".payment-modal").modal("hide");
-		
-		$scope.$emit("saleOver");
-	}
-	
-	$scope.loadPaymentMethods = function(){
-		$scope.paymentMethod = null;
-		// Check the card option by default.
-		$http.get("paymentMethod").success(function(paymentMethods){
-			$scope.paymentMethods = paymentMethods;
-		});
-	};
-	
-	$scope.openReceipt = function(){
-		window.open("invoice/" + $scope.invoice.id + "/receipt", "Ticket de caisse", "height=600,width=479");
-		
-		$scope.closeSale();
-	}
-	
-	$scope.printReceipt = function(){
-		$http.post("invoice/" + $scope.invoice.id + "/receipt?print");
-		
-		$scope.closeSale();
-	};
-	
-	$scope.selectPaymentMethod = function(paymentMethod){
-		if(paymentMethod.type != "CASH" && (paymentMethod.type != "CREDIT" || $scope.customerCreditAmount > $scope.amountLeft)){
-			$(".payment-amount").val($scope.amountLeft);
-		}else if(paymentMethod.type == "CREDIT"){
-			$(".payment-amount").val($scope.customerCreditAmount);
 		}
 		
-		$scope.paymentMethod = paymentMethod;
-	};
-	
-	$scope.validatePayment = function(){
-		var $paymentAmount = $(".payment-amount");
-		var paymentVal = parseFloat($paymentAmount.val().replace(",", "."));
-		
-		if(paymentVal  == 0){
-			// Show warning.
-			return;
-		}
-		
-		if($scope.paymentMethod == null){
-			// Show warning
-			return;
-		}
-		
-		// Checks if the payment already exists.
-		var newPayment = null;
-		for(var paymentIndex in $scope.invoice.payments){
-			var payment = $scope.invoice.payments[paymentIndex];
+		function showInvoice(invoice){
+			vm.invoice = invoice;
 			
-			if(payment.paymentMethod.type == $scope.paymentMethod.type){
-				newPayment = payment;
-				newPayment.amount += paymentVal;
+			$timeout(function(){
+				$(".invoice-tabs > li").removeClass("active");
+				$("#invoice-tab-" + invoice.id).addClass("active");
 				
-				break;
+				if(invoice.details.length == 0){
+					$(".checkout").attr("disabled", "disabled");
+				}else{
+					$(".checkout").removeAttr("disabled");
+				}
+			});
+			
+			// Load customer credit amount.
+			if(invoice.customer != null){
+				$http.get("customer/" + invoice.customer.id + "/customerCreditAmount").success(loadCustomerCreditAmountSuccess);
+			}
+			
+			function loadCustomerCreditAmountSuccess(customerCreditAmount){
+				$timeout(function(){
+					vm.customerCreditAmount = customerCreditAmount;
+				});
 			}
 		}
 		
-		if(newPayment == null){
-			newPayment = {
-				invoice : {id : $scope.invoice.id},
-				amount : paymentVal,
-				paymentMethod : $scope.paymentMethod
-			};
+		function warnInvoiceClosed(){
+			$(".invoice-closed-modal").modal();
+			$(".payment-modal").modal("hide");
 			
-			$scope.invoice.payments.push(newPayment);
+			$scope.$broadcast("clodeProductSearchModal");
+		}
+	}
+})();
+
+(function(){
+	angular
+		.module("Kubik")
+		.controller("PaymentCtrl", PaymentCtrl);
+	
+	function PaymentCtrl($scope, $http, $timeout){
+		var vm = this;
+		
+		vm.amountKeyPressed = amountKeyPressed;
+		vm.checkoutInvoice = checkoutInvoice;
+		vm.closeSale = closeSale;
+		vm.loadPaymentMethods = loadPaymentMethods;
+		vm.newPaymentMethodSelected = newPaymentMethodSelected;
+		vm.openReceipt = openReceipt;
+		vm.printReceipt = printReceipt;
+		vm.selectPaymentMethod = selectPaymentMethod;
+		vm.validatePayment = validatePayment;
+
+		loadPaymentMethods();
+		
+		$scope.$on("checkoutInvoice", function($event, invoice){
+			vm.checkoutInvoice(invoice);
+		});
+		
+		$scope.$on("newPaymentMethod", function(event, paymentMethod){
+			vm.newPaymentMethodSelected(paymentMethod);
+		});
+		
+		function amountKeyPressed($event){
+			if(($event.keycode >= 48 && $event.keycode <= 57) || ($event.keycode >= 96 && $event.keycode <= 105)){
+				if(vm.amount == 0){
+					vm.amount = "";
+				}
+			}else if($event.keycode == 188 || $event.keycode == 190){
+				vm.dotEntered = true;
+			}else{
+				return false;
+			}
 		}
 		
-		$scope.amountLeft -= paymentVal;
-		
-		if($scope.amountLeft <= 0){
-			$scope.invoice.status = {type : "PAID"};
+		function checkoutInvoice(invoice){
+			vm.invoice = invoice;
 			
-			$http.post("invoice", $scope.invoice).success(function(invoice){
-				$scope.invoice = invoice;
+			vm.invoice.payments = [];
+			vm.amountLeft = vm.invoice.totalAmount;
+			
+			// Open the modal.
+			$(".payment-modal").on("shown.bs.modal", function(){
+				$(".payment-amount").focus();
+			}).modal({
+				backdrop : "static",
+				keyboard : "false"
 			});
 		}
 		
-		$paymentAmount.val("");
-		$scope.paymentMethod = null;
-		$(".payment-methods .active").removeClass("active");
-	};
-	
-	$scope.loadPaymentMethods();
-});
+		function closeSale(){
+			$(".payment-modal").modal("hide");
+			
+			$scope.$emit("saleOver");
+		}
+		
+		function loadPaymentMethods(){
+			vm.paymentMethod = null;
+			
+			$http.get("paymentMethod").success(loadPaymentMethodSuccess);
+			
+			function loadPaymentMethodSuccess(paymentMethods){
+				vm.paymentMethods = paymentMethods;
+			}
+		}
+		
+		function newPaymentMethodSelected(paymentMethod){
+			vm.paymentMethod = paymentMethod;
+		}
+		
+		function openReceipt(){
+			window.open("invoice/" + vm.invoice.id + "/receipt", "Ticket de caisse", "height=600,width=479");
+			
+			vm.closeSale();
+		}
+		
+		function printReceipt(){
+			$http.post("invoice/" + vm.invoice.id + "/receipt?print");
+			
+			vm.closeSale();
+		}
+
+		function selectPaymentMethod(paymentMethod){
+			if(paymentMethod.type != "CASH" && (paymentMethod.type != "CREDIT" || vm.customerCreditAmount > vm.amountLeft)){
+				$(".payment-amount").val(vm.amountLeft);
+			}else if(paymentMethod.type == "CREDIT"){
+				$(".payment-amount").val(vm.customerCreditAmount);
+			}
+			
+			vm.paymentMethod = paymentMethod;
+		}
+		
+		function validatePayment(){
+			var $paymentAmount = $(".payment-amount");
+			var paymentVal = parseFloat($paymentAmount.val().replace(",", "."));
+			
+			if(paymentVal  == 0){
+				// Show warning.
+				return;
+			}
+			
+			if(vm.paymentMethod == null){
+				// Show warning
+				return;
+			}
+			
+			// Checks if the payment already exists.
+			var newPayment = null;
+			for(var paymentIndex in vm.invoice.payments){
+				var payment = vm.invoice.payments[paymentIndex];
+				
+				if(payment.paymentMethod.type == vm.paymentMethod.type){
+					newPayment = payment;
+					newPayment.amount += paymentVal;
+					
+					break;
+				}
+			}
+			
+			if(newPayment == null){
+				newPayment = {
+					invoice : {id : vm.invoice.id},
+					amount : paymentVal,
+					paymentMethod : vm.paymentMethod
+				};
+				
+				vm.invoice.payments.push(newPayment);
+			}
+			
+			vm.amountLeft = Number((vm.amountLeft - paymentVal).toFixed(2));
+			
+			if(vm.amountLeft <= 0){
+				vm.invoice.status = {type : "PAID"};
+				
+				$http.post("invoice", vm.invoice).success(saveInvoiceSuccess);
+			}
+			
+			$paymentAmount.val("");
+			
+			vm.paymentMethod = null;
+			
+			$(".payment-methods .active").removeClass("active");
+			
+			function saveInvoiceSuccess(invoice){
+				vm.invoice = invoice;
+			}
+		}
+	}
+})();

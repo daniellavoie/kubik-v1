@@ -12,16 +12,14 @@
 		<link th:replace="util/import :: head">
 	</head>
 	
-	<body>
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="KubikCustomersPage" ng-controller="KubikCustomersPageController as view"  class="container text-center">
+		<div class="container text-center">
 			<h1>Clients</h1>
-						
-			<div th:replace="sales/customer/customers :: customers"></div>
+
+			<div th:replace="sales/customer/customers-standalone :: customers-standalone"></div>
 		</div>
-		
-		<div class="customer-card"></div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/sales/customers-page.js}"></script>

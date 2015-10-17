@@ -4,7 +4,7 @@
 	xmlns:th="http://www.thymeleaf.org">
 
 	<body>
-		<div th:fragment="products-modal" th:remove="tag">
+		<div th:fragment="products-modal" ng-controller="ProductSearchCtrl as productSearchCtrl">
 			<div class="products-modal autoModal modal fade">
 				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
@@ -19,7 +19,6 @@
 						
 						<div class="modal-footer">
 							<button 
-								ng-click="close()"
 								type="button" 
 								class="btn btn-default" 
 								data-dismiss="modal"

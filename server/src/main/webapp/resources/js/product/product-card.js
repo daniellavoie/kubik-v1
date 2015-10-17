@@ -1,91 +1,151 @@
-window.KubikProductCard = function(options){
-	if(options == undefined){
-		options = {};
-	}
-	if(options.$modalContainer == undefined){
-		options.$modalContainer = $(".product-card");
-	}
+(function(){
+	var PRODUCT_URL = "/product";
 	
-	this.app = app;
-	this.$modalContainer = options.$modalContainer;
-	this.productUrl = options.productUrl;
-	this.productSaved = options.productSaved;
+	var $modal = $(".kubikProductCard");
+	var $saveBtn = $modal.find(".save")
+	var $modifyBtn = $modal.find(".modify")
+	var $closeBtn = $modal.find(".closeModal")
+	var $cancelBtn = $modal.find(".cancel")
 	
-	this.init();
-};
-
-window.KubikProductCard.prototype.init = function(){
-	var kubikProductCard = this;
-	var kubikProductCategories;
+	angular
+		.module("Kubik")
+		.controller("ProductCardCtrl", ProductCardCtrl);
 	
-	this.app.controller("KubikProductCardController", function($scope, $http, $timeout){
-		kubikProductCard.$modalScope = $scope;
-		$scope.editMode = false;
+	function ProductCardCtrl($scope, $http, $timeout, $controller){
+		var vm = this;
 		
-		$scope.cancelModify = function(){
-			$scope.product = $scope.originalProduct;
+		vm.editMode = false;
+		vm.product = {};
+		vm.inventoryTabs = {	customerCredit : {	searchParams : {
+										page : 0,
+										resultPerPage : 20,
+										sortBy : "customerCredit.completeDate",
+										direction : "DESC" }
+								}, 
+								invoice : {	searchParams : {
+									page : 0,
+									resultPerPage : 20,
+									sortBy : "invoice.paidDate",
+									direction : "DESC"  }
+								}, 
+								reception : {	searchParams : {
+									page : 0,
+									resultPerPage : 20,
+									sortBy : "reception.dateReceived",
+									direction : "DESC"  }
+								}, 
+								rma : {	searchParams : {
+									page : 0,
+									resultPerPage : 20,
+									sortBy : "rma.shippedDate",
+									direction : "DESC"  }
+								}};
+		
+		loadSupplier();
+		
+		vm.cancelModify = cancelModify;
+		vm.changeInventoryTab = changeInventoryTab;
+		vm.changePage = changePage;
+		vm.changeTab = changeTab;
+		vm.endEditMode = endEditMode;
+		vm.getSupplier = getSupplier;
+		vm.loadCompany = loadCompany;
+		vm.loadInventoryTab = loadInventoryTab;
+		vm.loadInventoryTabs = loadInventoryTabs;
+		vm.loadSupplier = loadSupplier;
+		vm.modify = modify;
+		vm.openCard = openCard;
+		vm.openProductCategories = openProductCategories;
+		vm.save = save;
+		
+		$scope.$on("openProductCard", function(event, product){
+			vm.openCard(product);
+		});
+		
+		function cancelModify(){
+			vm.product = vm.originalProduct;
 			
-			$scope.endEditMode();
-		};
-		
-		$scope.changeInventoryTab = function(tabClassName){
-			if($scope.inventoryTab != tabClassName){
-				$scope.inventoryTab = tabClassName;
-			}
-		};
-		
-		$scope.changePage = function(page){
-			$scope.inventoryTabs[$scope.inventoryTab].searchParams.page = page;
-			
-			$scope.loadInventoryTab($scope.inventoryTab);
+			vm.endEditMode();
 		}
 		
-		$scope.endEditMode = function(){
-			$scope.editMode = false;
-			
-			$scope.$saveBtn.addClass("hidden");
-			$scope.$cancelBtn.addClass("hidden");
-			$scope.$modifyBtn.removeClass("hidden");
-			$scope.$closeBtn.removeClass("hidden");
-			
-			$scope.refreshModalBackdrop();
-		};
+		function changeInventoryTab(tabClassName){
+			if(vm.inventoryTab != tabClassName){
+				vm.inventoryTab = tabClassName;
+			}
+		}
 		
-		$scope.getSupplier = function(id){
-			for(var supplierIndex in $scope.suppliers){
-				var supplier = $scope.suppliers[supplierIndex];
+		function changePage(page){
+			vm.inventoryTabs[vm.inventoryTab].searchParams.page = page;
+			
+			vm.loadInventoryTab(vm.inventoryTab);
+		}
+		
+		function changeTab(tab){
+			vm.productTab = tab;
+		}
+		
+		function endEditMode(){
+			vm.editMode = false;
+			
+			$saveBtn.addClass("hidden");
+			$cancelBtn.addClass("hidden");
+			$modifyBtn.removeClass("hidden");
+			$closeBtn.removeClass("hidden");
+		}
+		
+		function getSupplier(id){
+			for(var supplierIndex in vm.suppliers){
+				var supplier = vm.suppliers[supplierIndex];
 				if(supplier.id == id){
 					return supplier;
 				}
 			}
 			
 			return null;
-		};
+		}
 		
-		$scope.loadInventoryTab = function(tabName){			
-			$http.get(kubikProductCard.productUrl + "/" + $scope.product.id + "/" + tabName + "?" + $.param($scope.inventoryTabs[tabName].searchParams)).success(function(searchResult){
-				$scope.inventoryTabs[tabName].result = searchResult;
-			});
-		};
-		
-		$scope.loadInventoryTabs = function(){
-			for(var inventoryTabIndex in $scope.inventoryTabs){
-				$scope.loadInventoryTab(inventoryTabIndex);
+		function loadCompany(){
+			$.get("/company").success(companyLoaded);
+			
+			function companyLoaded(company){
+				vm.company = company;
 			}
 		}
 		
-		$scope.modify = function(){
-			$scope.editMode = true;
+		function loadInventoryTab(tabName){
+			var url = PRODUCT_URL + "/" + vm.product.id + "/" + tabName + "?" + $.param(vm.inventoryTabs[tabName].searchParams);
 			
-			$scope.$saveBtn.removeClass("hidden");
-			$scope.$cancelBtn.removeClass("hidden");
-			$scope.$modifyBtn.addClass("hidden");
-			$scope.$closeBtn.addClass("hidden");
+			$http.get(url).success(tabLoaded);
 			
-			$scope.originalProduct = $.extend(true, {}, $scope.product);
+			function tabLoaded(searchResult){
+				vm.inventoryTabs[tabName].result = searchResult;
+			}
+		}
+		
+		function loadInventoryTabs(){
+			for(var inventoryTabIndex in vm.inventoryTabs){				
+				vm.loadInventoryTab(inventoryTabIndex);
+			}
+		}
+		
+		function loadSupplier(){
+			$http.get("/supplier").success(function(suppliers){
+				vm.suppliers = suppliers;
+			});
+		}
+		
+		function modify(){
+			vm.editMode = true;
+			
+			$saveBtn.removeClass("hidden");
+			$cancelBtn.removeClass("hidden");
+			$modifyBtn.addClass("hidden");
+			$closeBtn.addClass("hidden");
+			
+			vm.originalProduct = $.extend(true, {}, vm.product);
 			
 			$timeout(function(){
-				if($scope.editMode){
+				if(vm.editMode){
 					$(".date-published, .publish-end-date").each(function(index, element){
 						var $element = $(element);
 						
@@ -98,129 +158,69 @@ window.KubikProductCard.prototype.init = function(){
 				}
 				
 				var supplier = null;
-				if($scope.product.supplier != null) {
-					supplier = $scope.getSupplier($scope.product.supplier.id);
+				if(vm.product.supplier != null) {
+					supplier = vm.getSupplier(vm.product.supplier.id);
 				}
 				if(supplier == null){
-					supplier = $scope.suppliers[0];
+					supplier = vm.suppliers[0];
 				}
 				
 				$("#product-supplier-" + supplier.id).attr("SELECTED", "SELECTED");
 				
 				$scope.$apply();
 			});
-			
-			$scope.refreshModalBackdrop();
 		}
 		
-		$scope.openCard = function(product){
+		function openCard(product){
 			if(product.id == undefined){
-				showProductCard(product);
+				displayProduct(product);
 			}else{
-				$http.get("/product/" + product.id).success(function(product){
-					showProductCard(product);
-				});
+				$http.get(PRODUCT_URL + "/" + product.id).success(displayProduct);
 			}
 			
-			function showProductCard(product){				
-				$scope.product = product;
-				$scope.productTab = "product";
-				$scope.inventoryTab = "reception";
-
-				$timeout(function(){
-					kubikProductCard.$modal = kubikProductCard.$modalContainer.find(".kubikProductCard").modal({
-						backdrop : "static",
-						keyboard : false
+			function displayProduct(product){
+				$modal.on('show.bs.modal', function (e) {
+					$timeout(function(){
+						vm.product = product;
+						vm.productTab = "product";
+						vm.inventoryTab = "reception";
+						
+						if(product.id == undefined){
+							vm.modify();
+						}else{
+							vm.loadInventoryTabs();
+						}
 					});
-					
-					if(product.id == undefined){
-						$scope.modify();
-					}else{
-						$scope.loadInventoryTabs();
-					}
-				});
+				}).modal({
+					backdrop : "static",
+					keyboard : false
+				});;
 			}
 		}
 		
-		$scope.refreshModalBackdrop = function(){
-			$timeout(function(){
-				kubikProductCard.$modalContainer.find(".modal-backdrop")
-			      .css('height', 0)
-			      .css('height', kubikProductCard.$modal[0].scrollHeight);
-			});
-		};
+		function openProductCategories(){
+			$scope.$broadcast("openProductCategories", {categorySelected : categorySelected});
+			
+			function categorySelected(category){
+				vm.product.category = category;
+				
+				$scope.$broadcast("closeProductCategoriesModal");
+			}
+		}
 		
-		$scope.save = function(){
-			$scope.product.datePublished = $(".date-published").datepicker("getDate");
-			$scope.product.publishEndDate = $(".publish-end-date").datepicker("getDate");
+		function save(){
+			vm.product.datePublished = $(".date-published").datepicker("getDate");
+			vm.product.publishEndDate = $(".publish-end-date").datepicker("getDate");
 		
-			if(!$scope.product.dilicomReference){
-				$scope.product.supplier = $scope.getSupplier($("select.product-supplier").val());
+			if(!vm.product.dilicomReference){
+				vm.product.supplier = vm.getSupplier($("select.product-supplier").val());
 			}
 			
-			$http.post(kubikProductCard.productUrl, $scope.product).success(function(product){
-				$scope.product = product;
-				$scope.endEditMode();
-				if(kubikProductCard.productSaved != undefined){
-					kubikProductCard.productSaved(product);
-				}
+			$http.post(PRODUCT_URL, vm.product).success(function(product){
+				vm.product = product;
+				vm.endEditMode();
+				$scope.$emit("productSaved", product)
 			})
-		};
-		
-		$.get("/company").success(function(company){
-			$scope.company = company;
-		});
-
-		$scope.$saveBtn = kubikProductCard.$modalContainer.find(".save")
-		$scope.$modifyBtn = kubikProductCard.$modalContainer.find(".modify")
-		$scope.$closeBtn = kubikProductCard.$modalContainer.find(".closeModal")
-		$scope.$cancelBtn = kubikProductCard.$modalContainer.find(".cancel")
-		
-		$scope.inventoryTabs = {	customerCredit : {	searchParams : {
-											page : 0,
-											resultPerPage : 20,
-											sortBy : "customerCredit.completeDate",
-											direction : "DESC" }
-									}, 
-									invoice : {	searchParams : {
-										page : 0,
-										resultPerPage : 20,
-										sortBy : "invoice.paidDate",
-										direction : "DESC"  }
-									}, 
-									reception : {	searchParams : {
-										page : 0,
-										resultPerPage : 20,
-										sortBy : "reception.dateReceived",
-										direction : "DESC"  }
-									}, 
-									rma : {	searchParams : {
-										page : 0,
-										resultPerPage : 20,
-										sortBy : "rma.shippedDate",
-										direction : "DESC"  }
-									}};
-		
-		$http.get("/supplier").success(function(suppliers){
-			$scope.suppliers = suppliers;
-		});
-
-		$scope.kubikProductCategories = kubikProductCategories;
-		$scope.kubikProductCategories.categorySelectedCallback = function(category){
-			$scope.product.category = category;
-			
-			$scope.kubikProductCategories.closeModal();
-		};
-	});
-	
-	kubikProductCategories = new KubikProductCategories({
-		app : this.app,
-		$modal : $(".categories-modal"),
-		categoriesUrl : "/category",
-		categorySelectedCallback : {}
-	});
-};
-
-window.KubikProductCard.prototype.openCard = function(product){
-	this.$modalScope.openCard(product);
-}
+		}
+	}
+})();

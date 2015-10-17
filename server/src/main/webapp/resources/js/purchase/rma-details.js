@@ -1,162 +1,207 @@
-var app = angular.module("KubikRmaDetails", []);
-var kubikProductCard = new KubikProductCard({
-	app : app,
-	productUrl : "../product"
-}); 
-
-var rmaId = window.location.pathname.split("/")[2];
-
-app.controller("KubikRmaDetailsController", function($scope, $http, $timeout){
-	$scope.addProduct = function($event){
-		$scope.error.productNotFound = false;
-		if($event.keyCode == 13){
-			$scope.showLoading();
-			detailFound = false;
-			for(var detailIndex in $scope.rma.details){
-				var detail = $scope.rma.details[detailIndex];
-				
-				if(detail.product.ean13 == $scope.detail.product.ean13){
-					detailFound = true;
+(function(){
+	var rmaId = window.location.pathname.split("/")[2];
+	
+	angular
+		.module("Kubik")
+		.controller("RmaDetailsCtrl", RmaDetailsCtrl);
+	
+	function RmaDetailsCtrl($scope, $http, $timeout){
+		var vm = this;
+		
+		vm.error = {};
+		vm.detail = {product : {}};
+		
+		vm.addProduct = addProduct;
+		vm.cancel = cancel;
+		vm.changeRma = changeRma;
+		vm.changePaymentMethod = changePaymentMethod;
+		vm.focus = focus;
+		vm.hideAlerts = hideAlerts;
+		vm.hideLoading = hideLoading;
+		vm.loadNextRma = loadNextRma;
+		vm.loadRma = loadRma;
+		vm.loadPreviousRma = loadPreviousRma;
+		vm.openProductCard = openProductCard;
+		vm.openSupplierCard = openSupplierCard;
+		vm.print = print; 
+		vm.rmaChanged = rmaChanged;
+		vm.saveRma = saveRma;
+		vm.showLoading = showLoading;
+		vm.showProductNotFoundAlert = showProductNotFoundAlert;
+		vm.validate = validate;
+		
+		loadRma();
+		loadNextRma();
+		loadPreviousRma();
+		
+		$scope.$on("supplierSaved", function($event, supplier){
+			vm.loadRma();
+		});
+		
+		function addProduct($event){
+			vm.error.productNotFound = false;
+			
+			if($event.keyCode == 13){
+				vm.showLoading();
+				detailFound = false;
+				for(var detailIndex in vm.rma.details){
+					var detail = vm.rma.details[detailIndex];
 					
-					detail.quantity += 1;
-					$scope.saveRma();
-					$scope.detail.product.ean13 = ""
-					break;
+					if(detail.product.ean13 == vm.detail.product.ean13){
+						detailFound = true;
+						
+						detail.quantity += 1;
+						vm.saveRma();
+						vm.detail.product.ean13 = ""
+						break;
+					}
+				}
+				
+				if(!detailFound){
+					var url = "../product?ean13=" + vm.detail.product.ean13 + "&supplierEan13=" + vm.rma.supplier.ean13
+					
+					$http.get(url)
+						.success(productLoadSuccess)
+						.error(productLoadOnError)
+						.finally(productLoadCompleted);
+				}
+				
+				$("#product-ean13").select();
+			}
+			
+			function productLoadSuccess(product){
+				if(product != ""){
+					vm.rma.details.push({product : product, quantity : 1, rma : {id : vm.rma.id}});
+					
+					vm.saveRma();
+				}else{
+					vm.error.productNotFound = true;
 				}
 			}
 			
-			if(!detailFound){
-				$http.get(
-					"../product?ean13=" + $scope.detail.product.ean13 + "&supplierEan13=" + $scope.rma.supplier.ean13
-				).success(function(product){
-					if(product != ""){
-						$scope.rma.details.push({product : product, quantity : 1, rma : {id : $scope.rma.id}});
-						
-						$scope.saveRma();
-					}else{
-						$scope.error.productNotFound = true;
-					}
-				}).error(function(){
-					$scope.error.productNotFound = true;
-				}).finally(function(){
-					$scope.hideLoading();
-				});
+			function productLoadOnError(){
+				vm.error.productNotFound = true;
 			}
 			
-			$("#product-ean13").select();
+			function productLoadCompleted(){
+				vm.hideLoading();
+			}
 		}
-	};
-	
-	$scope.cancel = function(){
-		$scope.rma.status = 'CANCELED';
 		
-		$scope.saveRma();
-	};	
-	
-	$scope.changeRma = function(rmaId){
-		location.href = rmaId;
-	};
-	
-	$scope.changePaymentMethod = function(paymentMethodType){
-		$scope.rma.paymentMethod.type = paymentMethodType;
-		
-		$scope.saveRma();
-	};
-	
-	$scope.focus = function($event){
-		$scope.inputIdToFocus = $event.target.id;
-	};
-	
-	$scope.hideAlerts = function(){
-		$(".alerts .alert").addClass("hidden");
-	};
-	
-	$scope.hideLoading = function(){
-		$(".loading").addClass("hidden");
-	};
-		
-	$scope.loadRma = function(){
-		$http.get(rmaId).success(function(rma){
-			$scope.rma = rma;
+		function cancel(){
+			vm.rma.status = 'CANCELED';
 			
-			if($scope.inputIdToFocus != undefined){
-				$timeout(function(){$("#" + $scope.inputIdToFocus).focus()});
+			vm.saveRma();
+		}
+		
+		function changeRma(rmaId){
+			location.href = rmaId;
+		}
+		
+		function changePaymentMethod(paymentMethodType){
+			vm.rma.paymentMethod.type = paymentMethodType;
+			
+			vm.saveRma();
+		}
+		
+		function focus($event){
+			vm.inputIdToFocus = $event.target.id;
+		}
+
+		function hideAlerts(){
+			$(".alerts .alert").addClass("hidden");
+		}
+
+		function hideLoading(){
+			$(".loading").addClass("hidden");
+		}
+		
+		function loadNextRma(){
+			$http.get(rmaId + "/next").success(nextRmaLoadedSuccess);
+			
+			function nextRmaLoadedSuccess(nextRmaId){
+				if(nextRmaId == "") nextRmaId = null;
+				vm.nextRma = nextRmaId;
 			}
-		});
-	};
-	
-	$scope.openSupplierCard = function(supplier, $event){
-		try{
-			$scope.kubikSupplierCard.openCard(supplier);
-		}finally{
+		}
+		
+		function loadPreviousRma(){
+			$http.get(rmaId + "/previous").success(previousRmaLoadedSuccess);
+			
+			function previousRmaLoadedSuccess(previousRmaId){
+				if(previousRmaId == "") previousRmaId = null;
+				vm.previousRma = previousRmaId;
+			}
+		}
+		
+		function loadRma(){
+			$http.get(rmaId).success(rmaLoaded);
+			
+			function rmaLoaded(rma){
+				vm.rma = rma;
+				
+				if(vm.inputIdToFocus != undefined){
+					$timeout(function(){
+						$("#" + vm.inputIdToFocus).focus()
+					});
+				}
+			}
+		}
+		
+		function openProductCard($event, product) {
 			$event.stopPropagation();
-		}
-	}
-	
-	$scope.print = function(){
-		window.open($scope.rma.id + "/report", "Avis de retour fournisseur", "pdf");
-	}
-	
-	$scope.rmaChanged = function(){
-		if($scope.rmaChangedTimer != undefined) clearTimeout($scope.rmaChangedTimer);
-	    
-		$scope.rmaChangedTimer = setTimeout($scope.saveRma, 1000);
-	}
-	
-	$scope.saveRma = function(){
-		$scope.showLoading();
-		
-		angular.forEach($scope.rma.details, cleanDetailCategory);
-		
-		$http.post(".", $scope.rma).finally(saveCompleted);
-		
-		function cleanDetailCategory(detail, index){
-			detail.product.category = null;
-		}
-		
-		function saveCompleted(){
-			$scope.hideLoading();
 			
-			$scope.loadRma();
+			$scope.$broadcast("openProductCard", product);
 		}
-	};
-	
-	$scope.showLoading = function(){
-		$scope.hideAlerts();
-		$(".loading").removeClass("hidden");
-	}
-	
-	$scope.showProductNotFoundAlert = function(){
-		$(".product-not-found").removeClass("hidden");
-	}
-	
-	$scope.validate = function(){
-		$scope.rma.status = "SHIPPED";
+
+		function openSupplierCard($event, supplier){
+			$event.stopPropagation();
+
+			$scope.$broadcast("openSupplierCard", supplier);
+		}
 		
-		$scope.saveRma();
-	};
+		function print(){
+			window.open(vm.rma.id + "/report", "Avis de retour fournisseur", "pdf");
+		}
 
-	$scope.kubikSupplierCard = new KubikSupplierCard({
-		supplierSaved : function(){
-			$scope.loadRma();
-		}, 
-		supplierUrl : "../supplier"
-	});
-	
-	$http.get(rmaId + "/next").success(function(rmaId){
-		if(rmaId == "") rmaId = null;
-		$scope.nextRma = rmaId;
-	});
-	
-	$http.get(rmaId + "/previous").success(function(rmaId){
-		if(rmaId == "") rmaId = null;
-		$scope.previousRma = rmaId;
-	});
-	
-	$scope.error = {};
-	$scope.detail = {product : {}};
+		function rmaChanged(){
+			if(vm.rmaChangedTimer != undefined) clearTimeout(vm.rmaChangedTimer);
+		    
+			vm.rmaChangedTimer = setTimeout(vm.saveRma, 1000);
+		}
 
-	$scope.kubikProductCard = kubikProductCard;
-	
-	$scope.loadRma();
-});
+		function saveRma(){
+			vm.showLoading();
+			
+			angular.forEach(vm.rma.details, cleanDetailCategory);
+			
+			$http.post(".", vm.rma).finally(saveCompleted);
+			
+			function cleanDetailCategory(detail, index){
+				detail.product.category = null;
+			}
+			
+			function saveCompleted(){
+				vm.hideLoading();
+				
+				vm.loadRma();
+			}
+		}
+
+		function showLoading(){
+			vm.hideAlerts();
+			
+			$(".loading").removeClass("hidden");
+		}
+
+		function showProductNotFoundAlert(){
+			$(".product-not-found").removeClass("hidden");
+		}
+		
+		function validate(){
+			vm.rma.status = "SHIPPED";
+			
+			vm.saveRma();
+		}
+	}
+})();

@@ -4,7 +4,7 @@
 	xmlns:th="http://www.thymeleaf.org">
 
 	<body>
-		<div th:fragment="references-modal" th:remove="tag">
+		<div th:fragment="references-modal" ng-controller="ReferenceSearchCtrl as referenceSearchCtrl">
 			<div class="references-modal autoModal modal fade">
 				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
@@ -14,7 +14,7 @@
 						</div>
 						
 						<div class="modal-body">
-							<div th:include="dilicom/references :: references"></div>
+							<div th:include="dilicom/references-list :: references-list"></div>
 						</div>
 						
 						<div class="modal-footer">
@@ -28,6 +28,8 @@
 					</div>
 				</div>
 			</div>
+			
+			<div th:replace="dilicom/reference-card :: reference-card"></div>
 		</div>
 	</body>
 

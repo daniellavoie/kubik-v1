@@ -11,23 +11,23 @@
 		<link th:replace="util/import :: head">
 	</head>
 	
-	<body>
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center" ng-cloak ng-app="KubikPurchaseOrders" ng-controller="KubikPurchaseOrdersController as ordersView">
+		<div class="container text-center" ng-cloak ng-controller="PurchaseOrdersCtrl as purchaseOrdersCtrl">
 			<h1>Commandes fournisseur</h1>
 			
 			<ul class="pager row text-center">
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!ordersPage.first" ng-click="changePage(ordersPage.number-1)">Précédente</a>
+					<a href="#" ng-if="!purchaseOrdersCtrl.ordersPage.first" ng-click="purchaseOrdersCtrl.changePage(purchaseOrdersCtrl.ordersPage.number-1)">Précédente</a>
 				</li>
 				
-				<li class="col-md-8">Page {{ordersPage.number+1}} sur {{ordersPage.totalPages}}</li>
+				<li class="col-md-8">Page {{purchaseOrdersCtrl.ordersPage.number+1}} sur {{purchaseOrdersCtrl.ordersPage.totalPages}}</li>
 				
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!ordersPage.last" ng-click="changePage(ordersPage.number+1)">Suivante</a>
+					<a href="#" ng-if="!purchaseOrdersCtrl.ordersPage.last" ng-click="purchaseOrdersCtrl.changePage(purchaseOrdersCtrl.ordersPage.number+1)">Suivante</a>
 				</li>
 			</ul>
 			
@@ -51,9 +51,9 @@
 						</tr>
 						</thead>
 					<tbody>
-						<tr ng-repeat="order in ordersPage.content" ng-click="openOrder(order.id)">
+						<tr ng-repeat="order in purchaseOrdersCtrl.ordersPage.content" ng-click="purchaseOrdersCtrl.openOrder(order.id)">
 							<td>{{order.id}}</td>
-							<td><a href="#" ng-click="openSupplierCard(order.supplier, $event)">{{order.supplier.name}}</a></td>
+							<td><a href="#" ng-click="purchaseOrdersCtrl.openSupplierCard($event, order.supplier)">{{order.supplier.name}}</a></td>
 							<td>{{order.date | date : "short"}}</td>
 							<td>{{order.dateReceived | date : "short"}}</td>
 							<td>
@@ -76,9 +76,9 @@
 					</tbody>
 				</table>
 			</div>
-		</div>
 		
-		<div class="supplier-card"></div>
+			<div th:replace="product/supplier-card :: supplier-card"></div>
+		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/purchase/orders.js}"></script>

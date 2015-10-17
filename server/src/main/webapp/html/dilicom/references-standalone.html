@@ -1,0 +1,10 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<body>
+		<div th:fragment="references-standalone" ng-controller="ReferenceSearchCtrl as referenceSearchCtrl">
+			<div th:replace="dilicom/references-list :: references-list"></div>
+			
+			<div th:replace="dilicom/references-card :: references-card"></div>
+		</div>
+	</body>
+</html>

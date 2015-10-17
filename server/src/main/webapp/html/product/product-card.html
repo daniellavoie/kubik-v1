@@ -4,9 +4,9 @@
 	xmlns:th="http://www.thymeleaf.org">
 
 <body>
-	<div th:fragment="product-card" class="product-card">
-		<div class="kubikProductCard autoModal modal fade">
-			<div class="modal-dialog modal-lg" ng-controller="KubikProductCardController">
+	<div th:fragment="product-card" class="product-card" ng-controller="ProductCardCtrl as productCardCtrl">
+		<div class="kubikProductCard modal fade">
+			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -15,113 +15,113 @@
 					
 					<div class="modal-body">
 						<div class="text-center">
-							<img src="http://images1.centprod.com/{{company.ean13}}/{{product.imageEncryptedKey}}-cover-medium.jpg">
+							<img src="http://images1.centprod.com/{{productCardCtrl.company.ean13}}/{{productCardCtrl.product.imageEncryptedKey}}-cover-medium.jpg">
 						</div>
 					
 						<ul class="nav nav-tabs">
-							<li role="presentation" ng-click="productTab = 'product'" ng-class="{true : 'active'}[productTab == 'product']"><a href="#">Produit</a></li>
-							<li role="presentation" ng-click="productTab = 'category'" ng-class="{true : 'active'}[productTab == 'category']"><a href="#">Catégorisation</a></li>
-							<li role="presentation" ng-click="productTab = 'publisher'" ng-class="{true : 'active'}[productTab == 'publisher']"><a href="#">Editeur</a></li>
-							<li role="presentation" ng-click="productTab = 'price'" ng-class="{true : 'active'}[productTab == 'price']"><a href="#">Prix</a></li>
-							<li role="presentation" ng-click="productTab = 'supplier'" ng-class="{true : 'active'}[productTab == 'supplier']"><a href="#">Fournisseur</a></li>
-							<li role="presentation" ng-click="productTab = 'dimensions'" ng-class="{true : 'active'}[productTab == 'dimensions']"><a href="#">Dimensions</a></li>
-							<li role="presentation" ng-click="productTab = 'inventory'" ng-class="{true : 'active'}[productTab == 'inventory']"><a href="#">Inventaire</a></li>
+							<li role="presentation" ng-click="productCardCtrl.changeTab('product')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'product']"><a href="#">Produit</a></li>
+							<li role="presentation" ng-click="productCardCtrl.changeTab('category')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'category']"><a href="#">Catégorisation</a></li>
+							<li role="presentation" ng-click="productCardCtrl.changeTab('publisher')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'publisher']"><a href="#">Editeur</a></li>
+							<li role="presentation" ng-click="productCardCtrl.changeTab('price')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'price']"><a href="#">Prix</a></li>
+							<li role="presentation" ng-click="productCardCtrl.changeTab('supplier')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'supplier']"><a href="#">Fournisseur</a></li>
+							<li role="presentation" ng-click="productCardCtrl.changeTab('dimensions')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'dimensions']"><a href="#">Dimensions</a></li>
+							<li role="presentation" ng-click="productCardCtrl.changeTab('inventory')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'inventory']"><a href="#">Inventaire</a></li>
 						</ul>
 						
-						<div class="tab product" ng-class="{true : 'hidden'}[productTab != 'product']">
+						<div class="tab product" ng-class="{true : 'hidden'}[productCardCtrl.productTab != 'product']">
 							<form class="form-horizontal">
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Ean13</label>
 									<div class="col-sm-6">
-										<p ng-if="product.id != null" class="form-control-static">{{product.ean13}}</p>
-										<input ng-if="editMode && product.id == null" class="form-control" ng-model="product.ean13" placeholder="Ean13">
+										<p class="form-control-static">{{productCardCtrl.product.ean13}}</p>
+										<input ng-if="productCardCtrl.editMode && productCardCtrl.product.id == null" class="form-control" ng-model="productCardCtrl.product.ean13" placeholder="Ean13">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Titre</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.extendedLabel}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.extendedLabel" placeholder="Titre">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.extendedLabel}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.extendedLabel" placeholder="Titre">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Titre court</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.standardLabel}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.standardLabel" placeholder="Titre court">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.standardLabel}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.standardLabel" placeholder="Titre court">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Titre caisse</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.cashRegisterLabel}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.cashRegisterLabel" placeholder="Titre caisse">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.cashRegisterLabel}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.cashRegisterLabel" placeholder="Titre caisse">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Auteur</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.author}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.author" placeholder="Auteur">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.author}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.author" placeholder="Auteur">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Date de publication</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.datePublished | date}}</p>
-										<input ng-if="editMode" class="date-published form-control" value="{{product.datePublished}}" placeholder="Date de publication">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.datePublished | date}}</p>
+										<input ng-if="productCardCtrl.editMode" class="date-published form-control" value="{{productCardCtrl.product.datePublished}}" placeholder="Date de publication">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Date de fin de disponibilité</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.publishEndDate | date}}</p>
-										<input ng-if="editMode" class="publish-end-date form-control" placeholder="Date de fin de disponibilité" />
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.publishEndDate | date}}</p>
+										<input ng-if="productCardCtrl.editMode" class="publish-end-date form-control" placeholder="Date de fin de disponibilité" />
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Isbn</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.isbn}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.isbn" placeholder="Isbn">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.isbn}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.isbn" placeholder="Isbn">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Thème</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.theme}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.theme" placeholder="Thème">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.theme}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.theme" placeholder="Thème">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Collection</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.collection}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.collection" placeholder="Collection">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.collection}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.collection" placeholder="Collection">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Référence collection</label>
 									<div class="col-sm-6">
-										<p class="form-control-static">{{product.collectionReference}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.collectionReference" placeholder="Référence collection">
+										<p class="form-control-static">{{productCardCtrl.product.collectionReference}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.collectionReference" placeholder="Référence collection">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Disponibilité</label>
 									<div class="col-sm-6">
-										<p class="form-control-static">{{product.availabilityCode}}</p>
+										<p class="form-control-static">{{productCardCtrl.product.availabilityCode}}</p>
 									</div>
 								</div>
 								
@@ -129,8 +129,8 @@
 									<label class="col-sm-6 control-label">Disponible à la commande</label>
 									<div class="col-sm-6">
 										<p class="form-control-static">
-											<span ng-if="product.availableForOrder">Oui</span>
-											<span ng-if="!product.availableForOrder">Non</span>
+											<span ng-if="productCardCtrl.product.availableForOrder">Oui</span>
+											<span ng-if="!productCardCtrl.product.availableForOrder">Non</span>
 										</p>
 									</div>
 								</div>
@@ -138,116 +138,116 @@
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Type de produit</label>
 									<div class="col-sm-6">
-										<p class="form-control-static">{{product.productType}}</p>
+										<p class="form-control-static">{{productCardCtrl.product.productType}}</p>
 									</div>
 								</div>
 							</form>
 						</div>
 						
-						<div class="tab category form-horizontal" ng-class="{true : 'hidden'}[productTab != 'category']">
+						<div class="tab category form-horizontal" ng-class="{true : 'hidden'}[productCardCtrl.productTab != 'category']">
 							<div class="form-group">
 								<label class="col-sm-6 control-label">Catégorie</label>
 								<div class="col-sm-6">
 									<p class="form-control-static">
-										{{product.category.name}}
+										{{productCardCtrl.product.category.name}}
 										<button 
-											ng-if="editMode" 
+											ng-if="productCardCtrl.editMode" 
 											class="btn btn-xs btn-default" 
-											ng-click="kubikProductCategories.openModal()"
+											ng-click="productCardCtrl.openProductCategories()"
 										><span class="glyphicon glyphicon-edit"></span></button>
 									</p>
 								</div>
 							</div>
 						</div>
 						
-						<div class="tab publisher" ng-class="{true : 'hidden'}[productTab != 'publisher']">	
+						<div class="tab publisher" ng-class="{true : 'hidden'}[productCardCtrl.productTab != 'publisher']">	
 							<form class="form-horizontal">
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Nom</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.publisher}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.publisher" placeholder="Nom">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.publisher}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.publisher" placeholder="Nom">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Présentation</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.publisherPresentation}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.publisherPresentation" placeholder="Présentation">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.publisherPresentation}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.publisherPresentation" placeholder="Présentation">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Isbn</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.publisherIsnb}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.publisherIsnb" placeholder="Isbn">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.publisherIsnb}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.publisherIsnb" placeholder="Isbn">
 									</div>
 								</div>
 							</form>
 						</div>
 						
-						<div class="tab price" ng-class="{true : 'hidden'}[productTab != 'price']">
+						<div class="tab price" ng-class="{true : 'hidden'}[productCardCtrl.productTab != 'price']">
 							<form class="form-horizontal">
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Type de prix</label>
 									<div class="col-sm-6">
-										<p class="form-control-static">{{product.priceType}}</p>
+										<p class="form-control-static">{{productCardCtrl.product.priceType}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Prix TTC</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.priceTaxIn | currency : "&euro;"}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.priceTaxIn" placeholder="Prix TTC">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.priceTaxIn | currency : "&euro;"}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.priceTaxIn" placeholder="Prix TTC">
 									</div>
 								</div>
 								
-								<div ng-if="!product.dilicomReference" class="form-group">
+								<div ng-if="!productCardCtrl.product.dilicomReference" class="form-group">
 									<label class="col-sm-6 control-label">Prix d'achat HT</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.purchasePriceTaxOut | currency : "&euro;"}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.purchasePriceTaxOut" placeholder="Prix d'achat HT">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.purchasePriceTaxOut | currency : "&euro;"}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.purchasePriceTaxOut" placeholder="Prix d'achat HT">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Taxes</label>
-									<div ng-if="!editMode" class="col-sm-6">
-										<p ng-if="product.tvaRate1 != null && product.tvaRate1 != 0" class="form-control-static">{{product.tvaRate1}} %</p>
-										<p ng-if="product.tvaRate2 != null && product.tvaRate2 != 0" class="form-control-static">{{product.tvaRate2}} %</p>
-										<p ng-if="product.tvaRate3 != null && product.tvaRate3 != 0" class="form-control-static">{{product.tvaRate3}} %</p>
+									<div ng-if="!productCardCtrl.editMode" class="col-sm-6">
+										<p ng-if="productCardCtrl.product.tvaRate1 != null && productCardCtrl.product.tvaRate1 != 0" class="form-control-static">{{productCardCtrl.product.tvaRate1}} %</p>
+										<p ng-if="productCardCtrl.product.tvaRate2 != null && productCardCtrl.product.tvaRate2 != 0" class="form-control-static">{{productCardCtrl.product.tvaRate2}} %</p>
+										<p ng-if="productCardCtrl.product.tvaRate3 != null && productCardCtrl.product.tvaRate3 != 0" class="form-control-static">{{productCardCtrl.product.tvaRate3}} %</p>
 									</div>
-									<div ng-if="editMode" class="col-sm-6">
-										<input class="form-control" ng-model="product.tvaRate1" placeholder="Taux taxe 1">
-										<input class="form-control" ng-model="product.tvaRate2" placeholder="Taux taxe 2">
-										<input class="form-control" ng-model="product.tvaRate3" placeholder="Taux taxe 3">
+									<div ng-if="productCardCtrl.editMode" class="col-sm-6">
+										<input class="form-control" ng-model="productCardCtrl.product.tvaRate1" placeholder="Taux taxe 1">
+										<input class="form-control" ng-model="productCardCtrl.product.tvaRate2" placeholder="Taux taxe 2">
+										<input class="form-control" ng-model="productCardCtrl.product.tvaRate3" placeholder="Taux taxe 3">
 									</div>
 								</div>
 							</form>
 						</div>
 						
-						<div class="tab supplier" ng-class="{true : 'hidden'}[productTab != 'supplier']">
+						<div class="tab supplier" ng-class="{true : 'hidden'}[productCardCtrl.productTab != 'supplier']">
 							<form class="form-horizontal">
-								<div ng-if="!editMode || product.dilicomReference">
+								<div ng-if="!productCardCtrl.editMode || productCardCtrl.product.dilicomReference">
 									<div class="form-group">
 										<label class="col-sm-6 control-label">Nom</label>
 										<div class="col-sm-6">
-											<p class="form-control-static">{{product.supplier.name}}</p>
+											<p class="form-control-static">{{productCardCtrl.product.supplier.name}}</p>
 										</div>
 									</div>
 									
 									<div class="form-group">
 										<label class="col-sm-6 control-label">Ean13</label>
 										<div class="col-sm-6">
-											<p class="form-control-static">{{product.supplier.ean13}}</p>
+											<p class="form-control-static">{{productCardCtrl.product.supplier.ean13}}</p>
 										</div>
 									</div>
 								</div>
 								
-								<div ng-if="editMode && !product.dilicomReference">
+								<div ng-if="productCardCtrl.editMode && !productCardCtrl.product.dilicomReference">
 									<div class="form-group">
 										<label class="col-sm-6 control-label">Fournisseur</label>
 										<div class="col-sm-6">
@@ -266,30 +266,30 @@
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Remise</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.discount}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.discount" type="number" min="0" max="100" step="0.1" placeholder="Référence">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.discount}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.discount" type="number" min="0" max="100" step="0.1" placeholder="Référence">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Référence</label>
 									<div class="col-sm-6">
-										<p ng-if="!editMode" class="form-control-static">{{product.supplierReference}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.supplierReference" placeholder="Référence">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.supplierReference}}</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.supplierReference" placeholder="Référence">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Type de retour</label>
 									<div class="col-sm-6">
-										<p class="form-control-static">{{product.returnType}}</p>
+										<p class="form-control-static">{{productCardCtrl.product.returnType}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Unité de commande</label>
 									<div class="col-sm-6">
-										<p class="form-control-static">{{product.returnType}}</p>
+										<p class="form-control-static">{{productCardCtrl.product.returnType}}</p>
 									</div>
 								</div>
 								
@@ -297,93 +297,97 @@
 									<label class="col-sm-6 control-label">Commande à l'unité</label>
 									<div class="col-sm-6">
 										<p class="form-control-static">
-											<span ng-if="product.orderableByUnit">Oui</span>
-											<span ng-if="!product.orderableByUnit">Non</span>
+											<span ng-if="productCardCtrl.product.orderableByUnit">Oui</span>
+											<span ng-if="!productCardCtrl.product.orderableByUnit">Non</span>
 										</p>
 									</div>
 								</div>
  							</form>
 						</div>
 						
-						<div class="tab dimensions" ng-class="{true : 'hidden'}[productTab != 'dimensions']">							 
+						<div class="tab dimensions" ng-class="{true : 'hidden'}[productCardCtrl.productTab != 'dimensions']">							 
 							<form class="form-horizontal">	
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Hauteur</label>
-									<div class="col-sm-6" ng-if="product.height != null">
-										<p ng-if="!editMode" class="form-control-static">{{product.height}} mm</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.height" placeholder="Hauteur en millimètre">
+									<div class="col-sm-6" ng-if="productCardCtrl.product.height != null">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.height}} mm</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.height" placeholder="Hauteur en millimètre">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Largeur</label>
-									<div class="col-sm-6" ng-if="product.width != null">
-										<p ng-if="!editMode" class="form-control-static">{{product.width}} mm</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.width" placeholder="Largeur en millimètre">
+									<div class="col-sm-6" ng-if="productCardCtrl.product.width != null">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.width}} mm</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.width" placeholder="Largeur en millimètre">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Epaisseur</label>
-									<div class="col-sm-6" ng-if="product.thickness != null">
-										<p ng-if="!editMode" class="form-control-static">{{product.thickness}} mm</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.thickness" placeholder="Epaisseur en millimètre">
+									<div class="col-sm-6" ng-if="productCardCtrl.product.thickness != null">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.thickness}} mm</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.thickness" placeholder="Epaisseur en millimètre">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Poids</label>
-									<div class="col-sm-6" ng-if="product.weight != null">
-										<p ng-if="!editMode" class="form-control-static">{{product.weight}} g</p>
-										<input ng-if="editMode" class="form-control" ng-model="product.weight" placeholder="Poids en gramme">
+									<div class="col-sm-6" ng-if="productCardCtrl.product.weight != null">
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.weight}} g</p>
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.weight" placeholder="Poids en gramme">
 									</div>
 								</div>
 							</form>
 						</div>
 						
-						<div class="tab inventory" ng-class="{true : 'hidden'}[productTab != 'inventory']">							 
+						<div class="tab inventory" ng-class="{true : 'hidden'}[productCardCtrl.productTab != 'inventory']">							 
 							<div class="form-horizontal">	
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Quantité disponible</label>
 									<div class="col-sm-6">
-										<p ng-if="product.productInventory != null" class="form-control-static">{{product.productInventory.quantityOnHand}}</p>
-										<p ng-if="product.productInventory == null" class="form-control-static">0</p>
+										<p ng-if="productCardCtrl.product.productInventory != null" class="form-control-static">{{productCardCtrl.product.productInventory.quantityOnHand}}</p>
+										<p ng-if="productCardCtrl.product.productInventory == null" class="form-control-static">0</p>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Mises de côté</label>
 									<div class="col-sm-6">
-										<p ng-if="product.productInventory != null" class="form-control-static">{{product.productInventory.quantityOnHold}}</p>
-										<p ng-if="product.productInventory == null" class="form-control-static">0</p>
+										<p ng-if="productCardCtrl.product.productInventory != null" class="form-control-static">{{productCardCtrl.product.productInventory.quantityOnHold}}</p>
+										<p ng-if="productCardCtrl.product.productInventory == null" class="form-control-static">0</p>
 									</div>
 								</div>
 							</div>
 							
 							<ul class="nav nav-tabs">
-								<li role="presentation" ng-click="changeInventoryTab('reception')" ng-class="{true : 'active'}[inventoryTab == 'reception']"><a href="#">Commandes</a></li>
-								<li role="presentation" ng-click="changeInventoryTab('invoice')" ng-class="{true : 'active'}[inventoryTab == 'invoice']"><a href="#">Ventes</a></li>
-								<li role="presentation" ng-click="changeInventoryTab('rma')" ng-class="{true : 'active'}[inventoryTab == 'rma']"><a href="#">Retours fournisseurs</a></li>
-								<li role="presentation" ng-click="changeInventoryTab('customerCredit')" ng-class="{true : 'active'}[inventoryTab == 'customerCredit']"><a href="#">Retours clients</a></li>
+								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('reception')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'reception']"><a href="#">Commandes</a></li>
+								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('invoice')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'invoice']"><a href="#">Ventes</a></li>
+								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('rma')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'rma']"><a href="#">Retours fournisseurs</a></li>
+								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('customerCredit')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'customerCredit']"><a href="#">Retours clients</a></li>
 							</ul>
 						
 							<div class="text-center">
 								<ul class="pager row">
 									<li class="col-md-2">
 										&nbsp;
-										<a href="#" ng-if="!inventoryTabs[inventoryTab].result.first" ng-click="changePage(inventoryTabs[inventoryTab].result.number-1)">Précédente</a>
+										<a 
+											href="#" 
+											ng-if="!productCardCtrl.inventoryTabs[productCardCtrl.inventoryTab].result.first" 
+											ng-click="productCardCtrl.changePage(productCardCtrl.inventoryTabs[productCardCtrl.inventoryTab].result.number-1)"
+										>Précédente</a>
 									</li>
 									
 									<li class="col-md-8">
 										Page 
-										{{inventoryTabs[inventoryTab].result.number+1}} 
+										{{productCardCtrl.inventoryTabs[productCardCtrl.inventoryTab].result.number+1}} 
 										sur 
-										{{(inventoryTabs[inventoryTab].result.totalPages != 0 ? inventoryTabs[inventoryTab].result.totalPages : 1)}}
+										{{(productCardCtrl.inventoryTabs[productCardCtrl.inventoryTab].result.totalPages != 0 ? productCardCtrl.inventoryTabs[productCardCtrl.inventoryTab].result.totalPages : 1)}}
 									</li>
 									
 									<li class="col-md-2">
 										&nbsp;
-										<a href="#" ng-if="!inventoryTabs[inventoryTab].result.last" ng-click="changePage(inventoryTabs[inventoryTab].result.number+1)">Suivante</a>
+										<a href="#" ng-if="!productCardCtrl.inventoryTabs[productCardCtrl.inventoryTab].result.last" ng-click="changePage(productCardCtrl.inventoryTabs[productCardCtrl.inventoryTab].result.number+1)">Suivante</a>
 									</li>
 								</ul>
 								
-								<div class="tab reception" ng-class="{true : 'hidden'}[inventoryTab != 'reception']">							 
+								<div class="tab reception" ng-class="{true : 'hidden'}[productCardCtrl.inventoryTab != 'reception']">							 
 									<table class="table table-condensed">
 										<tbody>
 											<tr>
@@ -393,19 +397,19 @@
 											</tr>
 										</tbody>
 										<tbody>
-											<tr ng-repeat="detail in inventoryTabs.reception.result.content">
+											<tr ng-repeat="detail in productCardCtrl.inventoryTabs.reception.result.content">
 												<td><a href="/reception/{{detail.reception.id}}" target="_blank">{{detail.reception.id}}</a></td>
 												<td>{{detail.reception.dateReceived | date}}</td>
 												<td>{{detail.quantityReceived}}</td>
 											</tr>
-											<tr ng-if="inventoryTabs.reception.result.content.length == 0">
+											<tr ng-if="productCardCtrl.inventoryTabs.reception.result.content.length == 0">
 												<td colspan="3">Aucune réception pour ce produit</td>
 											</tr>
 										</tbody>
 									</table>
 								</div>
 							
-								<div class="tab invoice" ng-class="{true : 'hidden'}[inventoryTab != 'invoice']">							 
+								<div class="tab invoice" ng-class="{true : 'hidden'}[productCardCtrl.inventoryTab != 'invoice']">							 
 									<table class="table table-condensed">
 										<tbody>
 											<tr>
@@ -415,19 +419,19 @@
 											</tr>
 										</tbody>
 										<tbody>
-											<tr ng-repeat="detail in inventoryTabs.invoice.result.content">
+											<tr ng-repeat="detail in productCardCtrl.inventoryTabs.invoice.result.content">
 												<td><a href="/invoice/{{detail.invoice.id}}" target="_blank">{{detail.invoice.id}}</a></td>
 												<td>{{detail.invoice.paidDate | date}}</td>
 												<td>{{detail.quantity}}</td>
 											</tr>
-											<tr ng-if="inventoryTabs.invoice.result.content.length == 0">
+											<tr ng-if="productCardCtrl.inventoryTabs.invoice.result.content.length == 0">
 												<td colspan="3">Aucune facture pour ce produit</td>
 											</tr>
 										</tbody>
 									</table>
 								</div>
 							
-								<div class="tab rma" ng-class="{true : 'hidden'}[inventoryTab != 'rma']">							 
+								<div class="tab rma" ng-class="{true : 'hidden'}[productCardCtrl.inventoryTab != 'rma']">							 
 									<table class="table table-condensed">
 										<tbody>
 											<tr>
@@ -437,19 +441,19 @@
 											</tr>
 										</tbody>
 										<tbody>
-											<tr ng-repeat="detail in inventoryTabs.rma.result.content">
+											<tr ng-repeat="detail in productCardCtrl.inventoryTabs.rma.result.content">
 												<td><a href="/rma/{{detail.rma.id}}" target="_blank">{{detail.rma.id}}</a></td>
 												<td>{{detail.rma.shippedDate | date}}</td>
 												<td>{{detail.quantity}}</td>
 											</tr>
-											<tr ng-if="inventoryTabs.rma.result.content.length == 0">
+											<tr ng-if="productCardCtrl.inventoryTabs.rma.result.content.length == 0">
 												<td colspan="3">Aucun retour fournisseur pour ce produit</td>
 											</tr>
 										</tbody>
 									</table>
 								</div>
 						
-								<div class="tab customerCredit" ng-class="{true : 'hidden'}[inventoryTab != 'customerCredit']">							 
+								<div class="tab customerCredit" ng-class="{true : 'hidden'}[productCardCtrl.inventoryTab != 'customerCredit']">							 
 									<table class="table table-condensed">
 										<tbody>
 											<tr>
@@ -459,12 +463,12 @@
 											</tr>
 										</tbody>
 										<tbody>
-											<tr ng-repeat="detail in inventoryTabs.customerCredit.result.content">
+											<tr ng-repeat="detail in productCardCtrl.inventoryTabs.customerCredit.result.content">
 												<td><a href="/customerCredit/{{detail.customerCredit.id}}" target="_blank">{{detail.customerCredit.id}}</a></td>
 												<td>{{detail.customerCredit.completeDate | date}}</td>
 												<td>{{detail.quantity}}</td>
 											</tr>
-											<tr ng-if="inventoryTabs.customerCredit.result.content.length == 0">
+											<tr ng-if="productCardCtrl.inventoryTabs.customerCredit.result.content.length == 0">
 												<td colspan="3">Aucun retour client pour ce produit</td>
 											</tr>
 										</tbody>
@@ -476,19 +480,19 @@
 						
 					<div class="modal-footer">
 						<button
-							ng-click="cancelModify()"
+							ng-click="productCardCtrl.cancelModify()"
 							type="button" 
 							class="cancel btn btn-danger hidden" 
 						>Annuler</button>
 						
 						<button 
-							ng-click="save()"
+							ng-click="productCardCtrl.save()"
 							type="button" 
 							class="save btn btn-success hidden" 
 						>Enregistrer</button>
 						
 						<button 
-							ng-click="modify()"
+							ng-click="productCardCtrl.modify()"
 							type="button" 
 							class="modify btn btn-primary" 
 						>Modifier</button>

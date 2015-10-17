@@ -1,59 +1,69 @@
-var app = angular.module("KubikReceptions", []);
+(function(){
+	angular
+		.module("Kubik")
+		.controller("ReceptionsCtrl", ReceptionsCtrl);
+	
+	function ReceptionsCtrl($scope, $http){
+		var vm = this;
 
-app.controller("KubikReceptionsController", function($scope, $http){
-	$scope.calculateReceptionQuantity = function(reception){
-		var quantity = 0;
-		if(reception != undefined){
-			for(var detailIndex in reception.details){
-				var detail = reception.details[detailIndex];
-				
-				quantity += detail.quantityToReceive;
+		vm.page = 0;
+		vm.resultPerPage = 50;
+		vm.sortBy = "deliveryDate";
+		vm.direction = "DESC";
+		
+		vm.calculateReceptionQuantity = calculateReceptionQuantity;
+		vm.changePage = changePage;
+		vm.loadReceptions = loadReceptions;
+		vm.openReception = openReception;
+		vm.openSupplierCard = openSupplierCard;
+		
+		loadReceptions();
+		
+		$scope.$on("supplierSaved", function($event, supplier){
+			vm.loadReceptions();
+		});
+
+		function calculateReceptionQuantity(reception){
+			var quantity = 0;
+			if(reception != undefined){
+				for(var detailIndex in reception.details){
+					var detail = reception.details[detailIndex];
+					
+					quantity += detail.quantityToReceive;
+				}
+			}
+			
+			return quantity;
+		}
+		
+		function changePage(page){
+			vm.page = page;
+			
+			vm.loadReceptions();
+		}
+		
+		function loadReceptions(){
+			var params = {
+					page : vm.page,
+					resultPerPage : vm.resultPerPage,
+					sortBy : vm.sortBy,
+					direction : vm.direction};
+
+			$http.get("reception?" + $.param(params)).success(receptionsLoaded);
+			
+			function receptionsLoaded(receptionsPage){
+				vm.receptionsPage = receptionsPage;
 			}
 		}
-		
-		return quantity;
-	};
-	
-	$scope.changePage = function(page){
-		$scope.page = page;
-		
-		$scope.loadReceptions();
-	}
-	
-	$scope.loadReceptions = function(){
-		var params = {	page : $scope.page,
-				resultPerPage : $scope.resultPerPage,
-				sortBy : $scope.sortBy,
-				direction : $scope.direction};
 
-		$http.get("reception?" + $.param(params)).success(function(receptionsPage){
-			$scope.receptionsPage = receptionsPage;
-		});
-	};
-	
-	$scope.openReception = function(id){
-		window.location.href = "reception/" + id;
-	};
-	
-	$scope.openSupplierCard = function(supplier, $event){
-		try{
-			$scope.kubikSupplierCard.openCard(supplier);
-		}finally{
+		function openReception(id){
+			window.location.href = "reception/" + id;
+		}
+		
+		function openSupplierCard($event, supplier){
 			$event.stopPropagation();
+
+			$scope.$broadcast("openSupplierCard", supplier);
 		}
 	}
-
-	$scope.kubikSupplierCard = new KubikSupplierCard({
-		supplierSaved : function(){
-			$scope.loadReceptions();
-		}, 
-		supplierUrl : "supplier"
-	});
-	
-	$scope.page = 0;
-	$scope.resultPerPage = 50;
-	$scope.sortBy = "deliveryDate";
-	$scope.direction = "DESC";
-	
-	$scope.loadReceptions();
-});
+})();

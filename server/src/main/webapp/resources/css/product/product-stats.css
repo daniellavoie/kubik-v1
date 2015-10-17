@@ -1,0 +1,13 @@
+.date.form-control {
+	display: inline;
+	max-width: 200px;
+}
+
+.stats-nav .loading {
+	margin: 20px 0px;
+	height: 40px;
+}
+
+.products-stats thead th a{
+	white-space: nowrap;
+}

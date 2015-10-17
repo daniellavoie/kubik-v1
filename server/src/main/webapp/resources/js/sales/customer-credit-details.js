@@ -1,138 +1,191 @@
-var app = angular.module("KubikCustomerCreditDetails", []);
-var kubikProductCard = new KubikProductCard({
-	app : app,
-	productUrl : "../product"
-});
-
-var customerCreditId = window.location.pathname.split("/")[2];
-
-app.controller("KubikCustomerCreditDetailsController", function($scope, $http, $timeout){
-	$scope.addProduct = function($event){
-		if($event.keyCode == 13){
-			$scope.showLoading();
-			detailFound = false;
-			for(var detailIndex in $scope.customerCredit.details){
-				var detail = $scope.customerCredit.details[detailIndex];
-				
-				if(detail.product.ean13 == $scope.detail.product.ean13){
-					detailFound = true;
+(function(){
+	var customerCreditId = window.location.pathname.split("/")[2];
+	
+	angular
+		.module("Kubik")
+		.controller("CustomerCreditDetailsCtrl", CustomerCreditDetailsCtrl);
+	
+	function CustomerCreditDetailsCtrl($scope, $http, $timeout){
+		var vm = this;
+		
+		vm.addProduct = addProduct;
+		vm.cancel = cancel;
+		vm.changeCustomerCredit = changeCustomerCredit;
+		vm.changePaymentMethod = changePaymentMethod;
+		vm.focus = focus;
+		vm.hideAlerts = hideAlerts;
+		vm.hideLoading = hideLoading;
+		vm.loadCustomerCredit = loadCustomerCredit;
+		vm.loadNextCustomerCredit = loadNextCustomerCredit;
+		vm.loadPreviousCustomerCredit = loadPreviousCustomerCredit;
+		vm.openInvoice = openInvoice;
+		vm.openCustomerCard = openCustomerCard;
+		vm.openProductCard = openProductCard;
+		vm.showLoading = showLoading;
+		vm.quantityChanged = quantityChanged;
+		vm.saveCustomerCredit = saveCustomerCredit;
+		vm.showProductNotFoundAlert = showProductNotFoundAlert;
+		vm.validate = validate;
+		
+		loadCustomerCredit();
+		loadNextCustomerCredit();
+		loadPreviousCustomerCredit();
+		
+		$scope.$on("customerSaved", function($event, customer){
+			vm.loadCustomerCredit();
+		});
+		
+		function addProduct($event){
+			if($event.keyCode == 13){
+				vm.showLoading();
+				detailFound = false;
+				for(var detailIndex in vm.customerCredit.details){
+					var detail = vm.customerCredit.details[detailIndex];
 					
-					detail.quantity += 1;
-					$scope.saveCustomerCredit();
-					$scope.detail.product.ean13 = ""
-					break;
+					if(detail.product.ean13 == vm.detail.product.ean13){
+						detailFound = true;
+						
+						detail.quantity += 1;
+						vm.saveCustomerCredit();
+						vm.detail.product.ean13 = "";
+						
+						break;
+					}
+				}
+				
+				if(!detailFound){
+					var url = "../invoice/" + vm.customerCredit.invoice.id + "/detail/product/ean13/" + vm.detail.product.ean13;
+					
+					$http.get(url)
+						.success(searchInvoiceForProductSuccess)
+						.error(searchInvoiceForProductError);
 				}
 			}
 			
-			if(!detailFound){
-				$http.get(
-					"../invoice/" + $scope.customerCredit.invoice.id + "/detail/product/ean13/" + $scope.detail.product.ean13
-				).success(function(invoiceDetail){
-					$scope.customerCredit.details.push({product : { id :  invoiceDetail.product.id}, quantity : 1, maxQuantity : invoiceDetail.quantity});
+			function searchInvoiceForProductSuccess(invoiceDetail){
+				if(invoiceDetail != ""){
+					vm.customerCredit.details.push({customerCredit : {id : vm.customerCredit.id}, product : invoiceDetail.product, quantity : 1, maxQuantity : invoiceDetail.quantity});
 					
-					$scope.saveCustomerCredit();
-				}).error(function(){
-					$scope.hideLoading();
-					$scope.showProductNotFoundAlert();
-				});
+					vm.saveCustomerCredit();
+				} else {
+					searchInvoiceForProductError();
+				}
+			}
+			
+			function searchInvoiceForProductError(){
+				vm.hideLoading();
+				vm.showProductNotFoundAlert();
 			}
 		}
-	};
-	
-	$scope.cancel = function(){
-		$scope.customerCredit.status = 'CANCELED';
 		
-		$scope.saveCustomerCredit();
-	};	
-	
-	$scope.changeCustomerCredit = function(customerCreditId){
-		location.href = customerCreditId;
-	};
-	
-	$scope.changePaymentMethod = function(paymentMethodType){
-		$scope.customerCredit.paymentMethod.type = paymentMethodType;
+		function cancel(){
+			vm.customerCredit.status = 'CANCELED';
+
+			vm.saveCustomerCredit();
+		}
 		
-		$scope.saveCustomerCredit();
-	};
-	
-	$scope.focus = function($event){
-		$scope.inputIdToFocus = $event.target.id;
-	};
-	
-	$scope.hideAlerts = function(){
-		$(".alerts .alert").addClass("hidden");
-	};
-	
-	$scope.hideLoading = function(){
-		$(".loading").addClass("hidden");
-	};
-		
-	$scope.loadCustomerCredit = function(){
-		$http.get(customerCreditId).success(function(customerCredit){
-			$scope.customerCredit = customerCredit;
+		function changeCustomerCredit(customerCreditId){
+			location.href = customerCreditId;
+		}
+
+		function changePaymentMethod(paymentMethodType){
+			vm.customerCredit.paymentMethod.type = paymentMethodType;
 			
-			if($scope.inputIdToFocus != undefined){
-				$timeout(function(){$("#" + $scope.inputIdToFocus).focus()});
+			vm.saveCustomerCredit();
+		}
+
+		function focus($event){
+			vm.inputIdToFocus = $event.target.id;
+		}
+		
+		function hideAlerts(){
+			$(".alerts .alert").addClass("hidden");
+		}
+		
+		function hideLoading(){
+			$(".loading").addClass("hidden");
+		}
+		
+		function loadCustomerCredit(){
+			$http.get(customerCreditId).success(function(customerCredit){
+				vm.customerCredit = customerCredit;
+				
+				if(vm.inputIdToFocus != undefined){
+					$timeout(function(){$("#" + vm.inputIdToFocus).focus()});
+				}
+			});
+		}
+		
+		function loadNextCustomerCredit(){
+			$http.get(customerCreditId + "/next").success(function(nextCustomerCreditId){
+				if(nextCustomerCreditId == "") nextCustomerCreditId = null;
+				vm.nextCustomerCredit = nextCustomerCreditId;
+			});	
+		}
+		
+		function loadPreviousCustomerCredit(){
+			$http.get(customerCreditId + "/previous").success(function(previousCustomerCreditId){
+				if(previousCustomerCreditId == "") previousCustomerCreditId = null;
+				vm.previousCustomerCredit = previousCustomerCreditId;
+			});	
+		}
+		
+		function openInvoice(){
+			location.href = "../invoice/" + vm.customerCredit.invoice.id;
+		}
+		
+		function openCustomerCard($event, customer){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openCustomerCard", customer);
+		}
+		
+		function openProductCard($event, product){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openProductCard", product);
+		}
+		
+		function showLoading(){
+			vm.hideAlerts();
+			
+			$(".loading").removeClass("hidden");
+		}
+
+		function quantityChanged(){
+			if(vm.quantityChangedTimer != undefined) clearTimeout(vm.quantityChangedTimer);
+		    
+			vm.quantityChangedTimer = setTimeout(vm.saveCustomerCredit, 1000);
+		}
+		
+		function saveCustomerCredit(){
+			vm.showLoading();
+			
+			angular.forEach(vm.customerCredit.details, cleanDetail);
+			
+			vm.customerCredit.invoice = {id : vm.customerCredit.invoice.id};
+			
+			$http.post(".", vm.customerCredit).finally(saveCustomerCreditCompleted);
+			
+			function saveCustomerCreditCompleted(){
+				vm.hideLoading();
+				
+				vm.loadCustomerCredit();
 			}
-		});
-	};
-	
-	$scope.openInvoice = function(){
-		location.href = "../invoice/" + $scope.customerCredit.invoice.id;
-	};
-	
-	$scope.quantityChanged = function(){
-		if($scope.quantityChangedTimer != undefined) clearTimeout($scope.quantityChangedTimer);
-	    
-		$scope.quantityChangedTimer = setTimeout($scope.saveCustomerCredit, 1000);
-	}
-	
-	$scope.saveCustomerCredit = function(){
-		$scope.showLoading();
-		
-		angular.forEach($scope.customerCredit.details, function(detail, index){
-			detail.product.category = null;
-		});
-		
-		$scope.customerCredit.invoice = {id : $scope.customerCredit.invoice.id};
-		
-		$http.post(".", $scope.customerCredit).finally(function(){
-			$scope.hideLoading();
 			
-			$scope.loadCustomerCredit();
-		});
-	};
-	
-	$scope.showLoading = function(){
-		$scope.hideAlerts();
-		$(".loading").removeClass("hidden");
-	}
-	
-	$scope.showProductNotFoundAlert = function(){
-		$(".product-not-found").removeClass("hidden");
-	}
-	
-	$scope.validate = function(){
-		$scope.customerCredit.status = "COMPLETED";
+			function cleanDetail(detail, index){
+				detail.product.category = null;
+			}
+		}
 		
-		$scope.saveCustomerCredit();
-	};
-	
-	$scope.kubikCustomerCard = new KubikCustomerCard({customerUrl : "../customer", customerSaved : function(){
-		$scope.loadCustomerCredit();
-	}});
-	
-	$http.get(customerCreditId + "/next").success(function(customerCreditId){
-		if(customerCreditId == "") customerCreditId = null;
-		$scope.nextCustomerCredit = customerCreditId;
-	});
-	
-	$http.get(customerCreditId + "/previous").success(function(customerCreditId){
-		if(customerCreditId == "") customerCreditId = null;
-		$scope.previousCustomerCredit = customerCreditId;
-	});
-	
-	$scope.kubikProductCard = kubikProductCard;
-	
-	$scope.loadCustomerCredit();
-});
+		function showProductNotFoundAlert(){
+			$(".product-not-found").removeClass("hidden");
+		}
+		
+		function validate(){
+			vm.customerCredit.status = "COMPLETED";
+			
+			vm.saveCustomerCredit();
+		}
+	}
+})();

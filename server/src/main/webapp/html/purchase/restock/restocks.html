@@ -11,23 +11,23 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/restock/restocks.css}" />
 	</head>
 	
-	<body>
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="KubikRestocks" ng-controller="KubikRestocksController as view" ng-cloak class="container text-center">
+		<div ng-controller="RestocksCtrl as restocksCtrl" ng-cloak class="container text-center">
 			<h1>Réapprovisionnements</h1>
 
 			<ul class="pager row text-center">
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!restocksPage.first" ng-click="changePage(restocksPage.number-1)">Précédente</a>
+					<a href="#" ng-if="!restocksCtrl.restocksPage.first" ng-click="restocksCtrl.changePage(restocksCtrl.restocksPage.number-1)">Précédente</a>
 				</li>
 				
-				<li class="col-md-8">Page {{restocksPage.number+1}} sur {{restocksPage.totalPages}}</li>
+				<li class="col-md-8">Page {{restocksCtrl.restocksPage.number+1}} sur {{restocksCtrl.restocksPage.totalPages}}</li>
 				
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!restocksPage.last" ng-click="changePage(restocksPage.number+1)">Suivante</a>
+					<a href="#" ng-if="!restocksCtrl.restocksPage.last" ng-click="restocksCtrl.changePage(restocksCtrl.restocksPage.number+1)">Suivante</a>
 				</li>
 			</ul>
 			
@@ -62,15 +62,24 @@
 					</thead>
 					
 					<tbody>
-						<tr ng-repeat="restock in restocksPage.content" ng-click="openRestock(restock)">
+						<tr ng-repeat="restock in restocksCtrl.restocksPage.content" ng-click="restocksCtrl.openRestock(restock)">
 							<td>{{restock.product.ean13}}</td>
-							<td>{{restock.product.standardLabel}}</td>
+							<td>
+								<a href="#" ng-click="restocksCtrl.openProductCard($event, restock.product)">
+									{{restock.product.standardLabel}}
+								</a>
+							</td>
 							<td>{{restock.product.author}}</td>
+							<td>
+								<a href="#" ng-click="restocksCtrl.openSupplierCard($event, restock.product.supplier)">
+									{{restock.product.supplier.name}}
+								</a>
+							</td>
 							<td>{{restock.openDate | date}}</td>
 							<td>{{restock.quantity}}</td>
 						<tr>
 						
-						<tr ng-if="restocksPage.content.length == 0">
+						<tr ng-if="restocksCtrl.restocksPage.content.length == 0">
 							<td colspan="7">
 								Aucun réapprovisionnement
 							</td>
@@ -83,28 +92,28 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<h3 class="modal-header">
-							Réapprovisionnement {{product.ean13}}
+							Réapprovisionnement {{restocksCtrl.product.ean13}}
 						</h3>
 						
 						<div class="modal-body form-horizontal text-left">
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Produit</label>
 								<div class="col-sm-9">
-									<p class="form-control-static">{{restock.product.extendedLabel}}</p>
+									<p class="form-control-static">{{restocksCtrl.restock.product.extendedLabel}}</p>
 								</div>
 							</div>
 							
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Ean13</label>
 								<div class="col-sm-9">
-									<p class="form-control-static">{{restock.product.ean13}}</p>
+									<p class="form-control-static">{{restocksCtrl.restock.product.ean13}}</p>
 								</div>
 							</div>
 							
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Quantité</label>
 								<div class="col-sm-9">
-									<input class="form-control" type="number" min="1" max="99999" placeholder="Quantité" ng-model="restock.quantity" />
+									<input class="form-control" type="number" min="1" max="99999" placeholder="Quantité" ng-model="restocksCtrl.restock.quantity" />
 								</div>
 							</div>
 							
@@ -124,12 +133,12 @@
 									
 									<tbody>
 										<tr>
-											<td>{{restock.product.productInventory.quantityOnHand}}</td>
-											<td>{{productStats.quantityOrdered}}</td>
-											<td>{{productStats.quantityReceived}}</td>
-											<td>{{productStats.quantitySold}}</td>
-											<td>{{productStats.quantityReturned}}</td>
-											<td>{{productStats.quantityRefunded}}</td>
+											<td>{{restocksCtrl.restock.product.productInventory.quantityOnHand}}</td>
+											<td>{{restocksCtrl.productStats.quantityOrdered}}</td>
+											<td>{{restocksCtrl.productStats.quantityReceived}}</td>
+											<td>{{restocksCtrl.productStats.quantitySold}}</td>
+											<td>{{restocksCtrl.productStats.quantityReturned}}</td>
+											<td>{{restocksCtrl.productStats.quantityRefunded}}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -138,15 +147,17 @@
 						
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-							<button type="button" class="btn btn-danger" ng-click="validateRestock('SKIPPED', true)">Ignorer</button>
-							<button type="button" class="btn btn-primary" ng-click="validateRestock('VALIDATED', true)">Ajouter</button>
+							<button type="button" class="btn btn-danger" ng-click="restocksCtrl.validateRestock('SKIPPED', true)">Ignorer</button>
+							<button type="button" class="btn btn-primary" ng-click="restocksCtrl.validateRestock('VALIDATED', true)">Ajouter</button>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 		
-		<div th:replace="product/product-card :: product-card"></div>
+			<div th:replace="product/product-card :: product-card"></div>
+		
+			<div th:replace="product/supplier-card :: supplier-card"></div>
+		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/purchase/restocks.js}"></script>

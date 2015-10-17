@@ -11,23 +11,23 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/dilicom/dilicom-orders.css}" />
 	</head>
 	
-	<body>
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="KubikDilicomOrders" ng-controller="DilicomOrdersController as dilicomOrdersController" ng-cloak class="container text-center">
+		<div ng-controller="DilicomOrdersCtrl as dilicomOrdersCtrl" ng-cloak class="container text-center">
 			<h1>Commandes Dilicom</h1>
 
 			<ul class="pager row text-center">
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!dilicomOrdersController.dilicomOrdersPage.first" ng-click="dilicomOrdersController.changePage(dilicomOrdersPage.number-1)">Précédente</a>
+					<a href="#" ng-if="!dilicomOrdersCtrl.dilicomOrdersPage.first" ng-click="dilicomOrdersCtrl.changePage(dilicomOrdersCtrl.dilicomOrdersPage.number-1)">Précédente</a>
 				</li>
 				
-				<li class="col-md-8">Page {{dilicomOrdersController.dilicomOrdersPage.number+1}} sur {{dilicomOrdersController.dilicomOrdersPage.totalPages}}</li>
+				<li class="col-md-8">Page {{dilicomOrdersCtrl.dilicomOrdersPage.number+1}} sur {{dilicomOrdersCtrl.dilicomOrdersPage.totalPages}}</li>
 				
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!dilicomOrdersController.dilicomOrdersPage.last" ng-click="dilicomOrdersController.changePage(dilicomOrdersController.dilicomOrdersPage.number+1)">Suivante</a>
+					<a href="#" ng-if="!dilicomOrdersCtrl.dilicomOrdersPage.last" ng-click="dilicomOrdersCtrl.changePage(dilicomOrdersCtrl.dilicomOrdersPage.number+1)">Suivante</a>
 				</li>
 			</ul>
 			
@@ -46,7 +46,7 @@
 					</thead>
 
 					<tbody>
-						<tr ng-repeat="dilicomOrder in dilicomOrdersController.dilicomOrdersPage.content" ng-click="dilicomOrdersController.openDilicomOrder(dilicomOrder)">
+						<tr ng-repeat="dilicomOrder in dilicomOrdersCtrl.dilicomOrdersPage.content" ng-click="dilicomOrdersCtrl.openDilicomOrder(dilicomOrder)">
 							<td><a th:href="@{/purchaseOrder/{{dilicomOrder.purchaseOrder.id}}}">{{dilicomOrder.purchaseOrder.id}}</a></td>
 							<td><a th:href="@{/reception/{{dilicomOrder.purchaseOrder.reception.id}}}">{{dilicomOrder.purchaseOrder.reception.id}}</a></td>
 							<td>
@@ -62,7 +62,7 @@
 							<td>{{dilicomOrder.validationDate | date : "short"}}</td>
 						<tr>
 						
-						<tr ng-if="dilicomOrdersController.dilicomOrdersPage.content.length == 0">
+						<tr ng-if="dilicomOrdersCtrl.dilicomOrdersPage.content.length == 0">
 							<td colspan="7">
 								Aucune commande
 							</td>
@@ -73,7 +73,6 @@
 		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
-		<script type="text/javascript" th:src="@{/js/dilicom/KubikDilicomOrders.module.js}"></script> 
-		<script type="text/javascript" th:src="@{/js/dilicom/DilicomOrdersController.js}"></script>
+		<script type="text/javascript" th:src="@{/js/dilicom/dilicom-orders.js}"></script>
 	</body>
 </html>

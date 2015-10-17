@@ -13,23 +13,23 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/daily-report.css}" />
 	</head>
 	
-	<body>
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="KubikDailyReportPage" ng-cloak ng-controller="KubikDailyReportPageController as view"  class="container text-center">
+		<div ng-cloak ng-controller="DailyReportPageCtrl as dailyReportPageCtrl"  class="container text-center">
 			<h1>Rapports Journaliers</h1>
 	
 			<ul class="pager row text-center">
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!dailyReportPage.first" ng-click="changePage(dailyReportPage.number-1)">Précédente</a>
+					<a href="#" ng-if="!dailyReportPageCtrl.dailyReportPage.first" ng-click="dailyReportPageCtrl.changePage(dailyReportPageCtrl.dailyReportPage.number-1)">Précédente</a>
 				</li>
 				
-				<li class="col-md-8">Page {{dailyReportPage.number+1}} sur {{dailyReportPage.totalPages}}</li>
+				<li class="col-md-8">Page {{dailyReportPageCtrl.dailyReportPage.number+1}} sur {{dailyReportPageCtrl.dailyReportPage.totalPages}}</li>
 				
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!dailyReportPage.last" ng-click="changePage(dailyReportPage.number+1)">Suivante</a>
+					<a href="#" ng-if="!dailyReportPageCtrl.dailyReportPage.last" ng-click="dailyReportPageCtrl.changePage(dailyReportPageCtrl.dailyReportPage.number+1)">Suivante</a>
 				</li>
 			</ul>
 
@@ -46,7 +46,7 @@
 				</thead>
 				
 				<tbody>
-					<tr ng-repeat="dailyReport in dailyReportPage.content" ng-click="openDailyReport(dailyReport)">
+					<tr ng-repeat="dailyReport in dailyReportPageCtrl.dailyReportPage.content" ng-click="dailyReportPageCtrl.openDailyReport(dailyReport)">
 						<td>{{dailyReport.date | date : "dd/MM/yyyy"}}</td>
 						<td>{{dailyReport.salesCount}}</td>
 						<td>{{dailyReport.returnCount}}</td>
@@ -56,7 +56,7 @@
 							<button 
 								id="reload-daily-report-{{dailyReport.id}}-btn" 
 								class="btn btn-xs btn-info" 
-								ng-click="reload(dailyReport, $event)">
+								ng-click="dailyReportPageCtrl.reload(dailyReport, $event)">
 								<span class="glyphicon glyphicon-refresh"></span>
 							</button>
 							<img 

@@ -5,7 +5,7 @@
 
 	<body>
 		<div th:fragment="categories-standalone" th:remove="tag">
-			<div ng-controller="KubikProductCategoriesController">
+			<div ng-controller="ProductCategoriesCtrl as productCategoriesCtrl">
 				<div th:replace="product/categories-list :: categories-list"></div>
 				
 				<div th:replace="product/categories-confirmations-modals :: categories-confirmations-modals"></div>

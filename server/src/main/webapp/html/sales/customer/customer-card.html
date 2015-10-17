@@ -5,8 +5,8 @@
 
 	<body>
 		<div th:fragment="customer-card" th:remove="tag">
-			<div class="customer-card autoModal modal fade">
-				<div class="modal-dialog" ng-controller="KubikCustomerCardController as view">
+			<div class="customer-card autoModal modal fade" ng-controller="CustomerCardCtrl as customerCardCtrl">
+				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h4 class="modal-title">Fiche client</h4>
@@ -17,13 +17,13 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Nom</label>
 									<div class="col-sm-8">
-										<div ng-if="!editMode" >
-											<p class="form-control-static">{{customer.lastName}}, {{customer.firstName}}</p>										
+										<div ng-if="!customerCardCtrl.editMode" >
+											<p class="form-control-static">{{customerCardCtrl.customer.lastName}}, {{customerCardCtrl.customer.firstName}}</p>										
 										</div>
 										
-										<div ng-if="editMode" >
-											<input class="form-control" ng-model="customer.lastName" placeholder="Nom de famille">
-											<input class="form-control" ng-model="customer.firstName" placeholder="Prénom">
+										<div ng-if="customerCardCtrl.editMode" >
+											<input class="form-control" ng-model="customerCardCtrl.customer.lastName" placeholder="Nom de famille">
+											<input class="form-control" ng-model="customerCardCtrl.customer.firstName" placeholder="Prénom">
 										</div>
 									</div>
 								</div>
@@ -31,17 +31,17 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Adresse</label>
 									<div class="col-sm-8">
-										<div ng-if="!editMode">
-											<p class="form-control-static">{{customer.address.streetLine1}}</p>
-											<p class="form-control-static">{{customer.address.streetLine2}}</p>
-											<p class="form-control-static">{{customer.address.city}}, {{customer.address.state}}, {{customer.address.zipCode}}</p>
+										<div ng-if="!customerCardCtrl.editMode">
+											<p class="form-control-static">{{customerCardCtrl.customer.address.streetLine1}}</p>
+											<p class="form-control-static">{{customerCardCtrl.customer.address.streetLine2}}</p>
+											<p class="form-control-static">{{customerCardCtrl.customer.address.city}}, {{customerCardCtrl.customer.address.state}}, {{customerCardCtrl.customer.address.zipCode}}</p>
 										</div>
-										<div ng-if="editMode">
-											<input class="form-control" ng-model="customer.address.streetLine1" placeholder="Adresse">
-											<input class="form-control" ng-model="customer.address.streetLine2" placeholder="Complément adresse">
-											<input class="form-control" ng-model="customer.address.city" placeholder="Ville">
-											<input class="form-control" ng-model="customer.address.state" placeholder="Département">
-											<input class="form-control" ng-model="customer.address.zipCode" placeholder="Code postal">
+										<div ng-if="customerCardCtrl.editMode">
+											<input class="form-control" ng-model="customerCardCtrl.customer.address.streetLine1" placeholder="Adresse">
+											<input class="form-control" ng-model="customerCardCtrl.customer.address.streetLine2" placeholder="Complément adresse">
+											<input class="form-control" ng-model="customerCardCtrl.customer.address.city" placeholder="Ville">
+											<input class="form-control" ng-model="customerCardCtrl.customer.address.state" placeholder="Département">
+											<input class="form-control" ng-model="customerCardCtrl.customer.address.zipCode" placeholder="Code postal">
 										</div>
 									</div>
 								</div>
@@ -49,54 +49,54 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Téléphone fixe</label>
 									<div class="col-sm-8">
-										<p ng-if="!editMode" class="form-control-static">{{customer.fixedPhone}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="customer.fixedPhone" placeholder="Téléphone fixe">
+										<p ng-if="!customerCardCtrl.editMode" class="form-control-static">{{customerCardCtrl.customer.fixedPhone}}</p>
+										<input ng-if="customerCardCtrl.editMode" class="form-control" ng-model="customerCardCtrl.customer.fixedPhone" placeholder="Téléphone fixe">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Mobile</label>
 									<div class="col-sm-8">
-										<p ng-if="!editMode" class="form-control-static">{{customer.mobilePhone}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="customer.mobilePhone" placeholder="Mobile">
+										<p ng-if="!customerCardCtrl.editMode" class="form-control-static">{{customerCardCtrl.customer.mobilePhone}}</p>
+										<input ng-if="customerCardCtrl.editMode" class="form-control" ng-model="customerCardCtrl.customer.mobilePhone" placeholder="Mobile">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Email</label>
 									<div class="col-sm-8">
-										<p ng-if="!editMode" class="form-control-static">{{customer.email}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="customer.email" placeholder="Email">
+										<p ng-if="!customerCardCtrl.editMode" class="form-control-static">{{customerCardCtrl.customer.email}}</p>
+										<input ng-if="customerCardCtrl.editMode" class="form-control" ng-model="customerCardCtrl.customer.email" placeholder="Email">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Ean13</label>
 									<div class="col-sm-8">
-										<p ng-if="!editMode" class="form-control-static">{{customer.ean13}}</p>
-										<input ng-if="editMode" class="form-control" ng-model="customer.ean13" placeholder="Ean13">
+										<p ng-if="!customerCardCtrl.editMode" class="form-control-static">{{customerCardCtrl.customer.ean13}}</p>
+										<input ng-if="customerCardCtrl.editMode" class="form-control" ng-model="customerCardCtrl.customer.ean13" placeholder="Ean13">
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Note interne</label>
 									<div class="col-sm-8">
-										<p ng-if="!editMode" class="form-control-static">{{customer.internalNote}}</p>
-										<textarea ng-if="editMode" class="form-control" ng-model="customer.internalNote" placeholder="Note interne"></textarea>
+										<p ng-if="!customerCardCtrl.editMode" class="form-control-static">{{customerCardCtrl.customer.internalNote}}</p>
+										<textarea ng-if="customerCardCtrl.editMode" class="form-control" ng-model="customerCardCtrl.customer.internalNote" placeholder="Note interne"></textarea>
 									</div>
 								</div>
 								
-								<div ng-if="customer.creationDate != null" class="form-group">
+								<div ng-if="customerCardCtrl.customer.creationDate != null" class="form-group">
 									<label class="col-sm-4 control-label">Date de création</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{customer.creationDate | date : "short"}}</p>
+										<p class="form-control-static">{{customerCardCtrl.customer.creationDate | date : "short"}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Avoir</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{customerCreditAmount | currency : "&euro;"}}</p>
+										<p class="form-control-static">{{customerCardCtrl.customerCreditAmount | currency : "&euro;"}}</p>
 									</div>
 								</div>
 							</div>
@@ -104,19 +104,19 @@
 						
 						<div class="modal-footer">
 							<button
-								ng-click="cancelModify()"
+								ng-click="customerCardCtrl.cancelModify()"
 								type="button" 
 								class="cancel btn btn-danger hidden" 
 							>Annuler</button>
 							
 							<button 
-								ng-click="save()"
+								ng-click="customerCardCtrl.save()"
 								type="button" 
 								class="save btn btn-success hidden" 
 							>Enregistrer</button>
 							
 							<button 
-								ng-click="modify()"
+								ng-click="customerCardCtrl.modify()"
 								type="button" 
 								class="modify btn btn-primary" 
 							>Modifier</button>

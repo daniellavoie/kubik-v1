@@ -13,27 +13,27 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/session/sessions.css}" />
 	</head>
 	
-	<body >
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="sessions" ng-controller="SessionController as sessionsView" ng-cloak class="container text-center">
+		<div ng-controller="SessionCtrl as sessionsCtrl" ng-cloak class="container text-center">
 			<h1>Préparation de commandes</h1>
 			
 			<div class="header">
-				<button class="btn btn-primary" ng-click="newSession()">Nouvelle préparation</button>
+				<button class="btn btn-primary" ng-click="sessionsCtrl.newSession()">Nouvelle préparation</button>
 			</div>
 			
 			<ul class="pager row text-center">
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!sessionsPage.first" ng-click="changePage(sessionsPage.number-1)">Précédente</a>
+					<a href="#" ng-if="!sessionsCtrl.sessionsPage.first" ng-click="sessionsCtrl.changePage(sessionsPage.number-1)">Précédente</a>
 				</li>
 				
-				<li class="col-md-8">Page {{sessionsPage.number+1}} sur {{sessionsPage.totalPages}}</li>
+				<li class="col-md-8">Page {{sessionsCtrl.sessionsPage.number+1}} sur {{sessionsCtrl.sessionsPage.totalPages}}</li>
 				
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!sessionsPage.last" ng-click="changePage(sessionsPage.number+1)">Suivante</a>
+					<a href="#" ng-if="!sessionsCtrl.sessionsPage.last" ng-click="sessionsCtrl.changePage(sessionsCtrl.sessionsPage.number+1)">Suivante</a>
 				</li>
 			</ul>
 			
@@ -47,9 +47,9 @@
 								<div class="btn-group">
   									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Statut</button>
 									<ul class="dropdown-menu" role="menu">
-										<li><a href="#" ng-click="updateStatus('DRAFT')"><span ng-class="{true : 'label label-info', false : 'label label-default'}[user.preferences.purchaseSession.status.indexOf('DRAFT') != -1]">Brouillon</span></a></li>
-										<li><a href="#" ng-click="updateStatus('SUBMITED')"><span ng-class="{true : 'label label-info', false : 'label label-default'}[user.preferences.purchaseSession.status.indexOf('SUBMITED') != -1]">Soumis</span></a></li>
-										<li><a href="#" ng-click="updateStatus('CANCELED')"><span ng-class="{true : 'label label-info', false : 'label label-default'}[user.preferences.purchaseSession.status.indexOf('CANCELED') != -1]">Annulé</span></a></li>
+										<li><a href="#" ng-click="sessionsCtrl.updateStatus('DRAFT')"><span ng-class="{true : 'label label-info', false : 'label label-default'}[sessionsCtrl.user.preferences.purchaseSession.status.indexOf('DRAFT') != -1]">Brouillon</span></a></li>
+										<li><a href="#" ng-click="sessionsCtrl.updateStatus('SUBMITED')"><span ng-class="{true : 'label label-info', false : 'label label-default'}[sessionsCtrl.user.preferences.purchaseSession.status.indexOf('SUBMITED') != -1]">Soumis</span></a></li>
+										<li><a href="#" ng-click="sessionsCtrl.updateStatus('CANCELED')"><span ng-class="{true : 'label label-info', false : 'label label-default'}[sessionsCtrl.user.preferences.purchaseSession.status.indexOf('CANCELED') != -1]">Annulé</span></a></li>
 									</ul>
 								</div>
 							</th>
@@ -59,7 +59,7 @@
 						</tr>
 						</thead>
 					<tbody>
-						<tr ng-repeat="session in sessionsPage.content" ng-click="openSession(session.id)">
+						<tr ng-repeat="session in sessionsCtrl.sessionsPage.content" ng-click="sessionsCtrl.openSession(session.id)">
 							<td>{{session.openDate | date : format : "short"}}</td>
 							<td>{{session.closeDate | date : format : "short"}}</td>
 							<td>

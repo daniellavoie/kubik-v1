@@ -6,7 +6,7 @@
 <body>
 	<div th:fragment="menu">
 		<!-- Fixed navbar -->
-		<nav ng-controller="KubikMenuController as menuView" th:attr="class=${'navbar navbar-default navbar-fixed-top navbar-inverse ' + @environment.getProperty('kubik.environment')}">
+		<nav ng-controller="MenuCtrl as menuCtrl" th:attr="class=${'navbar navbar-default navbar-fixed-top navbar-inverse ' + @environment.getProperty('kubik.environment')}">
 			<div class="container">
 <!-- 				<div  -->
 <!-- 					th:if="${@environment.getProperty('kubik.environment') != 'production'}" -->
@@ -32,7 +32,7 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 								Achat
 								<span class="caret"></span>
-								<span ng-cloak ng-if="restockCount > 0" class="glyphicon glyphicon glyphicon-exclamation-sign"></span></a>
+								<span ng-cloak ng-if="menuCtrl.restockCount > 0" class="glyphicon glyphicon glyphicon-exclamation-sign"></span></a>
 							<ul class="dropdown-menu" role="menu">
 								<li><a th:href="@{/purchaseSession}">Préparations de commandes</a></li>
 								<li><a th:href="@{/purchaseOrder}">Commandes</a></li>
@@ -40,7 +40,7 @@
     							<li class="divider"></li>
 								<li><a th:href="@{/rma}">Retours</a></li>
     							<li class="divider"></li>
-								<li><a th:href="@{/restock}">Réapprovisionnements <span ng-cloak class="badge">{{restockCount}}</span></a></li>
+								<li><a th:href="@{/restock}">Réapprovisionnements <span ng-cloak class="badge">{{menuCtrl.restockCount}}</span></a></li>
 							</ul>
 						</li>
 						
@@ -61,12 +61,12 @@
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 								Produits<span class="caret"></span>
-								<span ng-cloak ng-if="productsWithoutCategory > 0" class="glyphicon glyphicon glyphicon-exclamation-sign"></span>	
+								<span ng-cloak ng-if="menuCtrl.productsWithoutCategory > 0" class="glyphicon glyphicon glyphicon-exclamation-sign"></span>	
 							</a>
 							<ul class="dropdown-menu" role="menu">
 								<li><a th:href="@{/product}">Produits</a></li>
 								<li><a th:href="@{/category}">Catégories de produits</a></li>
-								<li><a th:href="@{/product?category&random}">Produits non catégorisés <span ng-cloak class="badge">{{productsWithoutCategory}}</span></a></li>
+								<li><a th:href="@{/product?category&random}">Produits non catégorisés <span ng-cloak class="badge">{{menuCtrl.productsWithoutCategory}}</span></a></li>
     							<li class="divider"></li>
 								<li><a th:href="@{/supplier}">Fournisseurs</a></li>
     							<li class="divider"></li>
@@ -77,12 +77,12 @@
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 								Dilicom<span class="caret"></span>
-								<span ng-cloak ng-if="notificationCount > 0" class="glyphicon glyphicon glyphicon-exclamation-sign"></span>
+								<span ng-cloak ng-if="menuCtrl.notificationCount > 0" class="glyphicon glyphicon glyphicon-exclamation-sign"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
 								<li><a th:href="@{/dilicomOrder}">Commandes</a></li>
 								<li><a th:href="@{/reference}">Références</a></li>
-								<li><a th:href="@{/notification}">Mises à jour <span ng-cloak class="badge">{{notificationCount}}</span></a></li>
+								<li><a th:href="@{/notification}">Mises à jour <span ng-cloak class="badge">{{menuCtrl.notificationCount}}</span></a></li>
 							</ul>
 						</li>
 

@@ -30,6 +30,7 @@ import com.cspinformatique.kubik.domain.purchase.service.ReceptionService;
 import com.cspinformatique.kubik.domain.purchase.task.exception.InvalidReceptionDetailException;
 import com.cspinformatique.kubik.domain.purchase.task.exception.InvalidReceptionSupplierException;
 import com.cspinformatique.kubik.domain.purchase.task.exception.ProductNotFoundException;
+import com.cspinformatique.kubik.domain.purchase.task.exception.PurchaseOrderNotDilicomException;
 import com.cspinformatique.kubik.domain.purchase.task.exception.PurchaseOrderNotFoundException;
 import com.cspinformatique.kubik.domain.purchase.task.exception.PurchaseOrderReceptionNotFoundException;
 import com.cspinformatique.kubik.domain.purchase.task.exception.ReceptionAlreadyReceivedException;
@@ -38,9 +39,9 @@ import com.cspinformatique.kubik.model.product.Supplier;
 import com.cspinformatique.kubik.model.purchase.DeliveryDateType;
 import com.cspinformatique.kubik.model.purchase.PurchaseOrder;
 import com.cspinformatique.kubik.model.purchase.Reception;
+import com.cspinformatique.kubik.model.purchase.Reception.Status;
 import com.cspinformatique.kubik.model.purchase.ReceptionDetail;
 import com.cspinformatique.kubik.model.purchase.ShippingPackage;
-import com.cspinformatique.kubik.model.purchase.Reception.Status;
 
 @Component
 public class FetchReceptionsTask implements InitializingBean {
@@ -186,6 +187,10 @@ public class FetchReceptionsTask implements InitializingBean {
 							LOGGER.info("Reception " + file.getName()
 									+ " skipped since no purchase order were found for id "
 									+ ((PurchaseOrderNotFoundException) ex).getPurchaseOrderId() + ".");
+						} else if (ex instanceof PurchaseOrderNotDilicomException) {
+							LOGGER.info("Reception " + file.getName() + " skipped since purchase order "
+									+ ((PurchaseOrderNotDilicomException) ex).getPurchaseOrderId()
+									+ " is not linked to a dilicom order.");
 						} else if (ex instanceof ReceptionAlreadyReceivedException) {
 							LOGGER.info(((ReceptionAlreadyReceivedException) ex).getReceptionId()
 									+ " has already been received. Shipping notification will be ignored.");
@@ -203,8 +208,8 @@ public class FetchReceptionsTask implements InitializingBean {
 						this.updateReceptionDetail(line, reception);
 					} catch (Exception ex) {
 						skipReception = true;
-						
-						LOGGER.error("Error while generating reception detail from line " + line, ex);
+
+						LOGGER.error("Error while generating detail from line " + line + " for reception " + reception.getId() + ".", ex);
 					}
 				}
 			}
@@ -238,6 +243,8 @@ public class FetchReceptionsTask implements InitializingBean {
 
 		if (purchaseOrder == null) {
 			throw new PurchaseOrderNotFoundException(purchaseOrderIdString);
+		} else if (purchaseOrder.getDilicomOrder() == null) {
+			throw new PurchaseOrderNotDilicomException(purchaseOrderIdString);
 		}
 
 		Reception reception = purchaseOrder.getReception();

@@ -12,18 +12,18 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/invoice-details.css}" />
 	</head>
 	
-	<body >
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container" ng-app="KubikInvoiceDetails" ng-controller="KubikInvoiceDetailsController as view" ng-cloak>
+		<div class="container" ng-cloak ng-controller="InvoiceDetailsCtrl as invoiceDetailsCtrl">
 			<div class="text-center">
 				<div  class="row">
 					<h1 class="col-sm-2">
-						<button ng-if="previousInvoice != null" ng-click="changeInvoice(previousInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
+						<button ng-if="previousInvoice != null" ng-click="invoiceDetailsCtrl.changeInvoice(invoiceDetailsCtrl.previousInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span></button>
 					</h1>
-					<h1 class="col-sm-8"k>Facture {{invoice.number}}</h1>
+					<h1 class="col-sm-8"k>Facture {{invoiceDetailsCtrl.invoice.number}}</h1>
 					<h1 class="col-sm-2">
-						<button ng-if="next != null" ng-click="changeInvoice(nextInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
+						<button ng-if="next != null" ng-click="invoiceDetailsCtrl.changeInvoice(invoiceDetailsCtrl.nextInvoice)" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
 					</h1>
 				</div>
 				
@@ -44,22 +44,22 @@
 						
 						<tbody>
 							<tr>
-								<td>{{invoice.number}}</td>
-								<td>{{invoice.paidDate | date : "short"}}</td>
-								<td ng-if="invoice.customer != null">
-									<a href="#" ng-click="kubikCustomerCard.openCard(invoice.customer)">
-										<span ng-if="invoice.customer.company == null">{{invoice.customer.firstName}} {{invoice.customer.lastName}}</span>
-										<span ng-if="invoice.customer.company != null">{{invoice.customer.company}}</span>
+								<td>{{invoiceDetailsCtrl.invoice.number}}</td>
+								<td>{{invoiceDetailsCtrl.invoice.paidDate | date : "short"}}</td>
+								<td ng-if="invoiceDetailsCtrl.invoice.customer != null">
+									<a href="#" ng-click="invoiceDetailsCtrl.openCustomerCard($event, invoiceDetailsCtrl.invoice.customer)">
+										<span ng-if="invoiceDetailsCtrl.invoice.customer.company == null">{{invoiceDetailsCtrl.invoice.customer.firstName}} {{invoiceDetailsCtrl.invoice.customer.lastName}}</span>
+										<span ng-if="invoiceDetailsCtrl.invoice.customer.company != null">{{invoiceDetailsCtrl.invoice.customer.company}}</span>
 									</a>
 								</td>
-								<td ng-if="invoice.customer == null">
+								<td ng-if="invoiceDetailsCtrl.invoice.customer == null">
 									Anonyme
 								</td>
-								<td>{{invoice.details.length}}</td>
-								<td>{{invoice.rebateAmount | currency : '&euro;'}}</td>
-								<td>{{invoice.totalAmount | currency : '&euro;'}}</td>
+								<td>{{invoiceDetailsCtrl.invoice.details.length}}</td>
+								<td>{{invoiceDetailsCtrl.invoice.rebateAmount | currency : '&euro;'}}</td>
+								<td>{{invoiceDetailsCtrl.invoice.totalAmount | currency : '&euro;'}}</td>
 								<td>
-									<div ng-repeat="payment in invoice.payments" class="{{invoice.status.type == 'PAID' ? 'dropdown' : ''}}">
+									<div ng-repeat="payment in invoiceDetailsCtrl.invoice.payments" class="{{invoiceDetailsCtrl.invoice.status.type == 'PAID' ? 'dropdown' : ''}}">
 										<div ng-switch="payment.paymentMethod.type">
 											<span data-toggle="dropdown" ng-switch-when="CARD" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
 											<span data-toggle="dropdown" ng-switch-when="CASH" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
@@ -67,7 +67,7 @@
 											<span data-toggle="dropdown" ng-switch-when="CREDIT" title="Avoir - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
 											<span data-toggle="dropdown" ng-switch-when="KADEOS" title="Chèque Kadéos - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
 											<span data-toggle="dropdown" ng-switch-when="LIRE" title="Chèque Lire - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
-											<div ng-if="invoice.status.type == 'PAID'" class="dropdown-menu" role="menu">
+											<div ng-if="invoiceDetailsCtrl.invoice.status.type == 'PAID'" class="dropdown-menu" role="menu">
 												<span title="Carte" ng-click="changePaymentMethod(payment, 'CARD')" class="glyphicon glyphicon-credit-card">&nbsp;</span>
 												<span title="Espèces" ng-click="changePaymentMethod(payment, 'CASH')" class="glyphicon glyphicon-euro">&nbsp;</span>
 												<span title="Chèque" ng-click="changePaymentMethod(payment, 'CHECK')" class="glyphicon glyphicon-edit">&nbsp;</span>
@@ -77,7 +77,7 @@
 										</div>
 									</div>
 								</td>
-								<td>{{invoice.status.description}}</td>
+								<td>{{invoiceDetailsCtrl.invoice.status.description}}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -96,12 +96,12 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="detail in invoice.details">
+							<tr ng-repeat="detail in invoiceDetailsCtrl.invoice.details">
 								<td>{{detail.product.ean13}}</td>
-								<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.standardLabel}}</a></td>
+								<td><a href="#" ng-click="invoiceDetailsCtrl.openProductCard($event, detail.product)">{{detail.product.standardLabel}}</a></td>
 								<td>{{detail.unitPrice | currency : '&euro;'}}
 								<td>
-									<div ng-repeat="taxAmount in invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
+									<div ng-repeat="taxAmount in invoiceDetailsCtrl.invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
 								</td>
 								<td>{{detail.quantity}}</td>						
 								<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>
@@ -110,9 +110,9 @@
 					</table>
 				</div>
 				
-				<button ng-click="printReceipt()" type="button" class="btn btn-primary">Imprimer le reçu</button>
+				<button ng-click="invoiceDetailsCtrl.printReceipt()" type="button" class="btn btn-primary">Imprimer le reçu</button>
 				
-				<button ng-click="openReceipt()" type="button" class="btn btn-primary">Afficher le reçu</button>
+				<button ng-click="invoiceDetailsCtrl.openReceipt()" type="button" class="btn btn-primary">Afficher le reçu</button>
 				
 				<div class="refund-modal modal fade">
 					<div class="modal-dialog modal-sm">
@@ -124,18 +124,18 @@
 							<div class="modal-body text-center">
 								<div class="form-group"> 
 									<label>Paiements enregistrés</label>
-									<p ng-if="invoice.payments.length == 0" class="form-control-static">Aucun</p>
-									<p ng-if="invoice.payments.length != 0" ng-repeat="payment in invoice.payments" class="form-control-static">
+									<p ng-if="invoiceDetailsCtrl.invoice.payments.length == 0" class="form-control-static">Aucun</p>
+									<p ng-if="invoiceDetailsCtrl.invoice.payments.length != 0" ng-repeat="payment in invoiceDetailsCtrl.invoice.payments" class="form-control-static">
 										{{payment.paymentMethod.description}} : {{payment.amount | currency : '&euro;'}}	
 									</p>
 								</div>
 								<div class="form-group"> 
 									<label>Montant à rembourser</label>
 									
-									<p class="form-control-static">{{invoice.totalAmount | currency : '&euro;'}}</p>
+									<p class="form-control-static">{{invoiceDetailsCtrl.invoice.totalAmount | currency : '&euro;'}}</p>
 								</div>
 								
-								<button ng-click="refund()" type="button" class="btn btn-danger form-control" data-dismiss="modal">Rembourser</button>
+								<button ng-click="invoiceDetailsCtrl.refund()" type="button" class="btn btn-danger form-control" data-dismiss="modal">Rembourser</button>
 							</div>
 						</div>
 					</div>
@@ -143,9 +143,9 @@
 			</div>
 		
 			<div th:replace="product/product-card :: product-card"></div>
-		</div>
 		
-		<div class="customer-card"></div>
+			<div th:replace="sales/customer/customer-card :: customer-card"></div>
+		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		

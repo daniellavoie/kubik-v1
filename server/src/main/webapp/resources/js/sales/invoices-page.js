@@ -1,70 +1,82 @@
-var app = angular.module("KubikInvoicesPage", []);
+(function(){
+	angular
+		.module("Kubik")
+		.controller("InvoicesCtrl", InvoicesCtrl);
+	
+	function InvoicesCtrl($scope, $http, $timeout){
+		var vm = this;
+		
+		vm.page = 0;
+		vm.resultPerPage = 50;
+		vm.sortBy = "paidDate";
+		vm.direction = "DESC";
+		
+		vm.invoice = {};
+		
+		vm.changePage = changePage;
+		vm.hideErrors = hideErrors;
+		vm.loadInvoices = loadInvoices;
+		vm.openCustomerCard = openCustomerCard;
+		vm.openInvoice = openInvoice;
+		vm.searchInvoice = searchInvoice;
+		vm.searchInvoiceKeyPressed = searchInvoiceKeyPressed;
+		
+		loadInvoices();
 
-app.controller("KubikInvoicesPageController", function($scope, $http, $timeout){
-	
-	$scope.changePage = function(page){
-		$scope.page = page;
+		$(".search-invoice").select();
 		
-		$scope.loadInvoices();
-	}
-	
-	$scope.hideErrors = function(){
-		$scope.error = null;
-	}
-	
-	$scope.loadInvoices = function(){
-		var params = {	page : $scope.page,
-						resultPerPage : $scope.resultPerPage,
-						sortBy : $scope.sortBy,
-						direction : $scope.direction};
-		
-		$http.get("invoice?" + $.param(params)).success(function(invoicePage){
-			$scope.invoicePage = invoicePage;
+		$scope.$on("customerSaved", function($event, customer){
+			vm.loadInvoices();
 		});
-	};
-	
-	$scope.openCustomerCard = function(customer, $event){
-		try{
-			$scope.kubikCustomerCard.openCard(customer);
-		}finally{
+		
+		function changePage(page){
+			vm.page = page;
+			
+			vm.loadInvoices();
+		}
+		
+		function hideErrors(){
+			vm.error = null;
+		}
+		
+		function loadInvoices(){
+			var params = {	page : vm.page,
+							resultPerPage : vm.resultPerPage,
+							sortBy : vm.sortBy,
+							direction : vm.direction};
+			
+			$http.get("invoice?" + $.param(params)).success(function(invoicePage){
+				vm.invoicePage = invoicePage;
+			});
+		}
+		
+		function openCustomerCard($event, customer){
 			$event.stopPropagation();
+			
+			$scope.$broadcast("openCustomerCard", customer);
 		}
-	}
-	
-	$scope.openInvoice = function(invoice){
-		location.href = "invoice/" + invoice.id;
-	}
-	
-	$scope.searchInvoice = function(){
-		$http.get("/invoice?number=" + $scope.invoice.number).success(function(invoice){
-			if(invoice == ""){
-				$scope.error = "Aucune facture retrouvée pour le numéro " + $scope.invoice.number;
-				
-				$(".search-invoice").select();
-				
-				return;
-			}
-			window.location.href = "/invoice/" + invoice.id;
-		});
-	};
-	
-	$scope.searchInvoiceKeyPressed = function($event){
-		if($event.keyCode == 13){
-			$scope.searchInvoice();
-		}
-	};
-	
-	$scope.kubikCustomerCard = new KubikCustomerCard({customerUrl : "customer", customerSaved : function(){
-		$scope.loadInvoices();
-	}});
-	
-	$scope.page = 0;
-	$scope.resultPerPage = 50;
-	$scope.sortBy = "paidDate";
-	$scope.direction = "DESC";
-	
-	$scope.invoice = {};
-	$scope.loadInvoices();
 
-	$(".search-invoice").select();
-});
+		function openInvoice(invoice){
+			location.href = "invoice/" + invoice.id;
+		}
+
+		function searchInvoice(){
+			$http.get("/invoice?number=" + vm.invoice.number).success(function(invoice){
+				if(invoice == ""){
+					vm.error = "Aucune facture retrouvée pour le numéro " + vm.invoice.number;
+					
+					$(".search-invoice").select();
+					
+					return;
+				}
+				window.location.href = "/invoice/" + invoice.id;
+			});
+		}
+		
+		function searchInvoiceKeyPressed($event){
+			if($event.keyCode == 13){
+				vm.searchInvoice();
+			}
+		}
+	}
+})();

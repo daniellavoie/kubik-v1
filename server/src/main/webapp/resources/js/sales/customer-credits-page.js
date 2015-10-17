@@ -1,118 +1,120 @@
-var app = angular.module("KubikCustomerCreditsPage", []);
-var kukikCustomerSearch = new KubikCustomerSearch({
-	app : app,
-	customerUrl : "customer",
-	modal : true,
-	$container : $(".customers-modal")
-});
-
-app.controller("KubikCustomerCreditsPageController", function($scope, $http, $timeout){
-	$scope.$on("openCustomerCard", function(event, customer){
-		$scope.openCustomerCard(customer, event);
-	});
+(function(){
+	angular
+		.module("Kubik")
+		.controller("CustomerCreditsCtrl", CustomerCreditsCtrl);
 	
-	$scope.changePage = function(page){
-		$scope.page = page;
+	function CustomerCreditsCtrl($scope, $http, $timeout){
+		var vm = this;
 		
-		$scope.loadCustomerCredits();
-	};
-	
-	$scope.createCustomerCredit = function(){
-		$http.post("customerCredit", $scope.customerCredit).success(function(customerCredit){
-			location.href = "customerCredit/" + customerCredit.id;
-		});
-	};
-	
-	$scope.invoiceNumberKeyUp= function($event){
-		if($event.keyCode == 13){
-			$scope.validateInvoiceNumber();
-		}
-	}
-	
-	$scope.loadCustomerCredits = function(){
-		var params = {	page : $scope.page,
-						resultPerPage : $scope.resultPerPage,
-						sortBy : $scope.sortBy,
-						direction : $scope.direction};
+		vm.customerCredit = {status : "OPEN"};
+		vm.page = 0;
+		vm.resultPerPage = 50;
+		vm.sortBy = "date";
+		vm.direction = "DESC";
 		
-		$http.get("customerCredit?" + $.param(params)).success(function(customerCreditsPage){
-			$scope.customerCreditsPage = customerCreditsPage;
+		vm.changePage = changePage;
+		vm.openCustomerCard = openCustomerCard;
+		vm.createCustomerCredit = createCustomerCredit;
+		vm.invoiceNumberKeyUp = invoiceNumberKeyUp;
+		vm.loadCustomerCredits = loadCustomerCredits;
+		vm.newCustomerCredit = newCustomerCredit;
+		vm.openCustomerCard = openCustomerCard;
+		vm.openCustomerCredit = openCustomerCredit;
+		vm.showCustomerSelection = showCustomerSelection;
+		vm.validateInvoiceNumber = validateInvoiceNumber;
+		
+		loadCustomerCredits();
+		
+		$scope.$on("customerSaved", function($event, customer){
+			if(vm.customerCredit != null){
+				vm.customerCredit.customer = customer;
+				
+				vm.createCustomerCredit();
+				
+				$scope.$broadcast("closeCustomerCard");
+				$scope.$broadcast("closeCustomerSearchModal");
+			}else{
+				vm.loadCustomerCredits();
+			}
 		});
-	};
-	
-	$scope.newCustomerCredit = function(){
-		// Open the modal.
-		$(".new-customer-credit-modal").modal({
-			backdrop : "static",
-			keyboard : "false"
-		}).on("shown.bs.modal", function(){
-			$(".invoice-number").focus();
-		});
-	};
-	
-	$scope.openCustomerCard = function(customer, $event){
-		try{
-			$scope.customerCredit = null;
-			$scope.kubikCustomerCard.openCard(customer);
-		}finally{
-			$event.stopPropagation();
-		}
-	};
-	
-	$scope.openCustomerCredit = function(customerCredit){
-		location.href = "customerCredit/" + customerCredit.id;
-	};
-	
-	$scope.showCustomerSelection = function(){
-		$scope.kubikCustomerSearch.openSearchModal();
-	}
-	
-	$scope.validateInvoiceNumber = function(){
-		$http.get("invoice?number=" + $scope.customerCredit.invoice.number).success(function(invoice){
-			$scope.customerCredit.invoice = invoice;
+		
+		$scope.$on("customerSelected", function($event, customer){
+			vm.customerCredit.customer = customer;
 			
-			if($scope.customerCredit.invoice.customer == null){
-				$scope.showCustomerSelection();
-			}else{
-				$scope.customerCredit.customer = $scope.customerCredit.invoice.customer;
-				
-				$scope.createCustomerCredit();
-			}
+			$scope.$broadcast("closeCustomerSearchModal");
+			
+			vm.loadCustomerCredits(); 
+			
+			vm.createCustomerCredit();
 		});
-	};
-	
-	$scope.kubikCustomerSearch = kukikCustomerSearch;
-	$scope.kubikCustomerSearch.customerSelected = function(customer){
-		$scope.customerCredit.customer = customer;
 		
-		$scope.kubikCustomerSearch.closeSearchModal();
+		function changePage(page){
+			vm.page = page;
+			
+			vm.loadCustomerCredits();
+		}
 		
-		$scope.loadCustomerCredits(); 
+		function createCustomerCredit(){
+			$http.post("customerCredit", vm.customerCredit).success(function(customerCredit){
+				location.href = "customerCredit/" + customerCredit.id;
+			});
+		}
 		
-		$scope.createCustomerCredit();
-	};
-	
-	$scope.kubikCustomerCard = new KubikCustomerCard({
-		customerUrl : "customer", 
-		customerSaved : function(customer){
-			if($scope.customerCredit != null){
-				$scope.customerCredit.customer = customer;
-				
-				$scope.createCustomerCredit();
-				
-				$scope.kubikCustomerCard.closeCard();
-				$scope.kubikCustomerSearch.closeSearchModal();
-			}else{
-				$scope.loadCustomerCredits();
+		function invoiceNumberKeyUp($event){
+			if($event.keyCode == 13){
+				vm.validateInvoiceNumber();
 			}
 		}
-	});
-	
-	$scope.customerCredit = {status : "OPEN"};
-	$scope.page = 0;
-	$scope.resultPerPage = 50;
-	$scope.sortBy = "date";
-	$scope.direction = "DESC";
-	
-	$scope.loadCustomerCredits();
-});
+
+		function loadCustomerCredits(){
+			var params = {	page : vm.page,
+							resultPerPage : vm.resultPerPage,
+							sortBy : vm.sortBy,
+							direction : vm.direction};
+			
+			$http.get("customerCredit?" + $.param(params)).success(function(customerCreditsPage){
+				vm.customerCreditsPage = customerCreditsPage;
+			});
+		}
+		
+		function newCustomerCredit(){
+			// Open the modal.
+			$(".new-customer-credit-modal").on("shown.bs.modal", function(){
+				$(".invoice-number").focus();
+			}).modal({
+				backdrop : "static",
+				keyboard : "false"
+			});
+		}
+		
+		function openCustomerCard($event, customer){
+			$event.stopPropagation();
+			
+			vm.customerCredit = null;
+			
+			$scope.$broadcast("openCustomerCard", customer);
+		}
+		
+		function openCustomerCredit(customerCredit){
+			location.href = "customerCredit/" + customerCredit.id;
+		}
+		
+		function showCustomerSelection(){
+			$scope.$broadcast("openCustomerSearchModal");
+		}
+		
+		function validateInvoiceNumber(){
+			$http.get("invoice?number=" + vm.customerCredit.invoice.number).success(function(invoice){
+				vm.customerCredit.invoice = invoice;
+				
+				if(vm.customerCredit.invoice.customer == null){
+					vm.showCustomerSelection();
+				}else{
+					vm.customerCredit.customer = vm.customerCredit.invoice.customer;
+					
+					vm.createCustomerCredit();
+				}
+			});
+		}
+	}
+})();

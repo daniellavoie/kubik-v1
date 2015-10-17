@@ -24,11 +24,12 @@ public class ProductStatsController {
 	private ProductStatsService productStatsService;
 
 	@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<ProductStats> findProductStats(
-			@RequestParam(required = false) Date startDate,
-			@RequestParam(required = false) Date endDate,
-			@RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "1000") Integer resultPerPage) {
+	public @ResponseBody Page<ProductStats> findProductStats(@RequestParam(required = false) Date startDate,
+			@RequestParam(required = false) Date endDate, @RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "1000") Integer resultPerPage,
+			@RequestParam(defaultValue = "sold") String orderBy,
+			@RequestParam(defaultValue = "DESC") Direction direction,
+			@RequestParam(defaultValue = "false") boolean withoutInventory) {
 		if (startDate == null) {
 			startDate = new Date(0);
 		}
@@ -39,9 +40,9 @@ public class ProductStatsController {
 			endDate = cal.getTime();
 		}
 
-		return this.productStatsService.findAll(startDate, endDate,
-				new PageRequest(page, resultPerPage, new Sort(Direction.DESC,
-						"sold")));
+		return this.productStatsService.findAll(startDate, endDate, withoutInventory, new PageRequest(page,
+				resultPerPage,
+				new Sort(new Sort.Order(direction, orderBy), new Sort.Order(Direction.ASC, "product.extended_label"))));
 	}
 
 	@RequestMapping(produces = MediaType.TEXT_HTML_VALUE)

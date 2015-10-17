@@ -1,149 +1,167 @@
-var attributesMapping = {
-	availabilityCode : "Code de disponibilité",
-	priceType : "Type de prix",
-	priceTaxIn : "Prix TTC",
-	tvaRate1 : "Taux taxe 1",
-	tvaRate2 : "Taux taxe 2",
-	tvaRate3 : "Taux taxe 3",
-	returnType : "Type de retour",
-	availableForOrder : "Disponible à la commande",
-	datePublished : "Date de publication",
-	productType : "Type de produit",
-	publishEndDate : "Date de fin de disponibilité",
-	extendedLabel : "Titre",
-	standardLabel : "Titre court",
-	cashRegisterLabel : "Titre caisse",
-	thickness : "Epaisseur",
-	width : "Largeur",
-	height : "Hauteur",
-	weight : "Poids",
-	publisher : "Editeur",
-	collection : "Collection",
-	author : "Auteur",
-	publisherPresentation : "Présentation auteur",
-	isbn : "ISBN",
-	supplierReference : "Référence fournisseur",
-	collectionReference : "Référence collection",
-	theme : "Thème",
-	publisherIsnb : "ISBN Fournisseur",
-	orderableByUnit : "Commande à l'unité"
-};
-
-var app = angular.module("KubikNotifications", []);
-
-app.controller("KubikNotificationsController", function($scope, $http){
-	$scope.autoValidateNotification = function($event, notification){
-		try{
-			$scope.notification = notification;
-			
-			$scope.validateNotification(false);
-		}finally{
-			$event.stopPropagation();
-		}
-	};
+(function(){
+	var attributesMapping = {
+			availabilityCode : "Code de disponibilité",
+			priceType : "Type de prix",
+			priceTaxIn : "Prix TTC",
+			tvaRate1 : "Taux taxe 1",
+			tvaRate2 : "Taux taxe 2",
+			tvaRate3 : "Taux taxe 3",
+			returnType : "Type de retour",
+			availableForOrder : "Disponible à la commande",
+			datePublished : "Date de publication",
+			productType : "Type de produit",
+			publishEndDate : "Date de fin de disponibilité",
+			extendedLabel : "Titre",
+			standardLabel : "Titre court",
+			cashRegisterLabel : "Titre caisse",
+			thickness : "Epaisseur",
+			width : "Largeur",
+			height : "Hauteur",
+			weight : "Poids",
+			publisher : "Editeur",
+			collection : "Collection",
+			author : "Auteur",
+			publisherPresentation : "Présentation auteur",
+			isbn : "ISBN",
+			supplierReference : "Référence fournisseur",
+			collectionReference : "Référence collection",
+			theme : "Thème",
+			publisherIsnb : "ISBN Fournisseur",
+			orderableByUnit : "Commande à l'unité"
+		};
 	
-	$scope.changeOverwrite = function(attribute, overwrite){
-		$scope.attributesInDiff[attribute].overwrite = overwrite;
-	};
+	angular
+		.module("Kubik")
+		.controller("DilicomNotificationsCtrl", DilicomNotificationsCtrl);
 	
-	$scope.changePage = function(page){
-		$scope.page = page;
+	function DilicomNotificationsCtrl($http){
+		var vm = this;
 		
-		$scope.loadNotifications();
-	}
-	
-	$scope.ignoreNotification = function($event, notification){
-		try{
-			$scope.notification = notification;
-			
-			$scope.overwriteNoAttribute();
-			
-			$scope.validateNotification(false);
-		}finally{
-			$event.stopPropagation();
-		}
-	}
-	
-	$scope.loadNotifications = function(successCallback){
-		var params = {	page : $scope.page,
-						resultPerPage : $scope.resultPerPage,
-						sortBy : $scope.sortBy,
-						direction : $scope.direction};
+		vm.page = 0;
+		vm.resultPerPage = 50;
+		vm.sortBy = "creationDate";
+		vm.direction = "ASC";
 		
-		$http.get("notification?" + $.param(params)).success(function(notificationsPage){
-			$scope.notificationsPage = notificationsPage;
+		loadNotifications();
+		
+		vm.autoValidateNotification = autoValidateNotification;
+		vm.changeOverwrite = changeOverwrite;
+		vm.changePage = changePage;
+		vm.ignoreNotification = ignoreNotification;
+		vm.loadNotifications = loadNotifications;
+		vm.openNotification = openNotification;
+		vm.overwriteAllAttributes = overwriteAllAttributes;
+		vm.overwriteNoAttribute = overwriteNoAttribute;
+		vm.validateNotification = validateNotification;
+		
+		function autoValidateNotification($event, notification){
+			$event.stopPropagation();
 			
-			if(successCallback != undefined){
-				successCallback();
+			vm.notification = notification;
+			
+			vm.validateNotification(false);
+		}
+		
+		function changeOverwrite(attribute, overwrite){
+			vm.attributesInDiff[attribute].overwrite = overwrite;
+		}
+		
+		function changePage(page){
+			vm.page = page;
+			
+			vm.loadNotifications();
+		}
+		
+		function ignoreNotification($event, notification){
+			$event.stopPropagation();
+			
+			vm.notification = notification;
+			
+			vm.overwriteNoAttribute();
+			
+			vm.validateNotification(false);
+		}
+		
+		function loadNotifications(successCallback){
+			var params = {	page : vm.page,
+							resultPerPage : vm.resultPerPage,
+							sortBy : vm.sortBy,
+							direction : vm.direction};
+			
+			$http.get("notification?" + $.param(params)).success(loadNotificationSuccess);
+			
+			function loadNotificationSuccess(notificationsPage){
+				vm.notificationsPage = notificationsPage;
+			
+				if(successCallback != undefined){
+					successCallback();
+				}
 			}
-		});
-	};
-	
-	$scope.openNotification = function(notification){
-		$scope.notification = notification;
+		}
 		
-		var params = {	ean13 : notification.product.ean13, 
-						supplierEan13 : notification.product.supplier.ean13};
-		
-		$http.get("reference/product?" + $.param(params)).success(function(newProduct){
-			$scope.attributesInDiff = {};
+		function openNotification(notification){
+			vm.notification = notification;
 			
-			for(var attribute in attributesMapping){
-				if(attributesMapping.hasOwnProperty(attribute)){
-					var oldAttributeValue = notification.product[attribute];
-					var newAttributeValue = newProduct[attribute];
-					
-					if(oldAttributeValue != newAttributeValue){
-						$scope.attributesInDiff[attribute] = {
-							attribute : attribute,
-							attributeLabel : attributesMapping[attribute],
-							oldValue : oldAttributeValue, 
-							newValue : newAttributeValue,
-							overwrite : true};
+			var params = {	ean13 : notification.product.ean13, 
+							supplierEan13 : notification.product.supplier.ean13};
+			
+			$http.get("reference/product?" + $.param(params)).success(function(newProduct){
+				vm.attributesInDiff = {};
+				
+				for(var attribute in attributesMapping){
+					if(attributesMapping.hasOwnProperty(attribute)){
+						var oldAttributeValue = notification.product[attribute];
+						var newAttributeValue = newProduct[attribute];
+						
+						if(oldAttributeValue != newAttributeValue){
+							vm.attributesInDiff[attribute] = {
+								attribute : attribute,
+								attributeLabel : attributesMapping[attribute],
+								oldValue : oldAttributeValue, 
+								newValue : newAttributeValue,
+								overwrite : true};
+						}
+					}
+				}
+				
+				$(".notification-modal").modal();
+			});
+		}
+		
+		function overwriteAllAttributes(){
+			for(var attributeInDiff in vm.attributesInDiff){
+				vm.attributesInDiff[attributeInDiff].overwrite = true;
+			}
+		}
+		
+		function overwriteNoAttribute(){
+			for(var attributeInDiff in vm.attributesInDiff){
+				vm.attributesInDiff[attributeInDiff].overwrite = false;
+			}
+		}
+		
+		function validateNotification(openNextNotification){
+			for(var attributeInDiffIndex in vm.attributesInDiff){
+				var attributeInDiff = vm.attributesInDiff[attributeInDiffIndex];
+				
+				if(attributeInDiff.overwrite){
+					vm.notification.product[attributeInDiff.attribute] = attributeInDiff.newValue;
+				}
+			}
+			
+			$http.post("notification/" + vm.notification.id, vm.notification.product).success(postNotificationSuccess);
+			
+			function postNotificationSuccess(){
+				vm.loadNotifications(successCallback);
+				
+				function successCallback(){
+					if(openNextNotification != undefined && openNextNotification && vm.notificationsPage.content.length > 0){
+						vm.openNotification(vm.notificationsPage.content[0]);					
+					}else{
+						$(".notification-modal").modal("hide");
 					}
 				}
 			}
-			
-			$(".notification-modal").modal();
-		});
-	};
-	
-	$scope.overwriteAllAttributes = function(){
-		for(var attributeInDiff in $scope.attributesInDiff){
-			$scope.attributesInDiff[attributeInDiff].overwrite = true;
 		}
-	};
-	
-	$scope.overwriteNoAttribute = function(){
-		for(var attributeInDiff in $scope.attributesInDiff){
-			$scope.attributesInDiff[attributeInDiff].overwrite = false;
-		}
-	};
-	
-	$scope.validateNotification = function(openNextNotification){
-		for(var attributeInDiffIndex in $scope.attributesInDiff){
-			var attributeInDiff = $scope.attributesInDiff[attributeInDiffIndex];
-			
-			if(attributeInDiff.overwrite){
-				$scope.notification.product[attributeInDiff.attribute] = attributeInDiff.newValue;
-			}
-		}
-		
-		$http.post("notification/" + $scope.notification.id, $scope.notification.product).success(function(){
-			$scope.loadNotifications(function(){
-				if(openNextNotification != undefined && openNextNotification && $scope.notificationsPage.content.length > 0){
-					$scope.openNotification($scope.notificationsPage.content[0]);					
-				}else{
-					$(".notification-modal").modal("hide");
-				}
-			});
-		});
 	}
-	
-	$scope.page = 0;
-	$scope.resultPerPage = 50;
-	$scope.sortBy = "creationDate";
-	$scope.direction = "ASC";
-	
-	$scope.loadNotifications();
-});
+})();

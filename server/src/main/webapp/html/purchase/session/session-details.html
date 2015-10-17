@@ -12,25 +12,25 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/session/session-details.css}" />
 	</head>
 	
-	<body >
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container" ng-cloak ng-app="KubikPurchaseSessionDetails" ng-controller="SessionDetailsController as view">
+		<div class="container" ng-cloak ng-controller="SessionDetailsCtrl as sessionDetailsCtrl">
 			<div class="text-center">
 				<h1>Préparation de commande </h1>
 				
 				<div class="header form-inline">
 					<div class="form-group">
 						<label>Statut : </label>
-						<span ng-if="session.status == 'DRAFT'" class="label label-info">Brouillon</span>
-						<span ng-if="session.status == 'SUBMITED'" class="label label-success">Soumis</span>
-						<span ng-if="session.status == 'CANCELED'" class="label label-danger">Annulé</span>
+						<span ng-if="sessionDetailsCtrl.session.status == 'DRAFT'" class="label label-info">Brouillon</span>
+						<span ng-if="sessionDetailsCtrl.session.status == 'SUBMITED'" class="label label-success">Soumis</span>
+						<span ng-if="sessionDetailsCtrl.session.status == 'CANCELED'" class="label label-danger">Annulé</span>
 					</div>
 					
 					<div class="minDeliveryDate form-group">
 						<label>Date de livraison min. :</label>
 						<input 
-							ng-model="session.minDeliveryDate" 
+							ng-model="sessionDetailsCtrl.session.minDeliveryDate" 
 							type="text" 
 							class="date form-control"
 							placeholder="dd/MM/yyyy" 
@@ -40,7 +40,7 @@
 					<div class="maxDeliveryDate form-group">
 						<label>Date de livraison max :</label>
 						<input 
-							ng-model="session.maxDeliveryDate"
+							ng-model="sessionDetailsCtrl.session.maxDeliveryDate"
 							type="text" 
 							class="date form-control"
 							placeholder="dd/MM/yyyy"	
@@ -60,9 +60,9 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="detail in session.details">
+							<tr ng-repeat="detail in sessionDetailsCtrl.session.details">
 								<td>
-									<a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
+									<a href="#" ng-click="sessionDetailsCtrl.openProductCard(detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
 								<td>{{detail.product.availabilityCode}}</td>
 								<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
 								<td>
@@ -70,20 +70,20 @@
 										ng-if="session.status != 'SUBMITED'" 
 										ng-model="detail.quantity"
 										id="detail-{{detail.id}}"
-										ng-click="quantityChanged($event)"
-										ng-keyup="quantityChanged($event)"
+										ng-click="sessionDetailsCtrl.quantityChanged($event)"
+										ng-keyup="sessionDetailsCtrl.quantityChanged($event)"
 										class="quantity" 
 										type="number"
 										min="1" 
 										max="99999" 
 									/>
-									<span ng-if="session.status == 'SUBMITED'">{{detail.quantity}}</span>
+									<span ng-if="sessionDetailsCtrl.session.status == 'SUBMITED'">{{detail.quantity}}</span>
 								</td>
 									
 								<td>
 									<button
-										ng-if="session.status != 'SUBMITED'"
-										ng-click="deleteDetail(detail)" 
+										ng-if="sessionDetailsCtrl.session.status != 'SUBMITED'"
+										ng-click="sessionDetailsCtrl.deleteDetail(detail)" 
 										type="button" 
 										class="btn btn-warning btn-xs"
 									>
@@ -93,24 +93,30 @@
 								</td>
 							</tr>
 							
-							<tr ng-if="session.details.length == 0">
+							<tr ng-if="sessionDetailsCtrl.session.details.length == 0">
 								<td colspan="5">
 									Aucun produit dans la commande.
 								</td>
 							</tr>
 						</tbody>
 						
-						<tfoot ng-if="session.status == 'DRAFT'">
+						<tfoot ng-if="sessionDetailsCtrl.session.status == 'DRAFT'">
 							<tr>
 								<td colspan="5 container">
 									<div class="col-sm-4">
-										<input ng-keyup="searchProductKeyUp($event)" ng-model="search.ean13" type="text" placeholder="Ean13" class="ean13 form-control">
+										<input 
+											type="text" 
+											placeholder="Ean13" 
+											class="ean13 form-control"
+											ng-keyup="sessionDetailsCtrl.searchProductKeyUp($event)" 
+											ng-model="sessionDetailsCtrl.search.ean13" 
+										/>
 									</div>
 									<div class="col-sm-3">
-										<button class="btn btn-success form-control" ng-click="kubikProductSearch.openSearchModal()">Recherche produit</button>
+										<button class="btn btn-success form-control" ng-click="sessionDetailsCtrl.openProductSearch()">Recherche produit</button>
 									</div>
 									<div class="col-sm-3">
-										<button class="btn btn-warning form-control" ng-click="kubikReferenceSearch.openSearchModal()">Recherche Dilicom</button>
+										<button class="btn btn-warning form-control" ng-click="sessionDetailsCtrl.openReferenceSearch()">Recherche Dilicom</button>
 									</div>
 								</td>
 							</tr>
@@ -118,9 +124,9 @@
 					</table>
 				</div>
 				
-				<div ng-if="session.status == 'DRAFT'">
-					<button ng-click="confirmCancelSession()" type="button" class="btn btn-danger">Annuler la préparation</button>
-					<button ng-click="confirmSubmitSession()" type="button" class="btn btn-primary">Générer les commandes</button>
+				<div ng-if="sessionDetailsCtrl.session.status == 'DRAFT'">
+					<button ng-click="sessionDetailsCtrl.confirmCancelSession()" type="button" class="btn btn-danger">Annuler la préparation</button>
+					<button ng-click="sessionDetailsCtrl.confirmSubmitSession()" type="button" class="btn btn-primary">Générer les commandes</button>
 				</div>
 				
 				<div class="confirm-submit modal fade">
@@ -131,7 +137,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-								<button ng-click="submitSession()" type="button" class="btn btn-primary">Générer les commandes</button>
+								<button ng-click="sessionDetailsCtrl.submitSession()" type="button" class="btn btn-primary">Générer les commandes</button>
 							</div>
 						</div>
 					</div>
@@ -145,7 +151,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
-								<button ng-click="cancelSession()" type="button" class="btn btn-danger">Annuler la préparation</button>
+								<button ng-click="sessionDetailsCtrl.cancelSession()" type="button" class="btn btn-danger">Annuler la préparation</button>
 							</div>
 						</div>
 					</div>
@@ -157,8 +163,8 @@
 							<div class="modal-body">
 								<p>Préparation de commande mise-à-jour.</p>
 								<p>
-									<button ng-click="redirectToPurchaseOrders()" type="button" class="btn btn-default" data-dismiss="modal">Voir les commandes</button>
-									<button ng-click="redirectToPurchaseSessions()" type="button" class="btn btn-default" data-dismiss="modal">Voir les préparations</button>
+									<button ng-click="sessionDetailsCtrl.redirectToPurchaseOrders()" type="button" class="btn btn-default" data-dismiss="modal">Voir les commandes</button>
+									<button ng-click="sessionDetailsCtrl.redirectToPurchaseSessions()" type="button" class="btn btn-default" data-dismiss="modal">Voir les préparations</button>
 								</p>
 							</div>
 						</div>
@@ -185,8 +191,6 @@
 		
 			<div th:replace="dilicom/references-modal :: references-modal"></div>
 		</div>
-		
-		<div class="reference-card"></div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		

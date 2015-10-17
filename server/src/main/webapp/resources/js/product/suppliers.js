@@ -1,22 +1,35 @@
-var app = angular.module("KubikSuppliers", []);
-
-app.controller("KubikSuppliersController", function($scope, $http, $timeout){
-	$scope.supplierSaved = function(supplier){
-		$scope.loadSuppliers();
-	};
+(function(){
+	angular
+		.module("Kubik")
+		.controller("SuppliersCtrl", SuppliersCtrl);
 	
-	$scope.loadSuppliers = function(){
-		$http.get("supplier").success(function(suppliers){
-			$scope.suppliers = suppliers;
+	function SuppliersCtrl($scope, $http, $timeout){
+		var vm = this;
+
+		loadSuppliers();
+		
+		vm.loadSuppliers = loadSuppliers;
+		vm.newSupplier = newSupplier;
+		vm.openSupplierCard = openSupplierCard;
+		
+		$scope.$on("supplierSaved", function($event, supplier){
+			vm.loadSuppliers();
 		});
-	};
-	
-	$scope.newSupplier = function(){
-		$scope.supplierCard.openCard({});
+		
+		function loadSuppliers(){
+			$http.get("supplier").success(loadSuppliersSuccess);
+			
+			function loadSuppliersSuccess(suppliers){
+				vm.suppliers = suppliers;
+			}
+		}
+		
+		function newSupplier(){
+			vm.openSupplierCard({});
+		}
+		
+		function openSupplierCard(supplier){
+			$scope.$broadcast("openSupplierCard", supplier)
+		}
 	}
-	
-	$scope.supplierCard = new KubikSupplierCard({	supplierUrl : "supplier", 
-													supplierSaved : $scope.supplierSaved});
-
-	$scope.loadSuppliers();
-});
+})();

@@ -1,119 +1,87 @@
-window.KubikSupplierCard = function(options){
-	if(options == undefined){
-		options = {};
-	}
-	if(options.$modalContainer == undefined){
-		options.$modalContainer = $(".supplier-card");
-	}
+(function(){
+	var SUPPLIER_URL = "/supplier";
 	
-	this.$modalContainer = options.$modalContainer;
-	this.supplierUrl = options.supplierUrl;
-	this.supplierSaved = options.supplierSaved;
+	var $modal = $(".supplier-card");
+	var $saveBtn = $modal.find(".save");
+	var $modifyBtn = $modal.find(".modify");
+	var $closeBtn = $modal.find(".closeModal");
+	var $cancelBtn = $modal.find(".cancel");
 	
-	this.init();
-};
-
-window.KubikSupplierCard.prototype.init = function(){
-	var kubikSupplierCard = this;
+	angular
+		.module("Kubik")
+		.controller("SupplierCardCtrl", SupplierCardCtrl);
 	
-	this.app = angular.module("KubikSupplierCard", []);
-	
-	this.app.controller("KubikSupplierCardController", function($scope, $http, $timeout){
-		kubikSupplierCard.$modalScope = $scope;
-		$scope.editMode = false;
+	function SupplierCardCtrl($scope, $http, $timeout){
+		var vm = this;
 		
-		$scope.cancelModify = function(){
-			$scope.supplier = $scope.originalSupplier;
+		vm.editMode = false;
+		
+		vm.cancelModify = cancelModify;
+		vm.closeCard = closeCard;
+		vm.endEditMode = endEditMode;
+		vm.modify = modify;
+		vm.openCard = openCard;
+		vm.save = save;
+		
+		$scope.$on("openSupplierCard", function($event, supplier){
+			vm.openCard(supplier);
+		});
+		
+		function cancelModify(){
+			vm.supplier = vm.originalSupplier;
 			
-			$scope.endEditMode();
+			vm.endEditMode();
 		}
 		
-		$scope.closeCard = function(){
-			kubikSupplierCard.$modalContainer.find(".modal").modal("hide");
+		function closeCard(){
+			$modal.modal("hide");
 		}
 		
-		$scope.endEditMode = function(){
-			$scope.editMode = false;
+		function endEditMode(){
+			vm.editMode = false;
 			
-			$scope.$saveBtn.addClass("hidden");
-			$scope.$cancelBtn.addClass("hidden");
-			$scope.$modifyBtn.removeClass("hidden");
-			$scope.$closeBtn.removeClass("hidden");
-			
-			$scope.refreshModalBackdrop();
-		};
-		
-		$scope.modify = function(){
-			$scope.editMode = true;
-			
-			$scope.$saveBtn.removeClass("hidden");
-			$scope.$cancelBtn.removeClass("hidden");
-			$scope.$modifyBtn.addClass("hidden");
-			$scope.$closeBtn.addClass("hidden");
-			
-			$scope.originalSupplier = $.extend(true, {}, $scope.supplier);
-			
-			$scope.refreshModalBackdrop();
+			$saveBtn.addClass("hidden");
+			$cancelBtn.addClass("hidden");
+			$modifyBtn.removeClass("hidden");
+			$closeBtn.removeClass("hidden");
 		}
 		
-		$scope.openCard = function(supplier){
-			$scope.supplier = supplier;
+		function modify(){
+			vm.editMode = true;
 			
-			$timeout(function(){
-				kubikSupplierCard.$modal = kubikSupplierCard.$modalContainer.find(".modal").modal({
-					backdrop : "static",
-					keyboard : false
-				});
+			$saveBtn.removeClass("hidden");
+			$cancelBtn.removeClass("hidden");
+			$modifyBtn.addClass("hidden");
+			$closeBtn.addClass("hidden");
+			
+			vm.originalSupplier = $.extend(true, {}, vm.supplier);
+		}
+		
+		function openCard(supplier){
+			$modal.on('show.bs.modal', function (e) {
+				vm.supplier = supplier;
 				
 				if(supplier.id == undefined){
-					$scope.modify();
+					vm.modify();
 				}
+			}).modal({
+				backdrop : "static",
+				keyboard : false
 			});
-		};
+		}
 		
-		$scope.refreshModalBackdrop = function(){
-			$timeout(function(){
-				kubikSupplierCard.$modalContainer.find(".modal-backdrop")
-			      .css('height', 0)
-			      .css('height', kubikSupplierCard.$modal[0].scrollHeight);
-			});
-		};
-		
-		$scope.save = function(){
-			var supplier = $scope.supplier;
+		function save(){
+			var supplier = vm.supplier;
 			
 			if(supplier.ean13.trim() != "" && supplier.name.trim() != ""){
-				$http.post(kubikSupplierCard.supplierUrl, supplier).success(function(supplier){					
-					$scope.endEditMode();
-					if(kubikSupplierCard.supplierSaved != undefined){
-						kubikSupplierCard.supplierSaved(supplier);
-					}
-				});
+				$http.post(SUPPLIER_URL, supplier).success(supplierSaved);
 			}
-		};
-
-		$scope.$saveBtn = kubikSupplierCard.$modalContainer.find(".save")
-		$scope.$modifyBtn = kubikSupplierCard.$modalContainer.find(".modify")
-		$scope.$closeBtn = kubikSupplierCard.$modalContainer.find(".closeModal")
-		$scope.$cancelBtn = kubikSupplierCard.$modalContainer.find(".cancel")
-	});
-	
-	$.get(
-		this.supplierUrl + "?card", 
-		function(supplierCardHtml) {
-			kubikSupplierCard.$modalContainer.html(supplierCardHtml);
 			
-		    angular.bootstrap($(".supplier-card")[0],['KubikSupplierCard']);
-		}, 
-		"html"
-	);
-
-};
-
-window.KubikSupplierCard.prototype.closeCard = function(){
-	this.$modalScope.closeCard();
-}
-
-window.KubikSupplierCard.prototype.openCard = function(supplier){
-	this.$modalScope.openCard(supplier);
-};
+			function supplierSaved(supplier){				
+				vm.endEditMode();
+				
+				$scope.$emit("supplierSaved", supplier);
+			}
+		}
+	}
+})();

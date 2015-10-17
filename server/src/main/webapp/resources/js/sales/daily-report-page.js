@@ -1,53 +1,61 @@
-var app = angular.module("KubikDailyReportPage", []);
-
-app.controller("KubikDailyReportPageController", function($scope, $http, $timeout){
+(function(){
+	angular
+		.module("Kubik")
+		.controller("DailyReportPageCtrl", DailyReportPageCtrl);
 	
-	$scope.changePage = function(page){
-		$scope.page = page;
+	function DailyReportPageCtrl($scope, $http){
+		var vm = this;
 		
-		$scope.loadDailyReports();
-	}
-	
-	$scope.loadDailyReports = function(){
-		var params = {	page : $scope.page,
-						resultPerPage : $scope.resultPerPage,
-						sortBy : $scope.sortBy,
-						direction : $scope.direction};
+		vm.page = 0;
+		vm.resultPerPage = 20;
+		vm.sortBy = "date";
+		vm.direction = "DESC";
 		
-		$http.get("dailyReport?" + $.param(params)).success(function(dailyReportPage){
-			$scope.dailyReportPage = dailyReportPage;
-		});
-	};
-	
-	$scope.openDailyReport = function(dailyReport){
-		location.href = "dailyReport/" + dailyReport.id;
-	}
-	
-	$scope.reload = function(dailyReport, $event){
-		try{
+		loadDailyReports();
+		
+		vm.changePage = changePage;
+		vm.loadDailyReports = loadDailyReports;
+		vm.openDailyReport = openDailyReport;
+		vm.reload = reload;
+		
+		function changePage(page){
+			vm.page = page;
+			
+			vm.loadDailyReports();
+		}
+		
+		function loadDailyReports(){
+			var params = {	page : vm.page,
+							resultPerPage : vm.resultPerPage,
+							sortBy : vm.sortBy,
+							direction : vm.direction};
+			
+			$http.get("dailyReport?" + $.param(params)).success(dailyReportLoadSuccess);
+			
+			function dailyReportLoadSuccess(dailyReportPage){
+				vm.dailyReportPage = dailyReportPage;
+			}
+		}
+		
+		function openDailyReport(dailyReport){
+			location.href = "dailyReport/" + dailyReport.id;
+		}
+		
+		function reload(dailyReport, $event){
+			$event.stopPropagation();
+			
 			var $btn = $("#reload-daily-report-" + dailyReport.id + "-btn");
 			var $loading = $("#reload-daily-report-" + dailyReport.id + "-loading");
 			
 			$btn.addClass("hidden");
 			$loading.removeClass("hidden");
 			
-			$http.post("dailyReport/" + dailyReport.id).success(function(){
-				$scope.loadDailyReports();
-			}).finally(function(){
-				$btn.removeClass("hidden");
-				$loading.addClass("hidden");
-			});
+			$http.post("dailyReport/" + dailyReport.id).success(vm.loadDailyReports).finally(dailyReportReloaded);
 			
-			$event.stopPropagation();
-		}finally{
-			$event.stopPropagation();
+			function dailyReportReloaded(){
+				$btn.removeClass("hidden");
+				$loading.addClass("hidden");				
+			}
 		}
 	}
-	
-	$scope.page = 0;
-	$scope.resultPerPage = 20;
-	$scope.sortBy = "date";
-	$scope.direction = "DESC";
-	
-	$scope.loadDailyReports();
-});
+})();

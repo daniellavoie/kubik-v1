@@ -12,27 +12,27 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/rma/rmas.css}" />
 	</head>
 	
-	<body>
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center" ng-cloak ng-app="KubikRmas" ng-controller="KubikRmasController as rmasView">
+		<div class="container text-center" ng-cloak ng-controller="RmasCtrl as rmasCtrl">
 			<h1>Retours fournisseur</h1>
 			
 			<div>
-				<button ng-click="newRma()" class="btn btn-primary">Nouveau retour</button>
+				<button ng-click="rmasCtrl.newRma()" class="btn btn-primary">Nouveau retour</button>
 			</div>
 			
 			<ul class="pager row text-center">
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!rmasPage.first" ng-click="changePage(rmasPage.number-1)">Précédente</a>
+					<a href="#" ng-if="!rmasCtrl.rmasPage.first" ng-click="rmasCtrl.changePage(rmasCtrl.rmasPage.number-1)">Précédente</a>
 				</li>
 				
-				<li class="col-md-8">Page {{rmasPage.number+1}} sur {{rmasPage.totalPages}}</li>
+				<li class="col-md-8">Page {{rmasCtrl.rmasPage.number+1}} sur {{rmasCtrl.rmasPage.totalPages}}</li>
 				
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!rmasPage.last" ng-click="changePage(rmasPage.number+1)">Suivante</a>
+					<a href="#" ng-if="!rmasCtrl.rmasPage.last" ng-click="rmasCtrl.changePage(rmasCtrl.rmasPage.number+1)">Suivante</a>
 				</li>
 			</ul>
 			
@@ -51,9 +51,9 @@
 						</tr>
 						</thead>
 					<tbody>
-						<tr ng-repeat="rma in rmasPage.content" ng-click="openOrder(rma.id)">
+						<tr ng-repeat="rma in rmasCtrl.rmasPage.content" ng-click="rmasCtrl.openOrder(rma.id)">
 							<td>{{rma.id}}</td>
-							<td><a href="#" ng-click="openSupplierCard(rma.supplier, $event)">{{rma.supplier.name}}</a></td>
+							<td><a href="#" ng-click="rmasCtrl.openSupplierCard($event, rma.supplier)">{{rma.supplier.name}}</a></td>
 							<td>{{rma.openDate | date : "short"}}</td>
 							<td>{{rma.shippedDate | date : "short"}}</td>
 							<td>
@@ -62,7 +62,7 @@
 								<span ng-if="rma.status == 'SHIPPED'" class="label label-danger">Expédié</span>
 							</td>
 							<td>{{rma.details.length}}</td>
-							<td>{{calculateRmaQuantity(rma)}}</td>
+							<td>{{rmasCtrl.calculateRmaQuantity(rma)}}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -76,10 +76,10 @@
 						</div>
 						<div class="model-body form-group">
 							<label>Code fournisseur</label>
-							<input type="text" ng-model="rma.supplier.ean13" ng-keyup="supplierEan13KeyUp($event)" class="supplier-ean13 form-control">
+							<input type="text" ng-model="rmasCtrl.rma.supplier.ean13" ng-keyup="rmasCtrl.supplierEan13KeyUp($event)" class="supplier-ean13 form-control">
 							
-							<div ng-if="error.supplierNotFound" class="alert alert-danger" role="alert">
-								<button type="button" class="close" aria-label="Close" ng-click="error.supplierNotFound = false"><span aria-hidden="true">&times;</span></button>
+							<div ng-if="rmasCtrl.error.supplierNotFound" class="alert alert-danger" role="alert">
+								<button type="button" class="close" aria-label="Close" ng-click="rmasCtrl.error.supplierNotFound = false"><span aria-hidden="true">&times;</span></button>
 								<span>Aucun fournisseur retrouvé.</span>
 							</div>
 						</div>
@@ -94,9 +94,9 @@
 					</div>
 				</div>
 			</div>
-		</div>
 		
-		<div class="supplier-card"></div>
+			<div th:replace="product/supplier-card :: supplier-card"></div>
+		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/purchase/rmas.js}"></script>

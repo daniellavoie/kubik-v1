@@ -9,7 +9,6 @@ import com.cspinformatique.kubik.model.product.ProductStats;
 
 public interface ProductStatsService {
 	ProductStats findByProductId(int productId, Date startDate, Date endDate);
-	
-	Page<ProductStats> findAll(Date startDate, Date endDate,
-			Pageable pageable);
+
+	Page<ProductStats> findAll(Date startDate, Date endDate, boolean withoutInventory, Pageable pageable);
 }

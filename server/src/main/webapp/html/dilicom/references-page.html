@@ -13,13 +13,11 @@
 	<body>
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="KubikReferencesPage" ng-controller="KubikReferencesPageController as view"  class="container text-center">
+		<div ng-app="Kubik" class="container text-center">
 			<h1>Références Dilicom</h1>
-						
-			<div th:replace="dilicom/references :: references"></div>
+
+			<div th:replace="product/products-standalone :: products-standalone"></div>
 		</div>
-		
-		<div class="reference-card"></div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/dilicom/references-page.js}"></script>

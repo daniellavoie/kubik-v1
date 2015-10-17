@@ -1,95 +1,114 @@
-var app = angular.module("KubikRmas", []);
+(function(){
+	angular
+		.module("Kubik")
+		.controller("RmasCtrl", RmasCtrl);
+	
+	function RmasCtrl($scope, $http){
+		var vm = this;
+		
+		vm.page = 0;
+		vm.resultPerPage = 50;
+		vm.sortBy = "openDate";
+		vm.direction = "DESC";
+		
+		vm.rma = {supplier : {}, status : "OPEN"};
+		vm.error = {};
+		
+		vm.calculateRmaQuantity = calculateRmaQuantity;
+		vm.changePage = changePage;
+		vm.createRma = createRma;
+		vm.loadRmas = loadRmas;
+		vm.newRma = newRma;
+		vm.openOrder = openOrder;
+		vm.supplierEan13KeyUp = supplierEan13KeyUp;
+		vm.validateSupplierEan13 = validateSupplierEan13;
+		vm.openSupplierCard = openSupplierCard;
 
-app.controller("KubikRmasController", function($scope, $http){
-	$scope.calculateRmaQuantity = function(rma){
-		var quantity = 0;
-		for(var detailIndex in rma.details){
-			var detail = rma.details[detailIndex];
-			
-			quantity += detail.quantity;
-		}
+		loadRmas();
 		
-		return quantity;
-	};
-	
-	$scope.changePage = function(page){
-		$scope.page = page;
-		
-		$scope.loadRmas();
-	}
-	
-	$scope.createRma = function(){
-		$http.post("rma", $scope.rma).success(function(rma){
-			location.href = "rma/" + rma.id;
+		$scope.$on("supplierSaved", function($event, supplier){
+			vm.loadRmas();
 		});
-	};
-	
-	$scope.loadRmas = function(){
-		var params = {	page : $scope.page,
-						resultPerPage : $scope.resultPerPage,
-						sortBy : $scope.sortBy,
-						direction : $scope.direction};
 		
-		$http.get("rma?" + $.param(params)).success(function(rmasPage){
-			$scope.rmasPage = rmasPage;
-		});
-	};
-		
-	$scope.newRma = function(){
-		// Open the modal.
-		$(".new-rma-modal").modal({
-			backdrop : "static",
-			keyboard : "false"
-		}).on("shown.bs.modal", function(){
-			$(".supplier-ean13").focus();
-		});
-	};
-	
-	$scope.openOrder = function(id){
-		window.location.href = "rma/" + id;
-	};
-	
-	$scope.supplierEan13KeyUp= function($event){
-		if($event.keyCode == 13){
-			$scope.validateSupplierEan13();
-		}
-	}
-	
-	$scope.validateSupplierEan13 = function(){
-		$scope.error.supplierNotFound = false;
-		$http.get("supplier?ean13=" + $scope.rma.supplier.ean13).success(function(supplier){
-			if(supplier != ""){
-				$scope.rma.supplier = supplier;
+		function calculateRmaQuantity(rma){
+			var quantity = 0;
+			for(var detailIndex in rma.details){
+				var detail = rma.details[detailIndex];
 				
-				$scope.createRma();
-			}else{
-				$scope.error.supplierNotFound = true;
+				quantity += detail.quantity;
 			}
-		});
-	};
-	
-	$scope.openSupplierCard = function(supplier, $event){
-		try{
-			$scope.kubikSupplierCard.openCard(supplier);
-		}finally{
+			
+			return quantity;
+		}
+		
+		function changePage(page){
+			vm.page = page;
+			
+			vm.loadRmas();
+		}
+
+		function createRma(){
+			$http.post("rma", vm.rma).success(rmaCreated);
+			
+			function rmaCreated(rma){
+				location.href = "rma/" + rma.id;
+			}
+		}
+		
+		function loadRmas(){
+			var params = {	page : vm.page,
+							resultPerPage : vm.resultPerPage,
+							sortBy : vm.sortBy,
+							direction : vm.direction};
+			
+			$http.get("rma?" + $.param(params)).success(rmasLoaded);
+			
+			function rmasLoaded(rmasPage){
+				vm.rmasPage = rmasPage;
+			}
+		}
+		
+		function newRma(){
+			$(".new-rma-modal").on("shown.bs.modal", focus).modal({
+				backdrop : "static",
+				keyboard : "false"
+			});
+			
+			function focus(){
+				$(".supplier-ean13").focus();
+			}
+		}
+
+		function openOrder(id){
+			window.location.href = "rma/" + id;
+		}
+		
+		function openSupplierCard($event, supplier){
 			$event.stopPropagation();
+			
+			$scope.$broadcast("openSupplierCard", supplier);
+		}
+		
+		function supplierEan13KeyUp($event){
+			if($event.keyCode == 13){
+				vm.validateSupplierEan13();
+			}
+		}
+		
+		function validateSupplierEan13(){
+			vm.error.supplierNotFound = false;
+			
+			$http.get("supplier?ean13=" + vm.rma.supplier.ean13).success(supplierLoaded);
+			
+			function supplierLoaded(supplier){
+				if(supplier != ""){
+					vm.rma.supplier = supplier;
+					
+					vm.createRma();
+				}else{
+					vm.error.supplierNotFound = true;
+				}
+			}
 		}
 	}
-
-	$scope.kubikSupplierCard = new KubikSupplierCard({
-		supplierSaved : function(){
-			$scope.loadRmas();
-		}, 
-		supplierUrl : "supplier"
-	});
-	
-	$scope.rma = {supplier : {}, status : "OPEN"};
-	$scope.error = {};
-	
-	$scope.page = 0;
-	$scope.resultPerPage = 50;
-	$scope.sortBy = "openDate";
-	$scope.direction = "DESC";
-	
-	$scope.loadRmas();
-});
+})();

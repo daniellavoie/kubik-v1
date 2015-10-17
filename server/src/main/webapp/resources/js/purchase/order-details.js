@@ -1,218 +1,256 @@
-var app = angular.module("KubikPurchaseOrderDetails", []);
-var orderId = window.location.pathname.split("/")[2];
-
-var kubikProductSearch = new KubikProductSearch({
-	app : app,
-	modal : $(".products-modal"),
-	productUrl : "../product"
-});
-
-app.controller("KubikPurchaseOrderDetailsController", function($scope, $http, $timeout){	
-
-	$scope.$on("openProductCard", function(event, product){
-		$scope.kubikProductCard.openCard(product);
-	});
+(function(){
+	var orderId = window.location.pathname.split("/")[2];
+	
+	angular
+		.module("Kubik")
+		.controller("PurchaseOrderDetailsCtrl", PurchaseOrderDetailsCtrl);
+	
+	function PurchaseOrderDetailsCtrl($scope, $http, $timeout, $controller){
+		var vm = this;
 		
-	$scope.addOneProduct = function(product){
-		if(product.supplier.id != $scope.order.supplier.id){
-			$scope.supplierNotMatching = product.supplier;
+		var productCardCtrl = $controller("ProductCardCtrl", {$scope : $scope});
+		var productSearchCtrl = $controller("ProductSearchCtrl", {$scope : $scope});
+
+		vm.search = {};
+				
+		loadOrder();
+		
+		vm.addOneProduct = addOneProduct;
+		vm.calculateOrderQuantity = calculateOrderQuantity;
+		vm.cancelOrder = cancelOrder;
+		vm.confirmCancelOrder = confirmCancelOrder;
+		vm.confirmSubmitOrder = confirmSubmitOrder;
+		vm.createDetail = createDetail;
+		vm.deleteDetail = deleteDetail;
+		vm.getDetail = getDetail;
+		vm.loadOrder = loadOrder;
+		vm.openProductCard = openProductCard;
+		vm.openProductSearch = openProductSearch;
+		vm.openSupplierCard = openSupplierCard;
+		vm.orderChanged = orderChanged;
+		vm.redirectToPurchaseOrders = redirectToPurchaseOrders;
+		vm.redirectToReceptions = redirectToReceptions;
+		vm.saveOrder = saveOrder;
+		vm.submitOrder = submitOrder;
+		vm.submitOrderAndSendToDilicom = submitOrderAndSendToDilicom;
+		vm.searchProduct = searchProduct;
+		vm.searchProductKeyUp = searchProductKeyUp;
+		vm.showOrderForm = showOrderForm;
+		
+		$scope.$on("productSelected", function(event, product) {
+			vm.addOneProduct(product);
 			
-			$(".supplier-not-matching").modal();
-		}else{
-			var detail = $scope.getDetail(product);
-			if(detail != null){
-				detail.quantity += 1;
-				$scope.saveSession();
+			productSearchCtrl.closeModal();
+		});
+		
+		$scope.$on("supplierSaved", function(event, supplier){
+			vm.loadOrder();
+		});
+		
+		function addOneProduct(product){
+			if(product.supplier.id != vm.order.supplier.id){
+				vm.supplierNotMatching = product.supplier;
+				
+				$(".supplier-not-matching").modal();
 			}else{
-				$scope.createDetail(product, 1)
-			}
-			
-			$("html, body").animate({ scrollTop: $(document).height() }, 500);
-		}
-	};	
-	
-	$scope.calculateOrderQuantity = function(order){
-		var quantity = 0;
-		if(order != undefined){
-			for(var detailIndex in order.details){
-				var detail = order.details[detailIndex];
-				
-				quantity += detail.quantity;
-			}
-		}
-		return quantity;
-	};
-	
-	$scope.cancelOrder = function(){
-		$scope.order.status = "CANCELED";
-		
-		$scope.saveOrder(function(){
-			$(".confirm-cancel").modal("hide");
-			
-			$(".redirection-modal").modal();
-		});
-	};
-	
-	$scope.confirmCancelOrder = function(){
-		$(".confirm-cancel").modal();
-	};
-	
-	$scope.confirmSubmitOrder = function(){
-		$(".confirm-submit").modal();
-	};
-	
-	$scope.createDetail = function(selectedProduct, quantity){
-		$scope.order.details.push({
-			purchaseOrder : {id : orderId},
-			product : selectedProduct,
-			quantity : quantity
-		});
-		
-		$scope.saveOrder();
-	};
-	
-	$scope.deleteDetail = function(orderDetail){
-		for(var detailIndex in $scope.order.details){
-			if($scope.order.details[detailIndex].product.id == orderDetail.product.id){
-				$scope.order.details.splice(detailIndex, 1);
-				
-				$scope.saveOrder();
-				
-				break;
-			}
-		}
-	};
-	
-	$scope.getDetail = function(product){
-		for(var detailIndex in $scope.order.details){
-			if($scope.order.details[detailIndex].product.id == product.id){
-				return $scope.order.details[detailIndex];
-			}
-		}
-		
-		return null;	
-	};
-	
-	$scope.loadOrder = function(){
-		$http.get(orderId).success(function(order){
-			$scope.order = order;
-
-			$timeout(function(){
-				if($scope.inputIdToFocus != undefined){
-					$("#" + $scope.inputIdToFocus).focus();
+				var detail = vm.getDetail(product);
+				if(detail != null){
+					detail.quantity += 1;
+					vm.saveSession();
+				}else{
+					vm.createDetail(product, 1)
 				}
-			})
-		});
-	};
-	
-	$scope.orderChanged = function($event){
-		$scope.inputIdToFocus = $event.target.id;
-		if($scope.quantityChangedTimer != undefined) clearTimeout($scope.quantityChangedTimer);
-	    
-		$scope.quantityChangedTimer = setTimeout($scope.saveOrder, 1000);
-	};
-	
-	$scope.redirectToPurchaseOrders = function(){
-		location.href = "../purchaseOrder";
-	};
-	
-	$scope.redirectToReceptions = function(){
-		location.href = "../reception";		
-	};
-	
-	$scope.saveOrder = function(success){
-		$scope.loading=true;
-		
-		angular.forEach($scope.order.details, cleanDetailCategory);
-		
-		$http.post(".", $scope.order).success(orderSaved);
-		
-		function cleanDetailCategory(detail, index){
-			detail.product.category = null;
-		}
-		
-		function orderSaved(order){
-			$scope.order = order;
-			$scope.loading=false;
-			$scope.$broadcast("orderSaved");
-			
-			$scope.loadOrder();
-			
-			if(success != undefined){
-				success();
+				
+				$("html, body").animate({ scrollTop: $(document).height() }, 500);
 			}
 		}
-	};
-	
-	$scope.submitOrder = function(){
-		$scope.order.status = "SUBMITED";
 		
-		$scope.saveOrder(function(){
-			$(".confirm-submit").modal("hide");
+		function calculateOrderQuantity(order){
+			var quantity = 0;
+			if(order != undefined){
+				for(var detailIndex in order.details){
+					var detail = order.details[detailIndex];
+					
+					quantity += detail.quantity;
+				}
+			}
+			return quantity;
+		}
+		
+		function cancelOrder(){
+			vm.order.status = "CANCELED";
 			
-			$(".redirection-modal").modal();
-		});
-	};
-	
-	$scope.submitOrderAndSendToDilicom = function(){
-		$scope.order.dilicomOrder = {creationDate : new Date(), status : "PENDING", purchaseOrder : {id : $scope.order.id }};
+			vm.saveOrder(function(){
+				$(".confirm-cancel").modal("hide");
+				
+				$(".redirection-modal").modal();
+			});
+		}
 		
-		$scope.submitOrder();
-	}
+		function confirmCancelOrder(){
+			$(".confirm-cancel").modal();
+		}
+		
+		function confirmSubmitOrder (){
+			$(".confirm-submit").modal();
+		}
+		
+		function createDetail(selectedProduct, quantity){
+			vm.order.details.push({
+				purchaseOrder : {id : orderId},
+				product : selectedProduct,
+				quantity : quantity
+			});
+			
+			vm.saveOrder();
+		};
+		
+		function deleteDetail(orderDetail){
+			for(var detailIndex in vm.order.details){
+				if(vm.order.details[detailIndex].product.id == orderDetail.product.id){
+					vm.order.details.splice(detailIndex, 1);
+					
+					vm.saveOrder();
+					
+					break;
+				}
+			}
+		}
+		
+		function getDetail(product){
+			for(var detailIndex in vm.order.details){
+				if(vm.order.details[detailIndex].product.id == product.id){
+					return vm.order.details[detailIndex];
+				}
+			}
+			
+			return null;	
+		}
+		
+		function loadOrder(){
+			$http.get(orderId).success(function(order){
+				vm.order = order;
 
-	$scope.kubikSupplierCard = new KubikSupplierCard({
-		supplierSaved : function(){
-			$scope.loadOrder();
-		}, 
-		supplierUrl : "../supplier"
-	});
-	
-	$scope.searchProduct = function(){
-		$scope.search.typedEan13 = $scope.search.ean13;
+				$timeout(function(){
+					if(vm.inputIdToFocus != undefined){
+						$("#" + vm.inputIdToFocus).focus();
+					}
+				})
+			});
+		}
 		
-		if($scope.typedEan13 != "" && !$scope.searchInProgress){
-			$scope.searchInProgress = true;
-			$http.get("../product?ean13=" + $scope.search.typedEan13).success(function(products){
+		function openProductCard($event, product){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openProductCard", product);
+		}
+		
+		function openProductSearch(){
+			$scope.$broadcast("openProductSearchModal");
+		}
+		
+		function openSupplierCard($event, supplier){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openSupplierCard", supplier);
+		}
+		
+		function orderChanged($event){
+			vm.inputIdToFocus = $event.target.id;
+			if(vm.quantityChangedTimer != undefined) clearTimeout(vm.quantityChangedTimer);
+		    
+			vm.quantityChangedTimer = setTimeout(vm.saveOrder, 1000);
+		}
+		
+		function redirectToPurchaseOrders(){
+			location.href = "../purchaseOrder";
+		}
+		
+		function redirectToReceptions(){
+			location.href = "../reception";		
+		}
+		
+		function saveOrder(success){
+			vm.loading=true;
+			
+			angular.forEach(vm.order.details, cleanDetailCategory);
+			
+			$http.post(".", vm.order).success(orderSaved);
+			
+			function cleanDetailCategory(detail, index){
+				detail.product.category = null;
+			}
+			
+			function orderSaved(order){
+				vm.order = order;
+				vm.loading = false;
+				
+				vm.loadOrder();
+				
+				if(success != undefined){
+					success();
+				}
+			}
+		}
+		
+		function submitOrder(){
+			vm.order.status = "SUBMITED";
+			
+			vm.saveOrder(orderSaved);
+			
+			function orderSaved(){
+				$(".confirm-submit").modal("hide");
+				
+				$(".redirection-modal").modal();
+			}
+		}
+		
+		function submitOrderAndSendToDilicom(){
+			vm.order.dilicomOrder = {creationDate : new Date(), status : "PENDING", purchaseOrder : {id : vm.order.id}};
+			
+			vm.submitOrder();
+		}
+		
+		function searchProduct(){
+			vm.search.typedEan13 = vm.search.ean13;
+			
+			if(vm.typedEan13 != "" && !vm.searchInProgress){
+				vm.searchInProgress = true;
+				
+				$http.get("../product?ean13=" + vm.search.typedEan13).success(handleResults).finally(searchCompleted);
+
+				vm.search.ean13 = "";
+			}
+			
+			function handleResults(products){
 				if(products.length == 0){
 					$(".product-not-found").modal();
 				}else {
 					$(".product-not-found").modal("hide");
 					
 					if (products.length > 1){
-						$scope.kubikProductSearch.openSearchModal($scope.search.typedEan13);
+						vm.kubikProductSearch.openSearchModal(vm.search.typedEan13);
 					}else{
-						$scope.addOneProduct(products[0]);
+						vm.addOneProduct(products[0]);
 					}
 				}
-			}).finally(function(){
-				$scope.searchInProgress = false;
-			});
-
-			$scope.search.ean13 = "";
-		}
-	};
-	
-	$scope.searchProductKeyUp = function($event){
-		if($event.keyCode == 13){
-			$scope.ean13 = this.ean13;
+			}
 			
-			$scope.searchProduct();
+			function searchCompleted(){
+				vm.searchInProgress = false;
+			}
 		}
-	};
-	
-	$scope.showOrderForm = function(){
-		window.open($scope.order.id + "/report", "Bon de commande", "pdf");
-	}
-	
-	$scope.kubikProductSearch = kubikProductSearch;
-	$scope.kubikProductSearch.productSelected = function(product){
-		$scope.addOneProduct(product);
 		
-		$scope.kubikProductSearch.closeSearchModal();
-	};
-
-	$scope.kubikProductCard = $scope.kubikProductSearch.kubikProductCard;
-	
-	$scope.search = {};
-	$scope.loadOrder();
-});
+		function searchProductKeyUp($event){
+			if($event.keyCode == 13){
+				vm.ean13 = this.ean13;
+				
+				vm.searchProduct();
+			}
+		}
+		
+		function showOrderForm(){
+			window.open(vm.order.id + "/report", "Bon de commande", "pdf");
+		}
+	}
+})();

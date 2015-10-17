@@ -6,7 +6,7 @@
 <body>
 	<div th:fragment="reference-card" th:remove="tag">
 		<div class="kubikReferenceCard autoModal modal fade">
-			<div class="modal-dialog" ng-controller="KubikReferenceCardController as view">
+			<div class="modal-dialog" ng-controller="ReferenceCardCtrl as referenceCardCtrl">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -15,15 +15,15 @@
 					
 					<div class="modal-body">
 						<div class="text-center">
-							<img src="http://images1.centprod.com/{{company.ean13}}/{{reference.imageEncryptedKey}}-cover-medium.jpg">
+							<img src="http://images1.centprod.com/{{referenceCardCtrl.company.ean13}}/{{referenceCardCtrl.reference.imageEncryptedKey}}-cover-medium.jpg">
 						</div>
 					
 						<ul class="nav nav-tabs">
-							<li role="presentation" ng-click="showTab('reference')" class="active"><a href="#">Produit</a></li>
-							<li role="presentation" ng-click="showTab('publisher')" ><a href="#">Editeur</a></li>
-							<li role="presentation" ng-click="showTab('price')" ><a href="#">Prix</a></li>
-							<li role="presentation" ng-click="showTab('supplier')" ><a href="#">Fournisseur</a></li>
-							<li role="presentation" ng-click="showTab('dimensions')" ><a href="#">Dimensions</a></li>
+							<li role="presentation" ng-click="referenceCardCtrl.showTab('reference')" class="active"><a href="#">Produit</a></li>
+							<li role="presentation" ng-click="referenceCardCtrl.showTab('publisher')" ><a href="#">Editeur</a></li>
+							<li role="presentation" ng-click="referenceCardCtrl.showTab('price')" ><a href="#">Prix</a></li>
+							<li role="presentation" ng-click="referenceCardCtrl.showTab('supplier')" ><a href="#">Fournisseur</a></li>
+							<li role="presentation" ng-click="referenceCardCtrl.showTab('dimensions')" ><a href="#">Dimensions</a></li>
 						</ul>
 						
 						<div class="tab reference">
@@ -31,84 +31,84 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Ean13</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.ean13}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.ean13}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Titre</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.extendedLabel}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.extendedLabel}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Titre court</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.standardLabel}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.standardLabel}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Titre caisse</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.cashRegisterLabel}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.cashRegisterLabel}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Auteur</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.author}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.author}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Date de publication</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.datePublished | date}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.datePublished | date}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Date de fin de disponibilité</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.publishEndDate | date}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.publishEndDate | date}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Isbn</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.isbn}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.isbn}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Thème</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.theme}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.theme}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Collection</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.collection}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.collection}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Référence collection</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.collectionReference}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.collectionReference}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Disponibilité</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.availabilityCode}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.availabilityCode}}</p>
 									</div>
 								</div>
 								
@@ -116,8 +116,8 @@
 									<label class="col-sm-4 control-label">Disponible à la commande</label>
 									<div class="col-sm-8">
 										<p class="form-control-static">
-											<span ng-if="reference.availableForOrder">Oui</span>
-											<span ng-if="!reference.availableForOrder">Non</span>
+											<span ng-if="referenceCardCtrl.reference.availableForOrder">Oui</span>
+											<span ng-if="!referenceCardCtrl.reference.availableForOrder">Non</span>
 										</p>
 									</div>
 								</div>
@@ -125,7 +125,7 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Type de produit</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.referenceType}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.referenceType}}</p>
 									</div>
 								</div>
 							</form>
@@ -136,21 +136,21 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Nom</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.publisher}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.publisher}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Présentation</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.publisherPresentation}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.publisherPresentation}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Isbn</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.publisherIsnb}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.publisherIsnb}}</p>
 									</div>
 								</div>
 							</form>
@@ -161,23 +161,23 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Type de prix</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.priceType}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.priceType}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Prix TTC</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.priceTaxIn | currency : "&euro;"}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.priceTaxIn | currency : "&euro;"}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Taxes</label>
 									<div class="col-sm-8">
-										<p ng-if="reference.tvaRate1 != null && reference.tvaRate1 != 0" class="form-control-static">{{reference.tvaRate1}} %</p>
-										<p ng-if="reference.tvaRate2 != null && reference.tvaRate2 != 0" class="form-control-static">{{reference.tvaRate2}} %</p>
-										<p ng-if="reference.tvaRate3 != null && reference.tvaRate3 != 0" class="form-control-static">{{reference.tvaRate3}} %</p>
+										<p ng-if="referenceCardCtrl.reference.tvaRate1 != null && referenceCardCtrl.reference.tvaRate1 != 0" class="form-control-static">{{referenceCardCtrl.reference.tvaRate1}} %</p>
+										<p ng-if="referenceCardCtrl.reference.tvaRate2 != null && referenceCardCtrl.reference.tvaRate2 != 0" class="form-control-static">{{referenceCardCtrl.reference.tvaRate2}} %</p>
+										<p ng-if="referenceCardCtrl.reference.tvaRate3 != null && referenceCardCtrl.reference.tvaRate3 != 0" class="form-control-static">{{referenceCardCtrl.reference.tvaRate3}} %</p>
 									</div>
 								</div>
 							</form>
@@ -185,33 +185,31 @@
 						
 						<div class="tab supplier hidden">
 							<form class="form-horizontal">
-								<div ng-if="!editMode || reference.dilicomReference">
-									<div class="form-group">
-										<label class="col-sm-4 control-label">Nom</label>
-										<div class="col-sm-8">
-											<p class="form-control-static">{{supplier.name}}</p>
-										</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Nom</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{reference.supplier.name}}</p>
 									</div>
-									
-									<div class="form-group">
-										<label class="col-sm-4 control-label">Ean13</label>
-										<div class="col-sm-8">
-											<p class="form-control-static">{{supplier.ean13}}</p>
-										</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Ean13</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{reference.supplier.ean13}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Référence</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.supplierReference}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.supplierReference}}</p>
 									</div>
 								</div>
 								
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Type de retour</label>
 									<div class="col-sm-8">
-										<p class="form-control-static">{{reference.returnType}}</p>
+										<p class="form-control-static">{{referenceCardCtrl.reference.returnType}}</p>
 									</div>
 								</div>
 								
@@ -219,8 +217,8 @@
 									<label class="col-sm-4 control-label">Commande à l'unité</label>
 									<div class="col-sm-8">
 										<p class="form-control-static">
-											<span ng-if="reference.orderableByUnit">Oui</span>
-											<span ng-if="!reference.orderableByUnit">Non</span>
+											<span ng-if="referenceCardCtrl.reference.orderableByUnit">Oui</span>
+											<span ng-if="!referenceCardCtrl.reference.orderableByUnit">Non</span>
 										</p>
 									</div>
 								</div>
@@ -231,26 +229,26 @@
 							<form class="form-horizontal">	
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Hauteur</label>
-									<div class="col-sm-8" ng-if="reference.height != null">
-										<p class="form-control-static">{{reference.height}} mm</p>
+									<div class="col-sm-8" ng-if="referenceCardCtrl.reference.height != null">
+										<p class="form-control-static">{{referenceCardCtrl.reference.height}} mm</p>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Largeur</label>
-									<div class="col-sm-8" ng-if="reference.width != null">
-										<p class="form-control-static">{{reference.width}} mm</p>
+									<div class="col-sm-8" ng-if="referenceCardCtrl.reference.width != null">
+										<p class="form-control-static">{{referenceCardCtrl.reference.width}} mm</p>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Epaisseur</label>
-									<div class="col-sm-8" ng-if="reference.thickness != null">
-										<p class="form-control-static">{{reference.thickness}} mm</p>
+									<div class="col-sm-8" ng-if="referenceCardCtrl.reference.thickness != null">
+										<p class="form-control-static">{{referenceCardCtrl.reference.thickness}} mm</p>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-4 control-label">Poids</label>
-									<div class="col-sm-8" ng-if="reference.weight != null">
-										<p class="form-control-static">{{reference.weight}} g</p>
+									<div class="col-sm-8" ng-if="referenceCardCtrl.reference.weight != null">
+										<p class="form-control-static">{{referenceCardCtrl.reference.weight}} g</p>
 									</div>
 								</div>
 							</form>
@@ -263,9 +261,10 @@
 							class="closeModal btn btn-default" 
 							data-dismiss="modal"
 						>Fermer</button>
-				</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div><!-- /.modal -->
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 

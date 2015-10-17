@@ -1,92 +1,67 @@
-window.KubikReferenceCard = function(options){
-	if(options == undefined){
-		options = {};
-	}
-	if(options.$modalContainer == undefined){
-		options.$modalContainer = $(".reference-card");
-	}
+(function(){
+	var $modal = $(".kubikReferenceCard");
 	
-	this.$modalContainer = options.$modalContainer;
-	this.referenceUrl = options.referenceUrl;
-	this.referenceSaved = options.referenceSaved;
+	angular
+		.module("Kubik")
+		.controller("ReferenceCardCtrl", ReferenceCardCtrl);
 	
-	this.init();
-};
-
-window.KubikReferenceCard.prototype.init = function(){
-	var kubikReferenceCard = this;
-	
-	this.app = angular.module("KubikReferenceCard", []);
-	
-	this.app.controller("KubikReferenceCardController", function($scope, $http, $timeout){
-		kubikReferenceCard.$modalScope = $scope;
+	function ReferenceCardCtrl($scope, $http, $timeout){	
+		var vm = this;
+				
+		loadCompany();
+		loadSuppliers();
 		
-		$scope.getSupplier = function(id){
-			for(var supplierIndex in $scope.suppliers){
-				var supplier = $scope.suppliers[supplierIndex];
+		vm.getSupplier = getSupplier;
+		vm.loadCompany = loadCompany;
+		vm.loadSuppliers = loadSuppliers;
+		vm.openCard = openCard;
+		vm.showTab = showTab;
+		
+		$scope.$on("openReferenceCard", function($event, reference){
+			vm.openCard(reference);
+		});
+		
+		function getSupplier(id){
+			for(var supplierIndex in vm.suppliers){
+				var supplier = vm.suppliers[supplierIndex];
 				if(supplier.id == id){
 					return supplier;
 				}
 			}
 			
 			return null;
-		}		
+		}
 		
-		$scope.openCard = function(reference){
-			$scope.reference = reference;
+		function loadCompany(){
+			$.get("/company").success(function(company){
+				vm.company = company;
+			});
+		}
 
-			$timeout(function(){
-				kubikReferenceCard.$modal = kubikReferenceCard.$modalContainer.find(".modal").modal({
-					backdrop : "static",
-					keyboard : false
-				});
+		function loadSuppliers() {
+			$http.get("/supplier").success(function(suppliers){
+				vm.suppliers = suppliers;
 			});
 		}
 		
-		$scope.refreshModalBackdrop = function(){
-			$timeout(function(){
-				kubikReferenceCard.$modalContainer.find(".modal-backdrop")
-			      .css('height', 0)
-			      .css('height', kubikReferenceCard.$modal[0].scrollHeight);
+		function openCard(reference){
+			$modal.on("shown.bs.modal", function(){
+				$timeout(function(){
+					vm.reference = reference;					
+				})
+			}).modal({
+				backdrop : "static",
+				keyboard : false
 			});
-		};
+		}
 		
-		$scope.showTab = function(tabClass){
+		function showTab(tabClass){
 			$(".kubikReferenceCard .nav li").removeClass("active");
 			$(this).addClass("active");
 			
 			$(".kubikReferenceCard .tab").addClass("hidden");
 			
-			$(".tab." + tabClass).removeClass("hidden")
-			
-			$timeout(function(){
-				kubikReferenceCard.$modal.find(".modal-backdrop")
-			      .css('height', 0)
-			      .css('height', kubikReferenceCard.$modal[0].scrollHeight);
-			});
+			$(".tab." + tabClass).removeClass("hidden");
 		};
-		
-		$.get("/company").success(function(company){
-			$scope.company = company;
-		});
-
-		$http.get("/supplier").success(function(suppliers){
-			$scope.suppliers = suppliers;
-		});
-	});
-	
-	$.get(
-		"/reference?card", 
-		function(referenceCardHtml) {
-			kubikReferenceCard.$modalContainer.html(referenceCardHtml);
-			
-		    angular.bootstrap($(".kubikReferenceCard")[0],['KubikReferenceCard']);
-		}, 
-		"html"
-	);
-
-};
-
-window.KubikReferenceCard.prototype.openCard = function(reference){
-	this.$modalScope.openCard(reference);
-}
+	}
+})();

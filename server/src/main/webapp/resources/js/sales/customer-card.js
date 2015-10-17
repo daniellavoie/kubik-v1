@@ -1,122 +1,99 @@
-window.KubikCustomerCard = function(options){
-	if(options == undefined){
-		options = {};
-	}
-	if(options.$modalContainer == undefined){
-		options.$modalContainer = $(".customer-card");
-	}
+(function(){
+	var CUSTOMER_URL = "/customer";
 	
-	this.$modalContainer = options.$modalContainer;
-	this.customerUrl = options.customerUrl;
-	this.customerSaved = options.customerSaved;
-	
-	this.init();
-};
+	var $modal = $(".customer-card");
 
-window.KubikCustomerCard.prototype.init = function(){
-	var kubikCustomerCard = this;
+	var $saveBtn = $modal.find(".save")
+	var $modifyBtn = $modal.find(".modify")
+	var $closeBtn = $modal.find(".closeModal")
+	var $cancelBtn = $modal.find(".cancel")
 	
-	this.app = angular.module("KubikCustomerCard", []);
+	angular
+		.module("Kubik")
+		.controller("CustomerCardCtrl", CustomerCardCtrl);
 	
-	this.app.controller("KubikCustomerCardController", function($scope, $http, $timeout){
-		kubikCustomerCard.$modalScope = $scope;
-		$scope.editMode = false;
+	function CustomerCardCtrl($scope, $http, $timeout){
+		var vm = this;
 		
-		$scope.cancelModify = function(){
-			$scope.customer = $scope.originalCustomer;
+		vm.editMode = false;
+		
+		vm.cancelModify = cancelModify;
+		vm.closeCard = closeCard;
+		vm.endEditMode = endEditMode;
+		vm.modify = modify;
+		vm.openCard = openCard;
+		vm.save = save;
+		
+		$scope.$on("closeCustomerCard", function(event){
+			vm.closeCard();
+		})
+		
+		$scope.$on("openCustomerCard", function(event, customer){
+			vm.openCard(customer);
+		});
+		
+		function cancelModify(){
+			vm.customer = vm.originalCustomer;
 			
-			$scope.endEditMode();
+			vm.endEditMode();
 		}
 		
-		$scope.closeCard = function(){
-			kubikCustomerCard.$modalContainer.find(".modal").modal("hide");
+		function closeCard(){
+			$modal.modal("hide");
 		}
 		
-		$scope.endEditMode = function(){
-			$scope.editMode = false;
+		function endEditMode(){
+			vm.editMode = false;
 			
-			$scope.$saveBtn.addClass("hidden");
-			$scope.$cancelBtn.addClass("hidden");
-			$scope.$modifyBtn.removeClass("hidden");
-			$scope.$closeBtn.removeClass("hidden");
-			
-			$scope.refreshModalBackdrop();
-		};
-		
-		$scope.modify = function(){
-			$scope.editMode = true;
-			
-			$scope.$saveBtn.removeClass("hidden");
-			$scope.$cancelBtn.removeClass("hidden");
-			$scope.$modifyBtn.addClass("hidden");
-			$scope.$closeBtn.addClass("hidden");
-			
-			$scope.originalCustomer = $.extend(true, {}, $scope.customer);
-			
-			$scope.refreshModalBackdrop();
+			$saveBtn.addClass("hidden");
+			$cancelBtn.addClass("hidden");
+			$modifyBtn.removeClass("hidden");
+			$closeBtn.removeClass("hidden");
 		}
 		
-		$scope.openCard = function(customer){
-			$scope.customer = customer;
+		function modify(){
+			vm.editMode = true;
 			
-			// Load customer credit.
-			if(customer.id != undefined){
-				$http.get(kubikCustomerCard.customerUrl + "/" + customer.id + "/customerCreditAmount").success(function(customerCreditAmount){
-					$scope.customerCreditAmount = customerCreditAmount;
+			$saveBtn.removeClass("hidden");
+			$cancelBtn.removeClass("hidden");
+			$modifyBtn.addClass("hidden");
+			$closeBtn.addClass("hidden");
+			
+			vm.originalCustomer = $.extend(true, {}, vm.customer);
+		}
+		
+		function openCard(customer){
+			$modal.on("shown.bs.modal", function($event){
+				$timeout(function(){
+					vm.customer = customer;
+					
+					// Load customer credit.
+					if(customer.id != undefined){
+						var url = CUSTOMER_URL + "/" + customer.id + "/customerCreditAmount";
+						
+						$http.get(url).success(customerCreditAmountLoadSuccess);
+					}else{
+						vm.modify();
+					}
+					
+					function customerCreditAmountLoadSuccess(customerCreditAmount){
+						vm.customerCreditAmount = customerCreditAmount;
+					}
 				});
-			}
+			}).modal({
+				backdrop : "static",
+				keyboard : false
+			});
+		}
+		
+		function save(){
+			$http.post(CUSTOMER_URL, vm.customer).success(saveCustomerSuccess)
 			
-			$timeout(function(){
-				kubikCustomerCard.$modal = kubikCustomerCard.$modalContainer.find(".modal").modal({
-					backdrop : "static",
-					keyboard : false
-				});
+			function saveCustomerSuccess(customer){
+				vm.endEditMode();
 				
-				if(customer.id == undefined){
-					$scope.modify();
-				}
-			});
-		};
-		
-		$scope.refreshModalBackdrop = function(){
-			$timeout(function(){
-				kubikCustomerCard.$modalContainer.find(".modal-backdrop")
-			      .css('height', 0)
-			      .css('height', kubikCustomerCard.$modal[0].scrollHeight);
-			});
-		};
-		
-		$scope.save = function(){
-			$http.post(kubikCustomerCard.customerUrl, $scope.customer).success(function(customer){
-				$scope.endEditMode();
-				if(kubikCustomerCard.customerSaved != undefined){
-					kubikCustomerCard.customerSaved(customer);
-				}
-			})
-		};
-
-		$scope.$saveBtn = kubikCustomerCard.$modalContainer.find(".save")
-		$scope.$modifyBtn = kubikCustomerCard.$modalContainer.find(".modify")
-		$scope.$closeBtn = kubikCustomerCard.$modalContainer.find(".closeModal")
-		$scope.$cancelBtn = kubikCustomerCard.$modalContainer.find(".cancel")
-	});
-	
-	$.get(
-		kubikCustomerCard.customerUrl + "?card", 
-		function(customerCardHtml) {
-			kubikCustomerCard.$modalContainer.html(customerCardHtml);
-			
-		    angular.bootstrap($(".customer-card")[0],['KubikCustomerCard']);
-		}, 
-		"html"
-	);
-
-};
-
-window.KubikCustomerCard.prototype.closeCard = function(){
-	this.$modalScope.closeCard();
-}
-
-window.KubikCustomerCard.prototype.openCard = function(productId){
-	this.$modalScope.openCard(productId);
-};
+				$scope.$emit("customerSaved", customer);				
+			}
+		}
+	}
+})();

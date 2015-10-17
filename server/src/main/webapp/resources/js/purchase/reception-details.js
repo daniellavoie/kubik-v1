@@ -1,96 +1,121 @@
-var app = angular.module("KubikReceptionDetails", []);
-var receptionId = window.location.pathname.split("/")[2];
-var kubikProductCard = new KubikProductCard({
-	app : app, 
-	productUrl : "../product"
-});
+(function(){
+	var receptionId = window.location.pathname.split("/")[2];
+	
+	angular
+		.module("Kubik")
+		.controller("ReceptionDetailsCtrl", ReceptionDetailsCtrl);
+	
+	function ReceptionDetailsCtrl($scope, $http, $timeout){
+		var vm = this;
+		
+		vm.calculateReceptionQuantity = calculateReceptionQuantity;
+		vm.cancelReception = cancelReception;
+		vm.confirmReceptionValidation = confirmReceptionValidation;
+		vm.loadReception = loadReception;
+		vm.openProductCard = openProductCard;
+		vm.openSupplierCard = openSupplierCard;
+		vm.receptionChanged = receptionChanged;
+		vm.redirectToPurchaseOrders = redirectToPurchaseOrders;
+		vm.redirectToReceptions = redirectToReceptions;
+		vm.saveReception = saveReception;
+		vm.validateReception = validateReception;
+		
+		loadReception();
+		
+		$scope.$on("supplierSaved", function($event, supplier){
+			vm.loadReception();
+		});
+		
+		function calculateReceptionQuantity(reception){
+			var quantity = 0;
+			if(reception != undefined){
+				for(var detailIndex in reception.details){
+					var detail = reception.details[detailIndex];
+					
+					quantity += detail.quantityToReceive;
+				}
+			}
+			
+			return quantity;
+		}
 
-app.controller("KubikReceptionDetailsController", function($scope, $http, $timeout){
-	$scope.calculateReceptionQuantity = function(reception){
-		var quantity = 0;
-		if(reception != undefined){
-			for(var detailIndex in reception.details){
-				var detail = reception.details[detailIndex];
+		function cancelReception(){
+			vm.order.status = "CANCELED";
+			
+			vm.saveOrder(function(){
+				$(".confirm-cancel").modal("hide");
 				
-				quantity += detail.quantityToReceive;
+				$(".redirection-modal").modal();
+			});
+		}
+
+		function confirmReceptionValidation(){
+			$(".confirm-validation").modal();
+		}
+		
+		function loadReception(){
+			$http.get(receptionId).success(receptionLoaded);
+			
+			function receptionLoaded(reception){
+				vm.reception = reception;
+
+				$timeout(function(){
+					if(vm.inputIdToFocus != undefined){
+						$("#" + vm.inputIdToFocus).focus();
+					}
+				});
 			}
 		}
 		
-		return quantity;
-	};
-	
-	$scope.cancelReception = function(){
-		$scope.order.status = "CANCELED";
-		
-		$scope.saveOrder(function(){
-			$(".confirm-cancel").modal("hide");
+		function openProductCard($event, product){
+			$event.stopPropagation();
 			
-			$(".redirection-modal").modal();
-		});
-	};
-	
-	$scope.confirmReceptionValidation = function(){
-		$(".confirm-validation").modal();
-	};
-	
-	$scope.loadReception = function(){
-		$http.get(receptionId).success(function(reception){
-			$scope.reception = reception;
-
-			$timeout(function(){
-				if($scope.inputIdToFocus != undefined){
-					$("#" + $scope.inputIdToFocus).focus();
+			$scope.$broadcast("openProductCard", product);
+		}
+		
+		function openSupplierCard($event, supplier){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openSupplierCard", supplier);
+		}
+		
+		function receptionChanged($event){
+			vm.inputIdToFocus = $event.target.id;
+			if(vm.quantityChangedTimer != undefined) clearTimeout(vm.quantityChangedTimer);
+		    
+			vm.quantityChangedTimer = setTimeout(vm.saveReception, 1000);
+		}
+		
+		function redirectToPurchaseOrders(){
+			location.href = "../purchaseOrder";
+		}
+		
+		function redirectToReceptions(){
+			location.href = "../reception";		
+		}
+		
+		function saveReception(success){
+			$http.post(".", vm.reception).success(receptionSaved);
+			
+			function receptionSaved(reception){				
+				vm.loadReception();
+				
+				if(success != undefined){
+					success();
 				}
-			})
-		});
-	};
-	
-	$scope.receptionChanged = function($event){
-		$scope.inputIdToFocus = $event.target.id;
-		if($scope.quantityChangedTimer != undefined) clearTimeout($scope.quantityChangedTimer);
-	    
-		$scope.quantityChangedTimer = setTimeout($scope.saveReception, 1000);
-	};
-	
-	$scope.redirectToPurchaseOrders = function(){
-		location.href = "../purchaseOrder";
-	};
-	
-	$scope.redirectToReceptions = function(){
-		location.href = "../reception";		
-	};
-	
-	$scope.saveReception = function(success){
-		$http.post(".", $scope.reception).success(function(){
-			$scope.$broadcast("receptionSaved");
-			
-			$scope.loadReception();
-			
-			if(success != undefined){
-				success();
 			}
-		});
-	};
-	
-	$scope.validateReception = function(){
-		$scope.reception.status = "CLOSED";
-		
-		$scope.saveReception(function(){
-			$(".confirm-validation").modal("hide");
+		}
+
+		function validateReception(){
+			vm.reception.status = "CLOSED";
 			
-			$(".redirection-modal").modal();
-		});
-	};
-
-	$scope.kubikProductCard = kubikProductCard;
-
-	$scope.kubikSupplierCard = new KubikSupplierCard({
-		app : app,
-		supplierSaved : function(){
-			$scope.loadReception();
-		}, 
-		supplierUrl : "../supplier"
-	});
-	
-	$scope.loadReception();
-});
+			vm.saveReception(receptionSaved);
+			
+			function receptionSaved(){
+				$(".confirm-validation").modal("hide");
+				
+				$(".redirection-modal").modal();
+			}
+		}
+	}
+})();

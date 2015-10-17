@@ -1,17 +1,15 @@
-var app = angular.module("KubikReferencesPage", []);
-var kubikReferenceSearch = new KubikReferenceSearch({
-	app : app,
-	referenceUrl : "reference"
-});
-
-app.controller("KubikReferencesPageController", function($scope, $http, $timeout){
-	$scope.$on("openReferenceCard", function(event, reference){
-		$scope.kubikReferenceCard.openCard(reference);
-	})
+(function(){
+	var kubik = angular.module("Kubik");
 	
-	$scope.kubikReferenceSearch = kubikReferenceSearch;
+	var referenceCardController = kubik.controller("KubikReferenceCardController");
 	
-	$scope.kubikReferenceCard = new KubikReferenceCard({referenceUrl : "reference", referenceSaved : function(){
-		$scope.$broadcast("search");
-	}});
-});
+	kubik.controller("KubikReferencesPageController", KubikReferencesPageController);
+	
+	function KubikReferencesPageController($scope, $http, $timeout){
+		$scope.$on("openReferenceCard", openReferenceCard);
+		
+		function openReferenceCard(event, reference){
+			referenceCardController.openCard(reference);
+		}
+	}
+})();

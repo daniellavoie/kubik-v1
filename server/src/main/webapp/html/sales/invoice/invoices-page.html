@@ -13,10 +13,10 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/invoices.css}" />
 	</head>
 	
-	<body>
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="KubikInvoicesPage" ng-cloak ng-controller="KubikInvoicesPageController as view"  class="container text-center">
+		<div ng-app="KubikInvoicesPage" ng-cloak ng-controller="InvoicesCtrl as invoicesCtrl"  class="container text-center">
 			<h1>Factures</h1>
 			
 			<div class="row">
@@ -25,33 +25,33 @@
 						<input 
 							type="text"
 							class="search-invoice form-control" 
-							ng-model="invoice.number" 
+							ng-model="invoicesCtrl.invoice.number" 
 							placeholder="Entrer un numéro de facture" 
-							ng-keyup="searchInvoiceKeyPressed($event)"
+							ng-keyup="invoicesCtrl.searchInvoiceKeyPressed($event)"
 						/>
 	     				<span class="input-group-btn">
-							<button class="btn btn-default" ng-click="searchInvoice()">Ouvrir</button>
+							<button class="btn btn-default" ng-click="invoicesCtrl.searchInvoice()">Ouvrir</button>
 						</span>
 					</div>
 				</div>
 			</div>
 		
 			<div class="search-error alert alert-warning alert-dismissible" role="alert" ng-if="error != null">
-				<button type="button" class="close" ng-click="hideErrors()"><span aria-hidden="true">&times;</span></button>
-				{{error}}
+				<button type="button" class="close" ng-click="invoicesCtrl.hideErrors()"><span aria-hidden="true">&times;</span></button>
+				{{invoicesCtrl.error}}
 			</div>
 	
 			<ul class="pager row text-center">
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!invoicePage.first" ng-click="changePage(invoicePage.number-1)">Précédente</a>
+					<a href="#" ng-if="!invoicesCtrl.invoicePage.first" ng-click="invoicesCtrl.changePage(invoicesCtrl.invoicePage.number-1)">Précédente</a>
 				</li>
 				
-				<li class="col-md-8">Page {{invoicePage.number+1}} sur {{invoicePage.totalPages}}</li>
+				<li class="col-md-8">Page {{invoicesCtrl.invoicePage.number+1}} sur {{invoicesCtrl.invoicePage.totalPages}}</li>
 				
 				<li class="col-md-2">
 					&nbsp;
-					<a href="#" ng-if="!invoicePage.last" ng-click="changePage(invoicePage.number+1)">Suivante</a>
+					<a href="#" ng-if="!invoicesCtrl.invoicePage.last" ng-click="invoicesCtrl.changePage(invoicesCtrl.invoicePage.number+1)">Suivante</a>
 				</li>
 			</ul>
 					
@@ -70,11 +70,11 @@
 					</thead>
 					
 					<tbody>
-						<tr ng-repeat="invoice in invoicePage.content" ng-click="openInvoice(invoice)">
+						<tr ng-repeat="invoice in invoicesCtrl.invoicePage.content" ng-click="invoicesCtrl.openInvoice(invoice)">
 							<td>{{invoice.number}}</td>
 							<td>{{invoice.paidDate | date : "short"}}</td>
 							<td ng-if="invoice.customer != null">
-								<a href="#" ng-click="openCustomerCard(invoice.customer, $event)">
+								<a href="#" ng-click="invoicesCtrl.openCustomerCard($event, invoice.customer)">
 									<span ng-if="invoice.customer.company == null">{{invoice.customer.firstName}} {{invoice.customer.lastName}}</span>
 									<span ng-if="invoice.customer.company != null">{{invoice.customer.company}}</span>
 								</a>
@@ -101,9 +101,9 @@
 					</tbody>
 				</table>
 			</div>
+			
+			<div th:replace="sales/customer/customer-card :: customer-card"></div>
 		</div>
-		
-		<div class="customer-card"></div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/sales/invoices-page.js}"></script>

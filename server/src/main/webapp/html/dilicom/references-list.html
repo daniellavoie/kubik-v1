@@ -1,15 +1,15 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 	<body>
-		<div th:fragment="references">
-			<div class="references-search" ng-cloak ng-controller="KubikReferenceSearchController as referenceSearchView">
+		<div th:fragment="references-list">
+			<div class="references-search" ng-cloak>
 				<div class="form-inline text-center">
 					<div class="form-group">
 						<label class="sr-only" for="query">Recherche</label>
 						<input 
 							id="search-reference-query" 
-							ng-model="query"
-							ng-change="search()"
+							ng-model="referenceSearchCtrl.query"
+							ng-change="referenceSearchCtrl.search()"
 							class="form-control" 
 							type="text" 
 							placeholder="Recherche"
@@ -19,14 +19,22 @@
 					<ul class="pager row text-center">
 						<li class="col-md-2">
 							&nbsp;
-							<a href="#" ng-if="!searchResult.first" ng-click="changePage(searchResult.number-1)">Précédente</a>
+							<a 
+								href="#" 
+								ng-if="!referenceSearchCtrl.searchResult.first" 
+								ng-click="referenceSearchCtrl.changePage(referenceSearchCtrl.searchResult.number-1)"
+							>Précédente</a>
 						</li>
 						
-						<li class="col-md-8">Page {{searchResult.number+1}} sur {{searchResult.totalPages}}</li>
+						<li class="col-md-8">Page {{referenceSearchCtrl.searchResult.number+1}} sur {{referenceSearchCtrl.searchResult.totalPages}}</li>
 						
 						<li class="col-md-2">
 							&nbsp;
-							<a href="#" ng-if="!searchResult.last" ng-click="changePage(searchResult.number+1)">Suivante</a>
+							<a 
+								href="#" 
+								ng-if="!referenceSearchCtrl.searchResult.last" 
+								ng-click="referenceSearchCtrl.changePage(referenceSearchCtrl.searchResult.number+1)"
+							>Suivante</a>
 						</li>
 					</ul>
 				</div>
@@ -66,7 +74,10 @@
 						</thead>
 						
 						<tbody>
-							<tr ng-repeat="reference in searchResult.content" ng-click="referenceSelected(reference)">
+							<tr 
+								ng-repeat="reference in referenceSearchCtrl.searchResult.content" 
+								ng-click="referenceSearchCtrl.referenceSelected(reference)"
+							>
 								<td>{{reference.ean13}}</td>
 								<td>{{reference.standardLabel}}</td>
 								<td>{{reference.author}}</td>
@@ -74,20 +85,28 @@
 								<td>{{reference.datePublished | date}}</td>
 								<td><img id="reference-image-{{reference.id}}" class="reference-image" /></td>
 								<td>
-									<span class="glyphicon glyphicon-list-alt" ng-click="openCard($event, reference)"></span>
+									<span class="glyphicon glyphicon-list-alt" ng-click="referenceSearchCtrl.openCard($event, reference)"></span>
 									<img ng-if="reference.loading" th:src="@{/img/loading-small.gif}" />
-									<span ng-if="!reference.loading && !reference.importedInKubik" class="glyphicon glyphicon-plus" ng-click="createProduct($event, reference)"></span>
-									<span ng-if="!reference.loading && reference.error != null" class="glyphicon glyphicon-exclamation-sign" title="reference.error"></span>
+									<span 
+										class="glyphicon glyphicon-plus" 
+										ng-if="!reference.loading && !reference.importedInKubik" 
+										ng-click="referenceSearchCtrl.createProduct($event, reference)"
+									></span>
+									<span 
+										title="reference.error"
+										class="glyphicon glyphicon-exclamation-sign" 
+										ng-if="!reference.loading && reference.error != null" 
+									></span>
 								</td>
 							<tr>
 							
-							<tr ng-if="searchResult.content.length == 0">
+							<tr ng-if="referenceSearchCtrl.searchResult.content.length == 0">
 								<td colspan="7">
 									Aucune référence retrouvée
 								</td>
 							</tr>
 							
-							<tr ng-if="query == null">
+							<tr ng-if="referenceSearchCtrl.query == null">
 								<td colspan="7">
 									Rechercher une référence
 								</td>

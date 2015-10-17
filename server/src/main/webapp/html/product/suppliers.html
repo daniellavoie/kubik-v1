@@ -12,14 +12,14 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/product/suppliers.css}" />
 	</head>
 	
-	<body>
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div ng-app="KubikSuppliers" ng-cloak ng-controller="KubikSuppliersController as view"  class="container text-center">
+		<div ng-cloak ng-controller="SuppliersCtrl as suppliersCtrl"  class="container text-center">
 			<h1>Fournisseurs</h1>
 			
 			<div class="new-supplier text-center">
-				<button ng-click="newSupplier()" class="btn btn-primary">Nouveau client</button>
+				<button ng-click="suppliersCtrl.newSupplier()" class="btn btn-primary">Nouveau client</button>
 			</div>
 			
 			<div class="table-responsive">
@@ -34,7 +34,7 @@
 					</thead>
 					
 					<tbody>
-						<tr ng-repeat="supplier in suppliers" ng-click="supplierCard.openCard(supplier)">
+						<tr ng-repeat="supplier in suppliersCtrl.suppliers" ng-click="suppliersCtrl.openSupplierCard(supplier)">
 							<td>{{supplier.name}}</td>
 							<td>{{supplier.ean13}}</td>
 							<td>{{supplier.purchaseOrderEan13}}</td>
@@ -43,9 +43,9 @@
 					</tbody>
 				</table>
 			</div>
-		</div>
 		
-		<div class="supplier-card"></div>
+			<div th:replace="product/supplier-card :: supplier-card"></div>
+		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/product/suppliers.js}"></script>

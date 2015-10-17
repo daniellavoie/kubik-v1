@@ -12,36 +12,36 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/cash-register.css}" />
 	</head>
 	
-	<body>
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container" ng-app="KubikCashRegister" ng-cloak ng-controller="KubikCashRegisterController as view">
+		<div class="container" ng-cloak ng-controller="CashRegisterCtrl as cashRegisterCtrl">
 			<div class="text-center">
 				<h1>Caisse enregistreuse</h1>
 				
 				<ul class="invoice-tabs nav nav-tabs">
-					<li ng-repeat="invoice in invoices" id="invoice-tab-{{invoice.id}}" role="presentation" ng-click="showInvoice(invoice)">
+					<li ng-repeat="invoice in cashRegisterCtrl.invoices" id="invoice-tab-{{invoice.id}}" role="presentation" ng-click="cashRegisterCtrl.showInvoice(invoice)">
 						<a ng-if="invoice.customer == null" href="#">
 							<span>Client anoynme</span>
 							<span class="panel panel-default">	
-								<span ng-click="kubikCustomerSearch.openSearchModal()" class="pointer glyphicon glyphicon-search"></span>
+								<span ng-click="cashRegisterCtrl.openCustomerSearch($event)" class="pointer glyphicon glyphicon-search"></span>
 							</span>
 						</a>
 						<a ng-if="invoice.customer != null" href="#">
 							<span>{{invoice.customer.firstName}} {{invoice.customer.lastName}}</span>
 							<span class="panel panel-default">
-								<span ng-click="kubikCustomerSearch.openSearchModal()" class="pointer glyphicon glyphicon-search"></span>
-								<span ng-click="kubikCustomerCard.openCard(invoice.customer)" class="pointer glyphicon glyphicon-user"></span>
-								<span ng-click="removeCustomerFromInvoice()" class="pointer glyphicon glyphicon-remove"></span>
+								<span ng-click="cashRegisterCtrl.openCustomerSearch($event)" class="pointer glyphicon glyphicon-search"></span>
+								<span ng-click="cashRegisterCtrl.openCustomerCard($event, invoice.customer)" class="pointer glyphicon glyphicon-user"></span>
+								<span ng-click="cashRegisterCtrl.removeCustomerFromInvoice()" class="pointer glyphicon glyphicon-remove"></span>
 							</span>
 						</a>
 					</li>
-					<li ng-click="newInvoice()">
+					<li ng-click="cashRegisterCtrl.newInvoice()">
 						<a href="#">+</a>
 					</li>
 				</ul>
 				
-				<div ng-repeat="invoice in invoices" ng-if="isSelectedInvoice(invoice)">
+				<div ng-repeat="invoice in cashRegisterCtrl.invoices" ng-if="cashRegisterCtrl.isSelectedInvoice(invoice)">
 					<table class="panel panel-default table table-striped table-condensed">
 						<thead class="panel-heading">
 							<tr>
@@ -54,17 +54,17 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="detail in invoice.details">
-								<td><a href="#" ng-click="kubikProductCard.openCard(detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
+							<tr ng-repeat="detail in cashRegisterCtrl.invoice.details">
+								<td><a href="#" ng-click="cashRegisterCtrl.openProductCard($event, detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
 								<td>{{detail.unitPrice | currency : '&euro;'}}
 								<td>
-									<div ng-repeat="taxAmount in invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
+									<div ng-repeat="taxAmount in cashRegisterCtrl.invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
 								</td>
 								<td>
 									<input 
 										id="detail-{{detail.id}}"
-										ng-keyup="invoiceChanged($event)"
-										ng-click="invoiceChanged($event)"
+										ng-keyup="cashRegisterCtrl.invoiceChanged($event)"
+										ng-click="cashRegisterCtrl.invoiceChanged($event)"
 										ng-model="detail.quantity"
 										class="quantity form-control" 
 										type="number"
@@ -77,7 +77,7 @@
 								
 								<td>
 									<button
-										ng-click="removeInvoiceDetail(detail)" 
+										ng-click="cashRegisterCtrl.removeInvoiceDetail(detail)" 
 										type="button" 
 										class="btn btn-warning btn-xs"
 									>
@@ -86,7 +86,7 @@
 								</td>
 							</tr>
 							
-							<tr ng-if="invoice.details.length == 0">
+							<tr ng-if="cashRegisterCtrl.invoice.details.length == 0">
 								<td colspan="6">
 									Aucun produit dans le panier.
 								</td>
@@ -103,7 +103,7 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
-								<button type="button" class="btn btn-danger" ng-click="cancelInvoice()">Annuler la vente</button>
+								<button type="button" class="btn btn-danger" ng-click="cashRegisterCtrl.cancelInvoice()">Annuler la vente</button>
 							</div>
 						</div>
 					</div>
@@ -113,15 +113,15 @@
 			<footer class="footer text-center">
 				<div class="container">
 					<div class="col-sm-3">
-						<input ng-model="ean13" ng-keyup="searchProductKeyUp($event)" type="text" class="form-control ean13-input" placeholder="Ean13" />
+						<input ng-model="cashRegisterCtrl.ean13" ng-keyup="cashRegisterCtrl.searchProductKeyUp($event)" type="text" class="form-control ean13-input" placeholder="Ean13" />
 					</div>
 					
 					<div class="col-sm-2">
-						<button ng-click="kubikProductSearch.openSearchModal()" type="button" class="btn btn-primary form-control">Rechercher</button>
+						<button ng-click="cashRegisterCtrl.openProductSearch($event)" type="button" class="btn btn-primary form-control">Rechercher</button>
 					</div>
 					
 					<div class="col-sm-2">
-						<button ng-click="confirmCancelInvoice()" type="button" class="btn btn-danger form-control">Annuler</button>
+						<button ng-click="cashRegisterCtrl.confirmCancelInvoice()" type="button" class="btn btn-danger form-control">Annuler</button>
 					</div>
 					
 					<div class="col-sm-2">
@@ -129,14 +129,14 @@
 						 	placeholder="Remise"
 							type="number" 
 							class="form-control rebate-input"
-							ng-model="invoice.rebatePercent" 
-							ng-keyup="invoiceChanged($event)"
-							ng-click="invoiceChanged($event)"
+							ng-model="cashRegisterCtrl.invoice.rebatePercent" 
+							ng-keyup="cashRegisterCtrl.invoiceChanged($event)"
+							ng-click="cashRegisterCtrl.invoiceChanged($event)"
 						/>
 					</div>
 					
 					<div class="col-sm-2">
-						<button ng-click="checkoutInvoice()" type="button" class="checkout btn btn-success form-control">Encaisser</button>
+						<button ng-click="cashRegisterCtrl.checkoutInvoice()" type="button" class="checkout btn btn-success form-control">Encaisser</button>
 					</div>
 					
 					<div class="col-sm-1">
@@ -145,7 +145,7 @@
 				</div>
 			</footer>
 			
-			<div class="payment-modal modal fade" ng-controller="KubikPaymentController as paymentView">
+			<div class="payment-modal modal fade" ng-controller="PaymentCtrl as paymentCtrl">
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -153,19 +153,19 @@
 						</div>
 						
 						<div class="modal-body text-center">
-							<div ng-if="invoice.status.type != 'PAID'">
+							<div ng-if="paymentCtrl.invoice.status.type != 'PAID'">
 								<div class="form-group"> 
 									<label>Somme à aquiter</label>
-									<p class="form-control-static">{{amountLeft | currency : '&euro;'}}</p>
+									<p class="form-control-static">{{paymentCtrl.amountLeft | currency : '&euro;'}}</p>
 								</div>
 								
 								<div class="payment-methods btn-group btn-group-justified" data-toggle="buttons">
 									<label 
-										id="payment-method-{{paymentMethod.type}}" 
-										ng-repeat="paymentMethod in paymentMethods" 
-										ng-if="paymentMethod.type != 'CREDIT' || invoice.customer != null"
+										id="payment-method-{{paymentCtrl.paymentMethod.type}}" 
+										ng-repeat="paymentMethod in paymentCtrl.paymentMethods" 
+										ng-if="paymentMethod.type != 'CREDIT' || paymentCtrl.invoice.customer != null"
 										class="btn btn-default" 
-										ng-click="selectPaymentMethod(paymentMethod)"
+										ng-click="paymentCtrl.selectPaymentMethod(paymentMethod)"
 									> 
 										<input type="radio" autocomplete="off">{{paymentMethod.description}}
 									</label>
@@ -183,19 +183,19 @@
 											</div>
 										</div>
 										<div class="actions">
-											<button ng-click="validatePayment()" class="validate btn btn-success form-control">Valider</button>
+											<button ng-click="paymentCtrl.validatePayment()" class="validate btn btn-success form-control">Valider</button>
 											<button class="cancel btn btn-danger form-control" data-dismiss="modal">Annuler</button>
 										</div>
 										
-										<div class="form-group" ng-if="invoice.customer != null"> 
+										<div class="form-group" ng-if="paymentCtrl.invoice.customer != null"> 
 											<label>Avoir client</label>
-											<p class="form-control-static">{{customerCreditAmount | currency : '&euro;'}}</p>
+											<p class="form-control-static">{{cashRegisterCtrl.customerCreditAmount | currency : '&euro;'}}</p>
 										</div>
 										
 										<div class="form-group"> 
 											<label>Paiements enregistrés</label>
-											<p ng-if="invoice.payments.length == 0" class="form-control-static">Aucun</p>
-											<p ng-if="invoice.payments.length != 0" ng-repeat="payment in invoice.payments" class="form-control-static">
+											<p ng-if="paymentCtrl.invoice.payments.length == 0" class="form-control-static">Aucun</p>
+											<p ng-if="paymentCtrl.invoice.payments.length != 0" ng-repeat="payment in paymentCtrl.invoice.payments" class="form-control-static">
 												{{payment.paymentMethod.description}} : {{payment.amount | currency : '&euro;'}}	
 											</p>
 										</div>
@@ -203,18 +203,18 @@
 								</div>
 							</div>
 							
-							<div ng-if="invoice.status.type == 'PAID'">
+							<div ng-if="paymentCtrl.invoice.status.type == 'PAID'">
 								<h4>Vente terminé</h4>
 								
 								<div class="form-group"> 
 									<label>A rendre</label>
-									<p class="form-control-static">{{invoice.amountReturned | currency : '&euro;'}}</p>
+									<p class="form-control-static">{{paymentCtrl.invoice.amountReturned | currency : '&euro;'}}</p>
 								</div>
 								
 								<div>
-									<button ng-click="openReceipt()" type="button" class="btn btn-default form-control" data-dismiss="modal">Voir le reçu</button>
-									<button ng-click="printReceipt()" type="button" class="btn btn-default form-control" data-dismiss="modal">Imprimer le recu</button>
-									<button ng-click="closeSale()" type="button" class="btn btn-default form-control" data-dismiss="modal">Poursuivre les ventes</button>
+									<button ng-click="paymentCtrl.openReceipt()" type="button" class="btn btn-default form-control" data-dismiss="modal">Voir le reçu</button>
+									<button ng-click="paymentCtrl.printReceipt()" type="button" class="btn btn-default form-control" data-dismiss="modal">Imprimer le recu</button>
+									<button ng-click="paymentCtrl.closeSale()" type="button" class="btn btn-default form-control" data-dismiss="modal">Poursuivre les ventes</button>
 								</div>
 							</div>
 						</div>
@@ -227,7 +227,7 @@
 					<div class="modal-content">
 						<div class="modal-body">
 							<div class="alert alert-danger">
-								Aucune produit retrouvé pour l'ean13 {{typedEan13}}.
+								Aucune produit retrouvé pour l'ean13 {{cashRegisterCtrl.typedEan13}}.
 							</div>
 						</div>
 						<div class="modal-footer">
@@ -257,8 +257,6 @@
 		
 			<div th:replace="product/products-modal :: products-modal"></div>
 		</div>
-		
-		<div class="customer-card"></div>
 		
 		<script th:replace="util/import :: scripts"></script>
 			

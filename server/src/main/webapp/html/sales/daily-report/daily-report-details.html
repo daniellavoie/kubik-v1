@@ -12,11 +12,11 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/daily-report-details.css}" />
 	</head>
 	
-	<body >
+	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center" ng-cloak ng-app="KubikDailyReportDetails" ng-controller="KubikDailyReportDetailsController as view">
-			<h1>Rapport journalier du {{dailyReport.date | date : "dd/MM/yyyy"}}</h1>
+		<div class="container text-center" ng-controller="DailyReportDetailsCtrl as dailyReportDetailsCtrl">
+			<h1>Rapport journalier du {{dailyReportDetailsCtrl.dailyReport.date | date : "dd/MM/yyyy"}}</h1>
 
 			<div class="table-responsive">
 				<table class="daily-report table table-condensed table-striped panel panel-default">
@@ -31,10 +31,10 @@
 					
 					<tbody>
 						<tr>
-							<td>{{dailyReport.date | date : "dd/MM/yyyy"}}</td>
-							<td>{{dailyReport.salesCount}}</td>
-							<td>{{dailyReport.salesAmountTaxOut | currency : '&euro;'}}</td>
-							<td>{{dailyReport.salesAmountTaxIn | currency : '&euro;'}}</td>
+							<td>{{dailyReportDetailsCtrl.dailyReport.date | date : "dd/MM/yyyy"}}</td>
+							<td>{{dailyReportDetailsCtrl.dailyReport.salesCount}}</td>
+							<td>{{dailyReportDetailsCtrl.dailyReport.salesAmountTaxOut | currency : '&euro;'}}</td>
+							<td>{{dailyReportDetailsCtrl.dailyReport.salesAmountTaxIn | currency : '&euro;'}}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -50,7 +50,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-repeat="salesByPaymentMethod in dailyReport.salesByPaymentMethods">
+						<tr ng-repeat="salesByPaymentMethod in dailyReportDetailsCtrl.dailyReport.salesByPaymentMethods">
 							<td>{{salesByPaymentMethod.paymentMethod.description}}</td>
 							<td>{{salesByPaymentMethod.salesCount}}</td>
 							<td>{{salesByPaymentMethod.paymentsAmount | currency : '&euro;'}}</td>

@@ -8,39 +8,39 @@
 			<ul class="nav nav-pills nav-stacked">
      			<li 
 					class="level-{{category.level}}"
-					ng-repeat="category in categories" 
+					ng-repeat="category in productCategoriesCtrl.categories" 
 					ng-include="'tree_item_renderer.html'" 
-					ng-mouseover="categoryHovered(category, $event)"
+					ng-mouseover="productCategoriesCtrl.categoryHovered(category, $event)"
 				></li>
 			</ul>
 			
 			<script type="text/ng-template"  id="tree_item_renderer.html">
     			<a>
 					{{category.name}}
-					<span ng-if="category == hoveredCategory || category == selectedCategory">
-    					<button ng-if="kubikProductCategories.categorySelectedCallback != undefined" class="btn btn-xs btn-default" ng-click="categorySelected(category, $event)">Sélectionner</button>
-						<button class="btn btn-xs btn-default" ng-click="editCategory(category, $event)"><span class="glyphicon glyphicon-edit"></span></button>
-    					<button class="btn btn-xs btn-default" ng-click="addCategory(category, $event)"><span class="glyphicon glyphicon-plus"></span></button>
-    					<button ng-if="category.childCategories.length == 0" class="btn btn-xs btn-danger" ng-click="confirmDeleteCategory(category, $event)"><span class="glyphicon glyphicon-remove"></span></button>
+					<span ng-if="category == productCategoriesCtrl.hoveredCategory || category == productCategoriesCtrl.selectedCategory">
+    					<button ng-if="productCategoriesCtrl.categorySelectedCallback != undefined" class="btn btn-xs btn-default" ng-click="productCategoriesCtrl.categorySelected(category, $event)">Sélectionner</button>
+						<button class="btn btn-xs btn-default" ng-click="productCategoriesCtrl.editCategory(category, $event)"><span class="glyphicon glyphicon-edit"></span></button>
+    					<button class="btn btn-xs btn-default" ng-click="productCategoriesCtrl.addCategory(category, $event)"><span class="glyphicon glyphicon-plus"></span></button>
+    					<button ng-if="category.childCategories.length == 0" class="btn btn-xs btn-danger" ng-click="productCategoriesCtrl.confirmDeleteCategory(category, $event)"><span class="glyphicon glyphicon-remove"></span></button>
 					</span>
 				</a>
     			<ul class="nav nav-pills nav-stacked">
 	      			<li 
 						class="level-{{category.level}}"
 						ng-include="'tree_item_renderer.html'" 
-						ng-mouseover="categoryHovered(category, $event)"
+						ng-mouseover="productCategoriesCtrl.categoryHovered(category, $event)"
 						ng-repeat="category in category.childCategories" 
 					></li>
     			</ul>
 			</script>
 
-			<div ng-if="error != null" class="alert alert-warning alert-dismissible" role="alert">
-				<button type="button" class="close" ng-click="hideError()"><span>&times;</span></button>
+			<div ng-if="productCategoriesCtrl.error != null" class="alert alert-warning alert-dismissible" role="alert">
+				<button type="button" class="close" ng-click="productCategoriesCtrl.hideError()"><span>&times;</span></button>
 				{{error}}
 			</div>
 
 			<div>
-				<button class="btn btn-primary btn-xs" ng-click="addRootCategory()">Ajouter</button>
+				<button class="btn btn-primary btn-xs" ng-click="productCategoriesCtrl.addRootCategory()">Ajouter</button>
 			</div>
 		</div>
 	</body>

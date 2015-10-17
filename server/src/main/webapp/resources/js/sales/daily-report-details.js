@@ -1,12 +1,23 @@
-var app = angular.module("KubikDailyReportDetails", []);
-var dailyReportId = window.location.pathname.split("/")[2];
-
-app.controller("KubikDailyReportDetailsController", function($scope, $http, $timeout){	
-	$scope.loadDailyReport = function(){
-		$http.get(dailyReportId).success(function(dailyReport){
-			$scope.dailyReport = dailyReport;
-		});
-	};
+(function(){
+	var dailyReportId = window.location.pathname.split("/")[2];
 	
-	$scope.loadDailyReport();
-});
+	angular
+		.module("Kubik")
+		.controller("DailyReportDetailsCtrl", DailyReportDetailsCtrl);
+	
+	function DailyReportDetailsCtrl($scope, $http){
+		var vm = this;
+		
+		vm.loadDailyReport = loadDailyReport;
+		
+		loadDailyReport();
+		
+		function loadDailyReport(){
+			$http.get(dailyReportId).success(loadDailyReportSuccess);
+			
+			function loadDailyReportSuccess(dailyReport){
+				vm.dailyReport = dailyReport;
+			}
+		}
+	}
+})();

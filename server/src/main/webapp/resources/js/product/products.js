@@ -1,92 +1,113 @@
-window.KubikProductSearch = function(options){
-	if(options.modal == undefined){
-		options.modal = false;
-	}
+(function(){
+	var PRODUCT_URL = "/product";
 	
-	if(options.resultPerPage == undefined){
-		options.resultPerPage = 50;		
-	}
+	var $modal = $(".products-modal");
 	
-	if(options.defaultSortBy == undefined){
-		options.defaultSortBy = "extendedLabel";		
-	}
+	angular
+		.module("Kubik")
+		.controller("ProductSearchCtrl", ProductSearchCtrl);
 	
-	if(options.defaultSortDirection == undefined){
-		options.defaultSortDirection = "ASC";		
-	}
-	
-	if(options.productCreationAllowed == undefined){
-		options.productCreationAllowed = true;
-	}
-	
-	this.app = options.app;
-	this.modal = options.modal;
-	this.$container = options.$container;
-	this.productCreationAllowed = options.productCreationAllowed;
-	
-	this.productUrl = options.productUrl;
-	this.resultPerPage = options.resultPerPage;
-	this.defaultSortBy = options.defaultSortBy;
-	this.defaultSortDirection = options.defaultSortDirection;
-	this.productSelected = options.productSelected;
-	
-	this.init();
-};
-
-window.KubikProductSearch.prototype.init = function(){
-	var kubikProductSearch = this;	
-	this.app.controller("KubikProductSearchController", function($scope, $http, $timeout){
-		$scope.$on("openProductCard", function(event, product){
-			$scope.kubikProductCard.openCard(product);
-		})
+	function ProductSearchCtrl($scope, $http, $timeout, $controller){
+		var vm = this;
 		
-		$scope.$on("search", function(event){
-			$scope.search();
+		vm.query = "";
+		vm.page = 0;
+		vm.resultPerPage = 50;
+		vm.sortBy = "extendedLabel";
+		vm.direction = "ASC";
+		vm.productCreationAllowed = true;
+		
+		vm.changePage = changePage;
+		vm.closeModal = closeModal;
+		vm.loadCompany = loadCompany;
+		vm.newProduct = newProduct;
+		vm.openProductCard = openProductCard;
+		vm.openModal = openModal;
+		vm.productSelected = productSelected;
+		vm.sort = sort;
+		vm.search = search;
+		
+		loadCompany();
+		
+		$scope.$on("openProductSearchModal", function($event, options){
+			openModal(options);
 		});
 		
-		$scope.changePage = function(page){
-			$scope.page = page;
+		$scope.$on("productSaved", function(event, product){
+			vm.search();
+		});
+		
+		function changePage(page){
+			vm.page = page;
 			
-			$scope.search();
+			vm.search();
 		}
 		
-		$scope.productSelected = function(product){
-			if(kubikProductSearch.productSelected != undefined){
-				kubikProductSearch.productSelected(product);
-			}
-		};
-		
-		$scope.newProduct = function(){
-			$scope.$emit("openProductCard", {});
-		};
-		
-		$scope.openCard = function($event, product){
-			try{
-				$scope.$emit("openProductCard", product);
-			}finally{
-				$event.stopPropagation();
-			}
-		};
-		
-		$scope.sort = function(sortBy, direction){
-			$scope.sortBy = sortBy;
-			$scope.direction = direction;
+		function closeModal(){
+			$modal.modal("hide");
+		}
+
+		function loadCompany(){
+			$.get("/company").success(companyLoaded);
 			
-			$scope.search();
+			function companyLoaded(company){
+				vm.company = company;
+				
+				vm.search();
+			}
 		}
 		
-		$scope.search = function(){
+		function newProduct(){
+			$scope.$broadcast("openProductCard", {});
+		};
+		
+		function openModal(options){
+			$modal.modal({
+				backdrop : "static",
+				keyboard : false
+			}).on("shown.bs.modal", function(){
+				$("#search-product-query").focus();
+				
+				if(options == undefined) options = {};
+				
+				if(options.query != undefined){
+					vm.query = options.query;
+					vm.search();	
+				}
+			});
+		}
+		
+		function openProductCard($event, product){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openProductCard", product);
+		}
+		
+		function productSelected($event, product){			
+			$scope.$emit("productSelected", product);
+		}
+		
+		function sort(sortBy, direction){
+			vm.sortBy = sortBy;
+			vm.direction = direction;
+			
+			vm.search();
+		}
+		
+		function search(){
 			var params = {
 				search : "",
-				query : $scope.query,
-				page : $scope.page,
-				resultPerPage : $scope.resultPerPage,
-				sortBy : $scope.sortBy,
-				direction : $scope.direction 
+				query : vm.query,
+				page : vm.page,
+				resultPerPage : vm.resultPerPage,
+				sortBy : vm.sortBy,
+				direction : vm.direction 
 			};
 			
-			$http.get(kubikProductSearch.productUrl + "?" + $.param(params)).success(function(searchResult){
-				$scope.searchResult = searchResult;
+			$http.get(PRODUCT_URL + "?" + $.param(params)).success(searchCompleted);
+			
+			function searchCompleted(searchResult){
+				vm.searchResult = searchResult;
 
 				$timeout(function(){
 					for(var productIndex in searchResult.content){
@@ -94,55 +115,11 @@ window.KubikProductSearch.prototype.init = function(){
 						
 						$("#product-image-" + product.id).attr(
 							"src", 
-							"http://images1.centprod.com/" + $scope.company.ean13 + "/" + product.imageEncryptedKey + "-cover-thumb.jpg"
+							"http://images1.centprod.com/" + vm.company.ean13 + "/" + product.imageEncryptedKey + "-cover-thumb.jpg"
 						);
 					}					
 				});
-			});
+			}
 		};
-		
-		$scope.query = "";
-		$scope.page = 0;
-		$scope.resultPerPage = kubikProductSearch.resultPerPage
-		$scope.sortBy = kubikProductSearch.defaultSortBy;
-		$scope.direction = kubikProductSearch.defaultSortDirection;
-		$scope.productCreationAllowed = kubikProductSearch.productCreationAllowed;
-
-		$.get("/company").success(function(company){
-			$scope.company = company;
-			
-			$scope.search();
-		});
-		
-		kubikProductSearch.$scope = $scope;
-		
-		$scope.kubikProductCard = kubikProductSearch.kubikProductCard;
-		$scope.kubikProductCard.productSaved = function(){
-			$scope.$broadcast("search");
-		};
-	});
-	
-	this.kubikProductCard = new KubikProductCard({
-		app : kubikProductSearch.app,
-		productUrl : "/product"
-	});
-};
-
-window.KubikProductSearch.prototype.closeSearchModal = function(){
-	this.modal.modal("hide");
-};
-
-window.KubikProductSearch.prototype.openSearchModal = function(searchQuery){
-	var KubikProductSearch = this;
-	this.modal.modal({
-		backdrop : "static",
-		keyboard : false
-	}).on("shown.bs.modal", function(){
-		$("#search-product-query").focus();
-		
-		if(searchQuery != undefined){
-			KubikProductSearch.$scope.query = searchQuery;
-			KubikProductSearch.$scope.search();	
-		}
-	});
-};
+	}
+})();

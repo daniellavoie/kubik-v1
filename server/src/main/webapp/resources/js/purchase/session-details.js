@@ -1,229 +1,258 @@
-var app = angular.module("KubikPurchaseSessionDetails", []);
-var sessionId = window.location.pathname.split("/")[2];
-
-var kubikProductSearch = new KubikProductSearch({
-	app : app,
-	modal : $(".products-modal"),
-	productUrl : "../product"
-});
-
-var kubikReferenceSearch = new KubikReferenceSearch({
-	app : app,
-	modal : $(".references-modal"),
-	referenceUrl : "../reference"
-});
-
-app.controller("SessionDetailsController", function($scope, $http, $timeout){
-	$scope.$on("openProductCard", function(event, product){
-		$scope.kubikProductCard.openCard(product);
-	});
+(function(){
+	var sessionId = window.location.pathname.split("/")[2];
 	
-	$scope.$on("openReferenceCard", function(event, reference){
-		$scope.kubikReferenceCard.openCard(reference);
-	});
+	angular
+		.module("Kubik")
+		.controller("SessionDetailsCtrl", SessionDetailsCtrl);
+
+	function SessionDetailsCtrl($scope, $http, $timeout, $controller){
+		var vm = this;
 		
-	$scope.addOneProduct = function(product){
-		var detail = $scope.getDetail(product);
-		if(detail != null){
-			detail.quantity += 1;
-			$scope.saveSession();
-		}else{
-			$scope.createDetail(product, 1)
+		vm.search = {};
+		
+		loadSession();
+		
+		vm.addOneProduct = addOneProduct;
+		vm.cancelSession = cancelSession;
+		vm.closeReferenceSearchModal = closeReferenceSearchModal;
+		vm.confirmCancelSession = confirmCancelSession;
+		vm.confirmSubmitSession = confirmSubmitSession;
+		vm.createDetail = createDetail;
+		vm.createProductFromReference = createProductFromReference;
+		vm.deleteDetail = deleteDetail;
+		vm.getDetail = getDetail;
+		vm.loadSession = loadSession;
+		vm.openProductCard = openProductCard;
+		vm.openProductSearch = openProductSearch;
+		vm.openReferenceCard = openReferenceCard;
+		vm.openReferenceSearch = openReferenceSearch;
+		vm.quantityChanged = quantityChanged;
+		vm.redirectToPurchaseOrders = redirectToPurchaseOrders;
+		vm.redirectToPurchaseSessions = redirectToPurchaseSessions;
+		vm.saveSession = saveSession;
+		vm.searchProduct = searchProduct;
+		vm.searchProductKeyUp = searchProductKeyUp;
+		vm.searchReference = searchReference;
+		vm.submitSession = submitSession;
+		
+		$scope.$on("productSelected", function(event, product){
+			vm.addOneProduct(product);
+		});
+		
+		$scope.$on("referenceSelected", function(event, reference){
+			vm.createProductFromReference(reference);
+			
+			vm.closeReferenceSearchModal();
+		});
+			
+		function addOneProduct(product){
+			var detail = vm.getDetail(product);
+			if(detail != null){
+				detail.quantity += 1;
+				vm.saveSession();
+			}else{
+				vm.createDetail(product, 1)
+			}
+			
+			$("html, body").animate({ scrollTop: $(document).height() }, 500);
 		}
 		
-		$("html, body").animate({ scrollTop: $(document).height() }, 500);
-	};	
-	
-	$scope.cancelSession = function(){
-		$scope.session.status = "CANCELED";
-		
-		$scope.saveSession(function(){
-			$(".confirm-cancel").modal("hide");
+		function cancelSession(){
+			vm.session.status = "CANCELED";
 			
-			$(".redirection-modal").modal();
-		});
-	};
-	
-	$scope.confirmCancelSession = function(){
-		$(".confirm-cancel").modal();
-	};
-	
-	$scope.confirmSubmitSession = function(){
-		$(".confirm-submit").modal();
-	};
-	
-	$scope.createDetail = function(selectedProduct, quantity){
-		$scope.session.details.push({
-			purchaseSession : {id : sessionId},
-			product : selectedProduct,
-			quantity : quantity
-		});
-		
-		$scope.saveSession();
-	};
-	
-	$scope.createProductFromReference = function(reference){
-		$http.post("../reference/" + reference.id + "?createProduct").success(function(product){
-			$scope.addOneProduct(product);			
-		});
-	};
-	
-	$scope.deleteDetail = function(sessionDetail){
-		for(var detailIndex in $scope.session.details){
-			if($scope.session.details[detailIndex].product.id == sessionDetail.product.id){
-				$scope.session.details.splice(detailIndex, 1);
+			vm.saveSession(function(){
+				$(".confirm-cancel").modal("hide");
 				
-				break;
-			}
+				$(".redirection-modal").modal();
+			});
 		}
-	};
-	
-	$scope.getDetail = function(product){
-		for(var detailIndex in $scope.session.details){
-			if($scope.session.details[detailIndex].product.id == product.id){
-				return $scope.session.details[detailIndex];
+		
+		function closeReferenceSearchModal(){
+			$scope.$broadcast("closeReferenceSearchModal");
+		}
+		
+		function confirmCancelSession(){
+			$(".confirm-cancel").modal();
+		}
+		
+		function confirmSubmitSession(){
+			$(".confirm-submit").modal();
+		}
+		
+		function createDetail(selectedProduct, quantity){
+			vm.session.details.push({
+				purchaseSession : {id : sessionId},
+				product : selectedProduct,
+				quantity : quantity
+			});
+			
+			vm.saveSession();
+		}
+		
+		function createProductFromReference(reference){
+			$http.post("../reference/" + reference.id + "?createProduct").success(function(product){
+				vm.addOneProduct(product);			
+			});
+		}
+		
+		function deleteDetail(sessionDetail){
+			for(var detailIndex in vm.session.details){
+				if(vm.session.details[detailIndex].product.id == sessionDetail.product.id){
+					vm.session.details.splice(detailIndex, 1);
+					
+					break;
+				}
 			}
 		}
 		
-		return null;	
-	};
-	
-	$scope.loadSession = function(){
-		$http.get(sessionId).success(function(session){
-			$scope.loading=false;
-			$scope.session = session;
+		function getDetail(product){
+			for(var detailIndex in vm.session.details){
+				if(vm.session.details[detailIndex].product.id == product.id){
+					return vm.session.details[detailIndex];
+				}
+			}
 			
-			$timeout(function(){
-				$(".date").each(function(index, element){
-					var $element = $(element);
-					
-					$element.val(moment(parseInt($element.val())).format("DD/MM/YYYY")).datepicker({format : 'dd/mm/yyyy'});
+			return null;	
+		}
+		
+		function loadSession(){
+			$http.get(sessionId).success(function(session){
+				vm.loading=false;
+				vm.session = session;
+				
+				$timeout(function(){
+					$(".date").each(function(index, element){
+						var $element = $(element);
+						
+						$element.val(moment(parseInt($element.val())).format("DD/MM/YYYY")).datepicker({format : 'dd/mm/yyyy'});
+					});
 				});
 			});
-		});
-	};
-	
-	$scope.quantityChanged = function($event){
-		$scope.inputIdToFocus = $event.target.id;
-		if($scope.quantityChangedTimer != undefined) clearTimeout($scope.quantityChangedTimer);
-	    
-		$scope.quantityChangedTimer = setTimeout($scope.saveSession, 1000);
-	};
-	
-	$scope.redirectToPurchaseOrders = function(){
-		location.href = "../purchaseOrder";
-	};
-	
-	$scope.redirectToPurchaseSessions = function(){
-		location.href = "../purchaseSession";		
-	};
-	
-	$scope.saveSession = function(success){
-		$scope.loading = true;
-
-		angular.forEach($scope.session.details, cleanDetailCategory);
-		
-		$http.post(".", $scope.session).success(sessionSaved);
-		
-		function cleanDetailCategory(detail, index){
-			detail.product.category = null;
 		}
 		
-		function sessionSaved(session){
-			$scope.session = session;
+		function openProductCard(product){
+			$scope.$broadcast("openProductCard", product);
+		}
+		
+		function openReferenceCard(reference){
+			$scope.$broadcast("openReferenceCard", reference);
+		}
+		
+		function openProductSearch(options){
+			$scope.$broadcast("openProductSearchModal", options);
+		}
+		
+		function openReferenceSearch(options){
+			$scope.$broadcast("openReferenceSearchModal", options);
+		}
+		
+		function quantityChanged($event){
+			vm.inputIdToFocus = $event.target.id;
+			if(vm.quantityChangedTimer != undefined) clearTimeout(vm.quantityChangedTimer);
+		    
+			vm.quantityChangedTimer = setTimeout(vm.saveSession, 1000);
+		}
+		
+		function redirectToPurchaseOrders(){
+			location.href = "../purchaseOrder";
+		}
+		
+		function redirectToPurchaseSessions(){
+			location.href = "../purchaseSession";		
+		}
+		
+		function saveSession(success){
+			vm.loading = true;
+
+			vm.session.minDeliveryDate = moment(vm.session.minDeliveryDate, "DD/MM/YYYY").toDate();
+			vm.session.maxDeliveryDate = moment(vm.session.maxDeliveryDate, "DD/MM/YYYY").toDate();
 			
-			$scope.$broadcast("sessionSaved");
+			angular.forEach(vm.session.details, cleanDetailCategory);
 			
-			$scope.loadSession();
+			$http.post(".", vm.session).success(sessionSaved);
 			
-			if(success != undefined){
-				success();
+			function cleanDetailCategory(detail, index){
+				detail.product.category = null;
+			}
+			
+			function sessionSaved(session){
+				vm.session = session;
+				
+				$scope.$broadcast("sessionSaved");
+				
+				vm.loadSession();
+				
+				if(success != undefined){
+					success();
+				}
 			}
 		}
-	};
-	
-	$scope.searchProduct = function(){
-		$scope.search.typedEan13 = $scope.search.ean13;
 		
-		if($scope.search.typedEan13 != "" && !$scope.searchInProgress){
-			$scope.searchInProgress = true;
-			$http.get("../product?ean13=" + $scope.search.typedEan13).success(function(products){
+		function searchProduct(){
+			vm.search.typedEan13 = vm.search.ean13;
+			
+			if(vm.search.typedEan13 != "" && !vm.searchInProgress){
+				vm.searchInProgress = true;
+				$http.get("../product?ean13=" + vm.search.typedEan13).success(function(products){
+					// Check if a product was found
+					if(products.length == 0){
+						vm.searchReference();
+					}else {
+						$(".product-not-found").modal("hide");
+						
+						if (products.length > 1){
+							vm.openProductSearch({query : vm.search.typedEan13});
+						}else{
+							vm.addOneProduct(products[0]);
+						}
+					}
+				}).finally(function(){
+					vm.searchInProgress = false;
+				});
+
+				vm.search.ean13 = "";
+			}
+		}
+		
+		function searchProductKeyUp($event){
+			if($event.keyCode == 13){
+				vm.ean13 = this.ean13;
+				
+				vm.searchProduct();
+			}
+		}
+		
+		function searchReference(){
+			vm.searchInProgress = true;
+			$http.get("../reference?search&query=" + vm.search.typedEan13).success(function(referencesPage){
 				// Check if a product was found
-				if(products.length == 0){
-					$scope.searchReference();
+				if(referencesPage.content.length == 0){
+					// Show a warning explaining that the product does not exists.
+					$(".product-not-found").modal();
 				}else {
 					$(".product-not-found").modal("hide");
 					
-					if (products.length > 1){
-						$scope.kubikProductSearch.kubikProductSearch.openSearchModal($scope.search.typedEan13);
+					if (referencesPage.content.length > 1){
+						vm.openReferenceSearch({query : vm.search.typedEan13});
 					}else{
-						$scope.addOneProduct(products[0]);
+						vm.createProductFromReference(referencesPage.content[0]);
 					}
 				}
 			}).finally(function(){
-				$scope.searchInProgress = false;
+				vm.searchInProgress = false;
 			});
-
-			$scope.search.ean13 = "";
 		}
-	};
-	
-	$scope.searchProductKeyUp = function($event){
-		if($event.keyCode == 13){
-			$scope.ean13 = this.ean13;
+		
+		function submitSession(){
+			vm.session.status = "SUBMITED";
 			
-			$scope.searchProduct();
-		}
-	};
-	
-	$scope.searchReference = function(){
-		$scope.searchInProgress = true;
-		$http.get("../reference?search&query=" + $scope.typedEan13).success(function(referencesPage){
-			// Check if a product was found
-			if(referencesPage.content.length == 0){
-				// Show a warning explaining that the product does not exists.
-				$(".product-not-found").modal();
-			}else {
-				$(".product-not-found").modal("hide");
+			vm.saveSession(sessionSaved);
+			
+			function sessionSaved(){
+				$(".confirm-submit").modal("hide");
 				
-				if (referencesPage.content.length > 1){
-					$scope.kubikReferenceSearch.openSearchModal($scope.typedEan13);
-				}else{
-					$scope.createProductFromReference(referencesPage.content[0]);
-				}
+				$(".redirection-modal").modal();
 			}
-		}).finally(function(){
-			$scope.searchInProgress = false;
-		});
-	};
-	
-	$scope.submitSession = function(){
-		$scope.session.status = "SUBMITED";
-		
-		$scope.saveSession(function(){
-			$(".confirm-submit").modal("hide");
-			
-			$(".redirection-modal").modal();
-		});
-	};
-
-	$scope.kubikReferenceCard = new KubikReferenceCard();
-	
-	$scope.kubikProductSearch = kubikProductSearch;
-	$scope.kubikProductCard = kubikProductSearch.kubikProductCard;
-	$scope.kubikProductSearch.productSelected = function(product){
-		$scope.addOneProduct(product);
-		
-		$scope.kubikProductSearch.closeSearchModal();
-	};
-	
-	$scope.kubikReferenceSearch = kubikReferenceSearch;
-	$scope.kubikReferenceSearch.referenceSelected = function(reference){
-		$scope.createProductFromReference(reference);
-		
-		$scope.kubikReferenceSearch.closeSearchModal();
-	};
-
-	$scope.search = {};
-	$scope.loadSession();
-});
+		}
+	}
+})();

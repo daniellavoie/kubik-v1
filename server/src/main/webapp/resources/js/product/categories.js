@@ -1,134 +1,166 @@
-window.KubikProductCategories = function(options){
-	this.app = options.app;
-	this.$modal = options.$modal;
-	this.$container = options.$container;
-	this.categorySelectedCallback = options.categorySelectedCallback;
+(function(){
+	angular
+		.module("Kubik")
+		.controller("ProductCategoriesCtrl", ProductCategoriesCtrl);
 	
-	this.categoriesUrl = options.categoriesUrl;
-	
-	if(this.categoriesUrl == undefined){
-		this.categoriesUrl = "/category";
-	}
-	
-	this.init();
-};
-
-window.KubikProductCategories.prototype.init = function(){
-	var kubikProductCategories = this;
-
-	this.app.controller("KubikProductCategoriesController", function($scope, $http, $timeout){		
-		$scope.addCategory = function(parentCategory){
+	function ProductCategoriesCtrl($scope, $http, $timeout){
+		var CATEGORIES_URL = "/category";
+		var $modal = $(".categories-modal");
+		
+		var vm = this;
+		
+		vm.childParentCategoriesMap = {};
+		vm.categoriesTree = {};
+		vm.categories = [];
+		
+		loadCategories();
+		$scope.$emit("categoriesLoaded", vm);
+		
+		vm.addCategory = addCategory;
+		vm.addRootCategory = addRootCategory;
+		vm.cancelEditCategory = cancelEditCategory;
+		vm.categoryHovered = categoryHovered;
+		vm.categorySelected = categorySelected;
+		vm.closeModal = closeModal;
+		vm.confirmDeleteCategory = confirmDeleteCategory;
+		vm.deleteCategory = deleteCategory;
+		vm.editCategory = editCategory;
+		vm.hideError = hideError;
+		vm.loadCategories = loadCategories;
+		vm.openModal = openModal;
+		vm.saveCategory = saveCategory;
+		
+		$scope.$on("closeProductCategoriesModal", function(event){
+			vm.closeModal();
+		});
+		
+		$scope.$on("openProductCategories", function(event, options){
+			vm.openModal(options);
+		});
+		
+		$scope.$on("updateCategorySelectedCallback", function($event, categorySelected){
+//			$timeout(function(){
+				vm.categorySelectedCallback = categorySelected;
+//			});
+		});
+		
+		function addCategory(parentCategory){
 			if(parentCategory.childCategories == undefined){
 				parentCategory.childCategories = [];
 			}
 			
-			$http.get(kubikProductCategories.categoriesUrl + "?newName").success(function(name){
+			$http.get(CATEGORIES_URL + "?newName").success(newCategoryNameLoaded);
+			
+			function newCategoryNameLoaded(name){
 				parentCategory.childCategories.push({name : name, rootCategory : false});
-				$http.post(kubikProductCategories.categoriesUrl, parentCategory).success(function(category){
-					$scope.loadCategories();
-				});
-			});
-		};
-		
-		$scope.addRootCategory = function(){
-			$http.get(kubikProductCategories.categoriesUrl + "?newName").success(function(name){
-				$http.post(kubikProductCategories.categoriesUrl, {name : name, rootCategory : true}).success(function(category){
-					$scope.loadCategories();
-				});
-			});
+				
+				$http.post(CATEGORIES_URL, parentCategory).success(vm.loadCategories);
+			}
 		}
 		
-		$scope.cancelEditCategory = function(){
-			$scope.loadCategories();
-			$scope.error = null;
+		function addRootCategory(){
+			$http.get(CATEGORIES_URL + "?newName").success(newCategoryNameLoaded);
+			
+			function newCategoryNameLoaded(name){
+				$http.post(CATEGORIES_URL, {name : name, rootCategory : true}).success(vm.loadCategories());
+			}
+		}
+		
+		function cancelEditCategory(){
+			vm.loadCategories();
+			vm.error = null;
 	
 			$(".edit-category-modal").modal("hide");
 		}
 		
-		$scope.categorySelected = function(category, $event){
+		function categoryHovered(category, $event){
 			$event.stopPropagation();
 			
-			if($scope.kubikProductCategories.categorySelectedCallback != undefined){
-				$scope.kubikProductCategories.categorySelectedCallback(category);
+			vm.hoveredCategory = category;			
+		}
+		
+		function categorySelected(category, $event){
+			$event.stopPropagation();
+			
+			$scope.$emit("categorySelectedCallback", category);
+			
+			if(vm.categorySelectedCallback != undefined){
+				vm.categorySelectedCallback(category);
 			}
 		}
 		
-		$scope.categoryHovered = function(category, $event){
-			$scope.hoveredCategory = category;			
-			$event.stopPropagation();
+		
+		function closeModal(){
+			$modal.modal("hide");
 		}
 		
-//		$scope.categorySelected = function(category, $event){
-//			$scope.selectedCategory = category;
-//			
-//			$event.stopPropagation();
-//		};
-		
-		$scope.confirmDeleteCategory = function(category, $event){
+		function confirmDeleteCategory(category, $event){
 			$event.stopPropagation();
 			
 			$http.get("/product?category=" + category.id).success(function(productCount){
-				$scope.category = category;
-				$scope.productCount = productCount;
+				vm.category = category;
+				vm.productCount = productCount;
 				
 				$(".confirm-delete-category-modal").modal();
 				
 			});
-		};
+		}
 		
-		$scope.deleteCategory = function(category){
-			$scope.loading = true;
+		function deleteCategory(category){
+			vm.loading = true;
 			
-			var parentCategory = $scope.childParentCategoriesMap[category.id];
+			var parentCategory = vm.childParentCategoriesMap[category.id];
 			
-			$http.delete(kubikProductCategories.categoriesUrl + "/" + category.id + "/product").success(function(){
+			$http.delete(CATEGORIES_URL + "/" + category.id + "/product").success(productCategoriesDeleted);
+			
+			function productCategoriesDeleted(){
 				if(category.rootCategory){
-					$http.delete(kubikProductCategories.categoriesUrl + "/" + category.id).success(function(){
-						$(".confirm-delete-category-modal").modal("hide");
-						
-						$scope.loadCategories();
-					}).error(function(data){
-						$scope.error = data.message;
-					}).finally(function(){
-						$scope.loading = false;
-					});
+					$http.delete(CATEGORIES_URL + "/" + category.id).error(handleError).finally(deleteCompleted);
 				}else{
 					parentCategory.childCategories.splice(parentCategory.childCategories.indexOf(category), 1);
 					
-					$http.post(kubikProductCategories.categoriesUrl, parentCategory).success(function(){
-						$(".confirm-delete-category-modal").modal("hide");
-					}).error(function(data){
-						$scope.error = data.message;
-					}).finally(function(){
-						$scope.loading = false;
-						
-						$scope.loadCategories();
-					});
+					$http.post(CATEGORIES_URL, parentCategory).error(handleError).finally(deleteCompleted);
 				}
-			});
+				
+				function handleError(data){
+					vm.error = data.message;
+				}
+				
+				function deleteCompleted(){
+					$(".confirm-delete-category-modal").modal("hide");
+					
+					vm.loading = false;
+					
+					vm.loadCategories();
+				}
+			}
 		}
 		
-		$scope.editCategory = function(category){
-			$scope.category = category;
+		function editCategory(category){
+			vm.category = category;
 	
 			$(".edit-category-modal").modal();
 		}
 		
-		$scope.hideError = function(){
-			$scope.error = null;
+		function hideError(){
+			vm.error = null;
 		}
 		
-		$scope.loadCategories = function(successCallback){
-			$scope.loading = true;
+		function loadCategories(successCallback){
+			vm.loading = true;
 			
-			$http.get(kubikProductCategories.categoriesUrl).success(function(categories){
-				$scope.categories = categories;
+			$http.get(CATEGORIES_URL).success(categoriesLoaded).finally(function(){
+				vm.loading = false;
+			});
+			
+			function categoriesLoaded(categories){
+				vm.categories = categories;
 	
 				var calculateLevel = function(category, level){
 					category.level = level;
 	
 					angular.forEach(category.childCategories, function(childCategory, key){
-						$scope.childParentCategoriesMap[childCategory.id] = category;
+						vm.childParentCategoriesMap[childCategory.id] = category;
 						calculateLevel(childCategory, level + 1);
 					});
 				};
@@ -137,7 +169,7 @@ window.KubikProductCategories.prototype.init = function(){
 					category.level = 1;
 	
 					angular.forEach(category.childCategories, function(childCategory, key){
-						$scope.childParentCategoriesMap[childCategory.id] = category;
+						vm.childParentCategoriesMap[childCategory.id] = category;
 						calculateLevel(childCategory, 2);
 					});
 				});
@@ -145,39 +177,34 @@ window.KubikProductCategories.prototype.init = function(){
 				if(successCallback != undefined){
 					successCallback();
 				}
-			}).finally(function(){
-				$scope.loading = false;
-			});
+			}
 		};
 		
-		$scope.saveCategory = function(category){
-			$scope.hideError();
-			
-			$http.post(kubikProductCategories.categoriesUrl, $scope.category).success(function(){
-				$(".edit-category-modal").modal("hide");
-			}).error(function(data){
-				$scope.error = data.message;
-			}).finally(function(){
-				$scope.loadCategories();
+		function openModal(options){
+			$modal.on("show.bs.modal", function(e){
+				$timeout(function(){
+					if(options != undefined) vm.categorySelectedCallback = options.categorySelected;
+				});
+			}).modal({
+				backdrop : "static",
+				keyboard : false
 			});
 		}
 		
-		$scope.kubikProductCategories = kubikProductCategories;
-		
-		$scope.childParentCategoriesMap = {};
-		$scope.categoriesTree = {};
-		$scope.categories = [];
-		$scope.loadCategories();
-	});
-};
-
-window.KubikProductCategories.prototype.closeModal = function(){
-	this.$modal.modal("hide");
-};
-
-window.KubikProductCategories.prototype.openModal = function(searchQuery){
-	this.$modal.modal({
-		backdrop : "static",
-		keyboard : false
-	});
-};
+		function saveCategory(category){
+			vm.hideError();
+			
+			$http.post(CATEGORIES_URL, vm.category).error(handleError).finally(saveCompleted);
+			
+			function handleError(data){
+				vm.error = data.message;
+			}
+			
+			function saveCompleted(){
+				$(".edit-category-modal").modal("hide");
+				
+				vm.loadCategories();
+			}
+		}
+	}
+})();

@@ -1,57 +1,92 @@
-var app = angular.module("KubikRestocks", []);
-
-app.controller("KubikRestocksController", function($scope, $http){	
-	$scope.changePage = function(page){
-		$scope.page = page;
-		
-		$scope.loadRestocks();
-	};
+(function(){
+	angular
+		.module("Kubik")
+		.controller("RestocksCtrl", RestocksCtrl);
 	
-	$scope.loadRestocks = function(successCallback){
-		var params = {	page : $scope.page,
-						resultPerPage : $scope.resultPerPage,
-						sortBy : $scope.sortBy,
-						direction : $scope.direction};
+	function RestocksCtrl($scope, $http){
+		var vm = this;
 		
-		$http.get("restock?" + $.param(params)).success(function(restocksPage){
-			$scope.restocksPage = restocksPage;
+		vm.page = 0;
+		vm.resultPerPage = 50;
+		vm.sortBy = "openDate";
+		vm.direction = "DESC";
+		
+		vm.changePage = changePage;
+		vm.loadRestocks = loadRestocks;
+		vm.openProductCard = openProductCard;
+		vm.openRestock = openRestock;
+		vm.openSupplierCard = openSupplierCard;
+		vm.validateRestock = validateRestock;
+		
+		loadRestocks();
+		
+		function changePage(page){
+			vm.page = page;
 			
-			if(successCallback != undefined){
-				successCallback();
-			}
-		});
-	};
-	
-	$scope.openRestock = function(restock){
-		$scope.restock = restock;
-
-		$http.get("product/" + restock.product.id + "/productStats").success(function(productStats){
-			$scope.productStats = productStats;
+			vm.loadRestocks();
+		}
+		
+		function loadRestocks(successCallback){
+			var params = {	page : vm.page,
+							resultPerPage : vm.resultPerPage,
+							sortBy : vm.sortBy,
+							direction : vm.direction};
 			
-			$(".restock-modal").modal();
-		});
-	};
-	
-	$scope.validateRestock = function(status, openNextRestock){
-		$scope.restock.status = status;
-		
-		$scope.restock.product.category = null;
-		
-		$http.post("restock/", $scope.restock).success(function(){
-			$scope.loadRestocks(function(){
-				if(openNextRestock != undefined && openNextRestock && $scope.restocksPage.content.length > 0){
-					$scope.openRestock($scope.restocksPage.content[0]);					
-				}else{
-					$(".restock-modal").modal("hide");
+			$http.get("restock?" + $.param(params)).success(restocksLoadSuccess);
+			
+			function restocksLoadSuccess(restocksPage){
+				vm.restocksPage = restocksPage;
+				
+				if(successCallback != undefined){
+					successCallback();
 				}
-			});
-		});
+			}
+		}
+		
+		function openProductCard($event, product){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openProductCard", product);
+		}
+			
+		function openRestock(restock){
+			vm.restock = restock;
+
+			var url = "product/" + restock.product.id + "/productStats";
+			
+			$http.get(url).success(productStatsLoadSuccess);
+			
+			function productStatsLoadSuccess(productStats){
+				vm.productStats = productStats;
+				
+				$(".restock-modal").modal();
+			}
+		}
+		
+		function openSupplierCard($event, supplier){
+			$event.stopPropagation();
+			
+			$scope.$broadcast("openSupplierCard", supplier);
+		}
+		
+		function validateRestock(status, openNextRestock){
+			vm.restock.status = status;
+			
+			vm.restock.product.category = null;
+			
+			$http.post("restock/", vm.restock).success(saveRestockSucccess);
+			
+			function saveRestockSucccess(){
+				vm.loadRestocks(loadRestocksSuccess);
+				
+				function loadRestocksSuccess(){
+					if(openNextRestock != undefined && openNextRestock && vm.restocksPage.content.length > 0){
+						vm.openRestock(vm.restocksPage.content[0]);					
+					}else{
+						$(".restock-modal").modal("hide");
+					}
+				}
+			}
+		}
 	}
-	
-	$scope.page = 0;
-	$scope.resultPerPage = 50;
-	$scope.sortBy = "openDate";
-	$scope.direction = "DESC";
-	
-	$scope.loadRestocks();
-});
+})();

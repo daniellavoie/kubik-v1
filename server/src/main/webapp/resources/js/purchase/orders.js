@@ -1,57 +1,62 @@
-var app = angular.module("KubikPurchaseOrders", []);
-
-app.controller("KubikPurchaseOrdersController", function($scope, $http){
-	$scope.calculateOrderQuantity = function(order){
-		var quantity = 0;
-		for(var detailIndex in order.details){
-			var detail = order.details[detailIndex];
+(function(){
+	angular
+		.module("Kubik")
+		.controller("PurchaseOrdersCtrl", PurchaseOrdersCtrl);
+	
+	function PurchaseOrdersCtrl($scope, $http){
+		var vm = this;
+		
+		vm.page = 0;
+		vm.resultPerPage = 50;
+		vm.sortBy = "date";
+		vm.direction = "DESC";
+		
+		vm.calculateOrderQuantity = calculateOrderQuantity;
+		vm.changePage = changePage;
+		vm.loadOrders = loadOrders;
+		vm.openOrder = openOrder;
+		vm.openSupplierCard = openSupplierCard;
+		
+		loadOrders();
+		
+		function calculateOrderQuantity(order){
+			var quantity = 0;
+			for(var detailIndex in order.details){
+				var detail = order.details[detailIndex];
+				
+				quantity += detail.quantity;
+			}
 			
-			quantity += detail.quantity;
+			return quantity;
 		}
 		
-		return quantity;
-	};
-	
-	$scope.changePage = function(page){
-		$scope.page = page;
+		function changePage(page){
+			vm.page = page;
+			
+			vm.loadOrders();
+		}
 		
-		$scope.loadOrders();
-	}
-	
-	$scope.loadOrders = function(){
-		var params = {	page : $scope.page,
-						resultPerPage : $scope.resultPerPage,
-						sortBy : $scope.sortBy,
-						direction : $scope.direction};
+		function loadOrders(){
+			var params = {	page : vm.page,
+							resultPerPage : vm.resultPerPage,
+							sortBy : vm.sortBy,
+							direction : vm.direction};
+			
+			$http.get("purchaseOrder?" + $.param(params)).success(ordersLoaded);
+			
+			function ordersLoaded(ordersPage){
+				vm.ordersPage = ordersPage;
+			}
+		}
 		
-		$http.get("purchaseOrder?" + $.param(params)).success(function(ordersPage){
-			$scope.ordersPage = ordersPage;
-		});
-	};
-	
-	$scope.openOrder = function(id){
-		window.location.href = "purchaseOrder/" + id;
-	};
-	
-	$scope.openSupplierCard = function(supplier, $event){
-		try{
-			$scope.kubikSupplierCard.openCard(supplier);
-		}finally{
+		function openOrder(id){
+			window.location.href = "purchaseOrder/" + id;
+		}
+		
+		function openSupplierCard($event, supplier){
 			$event.stopPropagation();
+			
+			$scope.$broadcast("openSupplierCard", supplier);
 		}
 	}
-
-	$scope.kubikSupplierCard = new KubikSupplierCard({
-		supplierSaved : function(){
-			$scope.loadOrders();
-		}, 
-		supplierUrl : "supplier"
-	});
-	
-	$scope.page = 0;
-	$scope.resultPerPage = 50;
-	$scope.sortBy = "date";
-	$scope.direction = "DESC";
-	
-	$scope.loadOrders();
-});
+})();

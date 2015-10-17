@@ -1,28 +1,40 @@
-var app = angular.module("KubikNonCategorizedProduct", []);
-var kubikProductCategories = new KubikProductCategories({
-	app : app,
-	categoriesUrl : "category",
-	categorySelectedCallback : {}
-});
-
-app.controller("KubikNonCategorizedProductController", function($scope, $http){
-	$scope.loadRandomProduct = function(){
-		$http.get("/product?category&random").success(function(product){			
-			$scope.product = product;
+(function(){
+	angular
+		.module("Kubik")
+		.controller("NonCategorizedProductCtrl", NonCategorizedProductCtrl);
+	
+	function NonCategorizedProductCtrl($scope, $http, $timeout){
+		var vm = this;
+		
+		loadRandomProduct();
+		
+		vm.updateProductCategory = updateProductCategory;
+		
+		$scope.$on("categoriesLoaded", function($event, categoriesVm){
+			$timeout(function(){
+				categoriesVm.categorySelectedCallback = vm.updateProductCategory;				
+			});
 		});
-	};
-	
-	$scope.pass = function(){
-		$scope.loadRandomProduct();
-	};
-	
-	$scope.loadRandomProduct();
-	
-	$scope.kubikProductCategories = kubikProductCategories;
-	$scope.kubikProductCategories.categorySelectedCallback = function(category){
-		$scope.product.category = category;
-		$http.post("/product", $scope.product).success(function(product){
-			$scope.loadRandomProduct();
-		});
-	};
-});
+		
+		vm.loadRandomProduct = loadRandomProduct;
+		vm.pass = pass;
+		
+		function loadRandomProduct(){
+			$http.get("/product?category&random").success(loadRandomProductSuccess);
+			
+			function loadRandomProductSuccess(product){
+				vm.product = product;
+			}
+		}
+		
+		function pass(){
+			vm.loadRandomProduct();
+		}
+		
+		function updateProductCategory(category){
+			vm.product.category = category;
+			
+			$http.post("/product", vm.product).success(loadRandomProduct);
+		}
+	}
+})();
