@@ -222,7 +222,7 @@ public class ProductStatsRepositoryMysqlImpl implements ProductStatsRepository {
 										.getDouble("refunded"));
 					}
 				}, startDate, endDate, startDate, endDate, startDate, endDate,
-				startDate, endDate, startDate, endDate, productId);
+				startDate, endDate, startDate, endDate, false, productId);
 	}
 
 }
