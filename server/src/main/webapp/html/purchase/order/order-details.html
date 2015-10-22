@@ -69,7 +69,7 @@
 									<span ng-if="purchaseOrderDetailsCtrl.order.status != 'DRAFT'">{{purchaseOrderDetailsCtrl.order.discount}}</span>
 								</td>
 								<td>{{purchaseOrderDetailsCtrl.order.details.length}}</td>
-								<td>{{purchaseOrderDetailsCtrl.calculateOrderQuantity(order)}}</td>
+								<td>{{purchaseOrderDetailsCtrl.calculateOrderQuantity(purchaseOrderDetailsCtrl.order)}}</td>
 								<td>{{purchaseOrderDetailsCtrl.order.totalAmountTaxOut | currency : '&euro;'}}</td>
 								<td><span ng-if="purchaseOrderDetailsCtrl.order.sentToDilicom" class="glyphicon glyphicon-transfer" title="Envoyé à Dilicom"></span>&nbsp;</td>
 							</tr>
