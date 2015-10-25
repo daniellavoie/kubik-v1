@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.cspinformatique.kubik</groupId>
 		<artifactId>kubik</artifactId>
-		<version>1.9.7</version>
+		<version>1.10.0</version>
 	</parent>
 
 	<artifactId>kubik-proxy</artifactId>
