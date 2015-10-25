@@ -133,6 +133,16 @@ public class ProductStatsRepositoryMysqlImpl implements ProductStatsRepository {
 				+ "				customer_credit.complete_date BETWEEN ? AND ?\n"
 				+ "		GROUP BY\n" + "			product.id\n"
 				+ "	) as refunded ON refunded.id = product.id\n"
+				+ "LEFT JOIN\n"
+				+ "	(	SELECT\n"
+				+ "			ifNULL(sum(quantity), 0) qty,\n"
+				+ "			product_id\n"
+				+ "		FROM \n"
+				+ "			inventory_count\n"
+				+ "		WHERE \n"
+				+ "			date_counted BETWEEN ? AND ?\n"
+				+ "		GROUP BY\n" + "			product_id\n"
+				+ "	) as counted ON counted.product_id = product.id\n"
 				+ "WHERE\n"
 				+ "	inventory.qty is not null AND\n"
 				+ " (	inventory.qty <= 0 OR ? = false) AND\n"
@@ -140,7 +150,8 @@ public class ProductStatsRepositoryMysqlImpl implements ProductStatsRepository {
 				+ "		received.qty is not null OR\n"
 				+ "		sold.qty is not null OR\n"
 				+ "		returned.qty is not null OR\n"
-				+ "		refunded.qty is not null)";
+				+ "		refunded.qty is not null OR\n"
+				+ "		counted.qty is not null)";
 
 		this.SQL_COUNT_PRODUCT_STATS = "SELECT\n" + "	count(*)\n"
 				+ SQL_JOIN_PRODUCT_STATS;
@@ -152,7 +163,8 @@ public class ProductStatsRepositoryMysqlImpl implements ProductStatsRepository {
 				+ "	received.qty as received,\n" 
 				+ "	sold.qty as sold,\n"
 				+ "	returned.qty as returned,\n"
-				+ "	refunded.qty as refunded\n" 
+				+ "	refunded.qty as refunded,\n" 
+				+ "	counted.qty as counted\n" 
 				+ SQL_JOIN_PRODUCT_STATS;
 	}
 
@@ -194,14 +206,14 @@ public class ProductStatsRepositoryMysqlImpl implements ProductStatsRepository {
 								.getInt("productId")), rs.getDouble("ordered"),
 								rs.getDouble("received"), rs.getDouble("sold"),
 								rs.getDouble("returned"), rs
-										.getDouble("refunded"));
+										.getDouble("refunded"), rs.getDouble("counted"));
 					}
 				}, startDate, endDate, startDate, endDate, startDate, endDate,
-				startDate, endDate, startDate, endDate, withoutInventory), pageable,
+				startDate, endDate, startDate, endDate, startDate, endDate, withoutInventory), pageable,
 				this.jdbcTemplate.queryForObject(SQL_COUNT_PRODUCT_STATS,
 						Long.class, startDate, endDate, startDate, endDate,
 						startDate, endDate, startDate, endDate, startDate,
-						endDate, withoutInventory));
+						endDate, startDate, endDate, withoutInventory));
 	}
 
 	public ProductStats findByProductId(int productId, Date startDate,
@@ -219,10 +231,10 @@ public class ProductStatsRepositoryMysqlImpl implements ProductStatsRepository {
 								.getInt("productId")), rs.getDouble("ordered"),
 								rs.getDouble("received"), rs.getDouble("sold"),
 								rs.getDouble("returned"), rs
-										.getDouble("refunded"));
+										.getDouble("refunded"), rs.getDouble("counted"));
 					}
 				}, startDate, endDate, startDate, endDate, startDate, endDate,
-				startDate, endDate, startDate, endDate, false, productId);
+				startDate, endDate, startDate, endDate, startDate, endDate, false, productId);
 	}
 
 }

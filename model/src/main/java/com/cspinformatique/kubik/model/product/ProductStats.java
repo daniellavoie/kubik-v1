@@ -7,6 +7,7 @@ public class ProductStats {
 	private Double quantitySold;
 	private Double quantityReturned;
 	private Double quantityRefunded;
+	private Double quantityCounted;
 
 	public ProductStats() {
 
@@ -14,13 +15,14 @@ public class ProductStats {
 
 	public ProductStats(Product product, Double quantityOrdered, Double quantityReceived,
 			Double quantitySold, Double quantityReturned,
-			Double quantityRefunded) {
+			Double quantityRefunded, Double quantityCounted) {
 		this.product = product;
 		this.quantityOrdered = quantityOrdered;
 		this.quantityReceived = quantityReceived;
 		this.quantitySold = quantitySold;
 		this.quantityReturned = quantityReturned;
 		this.quantityRefunded = quantityRefunded;
+		this.quantityCounted = quantityCounted;
 	}
 
 	public Product getProduct() {
@@ -69,5 +71,13 @@ public class ProductStats {
 
 	public void setQuantityRefunded(Double quantityRefunded) {
 		this.quantityRefunded = quantityRefunded;
+	}
+
+	public Double getQuantityCounted() {
+		return quantityCounted;
+	}
+
+	public void setQuantityCounted(Double quantityCounted) {
+		this.quantityCounted = quantityCounted;
 	}
 }

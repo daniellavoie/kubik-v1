@@ -28,7 +28,8 @@
 		                      	{key : 'received', label : 'Réceptionnés'},
 		                      	{key : 'sold', label : 'Vendus'},
 		                      	{key : 'returned', label : 'Retournés'},
-		                      	{key : 'refunded', label : 'Remboursés'}];
+		                      	{key : 'refunded', label : 'Remboursés'},
+		                      	{key : 'counted', label : 'Décomptés'}];
 		
 		vm.changePage = changePage;
 		vm.loadProductsStats = loadProductsStats;

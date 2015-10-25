@@ -3,7 +3,8 @@ package com.cspinformatique.kubik.domain.product.controller;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -24,6 +25,7 @@ import com.cspinformatique.kubik.domain.purchase.service.ReceptionDetailService;
 import com.cspinformatique.kubik.domain.purchase.service.RmaDetailService;
 import com.cspinformatique.kubik.domain.sales.service.CustomerCreditDetailService;
 import com.cspinformatique.kubik.domain.sales.service.InvoiceDetailService;
+import com.cspinformatique.kubik.domain.warehouse.service.InventoryCountService;
 import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.product.ProductStats;
 import com.cspinformatique.kubik.model.purchase.Reception;
@@ -34,32 +36,36 @@ import com.cspinformatique.kubik.model.sales.CustomerCredit;
 import com.cspinformatique.kubik.model.sales.CustomerCreditDetail;
 import com.cspinformatique.kubik.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.model.sales.InvoiceStatus;
+import com.cspinformatique.kubik.model.warehouse.InventoryCount;
 
 @Controller
 @RequestMapping("/product")
 public class ProductController {
-	@Autowired
+	@Resource
 	private CategoryService categoryService;
 
-	@Autowired
+	@Resource
 	private ProductService productService;
 
-	@Autowired
+	@Resource
 	private SupplierService supplierService;
 
-	@Autowired
+	@Resource
 	private CustomerCreditDetailService customerCreditDetailService;
 
-	@Autowired
+	@Resource
+	private InventoryCountService inventoryCountService;
+
+	@Resource
 	private InvoiceDetailService invoiceDetailService;
 
-	@Autowired
+	@Resource
 	private ProductStatsService productsStatsService;
 
-	@Autowired
+	@Resource
 	private ReceptionDetailService receptionDetailService;
 
-	@Autowired
+	@Resource
 	private RmaDetailService rmaDetailService;
 
 	@RequestMapping(method = RequestMethod.GET, params = "category", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -106,6 +112,15 @@ public class ProductController {
 			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
 		return this.customerCreditDetailService.findByProductAndCustomerCreditStatus(
 				this.productService.findOne(productId), CustomerCredit.Status.COMPLETED,
+				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
+	}
+
+	@RequestMapping(value = "/{productId}/inventoryCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Page<InventoryCount> findProductInventoryCounts(@PathVariable("productId") int productId,
+			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
+			@RequestParam(defaultValue = "DESC") Direction direction,
+			@RequestParam(defaultValue = "dateCounted") String sortBy) {
+		return inventoryCountService.findByProduct(productService.findOne(productId),
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
 

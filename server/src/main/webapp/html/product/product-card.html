@@ -361,6 +361,7 @@
 								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('invoice')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'invoice']"><a href="#">Ventes</a></li>
 								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('rma')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'rma']"><a href="#">Retours fournisseurs</a></li>
 								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('customerCredit')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'customerCredit']"><a href="#">Retours clients</a></li>
+								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('inventoryCount')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'inventoryCount']"><a href="#">Décomptes</a></li>
 							</ul>
 						
 							<div class="text-center">
@@ -473,6 +474,53 @@
 											</tr>
 										</tbody>
 									</table>
+								</div>
+						
+								<div class="tab inventoryCount" ng-class="{true : 'hidden'}[productCardCtrl.inventoryTab != 'inventoryCount']">									
+									<div ng-if="productCardCtrl.inventoryCount != null">
+										<div class="form-group">
+											<label class="col-sm-6 control-label">Quantité</label>
+											<div class="col-sm-6">
+												<input class="form-control" ng-model="productCardCtrl.inventoryCount.quantity" type="number" step="1" placeholder="Quantité">
+											</div>
+										</div>
+										
+										<div class="form-group">
+											<label class="col-sm-6 control-label">Raison</label>
+											<div class="col-sm-6">
+												<input class="form-control" ng-model="productCardCtrl.inventoryCount.reason" placeholder="Raison">
+											</div>
+										</div>
+										
+										<div class="text-right">
+											<button class="btn btn-default" ng-click="productCardCtrl.cancelInventoryCount()">Annuler</button>
+											<button class="btn btn-primary" ng-click="productCardCtrl.confirmInventoryCount()">Confirmer</button>
+										</div>
+									</div>
+									
+									<div ng-if="productCardCtrl.inventoryCount == null">
+										<button class="btn btn-default" ng-click="productCardCtrl.addInventoryCount()">Ajouter</button>
+																
+										<table class="table table-condensed">
+											<tbody>
+												<tr>
+													<th>Date</th>
+													<th>Quantié</th>
+													<th>Raison</th>
+												</tr>
+											</tbody>
+											<tbody>
+												<tr ng-repeat="inventoryCount in productCardCtrl.inventoryTabs.inventoryCount.result.content">
+													<td>{{inventoryCount.dateCounted | date}}</td>
+													<td>{{inventoryCount.quantity}}</td>
+													<td>{{inventoryCount.reason}}</td>
+												</tr>
+												<tr ng-if="productCardCtrl.inventoryTabs.inventoryCount.result.content.length == 0">
+													<td colspan="3">Aucun décompte d'inventaire pour ce produit</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>
 						</div>

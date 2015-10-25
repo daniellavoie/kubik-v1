@@ -10,7 +10,7 @@ import com.cspinformatique.kubik.model.warehouse.ProductInventory;
 
 public interface ProductInventoryRepository extends PagingAndSortingRepository<ProductInventory, Integer> {
 	ProductInventory findByProduct(Product product);
-
+	
 	@Query("SELECT product.id FROM ProductInventory WHERE quantityOnHand > 0")
 	List<Integer> findProductIdWithInventory();
 }

@@ -1,12 +1,10 @@
 package com.cspinformatique.kubik.model.sales;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 import com.cspinformatique.kubik.model.product.Product;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;

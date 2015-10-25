@@ -1,4 +1,5 @@
 (function(){
+	var INVENTORY_COUNT_URL = "/inventoryCount";
 	var PRODUCT_URL = "/product";
 	
 	var $modal = $(".kubikProductCard");
@@ -39,19 +40,29 @@
 									resultPerPage : 20,
 									sortBy : "rma.shippedDate",
 									direction : "DESC"  }
+								},
+								inventoryCount : {	searchParams : {
+									page : 0,
+									resultPerPage : 20,
+									sortBy : "dateCounted",
+									direction : "DESC"  }
 								}};
 		
 		loadSupplier();
 		
+		vm.addInventoryCount = addInventoryCount;
+		vm.cancelInventoryCount = cancelInventoryCount;
 		vm.cancelModify = cancelModify;
 		vm.changeInventoryTab = changeInventoryTab;
 		vm.changePage = changePage;
 		vm.changeTab = changeTab;
+		vm.confirmInventoryCount = confirmInventoryCount;
 		vm.endEditMode = endEditMode;
 		vm.getSupplier = getSupplier;
 		vm.loadCompany = loadCompany;
 		vm.loadInventoryTab = loadInventoryTab;
 		vm.loadInventoryTabs = loadInventoryTabs;
+		vm.loadProduct = loadProduct;
 		vm.loadSupplier = loadSupplier;
 		vm.modify = modify;
 		vm.openCard = openCard;
@@ -61,6 +72,15 @@
 		$scope.$on("openProductCard", function(event, product){
 			vm.openCard(product);
 		});
+		
+		
+		function addInventoryCount(){
+			vm.inventoryCount = {product : vm.product, dateCounted : new Date(), quandity : 0, reason : ""};
+		}
+		
+		function cancelInventoryCount(){
+			vm.inventoryCount = null;
+		}
 		
 		function cancelModify(){
 			vm.product = vm.originalProduct;
@@ -82,6 +102,17 @@
 		
 		function changeTab(tab){
 			vm.productTab = tab;
+		}
+		
+		function confirmInventoryCount(){
+			$http.post(INVENTORY_COUNT_URL, vm.inventoryCount).finally(confirmInventoryCountCompleted);
+			
+			function confirmInventoryCountCompleted(){
+				vm.inventoryCount = null;
+				
+				vm.loadProduct(vm.product.id);
+				vm.changePage(0);
+			}
 		}
 		
 		function endEditMode(){
@@ -125,6 +156,18 @@
 		function loadInventoryTabs(){
 			for(var inventoryTabIndex in vm.inventoryTabs){				
 				vm.loadInventoryTab(inventoryTabIndex);
+			}
+		}
+		
+		function loadProduct(productId, loadProductSuccessCallback){
+			$http.get(PRODUCT_URL + "/" + productId).success(loadProductSuccess);
+			
+			function loadProductSuccess(product){
+				vm.product = product;
+				
+				if(loadProductSuccessCallback != undefined){
+					loadProductSuccessCallback(product);					
+				}
 			}
 		}
 		
@@ -175,13 +218,12 @@
 			if(product.id == undefined){
 				displayProduct(product);
 			}else{
-				$http.get(PRODUCT_URL + "/" + product.id).success(displayProduct);
+				vm.loadProduct(product.id, displayProduct);
 			}
 			
 			function displayProduct(product){
 				$modal.on('show.bs.modal', function (e) {
 					$timeout(function(){
-						vm.product = product;
 						vm.productTab = "product";
 						vm.inventoryTab = "reception";
 						

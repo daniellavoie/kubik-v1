@@ -6,9 +6,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -23,6 +24,7 @@ import com.cspinformatique.kubik.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.domain.warehouse.model.InventoryExtract;
 import com.cspinformatique.kubik.domain.warehouse.model.InventoryExtractLine;
 import com.cspinformatique.kubik.domain.warehouse.repository.ProductInventoryRepository;
+import com.cspinformatique.kubik.domain.warehouse.service.InventoryCountService;
 import com.cspinformatique.kubik.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.model.product.Product;
 import com.cspinformatique.kubik.model.purchase.Reception;
@@ -33,25 +35,28 @@ import com.cspinformatique.kubik.model.warehouse.ProductInventory;
 public class ProductInventoryServiceImpl implements ProductInventoryService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProductInventoryServiceImpl.class);
 
-	@Autowired
+	@Resource
 	private ProductInventoryRepository productInventoyRepository;
 
-	@Autowired
+	@Resource
 	private CustomerCreditService customerCreditService;
 
-	@Autowired
+	@Resource
+	private InventoryCountService inventoryCountService;
+	
+	@Resource
 	private InvoiceService invoiceService;
 
-	@Autowired
+	@Resource
 	private ProductService productService;
 
-	@Autowired
+	@Resource
 	private ReceptionService receptionService;
 
-	@Autowired
+	@Resource
 	private ReceptionDetailService receptionDetailService;
 
-	@Autowired
+	@Resource
 	private RmaService rmaService;
 
 	@Override
@@ -86,8 +91,9 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 		double quantityCustomerReturned = this.customerCreditService.findProductQuantityReturnedByCustomer(productId);
 		double quantityReturnedToSupplier = this.rmaService.findProductQuantityReturnedToSupplier(productId);
 		double quantitySold = this.invoiceService.findProductQuantitySold(productId);
+		double quantityCounted = this.inventoryCountService.findProductQuantityCounted(productId);
 
-		double quantityOnHand = quantityReceived + quantityCustomerReturned - quantitySold - quantityReturnedToSupplier;
+		double quantityOnHand = quantityReceived + quantityCustomerReturned - quantitySold - quantityReturnedToSupplier + quantityCounted;
 
 		productInventory.setQuantityOnHand(quantityOnHand);
 
