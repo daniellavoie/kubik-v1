@@ -68,11 +68,11 @@
 											<span data-toggle="dropdown" ng-switch-when="KADEOS" title="Chèque Kadéos - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
 											<span data-toggle="dropdown" ng-switch-when="LIRE" title="Chèque Lire - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
 											<div ng-if="invoiceDetailsCtrl.invoice.status.type == 'PAID'" class="dropdown-menu" role="menu">
-												<span title="Carte" ng-click="changePaymentMethod(payment, 'CARD')" class="glyphicon glyphicon-credit-card">&nbsp;</span>
-												<span title="Espèces" ng-click="changePaymentMethod(payment, 'CASH')" class="glyphicon glyphicon-euro">&nbsp;</span>
-												<span title="Chèque" ng-click="changePaymentMethod(payment, 'CHECK')" class="glyphicon glyphicon-edit">&nbsp;</span>
-												<span title="Chèque Kadéos" ng-click="changePaymentMethod(payment, 'KADEOS')" class="glyphicon glyphicon-edit">&nbsp;</span>
-												<span title="Chèque Lire" ng-click="changePaymentMethod(payment, 'LIRE')" class="glyphicon glyphicon-edit">&nbsp;</span>
+												<span title="Carte" ng-click="invoiceDetailsCtrl.changePaymentMethod(payment, 'CARD')" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+												<span title="Espèces" ng-click="invoiceDetailsCtrl.changePaymentMethod(payment, 'CASH')" class="glyphicon glyphicon-euro">&nbsp;</span>
+												<span title="Chèque" ng-click="invoiceDetailsCtrl.changePaymentMethod(payment, 'CHECK')" class="glyphicon glyphicon-edit">&nbsp;</span>
+												<span title="Chèque Kadéos" ng-click="invoiceDetailsCtrl.changePaymentMethod(payment, 'KADEOS')" class="glyphicon glyphicon-edit">&nbsp;</span>
+												<span title="Chèque Lire" ng-click="invoiceDetailsCtrl.changePaymentMethod(payment, 'LIRE')" class="glyphicon glyphicon-edit">&nbsp;</span>
 											</div>
 										</div>
 									</div>
