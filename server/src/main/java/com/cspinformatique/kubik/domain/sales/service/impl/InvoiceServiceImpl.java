@@ -1,6 +1,5 @@
 package com.cspinformatique.kubik.domain.sales.service.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -117,6 +116,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 		for (InvoiceTaxAmount invoiceTaxAmount : invoice.getTaxesAmounts().values()) {
 			invoiceTaxAmount.setTaxAmount(0d);
 			invoiceTaxAmount.setTaxableAmount(0d);
+			invoiceTaxAmount.setTaxedAmount(0d);
 		}
 
 		for (InvoiceDetail detail : invoice.getDetails()) {
@@ -131,37 +131,27 @@ public class InvoiceServiceImpl implements InvoiceService {
 			}
 
 			double detailTotalAmount = detail.getUnitPrice().doubleValue() * quantity - rebateAmount;
-			double detailTaxAmount = (detailTotalAmount
-					/ (1 + (product.getTvaRate1() / 100)) * (product.getTvaRate1() / 100));
-			double detailTaxableAmount = detailTotalAmount - detailTaxAmount;
 
-			// Increment taxes total amounts.
-			totalTaxAmount += detailTaxAmount;
-			totalTaxableAmount += detailTaxableAmount;
-
-			// Increment customer credit taxes amounts.
-			InvoiceTaxAmount invoiceTaxAmount = invoice.getTaxesAmounts().get(product.getTvaRate1());
+			// Increment taxed amounts.
+			InvoiceTaxAmount invoiceTaxAmount = totalTaxesAmounts.get(product.getTvaRate1());
 			if (invoiceTaxAmount == null) {
-				invoiceTaxAmount = new InvoiceTaxAmount(0, product.getTvaRate1(), 0d, 0d);
-			} else if (invoiceTaxAmount.getTaxableAmount() == null) {
-				invoiceTaxAmount.setTaxableAmount(0d);
+				invoiceTaxAmount = new InvoiceTaxAmount(0, product.getTvaRate1(), 0d, 0d, 0d);
+			} else if (invoiceTaxAmount.getTaxedAmount() == null) {
+				invoiceTaxAmount.setTaxedAmount(0d);
 			}
-			
-			invoiceTaxAmount.setTaxableAmount(detailTaxableAmount + invoiceTaxAmount.getTaxableAmount());
-			invoiceTaxAmount.setTaxAmount(detailTaxAmount + invoiceTaxAmount.getTaxAmount());
+			invoiceTaxAmount.setTaxedAmount(detailTotalAmount + invoiceTaxAmount.getTaxedAmount());
 
 			totalTaxesAmounts.put(product.getTvaRate1(), invoiceTaxAmount);
 		}
 
-		for (InvoiceTaxAmount invoiceTaxAmount : invoice.getTaxesAmounts().values()) {
-			BigDecimal totalAmount = new BigDecimal(invoiceTaxAmount.getTaxableAmount())
-					.add(new BigDecimal(invoiceTaxAmount.getTaxAmount()));
-			double roundedTaxAmount = Precision.round(invoiceTaxAmount.getTaxAmount(), 2);
-
-			invoiceTaxAmount.setTaxAmount(roundedTaxAmount);
-			invoiceTaxAmount
-					.setTaxableAmount(Precision.round(new BigDecimal(Precision.round(totalAmount.doubleValue(), 2))
-							.subtract(new BigDecimal(roundedTaxAmount)).doubleValue(), 2));
+		for (InvoiceTaxAmount invoiceTaxAmount : totalTaxesAmounts.values()) {
+			invoiceTaxAmount.setTaxAmount(Precision.round((invoiceTaxAmount.getTaxedAmount()
+					/ (1 + (invoiceTaxAmount.getTaxRate() / 100)) * (invoiceTaxAmount.getTaxRate() / 100)), 2));
+			invoiceTaxAmount.setTaxableAmount(
+					Precision.round(invoiceTaxAmount.getTaxedAmount() - invoiceTaxAmount.getTaxAmount(), 2));
+			
+			totalTaxAmount += invoiceTaxAmount.getTaxAmount();
+			totalTaxableAmount += invoiceTaxAmount.getTaxableAmount();
 		}
 
 		invoice.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));

@@ -108,8 +108,8 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 	private void calculateTaxesAmounts(CustomerCredit customerCredit) {
 		HashMap<Double, InvoiceTaxAmount> totalTaxesAmounts = new HashMap<Double, InvoiceTaxAmount>();
 
-		BigDecimal totalTaxableAmount = new BigDecimal(0d);
-		BigDecimal totalTaxAmount = new BigDecimal(0d);
+		double totalTaxableAmount = 0d;
+		double totalTaxAmount = 0d;
 
 		Invoice invoice = this.invoiceService.findOne(customerCredit.getInvoice().getId());
 
@@ -137,43 +137,33 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 
 				BigDecimal detailTotalAmount = new BigDecimal(detail.getUnitPrice()).multiply(new BigDecimal(quantity))
 						.subtract(rebateAmount);
-				BigDecimal detailTaxAmount = detailTotalAmount
-						.multiply((new BigDecimal(product.getTvaRate1()).divide(new BigDecimal(100))));
-				BigDecimal detailTaxableAmount = detailTotalAmount.subtract(detailTaxAmount);
-
-				// Increment taxes total amounts.
-				totalTaxAmount = totalTaxAmount.add(detailTaxAmount);
-				totalTaxableAmount = totalTaxableAmount.add(detailTaxableAmount);
 
 				// Increment customer credit taxes amounts.
-				InvoiceTaxAmount invoiceTaxAmount = customerCredit.getTaxesAmounts().get(product.getTvaRate1());
+				InvoiceTaxAmount invoiceTaxAmount = totalTaxesAmounts.get(product.getTvaRate1());
 				if (invoiceTaxAmount == null) {
-					invoiceTaxAmount = new InvoiceTaxAmount(0, product.getTvaRate1(), 0d, 0d);
-				} else if (invoiceTaxAmount.getTaxableAmount() == null) {
-					invoiceTaxAmount.setTaxableAmount(0d);
+					invoiceTaxAmount = new InvoiceTaxAmount(0, product.getTvaRate1(), 0d, 0d, 0d);
+				} else if (invoiceTaxAmount.getTaxedAmount() == null) {
+					invoiceTaxAmount.setTaxedAmount(0d);
 				}
-				invoiceTaxAmount.setTaxableAmount(
-						detailTaxableAmount.add(new BigDecimal(invoiceTaxAmount.getTaxableAmount())).doubleValue());
-				invoiceTaxAmount.setTaxAmount(
-						detailTaxAmount.add(new BigDecimal(invoiceTaxAmount.getTaxAmount())).doubleValue());
+
+				invoiceTaxAmount.setTaxedAmount(detailTotalAmount.doubleValue());
 
 				totalTaxesAmounts.put(product.getTvaRate1(), invoiceTaxAmount);
 			}
 		}
 
-		for (InvoiceTaxAmount invoiceTaxAmount : customerCredit.getTaxesAmounts().values()) {
-			BigDecimal totalAmount = new BigDecimal(invoiceTaxAmount.getTaxableAmount())
-					.add(new BigDecimal(invoiceTaxAmount.getTaxAmount()));
-			double roundedTaxAmount = Precision.round(invoiceTaxAmount.getTaxAmount(), 2);
+		for (InvoiceTaxAmount invoiceTaxAmount : totalTaxesAmounts.values()) {
+			invoiceTaxAmount.setTaxAmount(Precision.round((invoiceTaxAmount.getTaxedAmount()
+					/ (1 + (invoiceTaxAmount.getTaxRate() / 100)) * (invoiceTaxAmount.getTaxRate() / 100)), 2));
+			invoiceTaxAmount.setTaxableAmount(
+					Precision.round(invoiceTaxAmount.getTaxableAmount() - invoiceTaxAmount.getTaxAmount(), 2));
 
-			invoiceTaxAmount.setTaxAmount(roundedTaxAmount);
-			invoiceTaxAmount
-					.setTaxableAmount(Precision.round(new BigDecimal(Precision.round(totalAmount.doubleValue(), 2))
-							.subtract(new BigDecimal(roundedTaxAmount)).doubleValue(), 2));
+			totalTaxAmount += invoiceTaxAmount.getTaxAmount();
+			totalTaxableAmount += invoiceTaxAmount.getTaxableAmount();
 		}
 
-		customerCredit.setTotalTaxAmount(Precision.round(totalTaxAmount.doubleValue(), 2));
-		customerCredit.setTotalTaxLessAmount(Precision.round(totalTaxableAmount.doubleValue(), 2));
+		customerCredit.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));
+		customerCredit.setTotalTaxLessAmount(Precision.round(totalTaxableAmount, 2));
 
 		if (customerCredit.getTaxesAmounts() != null) {
 			customerCredit.getTaxesAmounts().clear();

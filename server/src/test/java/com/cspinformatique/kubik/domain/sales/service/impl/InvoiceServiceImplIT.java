@@ -24,7 +24,7 @@ public class InvoiceServiceImplIT {
 	@Test
 	@Transactional
 	public void calculateInvoiceAmountsTest() {
-		Invoice invoice = invoiceService.findOne(1983);
+		Invoice invoice = invoiceService.findOne(2961);
 
 		invoice.getTaxesAmounts().clear();
 		invoice.setTotalTaxAmount(0d);
