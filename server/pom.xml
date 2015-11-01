@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.cspinformatique.kubik</groupId>
-		<version>1.10.2</version>
+		<version>1.10.3</version>
 		<artifactId>kubik</artifactId>
 	</parent>
 	
