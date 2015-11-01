@@ -27,7 +27,13 @@ public class InventoryCountServiceImpl implements InventoryCountService {
 
 	@Override
 	public double findProductQuantityCounted(int productId) {
-		return inventoryCountRepository.findProductQuantityCounted(productId);
+		Double result = inventoryCountRepository.findProductQuantityCounted(productId);
+
+		if (result == null) {
+			return 0d;
+		}
+
+		return result;
 	}
 
 	@Override

@@ -12,5 +12,5 @@ public interface InventoryCountRepository extends JpaRepository<InventoryCount, 
 	Page<InventoryCount> findByProduct(Product product, Pageable pageable);
 
 	@Query("SELECT sum(quantity) FROM InventoryCount WHERE product.id = ?1")
-	double findProductQuantityCounted(int productId);
+	Double findProductQuantityCounted(int productId);
 }
