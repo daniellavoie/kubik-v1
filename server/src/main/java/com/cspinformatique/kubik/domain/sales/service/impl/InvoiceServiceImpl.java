@@ -63,8 +63,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			double quantity = detail.getQuantity();
-			
-			Product product = productService.findOne(detail.getProduct().getId()); 
+
+			Product product = productService.findOne(detail.getProduct().getId());
 
 			// Calculate rebate amount for detail.
 			double rebateAmount = 0d;
@@ -111,8 +111,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 	public void calculateInvoiceTaxes(Invoice invoice) {
 		HashMap<Double, InvoiceTaxAmount> totalTaxesAmounts = new HashMap<Double, InvoiceTaxAmount>();
 
-		BigDecimal totalTaxableAmount = new BigDecimal(0d);
-		BigDecimal totalTaxAmount = new BigDecimal(0d);
+		double totalTaxableAmount = 0d;
+		double totalTaxAmount = 0d;
 
 		for (InvoiceTaxAmount invoiceTaxAmount : invoice.getTaxesAmounts().values()) {
 			invoiceTaxAmount.setTaxAmount(0d);
@@ -125,21 +125,19 @@ public class InvoiceServiceImpl implements InvoiceService {
 			double quantity = detail.getQuantity();
 
 			// Calculate rebate amount for detail.
-			BigDecimal rebateAmount = new BigDecimal(0d);
+			double rebateAmount = 0d;
 			if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d) {
-				rebateAmount = new BigDecimal(detail.getUnitPrice())
-						.multiply(new BigDecimal(invoice.getRebatePercent()).divide(new BigDecimal(100)));
+				rebateAmount = detail.getUnitPrice() * invoice.getRebatePercent() / 100;
 			}
 
-			BigDecimal detailTotalAmount = new BigDecimal(detail.getUnitPrice()).multiply(new BigDecimal(quantity))
-					.subtract(rebateAmount);
-			BigDecimal detailTaxAmount = detailTotalAmount
-					.multiply((new BigDecimal(product.getTvaRate1()).divide(new BigDecimal(100))));
-			BigDecimal detailTaxableAmount = detailTotalAmount.subtract(detailTaxAmount);
+			double detailTotalAmount = detail.getUnitPrice().doubleValue() * quantity - rebateAmount;
+			double detailTaxAmount = (detailTotalAmount
+					/ (1 + (product.getTvaRate1() / 100)) * (product.getTvaRate1() / 100));
+			double detailTaxableAmount = detailTotalAmount - detailTaxAmount;
 
 			// Increment taxes total amounts.
-			totalTaxAmount = totalTaxAmount.add(detailTaxAmount);
-			totalTaxableAmount = totalTaxableAmount.add(detailTaxableAmount);
+			totalTaxAmount += detailTaxAmount;
+			totalTaxableAmount += detailTaxableAmount;
 
 			// Increment customer credit taxes amounts.
 			InvoiceTaxAmount invoiceTaxAmount = invoice.getTaxesAmounts().get(product.getTvaRate1());
@@ -148,10 +146,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 			} else if (invoiceTaxAmount.getTaxableAmount() == null) {
 				invoiceTaxAmount.setTaxableAmount(0d);
 			}
-			invoiceTaxAmount.setTaxableAmount(
-					detailTaxableAmount.add(new BigDecimal(invoiceTaxAmount.getTaxableAmount())).doubleValue());
-			invoiceTaxAmount
-					.setTaxAmount(detailTaxAmount.add(new BigDecimal(invoiceTaxAmount.getTaxAmount())).doubleValue());
+			
+			invoiceTaxAmount.setTaxableAmount(detailTaxableAmount + invoiceTaxAmount.getTaxableAmount());
+			invoiceTaxAmount.setTaxAmount(detailTaxAmount + invoiceTaxAmount.getTaxAmount());
 
 			totalTaxesAmounts.put(product.getTvaRate1(), invoiceTaxAmount);
 		}
@@ -167,8 +164,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 							.subtract(new BigDecimal(roundedTaxAmount)).doubleValue(), 2));
 		}
 
-		invoice.setTotalTaxAmount(Precision.round(totalTaxAmount.doubleValue(), 2));
-		invoice.setTotalTaxLessAmount(Precision.round(totalTaxableAmount.doubleValue(), 2));
+		invoice.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));
+		invoice.setTotalTaxLessAmount(Precision.round(totalTaxableAmount, 2));
 
 		if (invoice.getTaxesAmounts() != null) {
 			invoice.getTaxesAmounts().clear();
@@ -368,10 +365,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 				}
 
 				if (status.equals(Types.PAID.name())) {
-					
+
 					if (invoice.getNumber() == null) {
 						String number = this.generateInvoiceNumber();
-						
+
 						invoice.setNumber(number);
 
 						number = String.format("%010d", Long.valueOf(invoice.getNumber()) + 1);
