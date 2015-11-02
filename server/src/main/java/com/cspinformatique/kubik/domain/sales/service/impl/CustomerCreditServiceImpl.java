@@ -156,7 +156,7 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 			invoiceTaxAmount.setTaxAmount(Precision.round((invoiceTaxAmount.getTaxedAmount()
 					/ (1 + (invoiceTaxAmount.getTaxRate() / 100)) * (invoiceTaxAmount.getTaxRate() / 100)), 2));
 			invoiceTaxAmount.setTaxableAmount(
-					Precision.round(invoiceTaxAmount.getTaxableAmount() - invoiceTaxAmount.getTaxAmount(), 2));
+					Precision.round(invoiceTaxAmount.getTaxedAmount() - invoiceTaxAmount.getTaxAmount(), 2));
 
 			totalTaxAmount += invoiceTaxAmount.getTaxAmount();
 			totalTaxableAmount += invoiceTaxAmount.getTaxableAmount();
