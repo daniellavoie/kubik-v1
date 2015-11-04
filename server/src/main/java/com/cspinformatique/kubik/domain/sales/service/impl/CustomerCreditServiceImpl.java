@@ -146,7 +146,7 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 					invoiceTaxAmount.setTaxedAmount(0d);
 				}
 
-				invoiceTaxAmount.setTaxedAmount(detailTotalAmount.doubleValue());
+				invoiceTaxAmount.setTaxedAmount(invoiceTaxAmount.getTaxedAmount() + detailTotalAmount.doubleValue());
 
 				totalTaxesAmounts.put(product.getTvaRate1(), invoiceTaxAmount);
 			}
