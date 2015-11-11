@@ -1,6 +1,7 @@
 package com.cspinformatique.kubik.model.product;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
@@ -72,7 +74,7 @@ public class Product {
 
 	private Category category;
 
-	private Long broadleafId;
+	private List<ProductImage> images;
 
 	public Product() {
 
@@ -88,7 +90,7 @@ public class Product {
 			String theme, String publisherIsnb, Boolean replacesAReference, Boolean replacedByAReference,
 			String replacesEan13, String replacedByEan13, Boolean orderableByUnit, BarcodeType barcodeType,
 			Boolean mainReference, Boolean secondaryReference, Integer referencesCount, float discount,
-			String imageEncryptedKey, boolean dilicomReference, Category category) {
+			String imageEncryptedKey, boolean dilicomReference, Category category, List<ProductImage> images) {
 		this.id = id;
 		this.ean13 = ean13;
 		this.supplier = supplier;
@@ -137,6 +139,7 @@ public class Product {
 		this.imageEncryptedKey = imageEncryptedKey;
 		this.dilicomReference = dilicomReference;
 		this.category = category;
+		this.images = images;
 	}
 
 	@Id
@@ -546,11 +549,12 @@ public class Product {
 		this.category = category;
 	}
 
-	public Long getBroadleafId() {
-		return broadleafId;
+	@OneToMany(mappedBy = "product")
+	public List<ProductImage> getImages() {
+		return images;
 	}
 
-	public void setBroadleafId(Long broadleafId) {
-		this.broadleafId = broadleafId;
+	public void setImages(List<ProductImage> images) {
+		this.images = images;
 	}
 }

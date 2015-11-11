@@ -1,0 +1,22 @@
+body{
+	background-color: #f0f0f0;
+	font-family: calibri;
+	padding-top: 20px;
+}
+
+ul {
+	list-style: none;
+}
+
+.main {
+	border-radius: 5px 5px 5px 5px;
+	box-shadow: 1px 1px 12px #555;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}

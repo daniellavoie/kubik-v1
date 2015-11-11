@@ -5,11 +5,16 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cspinformatique.kubik.domain.product.service.CategoryService;
+import com.cspinformatique.kubik.domain.product.service.ProductImageService;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.domain.product.service.ProductStatsService;
 import com.cspinformatique.kubik.domain.product.service.SupplierService;
@@ -27,6 +33,8 @@ import com.cspinformatique.kubik.domain.sales.service.CustomerCreditDetailServic
 import com.cspinformatique.kubik.domain.sales.service.InvoiceDetailService;
 import com.cspinformatique.kubik.domain.warehouse.service.InventoryCountService;
 import com.cspinformatique.kubik.model.product.Product;
+import com.cspinformatique.kubik.model.product.ProductImage;
+import com.cspinformatique.kubik.model.product.ProductImageSize;
 import com.cspinformatique.kubik.model.product.ProductStats;
 import com.cspinformatique.kubik.model.purchase.Reception;
 import com.cspinformatique.kubik.model.purchase.ReceptionDetail;
@@ -58,6 +66,9 @@ public class ProductController {
 
 	@Resource
 	private InvoiceDetailService invoiceDetailService;
+
+	@Resource
+	private ProductImageService productImageService;
 
 	@Resource
 	private ProductStatsService productsStatsService;
@@ -175,6 +186,21 @@ public class ProductController {
 		return "product/products-page";
 	}
 
+	@RequestMapping(value = "/{id}/image/{size}", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<InputStreamResource> loadProductImage(@PathVariable int id,
+			@PathVariable ProductImageSize size) {
+		ProductImage productImage = productImageService.findByProductAndSize(productService.findOne(id), size);
+
+		Assert.notNull(productImage, "Size " + size + " is unavailable for product + " + id + ".");
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentLength(productImage.getContentLength());
+
+		return new ResponseEntity<InputStreamResource>(
+				new InputStreamResource(productImageService.loadInputStream(productService.findOne(id), size)),
+				httpHeaders, HttpStatus.OK);
+	}
+
 	@RequestMapping(value = "/{productId}", params = { "targetProductId", "mergeProduct" })
 	public void mergeProducts(@PathVariable int productId, @RequestParam int targetProductId) {
 		this.productService.mergeProduct(this.findOne(productId), this.findOne(targetProductId));
@@ -186,7 +212,7 @@ public class ProductController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<Product> search(@RequestParam String query,
+	public @ResponseBody Page<Product> search(@RequestParam(defaultValue = "") String query,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
 			@RequestParam(defaultValue = "extendedLabel") String sortBy) {

@@ -1,0 +1,32 @@
+.menu .navigation {
+	background-color: #494949;
+	border-radius: 5px 5px 0px 0px;
+}
+
+.menu a {
+	color: #FFFFFF;
+	font-size: 18px;
+	text-decoration: none;
+}
+
+.sub-menu {
+	background-color: black;
+	color: white;
+	padding-bottom: 5px;
+	padding-top: 5px; 
+}
+
+.sub-menu .sub-menu-spacer {
+	background-color: #494949;
+	width: 1px;
+}
+
+.search-bar {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+.search-bar .you-search{
+	font-size: 18px;
+	margin-top: 7px;
+}

@@ -1,0 +1,16 @@
+.social {
+	background-color: white;
+}
+
+.site-plan h4 {
+	font-size: 16px;
+	text-transform: uppercase;
+}
+
+.site-plan ul {
+	padding-left: 0px;
+}
+
+.site-plan a, .site-plan a:hover {
+	color: #929292;
+}

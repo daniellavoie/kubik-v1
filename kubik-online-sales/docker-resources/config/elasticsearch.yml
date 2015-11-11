@@ -1,0 +1,5 @@
+bootstrap:
+  mlockall: true
+path:
+  logs: /data/log
+  data: /data/data

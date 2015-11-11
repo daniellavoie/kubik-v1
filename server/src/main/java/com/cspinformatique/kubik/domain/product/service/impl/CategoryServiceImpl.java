@@ -2,25 +2,34 @@ package com.cspinformatique.kubik.domain.product.service.impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.cspinformatique.kubik.domain.kos.service.KosNotificationService;
 import com.cspinformatique.kubik.domain.product.exception.CategoryNameAlreadyUsedException;
 import com.cspinformatique.kubik.domain.product.repository.CategoryRepository;
 import com.cspinformatique.kubik.domain.product.service.CategoryService;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
+import com.cspinformatique.kubik.model.kos.KosNotification.Action;
+import com.cspinformatique.kubik.model.kos.KosNotification.Type;
 import com.cspinformatique.kubik.model.product.Category;
 import com.cspinformatique.kubik.model.product.Product;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
 	private static final String DEFAULT_NAME = "Nouvelle Catégorie";
-	@Autowired
+
+	@Resource
 	private CategoryRepository categoryRepository;
 
-	@Autowired
+	@Resource
+	private KosNotificationService kosNotificationService;
+
+	@Resource
 	private ProductService productService;
 
 	private void assertNameNotAlreadyUsed(Category category) throws CategoryNameAlreadyUsedException {
@@ -36,15 +45,19 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
+	@Transactional
 	public void delete(int id) {
 		categoryRepository.delete(id);
+
+		// Create a broadleaf notification for the product.
+		kosNotificationService.createNewNotification(id, Type.CATEGORY, Action.DELETE);
 	}
 
 	@Override
 	public void deleteProductCategories(Category category) {
-		for(Product product : productService.findByCategory(category)){
+		for (Product product : productService.findByCategory(category)) {
 			product.setCategory(null);
-			
+
 			productService.save(product);
 		}
 	}
@@ -93,9 +106,15 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
+	@Transactional
 	public Category save(Category category) {
 		assertNameNotAlreadyUsed(category);
 
-		return categoryRepository.save(category);
+		category = categoryRepository.save(category);
+
+		// Create a broadleaf notification for the product.
+		kosNotificationService.createNewNotification(category.getId(), Type.CATEGORY, Action.UPDATE);
+
+		return category;
 	}
 }

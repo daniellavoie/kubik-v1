@@ -23,6 +23,7 @@
 		<module>server</module>
 		<module>reports</module>
 		<module>proxy</module>
+		<module>kubik-client</module>
 	</modules>
 
 	<build>
@@ -55,4 +56,23 @@
 		<developerConnection>scm:git:https://github.com/daniellavoie/Kubik.git</developerConnection>
 		<tag>kubik-1.4.1</tag>
 	</scm>
+	<dependencyManagement>
+		<dependencies>
+		    <dependency>
+		        <groupId>com.amazonaws</groupId>
+		        <artifactId>aws-java-sdk-s3</artifactId>
+		        <version>1.9.0</version>
+		    </dependency>
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-actor_2.11</artifactId>
+				<version>2.4.0</version>
+			</dependency>
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.9</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

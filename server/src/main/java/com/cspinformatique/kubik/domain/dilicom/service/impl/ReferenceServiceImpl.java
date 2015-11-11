@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.domain.dilicom.model.Reference;
 import com.cspinformatique.kubik.domain.dilicom.repository.es.ReferenceRepository;
-import com.cspinformatique.kubik.domain.dilicom.service.ImageService;
+import com.cspinformatique.kubik.domain.dilicom.service.DilicomImageService;
 import com.cspinformatique.kubik.domain.dilicom.service.ReferenceService;
 import com.cspinformatique.kubik.domain.product.service.ProductService;
 import com.cspinformatique.kubik.model.product.Product;
@@ -27,7 +27,7 @@ public class ReferenceServiceImpl implements ReferenceService {
 			.getLogger(ReferenceServiceImpl.class);
 
 	@Autowired
-	private ImageService imageService;
+	private DilicomImageService dilicomImageService;
 
 	@Autowired
 	private ReferenceRepository referenceRepository;
@@ -90,7 +90,7 @@ public class ReferenceServiceImpl implements ReferenceService {
 	}
 
 	private Reference calculateImageUrl(Reference reference) {
-		reference.setImageEncryptedKey(this.imageService.getEncryptedUrl(
+		reference.setImageEncryptedKey(this.dilicomImageService.getEncryptedUrl(
 				reference.getEan13(), reference.getSupplierEan13()));
 
 		return reference;

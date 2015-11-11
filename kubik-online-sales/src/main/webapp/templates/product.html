@@ -1,0 +1,37 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<title>La Dimension Fantastique - Accueil</title>
+		
+		<link th:replace="util/import :: head" />
+	</head>
+	
+	<body ng-app="kos">
+		<div th:replace="util/header :: header"></div>
+		
+		<div class="main container">
+			<div th:include="util/menu :: menu"></div>
+			
+			<div ng-controller="ProductCtrl as productCtrl" class="content row">
+				<div ng-cloak="" class="col-sm-4 ng-cloak">
+					<img src="http://images1.centprod.com/{{productCtrl.ean13}}/{{productCtrl.product.imageEncryptedKey}}-cover-medium.jpg" />
+				</div>
+				
+				<div ng-cloak="" class="col-sm-8 ng-cloak">
+					<div>
+						<div>{{productCtrl.product.title}}</div>
+						<div>De {{productCtrl.product.author}}</div>
+						<div>Parue le {{productCtrl.product.datePublished | date : "short"}}</div>
+					</div>
+				</div>
+			</div>
+			
+			<script th:replace="util/footer :: footer"></script>
+		</div>
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/product/product-controller.js}"></script>
+	</body>
+</html>
