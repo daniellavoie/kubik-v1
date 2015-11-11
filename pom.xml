@@ -23,7 +23,6 @@
 		<module>server</module>
 		<module>reports</module>
 		<module>proxy</module>
-		<module>kubik-client</module>
 	</modules>
 
 	<build>
