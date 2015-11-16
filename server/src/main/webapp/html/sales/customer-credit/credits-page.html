@@ -70,6 +70,7 @@
 								<span ng-if="customerCredit.paymentMethod.type == 'CASH'" title="Espèces" class="glyphicon glyphicon-euro">&nbsp;</span>
 								<span ng-if="customerCredit.paymentMethod.type == 'CHECK'" title="Chèque"  class="glyphicon glyphicon-edit">&nbsp;</span>
 								<span ng-if="customerCredit.paymentMethod.type == 'CREDIT'" title="Avoir"  class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
+								<span ng-if="customerCredit.paymentMethod.type == 'WIRE'" title="Virement"  class="glyphicon glyphicon-transfer">&nbsp;</span>
 							</td>
 							<td>
 								<span ng-if="customerCredit.status == 'OPEN'">Brouillon</span>
