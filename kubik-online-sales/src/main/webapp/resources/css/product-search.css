@@ -1,0 +1,34 @@
+.affix{
+	top: 0px;
+}
+
+.product:HOVER{
+	background-color: #F0F0F0;
+	border-radius: 5px 5px 5px 5px;
+	cursor: pointer;
+}
+
+.product img{
+	max-width: 130px;
+}
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+	.affix{
+		width: 220px;
+	}
+}
+
+/* Medium  devices  (tablets, 768px and up) */
+@media (min-width: 992px) {
+	.affix{
+		width: 293px;
+	}
+}
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+	.affix{
+		width: 360px;
+	}
+}

@@ -1,6 +1,27 @@
+.root-category:hover > .category-submenu, .category-submenu:hover {
+	display: block;
+}
+
 .menu .navigation {
 	background-color: #494949;
 	border-radius: 5px 5px 0px 0px;
+}
+
+.menu .navigation{
+}
+
+.menu .navigation > li{
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.menu .navigation > li:HOVER, .menu .navigation > li.active {
+	background-color: white;
+	cursor: pointer;
+}
+
+.menu .navigation > li:HOVER a{
+	color: black;
 }
 
 .menu a {
@@ -9,11 +30,29 @@
 	text-decoration: none;
 }
 
+.menu .sub-category {
+	width: 150px;
+	float: left;
+}
+
+.menu .sub-category .child-category:HOVER{
+	background-color: #F0F0F0;
+	cursor: pointer;
+}
+
+.menu .category-submenu {
+	background-color: white;
+}
+.menu .category-submenu a{
+	color: black;
+}
+
 .sub-menu {
 	background-color: black;
 	color: white;
 	padding-bottom: 5px;
-	padding-top: 5px; 
+	padding-top: 5px;
+	left: 0px;
 }
 
 .sub-menu .sub-menu-spacer {
@@ -26,7 +65,28 @@
 	margin-bottom: 15px;
 }
 
-.search-bar .you-search{
+.search-bar .you-search {
 	font-size: 18px;
 	margin-top: 7px;
 }
+
+/* Small devices (tablets, 768px and up) */
+/* @media ( min-width : 768px) { */
+/* 	.category-submenu { */
+/* 		width: 768px; */
+/* 	} */
+/* } */
+
+/* /* Medium  devices  (tablets, 768px and up) */ */
+/* @media ( min-width : 992px) { */
+/* 	.category-submenu { */
+/* 		width: 992px; */
+/* 	} */
+/* } */
+
+/* /* Large devices (large desktops, 1200px and up) */ */
+/* @media ( min-width : 1200px) { */
+/* 	.category-submenu { */
+/* 		width: 1200px; */
+/* 	} */
+/* } */

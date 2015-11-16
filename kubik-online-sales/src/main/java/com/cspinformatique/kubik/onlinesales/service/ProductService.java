@@ -1,6 +1,10 @@
 package com.cspinformatique.kubik.onlinesales.service;
 
+import java.util.Date;
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.cspinformatique.kubik.model.kos.KosNotification;
 import com.cspinformatique.kubik.onlinesales.model.Category;
@@ -14,4 +18,7 @@ public interface ProductService {
 	void processKosNotification(KosNotification kosNotification);
 	
 	Product save(Product product);
+	
+	Page<Product> search(String title, String author, List<Integer> categories, Date publishFrom, Date publishUntil, String manufacturer,
+			Double priceFrom, Double priceTo, String query, Pageable pageable);
 }

@@ -1,18 +1,16 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
-
+<html 
+	ng-app="kos" 
+	ng-controller="KosCtrl as kosCtrl"
+>
 	<head>
-		<title>La Dimension Fantastique - Accueil</title>
-		
 		<link th:replace="util/import :: head" />
 	</head>
 	
 	<body>
 		<div th:replace="util/header :: header"></div>
 		
-		<div class="main container">
+		<div ng-controller="IndexCtrl as indexCtrl" class="main container">
 			<div th:include="util/menu :: menu"></div>
 			
 			<div class="content row">
@@ -46,7 +44,7 @@
 					<a class="left carousel-control" href="#carousel-example-generic"
 						role="button" data-slide="prev"> <span
 						class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-						<span class="sr-only">PrÃ©cÃ©dent</span>
+						<span class="sr-only">Précédent</span>
 					</a> <a class="right carousel-control" href="#carousel-example-generic"
 						role="button" data-slide="next"> <span
 						class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
@@ -62,5 +60,6 @@
 			<script th:replace="util/footer :: footer"></script>
 		</div>
 		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/index-controller.js}"></script>
 	</body>
 </html>

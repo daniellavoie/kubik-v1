@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -191,14 +190,16 @@ public class ProductController {
 			@PathVariable ProductImageSize size) {
 		ProductImage productImage = productImageService.findByProductAndSize(productService.findOne(id), size);
 
-		Assert.notNull(productImage, "Size " + size + " is unavailable for product + " + id + ".");
-
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentLength(productImage.getContentLength());
-
-		return new ResponseEntity<InputStreamResource>(
-				new InputStreamResource(productImageService.loadInputStream(productService.findOne(id), size)),
-				httpHeaders, HttpStatus.OK);
+		if (productImage != null) {
+			HttpHeaders httpHeaders = new HttpHeaders();
+			httpHeaders.setContentLength(productImage.getContentLength());
+			
+			return new ResponseEntity<InputStreamResource>(
+					new InputStreamResource(productImageService.loadInputStream(productService.findOne(id), size)),
+					httpHeaders, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<InputStreamResource>(null, new HttpHeaders(), HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@RequestMapping(value = "/{productId}", params = { "targetProductId", "mergeProduct" })

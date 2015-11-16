@@ -32,7 +32,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 	private String ean13;
 
 	private String calculateImageKey(Product product, ProductImageSize size) {
-		return product.getId() + "-" + size.name() + ".jpg";
+		return product.getKubikId() + "-" + size.name() + ".jpg";
 	}
 
 	@Override

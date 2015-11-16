@@ -1,0 +1,148 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html 
+	ng-app="kos" 
+	ng-controller="KosCtrl as kosCtrl"
+>
+	<head>		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/product-search.css}" />
+	</head>
+	
+	<body ng-app="kos">
+		<div th:replace="util/header :: header"></div>
+		
+		<div class="main container">
+			<div th:include="util/menu :: menu"></div>
+			
+			<div ng-controller="ProductSearchCtrl as productSearchCtrl" class="productPage content row ng-cloak" ng-cloak="">
+				<div class="col-sm-4 hidden-xs">
+					<div data-spy="affix" data-offset-top="390">
+						<div>
+							<h4>Catégories</h4>
+							
+							<!-- There is an issue with Select2 where width needs to be explicit. Responsive design won't work with 
+							a definition comming from a css. -->
+							<select 
+								style="width: 100%"
+								multiple="multiple" 
+								class="categories-select form-control"
+								ng-change="productSearchCtrl.categoriesChanged()"
+								ng-model="productSearchCtrl.searchParams.categories" 
+								ng-options="category.id as category.name for category in productSearchCtrl.categories" 
+							></select>
+						</div>
+						
+						<div>
+							<h4>Titre</h4>
+							
+							<input 
+								type="text" 
+								class="form-control" 
+								ng-keyup="productSearchCtrl.triggerSearchEvent()" 
+								ng-model="productSearchCtrl.searchParams.title" 
+							/>
+						</div>
+						
+						<div>
+							<h4>Auteur</h4>
+							
+							<input 
+								type="text" 
+								class="form-control" 
+								ng-keyup="productSearchCtrl.triggerSearchEvent()" 
+								ng-model="productSearchCtrl.searchParams.author" 
+							/>
+						</div>
+						
+						<div>
+							<h4>Editeur</h4>
+							
+							<input 
+								type="text" 
+								class="form-control" 
+								ng-keyup="productSearchCtrl.triggerSearchEvent()" 
+								ng-model="productSearchCtrl.searchParams.manufacturer" 
+							/>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-sm-8">
+					<div class="pager-top text-center">
+						<div class="loading" ng-if="productSearchCtrl.loading">
+							<div><img th:src="@{/img/icons/loading.gif}" /></div>
+							<div>... chargement ...</div>
+						</div>
+						<ul ng-cloak="" ng-if="!productSearchCtrl.loading" class="pager row text-center">
+							<li class="col-sm-2 text-center">
+								<a 
+									href="#"
+									ng-if="!productSearchCtrl.productPage.first"
+									ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number-1, true)" 
+								>Précédente</a>
+							</li>
+							
+							<li class="col-sm-8 text-center">
+								<div>Page {{productSearchCtrl.productPage.number+1}} sur {{productSearchCtrl.productPage.totalPages}}</div>
+								<div>{{productSearchCtrl.productPage.totalElements}} produits</div>
+							</li>
+							
+							<li class="col-sm-2 text-center">
+								<a 
+									href="#"
+									ng-if="!productSearchCtrl.productPage.last" 
+									ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number+1, true)" 
+								>Suivante</a>
+							</li>
+						</ul>
+					</div>
+					
+					<div ng-repeat="product in productSearchCtrl.productPage.content" ng-click="productSearchCtrl.openProductPage(product)" class="product row">
+						<div class="col-sm-3 text-center">
+							<img src="http://images.amazon.com/images/P/{{product.isbn}}.01._SCMZZZZZZZ_.jpg" />
+<!-- 							<img ng-if="product.images.length == 0" th:src="@{/img/logos/dimension-fantastique-noir.png}" /> -->
+						</div>
+						<div class="col-sm-9">
+							<div><h4><a th:href="@{/product/{{product.id}}}">{{product.title}}</a></h4></div>
+							<div><h5>De {{product.author}}</h5></div>
+							<div>
+								Parue le {{product.datePublished | date : "shortDate"}}
+								chez {{product.manufacturer}}
+							</div>
+							<div>{{product.category.name}}</div>
+						</div>
+					</div>
+					
+					<div class="text-center">
+						<ul ng-cloak="" ng-if="!productSearchCtrl.loading" class="pager row text-center">
+							<li class="col-sm-2 text-center">
+								<a 
+									href="#"
+									ng-if="!productSearchCtrl.productPage.first"
+									ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number-1)" 
+								>Précédente</a>
+							</li>
+							
+							<li class="col-sm-8 text-center">
+								<div>Page {{productSearchCtrl.productPage.number+1}} sur {{productSearchCtrl.productPage.totalPages}}</div>
+								<div>{{productSearchCtrl.productPage.totalElements}} produits</div>
+							</li>
+							
+							<li class="col-sm-2 text-center">
+								<a 
+									href="#"
+									ng-if="!productSearchCtrl.productPage.last" 
+									ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number+1)" 
+								>Suivante</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+			<script th:replace="util/footer :: footer"></script>
+		</div>
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/product/product-search-controller.js}"></script>
+	</body>
+</html>

@@ -5,14 +5,15 @@
 		.module("kos")
 		.controller("ProductCtrl", ProductCtrl);
 	
-	function ProductCtrl(productService, companyService){
+	function ProductCtrl($scope, productService){
 		var vm = this;
 		
-		companyService.getEan13().then(function(ean13){
-			vm.ean13 = ean13;	
-		});
-		productService.loadProduct(productId).then(function(product){
+		productService.loadProduct(productId).then(loadProductSuccess);
+		
+		function loadProductSuccess(product){
 			vm.product = product;
-		});
+			
+			$scope.$emit("updateTitle", vm.product.title);
+		}
 	}
 })();

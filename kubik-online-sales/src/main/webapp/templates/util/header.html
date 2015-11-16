@@ -5,7 +5,30 @@
 	<body>
 		<div th:fragment="header">
 			<header class="container">
-				<img th:src="@{/img/logos/dimension-fantastique-noir.png}" />
+				<div class="col-sm-8">
+					<img th:src="@{/img/logos/dimension-fantastique-noir.png}" />
+				</div>
+				
+				<div class="col-sm-2">
+					<div class="row text-center">
+						<div class="glyphicon glyphicon-shopping-cart">
+							<div class="col-xs-1 glyphicon glyphicon-user"></div>
+							
+							<div class="col-xs-5">Mon compte</div>
+						</div>
+						<div class="col-xs-offset-6 col-xs-1 glyphicon glyphicon-shopping-cart">
+							<div ng-app="CartSummaryCtrl as cartSummaryCtrl">
+								<div class="col-xs-4">
+									<div>Panier</div>
+									<div>0,00 &euro;</div>
+								</div>
+								<div class="col-xs-1">
+									<span class="badge">0</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</header>
 		</div>
 	</body>

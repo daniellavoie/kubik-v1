@@ -131,7 +131,7 @@ public class Product {
 		this.category = category;
 	}
 
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<ProductImage> getImages() {
 		return images;
 	}

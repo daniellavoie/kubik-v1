@@ -27,9 +27,37 @@ public class CategoryServiceImpl implements CategoryService {
 	@Resource
 	private KubikTemplate kubikTemplate;
 
+	private void addChildCategoriesToList(Category category, List<Category> categoriesList) {
+		categoriesList.addAll(category.getChildCategories());
+
+		category.getChildCategories().forEach(childCategory -> addChildCategoriesToList(childCategory, categoriesList));
+	}
+
+	@Override
+	public Category findByName(String name) {
+		return categoryRepository.findByName(name);
+	}
+
 	@Override
 	public Category findByKubikId(int kubikId) {
 		return categoryRepository.findByKubikId(kubikId);
+	}
+
+	@Override
+	public List<Category> findByRootCategory(boolean rootCategory) {
+		return categoryRepository.findByRootCategory(rootCategory);
+	}
+
+	@Override
+	public List<Category> generateNestedCategories(int categoryId) {
+		Category category = categoryRepository.findOne(categoryId);
+
+		List<Category> categoriesList = new ArrayList<>();
+		categoriesList.add(category);
+
+		addChildCategoriesToList(category, categoriesList);
+
+		return categoriesList;
 	}
 
 	private void deleteCategory(Category category) {
@@ -44,6 +72,11 @@ public class CategoryServiceImpl implements CategoryService {
 
 		// Delete the category.
 		categoryRepository.delete(category);
+	}
+
+	@Override
+	public Category findOne(int id) {
+		return categoryRepository.findOne(id);
 	}
 
 	@Override
