@@ -51,4 +51,11 @@ public class ProductInventoryController {
 	public void updateProductInventory(@PathVariable String ean13) {
 		productInventoryService.updateInventory(productService.findByEan13(ean13).iterator().next());
 	}
+
+	@RequestMapping(value = "/product", method = RequestMethod.GET, params = "updateInventory", produces = MediaType.TEXT_HTML_VALUE)
+	public @ResponseBody String updateProductInventorird() {
+		productInventoryService.updateInventories();
+
+		return "DONE";
+	}
 }

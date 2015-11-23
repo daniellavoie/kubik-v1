@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 
 	@Resource
 	private InventoryCountService inventoryCountService;
-	
+
 	@Resource
 	private InvoiceService invoiceService;
 
@@ -61,12 +62,17 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 
 	@Override
 	public void deleteByProduct(Product product) {
-		this.productInventoyRepository.delete(this.findByProduct(product));
+		productInventoyRepository.delete(findByProduct(product));
+	}
+
+	@Override
+	public Page<ProductInventory> findAll(Pageable pageable) {
+		return productInventoyRepository.findAll(pageable);
 	}
 
 	@Override
 	public ProductInventory findByProduct(Product product) {
-		ProductInventory productInventory = this.productInventoyRepository.findByProduct(product);
+		ProductInventory productInventory = productInventoyRepository.findByProduct(product);
 
 		if (productInventory == null) {
 			productInventory = new ProductInventory(null, product, 0d, 0d);
@@ -82,25 +88,42 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 
 	@Override
 	public void updateInventory(Product product) {
-		int productId = product.getId();
+		updateInventory(findByProduct(product));
+	}
 
-		ProductInventory productInventory = this.findByProduct(product);
+	@Override
+	public void updateInventory(ProductInventory productInventory) {
+		int productId = productInventory.getProduct().getId();
 
 		double oldQuantityOnHand = productInventory.getQuantityOnHand();
-		double quantityReceived = this.receptionService.findProductQuantityReceived(productId);
-		double quantityCustomerReturned = this.customerCreditService.findProductQuantityReturnedByCustomer(productId);
-		double quantityReturnedToSupplier = this.rmaService.findProductQuantityReturnedToSupplier(productId);
-		double quantitySold = this.invoiceService.findProductQuantitySold(productId);
-		double quantityCounted = this.inventoryCountService.findProductQuantityCounted(productId);
+		double quantityReceived = receptionService.findProductQuantityReceived(productId);
+		double quantityCustomerReturned = customerCreditService.findProductQuantityReturnedByCustomer(productId);
+		double quantityReturnedToSupplier = rmaService.findProductQuantityReturnedToSupplier(productId);
+		double quantitySold = invoiceService.findProductQuantitySold(productId);
+		double quantityCounted = inventoryCountService.findProductQuantityCounted(productId);
 
-		double quantityOnHand = quantityReceived + quantityCustomerReturned - quantitySold - quantityReturnedToSupplier + quantityCounted;
+		double quantityOnHand = quantityReceived + quantityCustomerReturned - quantitySold - quantityReturnedToSupplier
+				+ quantityCounted;
 
 		productInventory.setQuantityOnHand(quantityOnHand);
 
 		LOGGER.info("Updating inventory for product " + productId + " from " + oldQuantityOnHand + " to "
 				+ quantityOnHand + ".");
 
-		this.save(productInventory);
+		save(productInventory);
+	}
+
+	@Override
+	public void updateInventories() {
+		Page<ProductInventory> page = null;
+		Pageable pageable = new PageRequest(0, 100, Direction.ASC, "id");
+		do {
+			page = findAll(pageable);
+
+			page.getContent().stream().forEach(productInventory -> updateInventory(productInventory));
+			
+			pageable = pageable.next();
+		} while (page.hasNext());
 	}
 
 	@Override
@@ -140,7 +163,7 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 
 	@Override
 	public ProductInventory save(ProductInventory productInventory) {
-		return this.productInventoyRepository.save(productInventory);
+		return productInventoyRepository.save(productInventory);
 	}
 
 }
