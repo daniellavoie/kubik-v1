@@ -384,7 +384,11 @@
 									
 									<li class="col-md-2">
 										&nbsp;
-										<a href="#" ng-if="!productCardCtrl.inventoryTabs[productCardCtrl.inventoryTab].result.last" ng-click="changePage(productCardCtrl.inventoryTabs[productCardCtrl.inventoryTab].result.number+1)">Suivante</a>
+										<a 
+											href="#" 
+											ng-if="!productCardCtrl.inventoryTabs[productCardCtrl.inventoryTab].result.last" 
+											ng-click="productCardCtrl.changePage(productCardCtrl.inventoryTabs[productCardCtrl.inventoryTab].result.number+1)"
+										>Suivante</a>
 									</li>
 								</ul>
 								
