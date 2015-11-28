@@ -68,7 +68,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 			// Calculate rebate amount for detail.
 			double rebateAmount = 0d;
 			if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d) {
-				rebateAmount = detail.getUnitPrice() * (invoice.getRebatePercent() / 100);
+				rebateAmount = product.getPriceTaxIn() * (invoice.getRebatePercent() / 100);
 			}
 
 			// Increment total rebate amount.
