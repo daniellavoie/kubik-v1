@@ -1,0 +1,52 @@
+body{
+	background-color: #f0f0f0;
+	font-family: calibri;
+	padding-top: 80px;
+}
+
+/* select{ */
+/* 	width: 100%; */
+/* } */
+
+ul {
+	list-style: none;
+}
+
+
+.main {
+	box-shadow: 0px 0px 12px #555;
+}
+
+
+.container{
+	padding-left: 0px;
+	padding-right: 0px;
+	border-radius: 5px 5px 5px 5px;
+}
+
+.content-top {
+	border-radius: 5px 5px 0px 0px;
+}
+
+.content-main{
+	padding: 20px;
+}
+
+.content-bottom{
+	border-radius: 0px 0px 0px 0px;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none;
+}
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+	body{
+		padding-top: 20px;
+	}
+}

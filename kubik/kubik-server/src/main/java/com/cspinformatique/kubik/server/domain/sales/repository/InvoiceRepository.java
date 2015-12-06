@@ -1,0 +1,45 @@
+package com.cspinformatique.kubik.server.domain.sales.repository;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
+
+import com.cspinformatique.kubik.server.model.sales.CashRegisterSession;
+import com.cspinformatique.kubik.server.model.sales.Invoice;
+import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
+import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
+
+public interface InvoiceRepository extends
+		PagingAndSortingRepository<Invoice, Integer> {
+	List<Invoice> findByCashRegisterSessionAndStatus(
+			CashRegisterSession session, InvoiceStatus invoiceStatus);
+
+	Invoice findByNumber(String number);
+
+	List<Invoice> findByPaidDateBetweenAndStatus(Date startPaidDate,
+			Date startEndDate, InvoiceStatus status);
+
+	Page<Invoice> findByPaidDateBetweenAndStatus(Date startPaidDate,
+			Date startEndDate, InvoiceStatus status, Pageable pageable);
+
+	Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable);
+	
+	Page<Invoice> findByStatusAndNumberIsNotNull(InvoiceStatus status, Pageable pageable);
+
+	@Query("SELECT invoiceDetail FROM Invoice invoice, InvoiceDetail invoiceDetail where invoice = invoiceDetail.invoice AND invoice.id = ?1 AND invoiceDetail.product.ean13 = ?2")
+	InvoiceDetail findDetailByInvoiceIdAndProductEan13(
+			int invoiceId, String ean13);
+
+	@Query("SELECT id FROM Invoice invoice WHERE id > ?1")
+	Page<Integer> findIdByIdGreaterThan(int id, Pageable pageable);
+
+	@Query("SELECT id FROM Invoice invoice WHERE id < ?1")
+	Page<Integer> findIdByIdLessThan(int id, Pageable pageable);
+	
+	@Query("SELECT sum(detail.quantity) FROM InvoiceDetail detail WHERE detail.product.id = ?1 AND detail.invoice.status.type = 'PAID'")
+	Double findProductQuantityPurchased(int productId);
+}

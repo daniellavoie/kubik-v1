@@ -1,0 +1,161 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html 
+	ng-app="kos" 
+	ng-controller="KosCtrl as kosCtrl"
+>
+	<head>		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/order/customer-order.css}" />
+	</head>
+	
+	<body ng-app="kos">
+		<div th:replace="util/header :: header"></div>
+		
+		<div class="main container">
+			<div th:include="util/menu :: menu"></div>
+			
+			<div ng-controller="CheckoutCtrl as checkoutCtrl" class="content row" ng-cloak="">
+				<div ng-if="checkoutCtrl.workflowStep == 'shipping'" class="shipping-method">
+					<div class="col-sm-9">
+						<div class="row">
+							<div class="col-sm-12">
+								<h3>Options de livraison</h3>
+								<div>
+									<input 
+										type="radio" 
+										value="COLISSIMO"
+										name="shippingMethod" 
+										id="shipping-method-COLISSIMO" 
+										ng-change="checkoutCtrl.saveCustomerOrder()"
+										ng-model="checkoutCtrl.customerOrder.shippingMethod"
+									/>
+									<label for="shipping-method-COLISSIMO">Colissimo</label>
+								</div>
+								<div>
+									<input 
+										type="radio" 
+										value="TAKEOUT"
+										name="shippingMethod" 
+										id="shipping-method-TAKEOUT" 
+										ng-change="checkoutCtrl.saveCustomerOrder()"
+										ng-model="checkoutCtrl.customerOrder.shippingMethod"
+									/>
+									<label for="shipping-method-TAKEOUT">Retrait en magasin</label>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-sm-9">
+								<div class="row">
+									<div ng-if="checkoutCtrl.customerOrder.shippingMethod == 'COLISSIMO'" class="col-sm-6">
+										<h3>Adresse d'expédition</h3>
+										<div>
+											<a	href="#" 
+												ng-click="checkoutCtrl.modifyAddress(checkoutCtrl.customerOrder.shippingAddress, true)"
+											>Modifier</a>
+										</div>
+										
+										<div>Lavoie Daniel</div>
+										<div>589 Terrasse De L'Arche</div>
+										<div>Batiment B, 1er etage, Appartement 122</div>
+										<div>NANTERRE, 92000</div>
+										<div>France</div>
+										<div>Téléhone 06 45 97 73 33</div>
+									</div>
+									<div class="col-sm-6">
+										<h3>Adresse de facturation</h3>
+										<div>
+											<a	href="#" 
+												ng-click="checkoutCtrl.modifyAddress(checkoutCtrl.customerOrder.billingAddress, false)"
+											>Modifier</a>
+										</div>
+										
+										<div>Lavoie Daniel</div>
+										<div>589 Terrasse De L'Arche</div>
+										<div>Batiment B, 1er etage, Appartement 122</div>
+										<div>NANTERRE, 92000</div>
+										<div>France</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-sm-3 checkout text-center">
+						<div>
+							<button class="btn btn-primary" ng-click="checkoutCtrl.confirmShippingMethod()">Acheter</button>
+						</div>
+						<div>Sous total : {{checkoutCtrl.customerOrder.subTotal| number : 2}} &euro;</div>
+						
+						<div>Livraison : {{checkoutCtrl.customerOrder.shippingCost | number : 2}} &euro;</div>
+						
+						<div>Montant total : {{checkoutCtrl.customerOrder.totalAmount | number : 2}} &euro;</div>
+					</div>
+				</div>
+				
+				<div ng-if="checkoutCtrl.workflowStep == 'payment'" class="payment">
+					<form id="checkout" method="post" action="/checkout">
+						<div id="payment-form"></div>
+						<input type="submit" value="Pay $10" />
+					</form>
+				</div>
+				
+				<div class="modify-address modal fade" role="dialog">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title">
+									Modifier l'adresse de 
+									<span ng-if="checkoutCtrl.shippingAddress">livraison.</span>
+									<span ng-if="!checkoutCtrl.shippingAddress">facturation.</span>
+								</h4>
+							</div>
+							<div class="modal-body">
+								<div class="form-group">
+									<label>Prénom</label>
+    								<input type="text" class="form-control" placeholder="Prénom" ng-value="checkoutCtrl.address.firstName" />
+  								</div>
+								<div class="form-group">
+									<label>Nom</label>
+    								<input type="text" class="form-control" placeholder="Nom" ng-value="checkoutCtrl.address.lastName" />
+  								</div>
+								<div class="form-group">
+									<label>Adresse 1</label>
+    								<input type="text" class="form-control" placeholder="Adresse 1" ng-value="checkoutCtrl.address.address1" />
+  								</div>
+								<div class="form-group">
+									<label>Adresse 2</label>
+    								<input type="text" class="form-control" placeholder="Adresse 2" ng-value="checkoutCtrl.address.address2" />
+  								</div>
+								<div class="form-group">
+									<label>Ville</label>
+    								<input type="text" class="form-control" placeholder="Ville" ng-value="checkoutCtrl.address.city" />
+  								</div>
+								<div class="form-group">
+									<label>Code postal</label>
+    								<input type="text" class="form-control" placeholder="Code postal" ng-value="checkoutCtrl.address.postalCode" />
+  								</div>
+								<div class="form-group">
+									<label>Téléphone</label>
+    								<input type="text" class="form-control" placeholder="Téléphone" ng-value="checkoutCtrl.address.phone" />
+  								</div>
+							</div>
+							
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+        						<button type="button" class="btn btn-primary">Enregistrer</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<script th:replace="util/footer :: footer"></script>
+		</div>
+		<script th:replace="util/import :: scripts"></script>
+		<script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+		<script type="text/javascript" th:src="@{/js/order/braintree-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/order/checkout-controller.js}"></script>
+	</body>
+</html>

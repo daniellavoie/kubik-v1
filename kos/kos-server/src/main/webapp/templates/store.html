@@ -1,0 +1,145 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html 
+	ng-app="kos" 
+	ng-controller="KosCtrl as kosCtrl"
+>
+	<head>
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/the-library.css}" />
+	</head>
+	
+	<body ng-controller="LibraryCtrl as libraryCtrl">
+		<div th:replace="util/header :: header"></div>
+		
+		<div class="main container">
+			<div th:replace="util/menu :: menu"></div>
+			
+			<div class="content">
+				<div class="row">
+					<div class="the-library col-xs-5 col-sm-3">La Librairie</div>
+				</div>
+				
+				<div class="row">
+					<div id="carousel-example-generic" class="carousel slide"
+						data-ride="carousel">
+						<!-- Indicators -->
+						<ol class="carousel-indicators">
+							<li data-target="#carousel-example-generic" data-slide-to="0"
+								class="active"></li>
+							<li data-target="#carousel-example-generic" data-slide-to="1"></li>
+							<li data-target="#carousel-example-generic" data-slide-to="2"></li>
+						</ol>
+		
+						<!-- Wrapper for slides -->
+						<div class="carousel-inner" role="listbox">
+							<div class="item  text-center active">
+								<img th:src="@{/img/carousel/carousel-1.png}" />
+								<div class="carousel-caption">...</div>
+							</div>
+							<div class="item text-center">
+								<img th:src="@{/img/carousel/carousel-2.png}" />
+								<div class="carousel-caption">...</div>
+							</div>
+							<div class="item text-center">
+								<img th:src="@{/img/carousel/carousel-3.png}" />
+								<div class="carousel-caption">...</div>
+							</div>
+						</div>
+		
+						<!-- Controls -->
+						<a class="left carousel-control" href="#carousel-example-generic"
+							role="button" data-slide="prev"> <span
+							class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+							<span class="sr-only">Précédent</span>
+						</a> <a class="right carousel-control" href="#carousel-example-generic"
+							role="button" data-slide="next"> <span
+							class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+							<span class="sr-only">Suivant</span>
+						</a>
+					</div>
+				</div>
+				
+				<div class="row library-presentation">
+					<h3>La Dimension Fantastique</h3>
+					<p class="text-justify">
+						La dimension fantastique, c’est Guix et Ju, deux libraires passionnés de bandes 
+						dessinées en tous genres (comics, franco-belge, mangas) et de littératures de 
+						l’imaginaire (fantasy, fantastique, science-fiction), et désireux de créer la 
+						librairie de leurs rêves : une librairie indépendante spécialisée dans les genres 
+						qu’ils affectionnent, proposant un large choix d’ouvrages, avec des mises en avant 
+						d’auteurs et d’éditeurs qu’ils veulent vous faire découvrir, des coups de coeur sur 
+						leurs livres préférés, et permettant aux lecteurs d’échanger et de partager autour 
+						de leur passion.
+					</p>
+				</div>
+				
+				<div class="row contact-info-row">
+					<div class="contact-info col-xs-offset-2 col-xs-10 col-sm-offset-8 col-sm-4 text-right">
+						<div>106, rue La Fayette - 75010 PARIS</div>
+						<div>Du lundi au samedi de 11h à 20h et</div>
+						<div>le dimanche de 11h30 à 18h</div>
+					</div>
+				</div>
+				
+				<div class="row the-librarians text-center">
+					<div class="col-sm-6">
+						<img th:src="@{/img/store/guix-s.png}" />
+						<div>
+							<h3>Guilaine&nbsp;-&nbsp;Libraire</h3>
+						</div>
+						<p class="text-justify">
+							Guilaine est tombé dans les univers imaginaires dans sa plus tendre enfance. 
+							Planquée au fond de son lit, elle s’est mise à dévorer des séries entières de 
+							fantasy et de science-fiction, passant allègrement d’Anne McCaffrey à Roger 
+							Zelazny avec un plaisir non dissimulé. Elle a même pensé un temps devenir la 
+							future Robin Hobb, avant de se rendre compte qu’elle ferait mieux d’arrêter de 
+							rêver et d’entreprendre la fantastique aventure du métier de libraire.
+						</p>
+						
+						<p class="text-justify">
+							<strong>Elle aime :</strong> écrire des chroniques, les chiens-saucisse, manger des bretzels, 
+							lire dans son bain, son chat, s’enfoncer dans un siège de cinéma, Troy et Abed 
+							in the morning, préparer des voyages, Jane Eyre, laisser traîner des livres un 
+							peu partout, se perdre au hasard dans les villes, Creedence Clearwater Revival.
+						</p>
+						<p class="text-justify">
+							<strong>Elle déteste :</strong> les trottoirs bondés, les métros de Paris, les klaxons de voiture, 
+							l’autofiction, les chevilles enflées, la condescendance, Christine Angot, les 
+							brocolis et les allergies printanières.
+						</p>
+					</div>
+
+					<div class="col-sm-6">
+						<img th:src="@{/img/store/ju-s.png}" />
+						<div>
+							<h3>Julien&nbsp;-&nbsp;Libraire</h3>
+						</div>
+						<p class="text-justify">
+							Le petit Julien a grandi au milieu de bibliothèques croulantes de livres et de BD. 
+							C’est ce qui amena le barbu de l’équipe à travailler en librairie alors qu’il 
+							commençait à peine à se raser. Il se prit rapidement de passion pour la SF et 
+							le fantastique, grâce à des auteurs comme Philip K.Dick, Terry Pratchett ou Neil 
+							Gaiman. Sa fascination pour les nouvelles technologies et sa Nintendo DS est 
+							certainement à l’origine de ce projet fantastique.
+						</p>
+						<p class="text-justify">
+							<strong>Il aime :</strong> passer des journées au cinéma, les gadgets, suer dans des concerts, lire 
+							dans le métro, les pizzas, Ulver, la bande-dessinée sous toutes ses formes, 
+							organiser des évènements culturels, Philip K. Dick, lire plusieurs livres en même 
+							temps, la bière blonde de qualité entre 8° et 9°.
+						</p>
+						<p class="text-justify">
+							<strong>Il déteste :</strong> les transports bondés, Beigbeder, les poils de chats, les gens qui 
+							parlent au cinéma, les crustacés, les gens qui fument concert, la littérature 
+							française nombriliste, iTunes, les retardataires, le dentiste.
+						</p>
+					</div>
+				</div>
+			</div>
+			
+			<script th:replace="util/footer :: footer"></script>
+		</div>
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/store-controller.js}"></script>
+	</body>
+</html>

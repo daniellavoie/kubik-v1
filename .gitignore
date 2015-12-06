@@ -4,13 +4,13 @@
 **.settings
 **/target
 
-server/test.lck
-server/test.log
-server/test.properties
-server/test.script
+kubik/kubik-server/test.lck
+kubik/kubik-server/test.log
+kubik/kubik-server/test.properties
+kubik/kubik-server/test.script
 
-server/data
-server/dilicom
-server/*.edi
-server/docker-resources/target
-server/docker-resources/target/docker/kubik.jar
+kubik/kubik-server/data
+kubik/kubik-server/dilicom
+kubik/kubik-server/*.edi
+kubik/kubik-server/docker-resources/target
+kubik/kubik-server/docker-resources/target/docker/kubik.jar

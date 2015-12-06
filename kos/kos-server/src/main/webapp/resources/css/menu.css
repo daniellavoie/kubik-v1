@@ -1,0 +1,78 @@
+.root-category:hover > .category-submenu, .category-submenu:hover {
+	display: block;
+}
+
+.menu{
+	margin-left: 15px;
+	margin-right: 15px;
+}
+
+.menu .tab{
+	background-color: #494949;
+	display: block;
+}
+
+.menu .tab.tab-first{
+	border-radius: 5px 0px 0px 0px;
+}
+
+.menu .tab.tab-last {
+	border-radius: 0px 5px 0px 0px;
+}
+
+.menu .tab:HOVER{
+	cursor: pointer;
+} 
+
+.menu .tab.active {
+	background-color: #1e1e1e;
+}
+
+
+.menu a {
+	color: #FFFFFF;
+	font-size: 18px;
+	text-decoration: none;
+}
+
+.sub-menu {
+	background-color: #1e1e1e;
+}
+
+.sub-menu .category {
+	display: block;
+	float: left;
+	min-width: 150px;
+	text-align: center;
+}
+
+.search-bar {
+	margin-bottom: 10px;
+	padding: 10px;
+}
+
+.search-bar .you-search {
+	font-size: 18px;
+	margin-top: 7px;
+}
+
+/* Small devices (tablets, 768px and up) */
+@media ( min-width : 768px) {
+	.tab {
+		height: 50px;
+	}
+}
+
+/* Medium  devices  (tablets, 768px and up) */
+@media ( min-width : 992px) {
+	.tab {
+		height: 25px;
+	}
+}
+
+/* /* Large devices (large desktops, 1200px and up) */ */
+/* @media ( min-width : 1200px) { */
+/* 	.category-submenu { */
+/* 		width: 1200px; */
+/* 	} */
+/* } */

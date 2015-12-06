@@ -1,0 +1,82 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html 
+	ng-app="kos" 
+	ng-controller="KosCtrl as kosCtrl"
+>
+	<head>
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/create-account.css}" />
+	</head>
+	
+	<body>
+		<div th:replace="util/header :: header"></div>
+		
+		<div ng-controller="CreateAccountCtrl as createAccountCtrl" class="container">
+			
+			<div class="create-account row">
+				<div class="col-sm-offset-4 col-sm-4">
+					<div ng-if="createAccountCtrl.error != null" class="alert alert-danger text-center ng-cloak" ng-cloak="" >
+						<button type="button" class="close" ng-click="createAccountCtrl.hideError()">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<span ng-if="createAccountCtrl.error == 'usernameAlreadyExists'">
+							L'email saisi est déjà utilisé.
+						</span>
+						<span ng-if="createAccountCtrl.error == 'invalidPasswordConfirmation'">
+							Les mots de passes ne correspondent pas.
+						</span>
+					</div>
+				
+					<div ng-if="!createAccountCtrl.submited" class="ng-cloak" ng-cloak="" >
+						<div class="form-group">
+	   						<label>Courriel</label>
+	   						<input type="email" class="form-control" placeholder="Courriel" ng-model="createAccountCtrl.account.username"/>
+	 					</div> 
+	 					<div class="form-group">
+		   					<label>Mot de passe</label>
+		   					<input type="password" class="form-control" placeholder="Mot de passe" ng-model="createAccountCtrl.account.password" />
+	 					</div>
+	 					<div class="form-group">
+		   					<label>Confirmation mot de passe</label>
+		   					<input type="password" class="form-control" placeholder="Confirmation mot de passe" ng-model="createAccountCtrl.passwordConfirmation" />
+						</div>
+		 					
+		 				<button 
+		 					ng-if="!createAccountCtrl.loading"
+		 					class="btn btn-default form-control" 
+		 					ng-click="createAccountCtrl.createAccount()"
+ 						>Créer mon compte</button>
+		 				<button 
+		 					ng-if="createAccountCtrl.loading"
+		 					class="btn btn-default form-control" 
+							disabled="disabled"
+ 						>
+ 							Créer mon compte
+ 							<img th:src="@{/img/icons/loading.gif}" />
+ 						</button> 
+	 				</div>
+	 				
+ 					<div ng-if="createAccountCtrl.success" class="alert alert-success text-center ng-cloak" role="alert" ng-cloak="" >
+						<p>
+							Votre compte à été créer avec succèss. Un email de confirmation vous a été envoyé. 
+							Vous pouvez accéder à votre espace client mais aucune commande ne sera traitée 
+							avant que votre addresse soit validée.
+						</p>
+						<p>
+						<a th:href="@{/compte/connexion}" target="_self">
+							<button class="btn btn-default">
+								<span class="glyphicon glyphicon-user"></span>
+								Se connecter
+							</button>
+						</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			
+			<script th:replace="util/footer :: footer"></script>
+		</div>
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/account/create-account-controller.js}"></script>
+	</body>
+</html>
