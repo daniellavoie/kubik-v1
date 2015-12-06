@@ -21,12 +21,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>model</module>
-		<module>server</module>
-		<module>reports</module>
-		<module>proxy</module>
-		<module>kos</module>
 		<module>kubik</module>
+		<module>kos</module>
 	</modules>
 
 	<build>
