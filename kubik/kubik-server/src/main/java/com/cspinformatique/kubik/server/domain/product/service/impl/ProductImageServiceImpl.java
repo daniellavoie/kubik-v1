@@ -27,9 +27,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.Region;
-import com.cspinformatique.kubik.server.domain.product.controller.PersistProductImageActor;
 import com.cspinformatique.kubik.server.domain.product.exception.ImageNotFoundException;
-import com.cspinformatique.kubik.server.domain.product.message.PersistProductImagesMessage;
 import com.cspinformatique.kubik.server.domain.product.repository.ProductImageRepository;
 import com.cspinformatique.kubik.server.domain.product.service.ProductImageService;
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
@@ -37,16 +35,9 @@ import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.product.ProductImage;
 import com.cspinformatique.kubik.server.model.product.ProductImageSize;
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
-
 @Service
 public class ProductImageServiceImpl implements ProductImageService {
 	private static Logger LOGGER = LoggerFactory.getLogger(ProductImageServiceImpl.class);
-
-	@Resource
-	private ActorSystem actorSystem;
 
 	@Resource
 	private AmazonS3 amazonS3;
@@ -66,8 +57,6 @@ public class ProductImageServiceImpl implements ProductImageService {
 	@Value("${kubik.ean13}")
 	private String ean13;
 
-	private ActorRef persistImagesActor;
-
 	private String calculateImageKey(Product product, ProductImageSize size) {
 		return product.getId() + "-" + size.name() + ".jpg";
 	}
@@ -79,8 +68,6 @@ public class ProductImageServiceImpl implements ProductImageService {
 
 	@PostConstruct
 	public void init() {
-		persistImagesActor = actorSystem.actorOf(Props.create(PersistProductImageActor.class, this));
-
 		if (!amazonS3.listBuckets().stream().filter(bucket -> bucket.getName().equals(bucketName)).findAny()
 				.isPresent()) {
 			amazonS3.createBucket(bucketName, Region.EU_Ireland);
@@ -169,7 +156,14 @@ public class ProductImageServiceImpl implements ProductImageService {
 
 				amazonS3.putObject(bucketName, calculateImageKey(product, size), inputStream, metadata);
 
-				productImageRepository.save(new ProductImage(0l, product, size, contentLength));
+				ProductImage productImage = productImageRepository.findByProductAndSize(product, size);
+
+				if (productImage == null)
+					productImage = new ProductImage(0l, product, size, contentLength);
+				else
+					productImage.setContentLength(contentLength);
+
+				productImageRepository.save(productImage);
 			} else {
 				throw new ImageNotFoundException();
 			}
