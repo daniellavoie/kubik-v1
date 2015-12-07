@@ -77,10 +77,13 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public void processKosNotification(KosNotification kosNotification) {
-		Product product = requestProductFromKubik(kosNotification.getKubikId());
+	public void processProductNotification(KosNotification kosNotification) {
+		save(requestProductFromKubik(kosNotification.getId()));
+	}
 
-		save(product);
+	@Override
+	public void processProductInventoryNotification(KosNotification kosNotification) {
+		processProductNotification(kosNotification);
 	}
 
 	private Product requestProductFromKubik(int productId) {
@@ -113,6 +116,7 @@ public class ProductServiceImpl implements ProductService {
 		product.setAuthor(kubikProduct.getAuthor());
 		product.setCollection(kubikProduct.getCollection());
 		product.setDatePublished(kubikProduct.getDatePublished());
+		product.setEan13(kubikProduct.getEan13());
 		product.setIsbn(kubikProduct.getIsbn());
 		product.setManufacturer(kubikProduct.getPublisher());
 		product.setPrice(kubikProduct.getPriceTaxIn());
@@ -121,11 +125,13 @@ public class ProductServiceImpl implements ProductService {
 		product.setHeight(kubikProduct.getHeight());
 		product.setWidth(kubikProduct.getWidth());
 		product.setWeight(kubikProduct.getWeight());
+		if (kubikProduct.getProductInventory() != null)
+			product.setAvailable(kubikProduct.getProductInventory().getQuantityOnHand() > 0);
 
 		product.getImages().clear();
 		for (com.cspinformatique.kubik.server.model.product.ProductImage kubikImage : kubikProduct.getImages()) {
-			product.getImages().add(new ProductImage(0, product,
-					ProductImageSize.valueOf(kubikImage.getSize().name()), kubikImage.getContentLength()));
+			product.getImages().add(new ProductImage(0, product, ProductImageSize.valueOf(kubikImage.getSize().name()),
+					kubikImage.getContentLength()));
 		}
 
 		return product;

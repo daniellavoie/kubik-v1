@@ -22,30 +22,34 @@ public class Product {
 	private String author;
 	private String collection;
 	private String manufacturer;
+	private String ean13;
 	private String isbn;
 	private double price;
 	private Date datePublished;
 	private Category category;
 	private List<ProductImage> images;
-	
+
 	private Integer thickness;
 	private Integer width;
 	private Integer height;
 	private Integer weight;
+	private boolean available;
 
 	public Product() {
 
 	}
 
 	public Product(int id, int kubikId, String title, String author, int categoryId, String collection,
-			String manufacturer, String isbn, double price, Date datePublished, Category category,
-			List<ProductImage> images, Integer thickness, Integer width, Integer height, Integer weight) {
+			String manufacturer, String ean13, String isbn, double price, Date datePublished, Category category,
+			List<ProductImage> images, Integer thickness, Integer width, Integer height, Integer weight,
+			boolean available) {
 		this.id = id;
 		this.kubikId = kubikId;
 		this.title = title;
 		this.author = author;
 		this.collection = collection;
 		this.manufacturer = manufacturer;
+		this.ean13 = ean13;
 		this.isbn = isbn;
 		this.price = price;
 		this.datePublished = datePublished;
@@ -55,6 +59,7 @@ public class Product {
 		this.width = width;
 		this.height = height;
 		this.weight = weight;
+		this.available = available;
 	}
 
 	@Id
@@ -105,6 +110,14 @@ public class Product {
 
 	public void setManufacturer(String manufacturer) {
 		this.manufacturer = manufacturer;
+	}
+
+	public String getEan13() {
+		return ean13;
+	}
+
+	public void setEan13(String ean13) {
+		this.ean13 = ean13;
 	}
 
 	public String getIsbn() {
@@ -179,5 +192,13 @@ public class Product {
 
 	public void setWeight(Integer weight) {
 		this.weight = weight;
+	}
+
+	public boolean isAvailable() {
+		return available;
+	}
+
+	public void setAvailable(boolean available) {
+		this.available = available;
 	}
 }

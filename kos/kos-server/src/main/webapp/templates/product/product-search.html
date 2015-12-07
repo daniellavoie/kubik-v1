@@ -69,13 +69,74 @@
 					</div>
 					
 					<div class="col-sm-8">
-						<div class="pager-top text-center">
+						<div class="pager pager-top text-center">
+							<div class="row text-center" ng-cloak="" >
+								<div class="col-sm-3 col-md-2">
+									<a 
+										href="#"
+										ng-if="!productSearchCtrl.productPage.first"
+										ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number-1, true)" 
+									><button 
+										class="btn btn-default"
+										ng-attr-disabled="productSearchCtrl.loading &amp;&amp; 'disabled' || undefined"
+									>Précédente</button></a>
+								</div>
+								
+								<div ng-if="!productSearchCtrl.loading" class="col-sm-6 col-md-8">
+									<div>Page {{productSearchCtrl.productPage.number+1}} sur {{productSearchCtrl.productPage.totalPages}}</div>
+									<div>{{productSearchCtrl.productPage.totalElements}} produits</div>
+								</div>
+								
+								<div class="loading col-sm-6 col-md-8" ng-if="productSearchCtrl.loading">
+									<div><img th:src="@{/img/icons/loading.gif}" /></div>
+									<div>... chargement ...</div>
+								</div>
+								
+								<div class="col-sm-3 col-md-2">
+									<a 
+										href="#"
+										ng-if="!productSearchCtrl.productPage.last" 
+										ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number+1, true)" 
+									><button 
+										class="btn btn-default"
+										ng-attr-disabled="productSearchCtrl.loading &amp;&amp; 'disabled' || undefined"
+									>Suivante</button></a>
+								</div>
+							</div>
+						</div>
+						
+						<div ng-repeat="product in productSearchCtrl.productPage.content" ng-click="productSearchCtrl.openProductPage(product)" class="product row">
+							<div class="col-sm-3 text-center">
+								<img ng-if="product.images.length != 0" ng:src="/product/{{product.id}}/image/THUMB.jpg" />
+								<img ng-if="product.images.length == 0" th:src="@{/img/logos/dimension-fantastique-noir.png}" />
+							</div>
+							<div class="col-sm-6">
+								<div><h4><a th:href="@{/product/{{product.id}}}">{{product.title}}</a></h4></div>
+								<div><h5>De {{product.author}}</h5></div>
+								<div>
+									Parue le {{product.datePublished | date : "shortDate"}}
+									chez {{product.manufacturer}}
+								</div>
+								<div>{{product.category.name}}</div>
+							</div>
+							<div class="col-sm-3">
+								<h4>
+									{{product.price | number : 2}} &euro;
+								</h4>
+								<div>
+									<span ng-if="product.available" class="label label-success">Disponible</span>
+									<span ng-if="!product.available" class="label label-warning">Indisponible</span>
+								</div>
+							</div>
+						</div>
+						
+						<div class="pager pager-bottom text-center">
 							<div class="row text-center" ng-cloak="" >
 								<div class="col-sm-2">
 									<a 
 										href="#"
 										ng-if="!productSearchCtrl.productPage.first"
-										ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number-1, true)" 
+										ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number-1, false)" 
 									><button 
 										class="btn btn-default"
 										ng-attr-disabled="productSearchCtrl.loading &amp;&amp; 'disabled' || undefined"
@@ -96,54 +157,13 @@
 									<a 
 										href="#"
 										ng-if="!productSearchCtrl.productPage.last" 
-										ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number+1, true)" 
+										ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number+1, false)" 
 									><button 
 										class="btn btn-default"
 										ng-attr-disabled="productSearchCtrl.loading &amp;&amp; 'disabled' || undefined"
 									>Suivante</button></a>
 								</div>
 							</div>
-						</div>
-						
-						<div ng-repeat="product in productSearchCtrl.productPage.content" ng-click="productSearchCtrl.openProductPage(product)" class="product row">
-							<div class="col-sm-3 text-center">
-								<img src="http://images.amazon.com/images/P/{{product.isbn}}.01._SCMZZZZZZZ_.jpg" />
-	<!-- 							<img ng-if="product.images.length == 0" th:src="@{/img/logos/dimension-fantastique-noir.png}" /> -->
-							</div>
-							<div class="col-sm-9">
-								<div><h4><a th:href="@{/product/{{product.id}}}">{{product.title}}</a></h4></div>
-								<div><h5>De {{product.author}}</h5></div>
-								<div>
-									Parue le {{product.datePublished | date : "shortDate"}}
-									chez {{product.manufacturer}}
-								</div>
-								<div>{{product.category.name}}</div>
-							</div>
-						</div>
-						
-						<div class="text-center">
-							<ul ng-cloak="" ng-if="!productSearchCtrl.loading" class="pager row text-center">
-								<li class="col-sm-2 text-center">
-									<a 
-										href="#"
-										ng-if="!productSearchCtrl.productPage.first"
-										ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number-1)" 
-									>Précédente</a>
-								</li>
-								
-								<li class="col-sm-8 text-center">
-									<div>Page {{productSearchCtrl.productPage.number+1}} sur {{productSearchCtrl.productPage.totalPages}}</div>
-									<div>{{productSearchCtrl.productPage.totalElements}} produits</div>
-								</li>
-								
-								<li class="col-sm-2 text-center">
-									<a 
-										href="#"
-										ng-if="!productSearchCtrl.productPage.last" 
-										ng-click="productSearchCtrl.changePage(productSearchCtrl.productPage.number+1)" 
-									>Suivante</a>
-								</li>
-							</ul>
 						</div>
 					</div>
 				</div>

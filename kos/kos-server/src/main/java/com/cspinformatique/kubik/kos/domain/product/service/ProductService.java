@@ -12,13 +12,15 @@ import com.cspinformatique.kubik.server.model.kos.KosNotification;
 
 public interface ProductService {
 	List<Product> findByCategory(Category category);
-	
+
 	Product findOne(int id);
-	
-	void processKosNotification(KosNotification kosNotification);
-	
+
+	void processProductNotification(KosNotification kosNotification);
+
+	void processProductInventoryNotification(KosNotification kosNotification);
+
 	Product save(Product product);
-	
-	Page<Product> search(String title, String author, List<String> categories, Date publishFrom, Date publishUntil, String manufacturer,
-			Double priceFrom, Double priceTo, String query, Pageable pageable);
+
+	Page<Product> search(String title, String author, List<String> categories, Date publishFrom, Date publishUntil,
+			String manufacturer, Double priceFrom, Double priceTo, String query, Pageable pageable);
 }

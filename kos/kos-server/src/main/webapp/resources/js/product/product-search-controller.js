@@ -8,7 +8,7 @@
 	var $affix = $('[data-smart-affix]');
 	var $body = $("body");
 	var $header = $("header");
-	var $menu = $(".menu");
+	var $contentTop  = $(".content-top ");
 	
 	var bodyPadding = parseInt($("body").css("padding-top").replace("px", ""));
 	
@@ -185,7 +185,7 @@
 	
 	function setAffixOffset(){
 		$affix.each(function(){
-			$(this).data('bs.affix').options.offset = bodyPadding + $header.outerHeight() + $menu.outerHeight(); 
+			$(this).data('bs.affix').options.offset = bodyPadding + $header.outerHeight() + $contentTop.outerHeight(); 
 		});
 	}
 })();

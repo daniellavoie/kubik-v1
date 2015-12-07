@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.cspinformatique.kubik.server.domain.kos.service.KosNotificationService;
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.purchase.service.ReceptionDetailService;
 import com.cspinformatique.kubik.server.domain.purchase.service.ReceptionService;
@@ -27,6 +28,7 @@ import com.cspinformatique.kubik.server.domain.warehouse.model.InventoryExtractL
 import com.cspinformatique.kubik.server.domain.warehouse.repository.ProductInventoryRepository;
 import com.cspinformatique.kubik.server.domain.warehouse.service.InventoryCountService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
+import com.cspinformatique.kubik.server.model.kos.KosNotification;
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.purchase.Reception;
 import com.cspinformatique.kubik.server.model.purchase.ReceptionDetail;
@@ -47,6 +49,9 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 
 	@Resource
 	private InvoiceService invoiceService;
+
+	@Resource
+	private KosNotificationService kosNotificationService;
 
 	@Resource
 	private ProductService productService;
@@ -110,7 +115,10 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 		LOGGER.info("Updating inventory for product " + productId + " from " + oldQuantityOnHand + " to "
 				+ quantityOnHand + ".");
 
-		save(productInventory);
+		productInventory = save(productInventory);
+
+		kosNotificationService.createNewNotification(productInventory.getProduct().getId(),
+				KosNotification.Type.PRODUCT_INVENTORY, KosNotification.Action.UPDATE);
 	}
 
 	@Override
@@ -121,7 +129,7 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 			page = findAll(pageable);
 
 			page.getContent().stream().forEach(productInventory -> updateInventory(productInventory));
-			
+
 			pageable = pageable.next();
 		} while (page.hasNext());
 	}

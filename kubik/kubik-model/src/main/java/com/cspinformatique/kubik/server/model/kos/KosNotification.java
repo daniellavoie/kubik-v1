@@ -21,7 +21,7 @@ public class KosNotification {
 	}
 	
 	public enum Type {
-		CATEGORY, PRODUCT
+		CATEGORY, PRODUCT, PRODUCT_INVENTORY
 	}
 
 	private int id;

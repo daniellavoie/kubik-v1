@@ -17,13 +17,17 @@
 
 	<version>2.0.3</version>
 
-
 	<packaging>pom</packaging>
 
 	<modules>
 		<module>kubik</module>
 		<module>kos</module>
 	</modules>
+
+	<properties>
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
 
 	<build>
 		<resources>

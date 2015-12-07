@@ -1,10 +1,14 @@
 package com.cspinformatique.kubik.kos.domain.product.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -63,7 +67,19 @@ public class ProductController {
 					new InputStreamResource(productImageService.loadImageInputStream(productService.findOne(id), size)),
 					httpHeaders, HttpStatus.OK);
 		} else {
-			return new ResponseEntity<InputStreamResource>(null, new HttpHeaders(), HttpStatus.NOT_FOUND);
+			try {
+				InputStream inputStream = new ClassPathResource("resources/img/logos/dimension-fantastique-noir.png")
+						.getInputStream();
+
+				byte[] content = IOUtils.toByteArray(inputStream);
+				HttpHeaders httpHeaders = new HttpHeaders();
+				httpHeaders.setContentLength(content.length);
+
+				return new ResponseEntity<InputStreamResource>(new InputStreamResource(inputStream), httpHeaders,
+						HttpStatus.OK);
+			} catch (IOException ioEx) {
+				throw new RuntimeException(ioEx);
+			}
 		}
 	}
 
