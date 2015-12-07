@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar /kubik/kubik.jar | tee /var/kubik.log
+java -jar /kos/kos-server.jar | tee /var/kos.log
