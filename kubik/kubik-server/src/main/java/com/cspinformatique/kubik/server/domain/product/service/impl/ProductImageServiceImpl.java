@@ -103,7 +103,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 	public void persistProductImagesToAws(int productId) {
 		Product product = productService.findOne(productId);
 
-		Arrays.asList(ProductImageSize.values()).parallelStream()
+		Arrays.asList(ProductImageSize.values()).stream()
 				.forEach(size -> persistProductImageToAws(product, size));
 
 		LOGGER.info("Uploaded product images " + product.getId() + " to AWS S3.");
