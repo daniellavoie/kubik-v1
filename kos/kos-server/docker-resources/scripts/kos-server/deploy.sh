@@ -20,7 +20,7 @@ echo "Building Dockerfile for Kos."
 
 sh $WORKSPACE/docker-resources/scripts/kos-server/docker-build.sh
 
-CMD="docker run -d -p 8090:8080 -v $KUBIK_DATA_DIR:/data --name $CONTAINER_NAME cspinformatique/kos"
+CMD="docker run -d -p 8090:8080 -v $KUBIK_DATA_DIR:/data -v /etc/localtime:/etc/localtime:ro -v /etc/timezone:/etc/timezone:ro --name $CONTAINER_NAME cspinformatique/kos"
 
 echo "Launching docker instance for Kos."
 echo "	Cmd : $CMD"
