@@ -78,7 +78,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void processProductNotification(KosNotification kosNotification) {
-		save(requestProductFromKubik(kosNotification.getId()));
+		save(requestProductFromKubik(kosNotification.getKubikId()));
 	}
 
 	@Override
