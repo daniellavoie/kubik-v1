@@ -1,5 +1,6 @@
 (function(){
-	var CUSTOMER_ORDER_URL = "/customer-order"
+	var CUSTOMER_ORDER_URL = "/customer-order";
+	
 	angular
 		.module("kos")
 		.factory("customerOrderService", CustomerOrderService);

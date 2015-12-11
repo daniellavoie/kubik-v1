@@ -17,6 +17,13 @@
 		
 		$scope.$on("setActiveTab", setActiveTabEvent);
 		
+		function hideCategorySubmenu(){
+			$timeout(function(){
+				vm.category = null;
+				vm.hoveredTab = null;
+			});
+		}
+		
 		function loadMenus(){
 			angular.forEach(CATEGORIES, onCategory);
 			
@@ -32,7 +39,7 @@
 						$scope.$emit("menu-loaded");
 					}
 				}
-			}
+			}	
 		}
 		
 		function mouseEntersCategoryMenu($event, category){
@@ -51,19 +58,11 @@
 		}
 		
 		function mouseLeavesCategoryMenu($event){
-			vm.hideCategorySubmenuTimer = setTimeout(hideCategorySubmenu, 200);
-			
-			function hideCategorySubmenu(){
-				$timeout(function(){
-					vm.category = null;
-					vm.hoveredTab = null;
-				});
-			}
+			vm.hideCategorySubmenuTimer = setTimeout(hideCategorySubmenu, 500);
 		}
 		
 		function mouseLeavesCategorySubmenu(){
-			vm.category = null;
-			vm.hoveredTab = null;
+			vm.hideCategorySubmenuTimer = setTimeout(hideCategorySubmenu, 500);
 		}
 		
 		function setActiveTabEvent($event, activeTab){

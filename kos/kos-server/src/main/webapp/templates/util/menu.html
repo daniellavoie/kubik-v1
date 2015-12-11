@@ -90,10 +90,26 @@
 		</nav>
 
 		<div class="search-bar row text-center" ng-controller="MenuSearchCtrl as menuSearchCtrl">
-				<div class="col-sm-4 you-search">Vous cherchez ?</div>
-				<div class="col-sm-5"><input ng-keyup="menuSearchCtrl.searchKeyUp($event)" ng-model="menuSearchCtrl.searchParams.query" class="form-control" type="text" /></div>
-				<div class="col-sm-2"><button ng-click="menuSearchCtrl.search()" class="btn btn-default">Recherche</button></div>
-				<div class="col-sm-1">&nbsp;</div>
+				<div class="col-sm-3 you-search">Vous cherchez ?</div>
+				<div class="col-sm-4">
+					<div class="input-group">
+						<input ng-keyup="menuSearchCtrl.searchKeyUp($event)" ng-model="menuSearchCtrl.searchParams.query" class="form-control" type="text" />
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+<!-- 							<button ng-click="menuSearchCtrl.search()" class="btn btn-default glyphicon glyphicon-search"></button> -->
+						</span>
+					</div>
+				</div>				
+				<div class="col-sm-5 text-right">
+					<a class="contact-us" ng-controller="ContactCtrl as contactCtrl" href="#" ng-click="contactCtrl.contactUs()">Nous contacter</a>
+					&nbsp;
+					<a href="http://www.babelio.com/monprofil.php?id_user=231403" target="_BLANK"><img th:src="@{/img/social/babelio.png}" /></a>
+					<a href="http://www.senscritique.com/Librairie_LDF" target="_BLANK"><img th:src="@{/img/social/sens-critique.png}" /></a>
+					<a href="https://instagram.com/ladimensionfantastique/" target="_BLANK"><img th:src="@{/img/social/instagram.png}" /></a>
+					<a href="https://fr.pinterest.com/LDFantastique/" target="_BLANK"><img th:src="@{/img/social/pinterest.png}" /></a>
+					<a href="https://www.facebook.com/dimensionfantastique" target="_BLANK"><img th:src="@{/img/social/facebook.png}" /></a>
+					<a href="https://twitter.com/LibrairieLDF" target="_BLANK"><img th:src="@{/img/social/twitter.png}" /></a>
+				</div>
 			</div>
 		</div>
 	</body>

@@ -8,6 +8,9 @@
 		<meta charset="utf-8" /> 
 		<base href="" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	</head>
+	
+	<body th:fragment="scripts" th:remove="tag">
 		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" th:href="@{/libs/select2-4.0.1-rc.1/css/select2.min.css}" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/kubik-online.css}" />
@@ -15,9 +18,7 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/menu.css}" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/content.css}" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/footer.css}" />
-	</head>
-	
-	<body th:fragment="scripts" th:remove="tag">
+		
 		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.min.js"></script>
@@ -30,6 +31,8 @@
 		<script type="text/javascript" th:src="@{/js/kos-module.js}"></script>
 		<script type="text/javascript" th:src="@{/js/kos-config.js}"></script>
 		<script type="text/javascript" th:src="@{/js/kos-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/contact-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/contact-service.js}"></script>
 		<script type="text/javascript" th:src="@{/js/account/account-service.js}"></script>
 		<script type="text/javascript" th:src="@{/js/product/category-service.js}"></script>
 		<script type="text/javascript" th:src="@{/js/product/product-service.js}"></script>
@@ -40,5 +43,6 @@
 		
 		<script type="text/javascript" th:src="@{/js/menu/menu-controller.js}"></script>
 		<script type="text/javascript" th:src="@{/js/menu/menu-search-controller.js}"></script>
+<!-- 		<script type="text/javascript" th:src="@{/js/ga.js}"></script> -->
 	</body>
 </html>

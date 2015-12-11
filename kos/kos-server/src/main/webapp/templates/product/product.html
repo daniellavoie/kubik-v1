@@ -5,7 +5,6 @@
 >
 	<head>
 		<link th:replace="util/import :: head" />
-		<link rel="stylesheet" type="text/css" th:href="@{/css/product.css}" />
 	</head>
 	
 	<body ng-controller="ProductCtrl as productCtrl" >
@@ -83,7 +82,11 @@
 			
 			<script th:replace="util/footer :: footer"></script>
 		</div>
+		
 		<script th:replace="util/import :: scripts"></script>
+		
+		<link rel="stylesheet" type="text/css" th:href="@{/css/product.css}" />
+		
 		<script type="text/javascript" th:src="@{/js/product/product-controller.js}"></script>
 	</body>
 </html>

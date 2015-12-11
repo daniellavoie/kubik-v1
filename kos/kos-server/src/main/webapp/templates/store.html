@@ -5,7 +5,6 @@
 >
 	<head>
 		<link th:replace="util/import :: head" />
-		<link rel="stylesheet" type="text/css" th:href="@{/css/the-library.css}" />
 	</head>
 	
 	<body ng-controller="LibraryCtrl as libraryCtrl">
@@ -78,15 +77,37 @@
 					</p>
 				</div>
 				
-				<div class="row contact-info-row">
-					<div class=" col-xs-offset-2 col-xs-10 col-sm-offset-8 col-sm-4 text-right">
-						<div class="contact-info pull-right">
-							<div>106, rue La Fayette - 75010 PARIS</div>
-							<div>Du lundi au samedi de 11h à 20h et</div>
-							<div>le dimanche de 11h30 à 18h</div>
-							<div>Tel.: +33(9) 82 42 23 21</div>
+				<div class="row practical-info">
+					<div class="map-wrapper col-md-9">
+						<div class="map">
+							<iframe 
+								src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2623.9802678135134!2d2.3488426160736786!3d48.877652707303625!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e6b6906980d%3A0x2be1988b7af633c!2sLa+Dimension+Fantastique!5e0!3m2!1sfr!2sfr!4v1449774861578" width="600" height="450" frameborder="0" style="border:0"
+							></iframe>
 						</div>
 					</div>
+					
+					<div class="col-md-3 contact-info text-center">
+						<table>
+							<tr>
+								<td><span class="glyphicon glyphicon-map-marker"></span></td>
+								<td>106, rue La Fayette - 75010 PARIS</td>
+							</tr>
+							<tr>
+								<td><span class="glyphicon glyphicon-time"></span></td>
+								<td>
+									<div>Du lundi au samedi de 11h à 20h et</div>
+									<div>le dimanche de 11h30 à 18h</div>
+								</td>
+							</tr>
+							<tr>
+								<td><span class="glyphicon glyphicon-earphone"></span></td>
+								<td>Tel.: +33(9) 82 42 23 21</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+					
+				<div class="row contact-info-row">
 				</div>
 				
 				<div class="row the-librarians text-center">
@@ -148,6 +169,7 @@
 			<script th:replace="util/footer :: footer"></script>
 		</div>
 		<script th:replace="util/import :: scripts"></script>
+		<link rel="stylesheet" type="text/css" th:href="@{/css/the-library.css}" />
 		<script type="text/javascript" th:src="@{/js/store-controller.js}"></script>
 	</body>
 </html>

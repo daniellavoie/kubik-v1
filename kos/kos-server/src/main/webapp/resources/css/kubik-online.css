@@ -36,6 +36,10 @@ ul {
 	border-radius: 0px 0px 0px 0px;
 }
 
+a{
+	font-size: 13pt;
+}
+
 a:hover {
 	text-decoration: none;
 }
