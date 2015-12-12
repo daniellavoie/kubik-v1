@@ -39,8 +39,6 @@ iframe{
 	padding : 0px;	
 }
 
-.practical-info 
-
 .the-library{
 	background-color: #1e1e1e;
 	color: white;
@@ -54,4 +52,5 @@ iframe{
 .the-librarians{
 	margin-left: 10px;
 	margin-right: 10px;
+	margin-top:10px;
 }
