@@ -15,6 +15,8 @@ public interface ProductRepository extends
 		PagingAndSortingRepository<Product, Integer> {
 	int countByCategory(Category category);
 	
+	int countByImagesValidated(boolean imagesValidated);
+	
 	List<Product> findByCategory(Category category);
 	
 	@Query("SELECT id FROM Product WHERE dilicomReference = ?1")
@@ -28,6 +30,9 @@ public interface ProductRepository extends
 
 	@Query("SELECT product FROM Product product WHERE category = ?1 ORDER BY RAND()")
 	Page<Product> findRandomByCategory(Category category, Pageable pageable);
+
+	@Query("SELECT product FROM Product product WHERE imagesValidated = ?1 ORDER BY RAND()")
+	Page<Product> findRandomByImagesValidated(boolean imagesValidated, Pageable pageable);
 
 	@Query("SELECT product FROM Product product WHERE category is null ORDER BY RAND()")
 	Page<Product> findRandomWithoutCategory(Pageable pageable);

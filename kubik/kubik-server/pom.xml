@@ -77,6 +77,12 @@
 	        <artifactId>aws-java-sdk-s3</artifactId>
 	    </dependency>
 		
+		<dependency>
+		    <groupId>com.mortennobel</groupId>
+		    <artifactId>java-image-scaling</artifactId>
+		    <version>0.8.5</version>
+		</dependency>
+		
 	    <dependency>
 	      <groupId>com.typesafe.akka</groupId>
 	      <artifactId>akka-actor_2.11</artifactId>

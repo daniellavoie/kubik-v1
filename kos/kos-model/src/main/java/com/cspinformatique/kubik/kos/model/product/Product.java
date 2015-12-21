@@ -41,8 +41,8 @@ public class Product {
 
 	public Product(int id, int kubikId, String title, String author, int categoryId, String collection,
 			String manufacturer, String ean13, String isbn, double price, Date datePublished, Category category,
-			List<ProductImage> images, Integer thickness, Integer width, Integer height, Integer weight,
-			boolean available) {
+			List<ProductImage> images, Integer thickness, Integer width, Integer height,
+			Integer weight, boolean available) {
 		this.id = id;
 		this.kubikId = kubikId;
 		this.title = title;

@@ -44,12 +44,12 @@ import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.product.ProductType;
 import com.cspinformatique.kubik.server.model.product.ReturnType;
 import com.cspinformatique.kubik.server.model.product.Supplier;
+import com.cspinformatique.kubik.server.model.purchase.PurchaseOrder.Status;
 import com.cspinformatique.kubik.server.model.purchase.PurchaseOrderDetail;
 import com.cspinformatique.kubik.server.model.purchase.PurchaseSessionDetail;
 import com.cspinformatique.kubik.server.model.purchase.ReceptionDetail;
 import com.cspinformatique.kubik.server.model.purchase.Restock;
 import com.cspinformatique.kubik.server.model.purchase.RmaDetail;
-import com.cspinformatique.kubik.server.model.purchase.PurchaseOrder.Status;
 import com.cspinformatique.kubik.server.model.sales.CustomerCreditDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 
@@ -160,12 +160,17 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 				reference.getReplacesEan13(), reference.getReplacedByEan13(), reference.getOrderableByUnit(),
 				reference.getBarcodeType() != null ? BarcodeType.parseByCode(reference.getBarcodeType()) : null,
 				reference.getMainReference(), reference.getSecondaryReference(), reference.getReferencesCount(), 0f,
-				null, true, null, null);
+				null, true, null, null, false);
 	}
 
 	@Override
 	public int countByCategory(Category category) {
 		return productRepository.countByCategory(category);
+	}
+
+	@Override
+	public int countByImagesValidated(boolean imagesValidated) {
+		return productRepository.countByImagesValidated(imagesValidated);
 	}
 
 	@Override
@@ -219,7 +224,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Override
 	public Product findRandomByCategory(Category category) {
-		Page<Product> result = null;
+		Page<Product> result;
 		Pageable pageable = new PageRequest(0, 1);
 
 		if (category == null) {
@@ -227,6 +232,17 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 		} else {
 			result = productRepository.findRandomByCategory(category, pageable);
 		}
+
+		if (result.getContent().size() == 0) {
+			return null;
+		}
+
+		return result.getContent().get(0);
+	}
+
+	@Override
+	public Product findRandomByImagesValidated(boolean imagesValidated) {
+		Page<Product> result = productRepository.findRandomByImagesValidated(imagesValidated, new PageRequest(0, 1));
 
 		if (result.getContent().size() == 0) {
 			return null;
@@ -352,11 +368,6 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 		if (!skipKosNotification && product.getWeight() != null) {
 			// Create a broadleaf notification for the product.
 			kosNotificationService.createNewNotification(product.getId(), Type.PRODUCT, Action.UPDATE);
-		}
-
-		// Upload the product image to AWS S3.
-		if (product.isDilicomReference()) {
-			productImageService.persistProductImagesToAws(product.getId());
 		}
 
 		return product;

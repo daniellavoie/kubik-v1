@@ -1,5 +1,6 @@
 package com.cspinformatique.kubik.server.domain.product.controller;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cspinformatique.kubik.server.domain.product.service.CategoryService;
 import com.cspinformatique.kubik.server.domain.product.service.ProductImageService;
@@ -78,30 +81,41 @@ public class ProductController {
 	@Resource
 	private RmaDetailService rmaDetailService;
 
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, params = "category", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Integer countByCategory(@RequestParam Integer category) {
+	public Integer countByCategory(@RequestParam Integer category) {
 		return productService.countByCategory(category != null ? categoryService.findOne(category) : null);
 	}
 
-	@RequestMapping(params = "ean13", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Iterable<Product> findByEan13(@RequestParam String ean13) {
-		return this.productService.findByEan13(ean13);
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.GET, params = { "count",
+			"nonValidatedProductImages" }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Integer countWithoutValidatedImages() {
+		return productService.countByImagesValidated(false);
 	}
 
+	@ResponseBody
+	@RequestMapping(params = "ean13", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Iterable<Product> findByEan13(@RequestParam String ean13) {
+		return productService.findByEan13(ean13);
+	}
+
+	@ResponseBody
 	@RequestMapping(params = { "ean13", "supplierEan13" }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Product findByEan13AndSupplierEan13(@RequestParam String ean13,
-			@RequestParam String supplierEan13) {
+	public Product findByEan13AndSupplierEan13(@RequestParam String ean13, @RequestParam String supplierEan13) {
 		return this.productService.findByEan13AndSupplier(ean13, this.supplierService.findByEan13(supplierEan13));
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Product findOne(@PathVariable int id) {
-		return this.productService.findOne(id);
+	public Product findOne(@PathVariable int id) {
+		return productService.findOne(id);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{id}/productStats", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ProductStats findProductStats(@PathVariable int id,
-			@RequestParam(required = false) Date startDate, @RequestParam(required = false) Date endDate) {
+	public ProductStats findProductStats(@PathVariable int id, @RequestParam(required = false) Date startDate,
+			@RequestParam(required = false) Date endDate) {
 		if (startDate == null) {
 			startDate = new Date(0);
 		}
@@ -112,21 +126,23 @@ public class ProductController {
 			endDate = cal.getTime();
 		}
 
-		return this.productsStatsService.findByProductId(id, startDate, endDate);
+		return productsStatsService.findByProductId(id, startDate, endDate);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{productId}/customerCredit", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<CustomerCreditDetail> findProductCustomerCredits(@PathVariable("productId") int productId,
+	public Page<CustomerCreditDetail> findProductCustomerCredits(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
 			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
-		return this.customerCreditDetailService.findByProductAndCustomerCreditStatus(
-				this.productService.findOne(productId), CustomerCredit.Status.COMPLETED,
+		return this.customerCreditDetailService.findByProductAndCustomerCreditStatus(productService.findOne(productId),
+				CustomerCredit.Status.COMPLETED,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{productId}/inventoryCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<InventoryCount> findProductInventoryCounts(@PathVariable("productId") int productId,
+	public Page<InventoryCount> findProductInventoryCounts(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(defaultValue = "DESC") Direction direction,
 			@RequestParam(defaultValue = "dateCounted") String sortBy) {
@@ -134,40 +150,50 @@ public class ProductController {
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{productId}/invoice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<InvoiceDetail> findProductInvoices(@PathVariable("productId") int productId,
+	public Page<InvoiceDetail> findProductInvoices(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(defaultValue = "DESC") Direction direction,
 			@RequestParam(defaultValue = "invoice.paidDate") String sortBy) {
-		return this.invoiceDetailService.findByProductAndInvoiceStatus(this.productService.findOne(productId),
+		return invoiceDetailService.findByProductAndInvoiceStatus(productService.findOne(productId),
 				new InvoiceStatus(InvoiceStatus.Types.PAID.name(), null),
 				new PageRequest(page, resultPerPage, direction, sortBy));
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{productId}/reception", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<ReceptionDetail> findProductPurchaseOrders(@PathVariable("productId") int productId,
+	public Page<ReceptionDetail> findProductPurchaseOrders(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
 			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
-		return this.receptionDetailService.findByProductAndReceptionStatus(this.productService.findOne(productId),
+		return receptionDetailService.findByProductAndReceptionStatus(productService.findOne(productId),
 				Reception.Status.CLOSED,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{productId}/rma", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<RmaDetail> findProductRmas(@PathVariable("productId") int productId,
+	public Page<RmaDetail> findProductRmas(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
 			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
-		return this.rmaDetailService.findByProductAndRmaStatus(this.productService.findOne(productId),
-				Rma.Status.SHIPPED,
+		return rmaDetailService.findByProductAndRmaStatus(this.productService.findOne(productId), Rma.Status.SHIPPED,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
 
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, params = { "random",
 			"category" }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Product findRandomByCategory(@RequestParam Integer category) {
+	public Product findRandomByCategory(@RequestParam Integer category) {
 		return productService.findRandomByCategory(category != null ? categoryService.findOne(category) : null);
+	}
+
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.GET, params = { "random",
+			"nonValidatedProductImages" }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Product findRandomWithoutValidatedImages() {
+		return productService.findRandomByImagesValidated(false);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = { "random", "category" }, produces = MediaType.TEXT_HTML_VALUE)
@@ -185,15 +211,22 @@ public class ProductController {
 		return "product/products-page";
 	}
 
+	@RequestMapping(method = RequestMethod.GET, params = { "random",
+			"nonValidatedProductImages" }, produces = MediaType.TEXT_HTML_VALUE)
+	public String getNonValidatedProductImagesPage() {
+		return "product/non-validated-product-images";
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/{id}/image/{size}", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<InputStreamResource> loadProductImage(@PathVariable int id,
+	public ResponseEntity<InputStreamResource> loadProductImage(@PathVariable int id,
 			@PathVariable ProductImageSize size) {
 		ProductImage productImage = productImageService.findByProductAndSize(productService.findOne(id), size);
 
 		if (productImage != null) {
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentLength(productImage.getContentLength());
-			
+
 			return new ResponseEntity<InputStreamResource>(
 					new InputStreamResource(productImageService.loadInputStream(productService.findOne(id), size)),
 					httpHeaders, HttpStatus.OK);
@@ -204,20 +237,44 @@ public class ProductController {
 
 	@RequestMapping(value = "/{productId}", params = { "targetProductId", "mergeProduct" })
 	public void mergeProducts(@PathVariable int productId, @RequestParam int targetProductId) {
-		this.productService.mergeProduct(this.findOne(productId), this.findOne(targetProductId));
+		productService.mergeProduct(this.findOne(productId), this.findOne(targetProductId));
 	}
 
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@RequestMapping(value = "/{productId}/image/amazon", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void persistAmazonImages(@PathVariable int productId) {
+		productImageService.persistAmazonImages(productService.findOne(productId));
+	}
+
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@RequestMapping(value = "/{productId}/image/dilicom", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void persistDilicomImages(@PathVariable int productId) {
+		productImageService.persistDilicomImages(productService.findOne(productId));
+	}
+
+	@ResponseBody
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Product save(@RequestBody Product product) {
-		return this.productService.save(product);
+	public Product save(@RequestBody Product product) {
+		return productService.save(product);
 	}
 
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@RequestMapping(value = "/{productId}/image/custom", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void uploadCustomProductImage(@PathVariable int productId, @RequestParam("file") MultipartFile file) {
+		try {
+			productImageService.uploadImageToAws(file.getBytes(), productService.findOne(productId));
+		} catch (IOException ioEx) {
+			throw new RuntimeException(ioEx);
+		}
+	}
+
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, params = "search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<Product> search(@RequestParam(defaultValue = "") String query,
+	public Page<Product> search(@RequestParam(defaultValue = "") String query,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
 			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
-		return this.productService.search(query,
+		return productService.search(query,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
 }

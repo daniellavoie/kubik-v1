@@ -13,5 +13,11 @@ public interface ProductImageService {
 	
 	InputStream loadInputStream(Product product, ProductImageSize size);
 
-	void persistProductImagesToAws(int productId);
+	void persistProductImagesToAws(Product product);
+	
+	void persistAmazonImages(Product product);
+	
+	void persistDilicomImages(Product product);
+	
+	void uploadImageToAws(byte[] imageBytes, Product product);
 }

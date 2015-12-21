@@ -1,0 +1,121 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="product-images" class="product-images" ng-controller="ProductImagesCtrl as productImagesCtrl">
+		<div class="row">
+			<!-- Product images -->
+			<div class="col-sm-9">
+				<div class="row">
+					<div class="col-sm-3">
+						<h3>Vignette</h3>
+						<img ng-src="/product/{{productImagesCtrl.product.id}}/image/THUMB.jpg?cache={{productImagesCtrl.cacheKey}}" />
+					</div>
+					<div class="col-sm-6">
+						<h3>Fiche</h3>
+						<img ng-src="/product/{{productImagesCtrl.product.id}}/image/MEDIUM.jpg?cache={{productImagesCtrl.cacheKey}}" />
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-sm-12">
+						<button
+							disabled="disabled"
+							class="btn btn-default"
+							ng-if="productImagesCtrl.downloadingImages"
+						>Télécharger depuis Amazon</button>
+						<button
+							class="btn btn-default"
+							ng-if="!productImagesCtrl.downloadingImages"
+							ng-click="productImagesCtrl.downloadImageFromAmazon()" 
+						>Télécharger depuis Amazon</button>
+						<button
+							disabled="disabled"
+							class="btn btn-default"
+							ng-if="productImagesCtrl.downloadingImages"
+						>Télécharger depuis Dilicom</button>
+						<button
+							class="btn btn-default"
+							ng-if="!productImagesCtrl.downloadingImages"
+							ng-click="productImagesCtrl.downloadImageFromDilicom()" 
+						>Télécharger depuis Dilicom</button>
+						<img 
+							ng-if="productImagesCtrl.downloadingImages"
+							th:src="@{/img/loading.gif}" 
+						/>
+						<div 
+							class="btn btn-default file" 
+							ng-if="!productImagesCtrl.downloadingImages">	
+							<span>Télécharger une image personnalisé</span>
+							<input 
+								type="file" 
+								class="btn btn-default"
+								file-model="productImagesCtrl.image" 
+								ng-if="!productImagesCtrl.downloadingImages"
+								file-change="productImagesCtrl.uploadCustomImage()"
+							/>
+						</div>
+						<div class="btn btn-default file" disabled="disabled" 
+							ng-if="productImagesCtrl.downloadingImages">
+							Télécharger une image personnalisé
+						</div>
+				
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-sm-12">
+					</div>
+				</div>
+			</div>
+			
+			<!--  Product details -->
+			<div class="class col-sm-3">
+				<div class="form-group row">
+					<label class="col-sm-4 control-label">Ean13</label>
+					<div class="col-sm-8">
+						<p class="form-control-static">{{productImagesCtrl.product.ean13}}</p>
+					</div>
+				</div>
+				
+				<div class="form-group row">
+					<label class="col-sm-4 control-label">Titre</label>
+					<div class="col-sm-8">
+						<p class="form-control-static">{{productImagesCtrl.product.extendedLabel}}</p>
+					</div>
+				</div>
+				
+				<div class="form-group row">
+					<label class="col-sm-4 control-label">Titre court</label>
+					<div class="col-sm-8">
+						<p class="form-control-static">{{productImagesCtrl.product.standardLabel}}</p>
+					</div>
+				</div>
+				
+				<div class="form-group row">
+					<label class="col-sm-4 control-label">Titre caisse</label>
+					<div class="col-sm-8">
+						<p class="form-control-static">{{productImagesCtrl.product.cashRegisterLabel}}</p>
+					</div>
+				</div>
+				
+				<div class="form-group row">
+					<label class="col-sm-4 control-label">Auteur</label>
+					<div class="col-sm-8">
+						<p class="form-control-static">{{productImagesCtrl.product.author}}</p>
+					</div>
+				</div>
+				
+				<div class="form-group row">
+					<label class="col-sm-4 control-label">Date de publication</label>
+					<div class="col-sm-8">
+						<p class="form-control-static">{{productImagesCtrl.product.datePublished | date}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

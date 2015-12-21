@@ -65,16 +65,12 @@ public class Product {
 	private Boolean secondaryReference;
 	private Integer referencesCount;
 	private float discount;
-
 	private String imageEncryptedKey;
-
 	private boolean dilicomReference;
-
 	private ProductInventory productInventory;
-
 	private Category category;
-
 	private List<ProductImage> images;
+	private boolean imagesValidated;
 
 	public Product() {
 
@@ -90,7 +86,8 @@ public class Product {
 			String theme, String publisherIsnb, Boolean replacesAReference, Boolean replacedByAReference,
 			String replacesEan13, String replacedByEan13, Boolean orderableByUnit, BarcodeType barcodeType,
 			Boolean mainReference, Boolean secondaryReference, Integer referencesCount, float discount,
-			String imageEncryptedKey, boolean dilicomReference, Category category, List<ProductImage> images) {
+			String imageEncryptedKey, boolean dilicomReference, Category category, List<ProductImage> images,
+			boolean imagesValidated) {
 		this.id = id;
 		this.ean13 = ean13;
 		this.supplier = supplier;
@@ -140,6 +137,7 @@ public class Product {
 		this.dilicomReference = dilicomReference;
 		this.category = category;
 		this.images = images;
+		this.imagesValidated = imagesValidated;
 	}
 
 	@Id
@@ -556,5 +554,13 @@ public class Product {
 
 	public void setImages(List<ProductImage> images) {
 		this.images = images;
+	}
+
+	public boolean isImagesValidated() {
+		return imagesValidated;
+	}
+
+	public void setImagesValidated(boolean imagesValidated) {
+		this.imagesValidated = imagesValidated;
 	}
 }

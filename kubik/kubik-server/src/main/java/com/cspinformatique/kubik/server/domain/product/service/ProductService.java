@@ -16,6 +16,8 @@ public interface ProductService {
 
 	int countByCategory(Category category);
 	
+	int countByImagesValidated(boolean imagesValidated);
+	
 	Iterable<Product> findByEan13(String ean13);
 	
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
@@ -29,6 +31,8 @@ public interface ProductService {
 	Product findOne(int id);
 	
 	Product findRandomByCategory(Category category);
+	
+	Product findRandomByImagesValidated(boolean imagesValidated);
 	
 	Set<String> getProductIdsCache();
 	

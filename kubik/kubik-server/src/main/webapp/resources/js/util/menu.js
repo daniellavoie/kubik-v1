@@ -14,6 +14,10 @@
 			vm.productsWithoutCategory = productsWithoutCategory;
 		});
 		
+		$http.get("/product?nonValidatedProductImages&count").success(function(nonValidatedImages){
+			vm.nonValidatedImages = nonValidatedImages;
+		});
+		
 		$http.get("/restock/OPEN/count").success(function(restockCount){
 			vm.restockCount = restockCount;
 		});
