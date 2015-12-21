@@ -111,9 +111,13 @@ public class ProductImageServiceImpl implements ProductImageService {
 				"Product " + product.getId() + " image encrypted key cannot be empty.");
 
 		try {
-			persistDilicomImages(product);
-		} catch (ImageNotFoundException imageNotFoundEx) {
 			persistAmazonImages(product);
+		} catch (ImageNotFoundException | ImageTooSmallException ex) {
+			try {
+				persistDilicomImages(product);
+			} catch (ImageNotFoundException | ImageTooSmallException ex2) {
+				LOGGER.warn("Proper image could not be found for product " + product.getId());
+			}
 		}
 	}
 
@@ -195,6 +199,8 @@ public class ProductImageServiceImpl implements ProductImageService {
 			resizeAndPersitsImage(originalImage, product, ProductImageSize.THUMB);
 			resizeAndPersitsImage(originalImage, product, ProductImageSize.MEDIUM);
 			resizeAndPersitsImage(originalImage, product, ProductImageSize.LARGE);
+
+			LOGGER.info("Persisted images for product " + product.getId() + ".");
 		} catch (IOException ioEx) {
 			throw new RuntimeException(ioEx);
 		}
