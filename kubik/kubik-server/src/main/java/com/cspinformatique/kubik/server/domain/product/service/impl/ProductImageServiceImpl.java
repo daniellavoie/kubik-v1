@@ -171,7 +171,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 					BufferedImage.TYPE_INT_RGB), "jpg", outputstream);
 
 			byte[] imageBytes = outputstream.toByteArray();
-			uploadImageToAws(new ByteArrayInputStream(imageBytes), imageBytes.length, product, size);
+			uploadImageToAws(new ByteArrayInputStream(imageBytes), outputstream.size(), product, size);
 		} catch (IOException ioEx) {
 			throw new RuntimeException(ioEx);
 		}
@@ -187,14 +187,20 @@ public class ProductImageServiceImpl implements ProductImageService {
 	@Override
 	public void uploadImageToAws(byte[] imageBytes, Product product) {
 		try {
-			BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
+			InputStream inputStream = new ByteArrayInputStream(imageBytes);
+
+			BufferedImage originalImage = ImageIO.read(inputStream);
 
 			if (originalImage.getWidth() == 1) {
 				throw new ImageTooSmallException();
 			}
 
 			// Persits the inputstream as Full format.
-			uploadImageToAws(new ByteArrayInputStream(imageBytes), imageBytes.length, product, ProductImageSize.FULL);
+			try(ByteArrayOutputStream  outputStream = new ByteArrayOutputStream()){
+				ImageIO.write(originalImage, "jpg", outputStream);
+				
+				uploadImageToAws(new ByteArrayInputStream(imageBytes), outputStream.size(), product, ProductImageSize.FULL);
+			}
 
 			resizeAndPersitsImage(originalImage, product, ProductImageSize.THUMB);
 			resizeAndPersitsImage(originalImage, product, ProductImageSize.MEDIUM);
