@@ -7,7 +7,6 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
@@ -61,7 +60,6 @@ public class ProductController {
 
 		if (productImage != null) {
 			HttpHeaders httpHeaders = new HttpHeaders();
-			httpHeaders.setContentLength(productImage.getContentLength());
 
 			return new ResponseEntity<InputStreamResource>(
 					new InputStreamResource(productImageService.loadImageInputStream(productService.findOne(id), size)),
@@ -71,12 +69,7 @@ public class ProductController {
 				InputStream inputStream = new ClassPathResource("resources/img/logos/dimension-fantastique-noir.png")
 						.getInputStream();
 
-				byte[] content = IOUtils.toByteArray(inputStream);
-				HttpHeaders httpHeaders = new HttpHeaders();
-				httpHeaders.setContentLength(content.length);
-
-				return new ResponseEntity<InputStreamResource>(new InputStreamResource(inputStream), httpHeaders,
-						HttpStatus.OK);
+				return new ResponseEntity<InputStreamResource>(new InputStreamResource(inputStream), HttpStatus.OK);
 			} catch (IOException ioEx) {
 				throw new RuntimeException(ioEx);
 			}

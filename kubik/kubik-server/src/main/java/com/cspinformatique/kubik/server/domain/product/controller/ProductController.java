@@ -10,7 +10,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -224,14 +223,11 @@ public class ProductController {
 		ProductImage productImage = productImageService.findByProductAndSize(productService.findOne(id), size);
 
 		if (productImage != null) {
-			HttpHeaders httpHeaders = new HttpHeaders();
-			httpHeaders.setContentLength(productImage.getContentLength());
-
 			return new ResponseEntity<InputStreamResource>(
 					new InputStreamResource(productImageService.loadInputStream(productService.findOne(id), size)),
-					httpHeaders, HttpStatus.OK);
+					HttpStatus.OK);
 		} else {
-			return new ResponseEntity<InputStreamResource>(null, new HttpHeaders(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<InputStreamResource>(HttpStatus.NOT_FOUND);
 		}
 	}
 
