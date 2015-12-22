@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.cspinformatique.kubik.kos.domain.product.exception.ImageNotFoundException;
 import com.cspinformatique.kubik.kos.domain.product.repository.ProductImageRepository;
 import com.cspinformatique.kubik.kos.domain.product.service.ProductImageService;
 import com.cspinformatique.kubik.kos.model.product.Product;
@@ -42,6 +46,16 @@ public class ProductImageServiceImpl implements ProductImageService {
 
 	@Override
 	public InputStream loadImageInputStream(Product product, ProductImageSize size) {
-		return amazonS3.getObject(bucketName, calculateImageKey(product, size)).getObjectContent();
+		try {
+			S3Object object = amazonS3.getObject(new GetObjectRequest(bucketName, calculateImageKey(product, size)));
+
+			if (object == null) {
+				throw new ImageNotFoundException();
+			}
+
+			return object.getObjectContent();
+		} catch (AmazonS3Exception amazonS3Ex) {
+			throw new ImageNotFoundException();
+		}
 	}
 }

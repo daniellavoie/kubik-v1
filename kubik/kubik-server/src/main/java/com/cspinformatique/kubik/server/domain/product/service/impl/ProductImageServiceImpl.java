@@ -26,9 +26,11 @@ import org.springframework.util.Assert;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.Region;
+import com.amazonaws.services.s3.model.S3Object;
 import com.cspinformatique.kubik.server.domain.product.exception.ImageNotFoundException;
 import com.cspinformatique.kubik.server.domain.product.exception.ImageTooSmallException;
 import com.cspinformatique.kubik.server.domain.product.repository.ProductImageRepository;
@@ -84,7 +86,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 		LOGGER.info("Starting product image initial load.");
 
 		Page<Product> productPage = null;
-		Pageable pageRequest = new PageRequest(0, 100, Direction.ASC, "id");
+		Pageable pageRequest = new PageRequest(0, 100, Direction.DESC, "id");
 
 		do {
 			productPage = productService.findAll(pageRequest);
@@ -100,8 +102,17 @@ public class ProductImageServiceImpl implements ProductImageService {
 
 	@Override
 	public InputStream loadInputStream(Product product, ProductImageSize size) {
-		return amazonS3.getObject(new GetObjectRequest(bucketName, calculateImageKey(product, size)))
-				.getObjectContent();
+		try {
+			S3Object object = amazonS3.getObject(new GetObjectRequest(bucketName, calculateImageKey(product, size)));
+
+			if (object == null) {
+				throw new ImageNotFoundException();
+			}
+
+			return object.getObjectContent();
+		} catch (AmazonS3Exception amazonS3Ex) {
+			throw new ImageNotFoundException();
+		}
 	}
 
 	@Override
@@ -196,10 +207,11 @@ public class ProductImageServiceImpl implements ProductImageService {
 			}
 
 			// Persits the inputstream as Full format.
-			try(ByteArrayOutputStream  outputStream = new ByteArrayOutputStream()){
+			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 				ImageIO.write(originalImage, "jpg", outputStream);
-				
-				uploadImageToAws(new ByteArrayInputStream(imageBytes), outputStream.size(), product, ProductImageSize.FULL);
+
+				uploadImageToAws(new ByteArrayInputStream(imageBytes), outputStream.size(), product,
+						ProductImageSize.FULL);
 			}
 
 			resizeAndPersitsImage(originalImage, product, ProductImageSize.THUMB);

@@ -17,6 +17,10 @@
 		
 		function setProductEvent($event, product){
 			vm.product = product;
+			
+			vm.cacheKey = Math.random();
+			
+			console.log("product id : " + vm.product.id + " | cache key : " + vm.cacheKey);
 		}
 		
 		function downloadImage(provider){

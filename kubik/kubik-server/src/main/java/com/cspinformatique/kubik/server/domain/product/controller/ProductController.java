@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cspinformatique.kubik.server.domain.product.exception.ImageNotFoundException;
 import com.cspinformatique.kubik.server.domain.product.service.CategoryService;
 import com.cspinformatique.kubik.server.domain.product.service.ProductImageService;
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
@@ -220,13 +221,11 @@ public class ProductController {
 	@RequestMapping(value = "/{id}/image/{size}", method = RequestMethod.GET)
 	public ResponseEntity<InputStreamResource> loadProductImage(@PathVariable int id,
 			@PathVariable ProductImageSize size) {
-		ProductImage productImage = productImageService.findByProductAndSize(productService.findOne(id), size);
-
-		if (productImage != null) {
+		try {
 			return new ResponseEntity<InputStreamResource>(
 					new InputStreamResource(productImageService.loadInputStream(productService.findOne(id), size)),
 					HttpStatus.OK);
-		} else {
+		} catch (ImageNotFoundException imageNotFoundEx) {
 			return new ResponseEntity<InputStreamResource>(HttpStatus.NOT_FOUND);
 		}
 	}

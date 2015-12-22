@@ -12,7 +12,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cspinformatique.kubik.kos.domain.product.exception.ImageNotFoundException;
 import com.cspinformatique.kubik.kos.domain.product.service.ProductImageService;
 import com.cspinformatique.kubik.kos.domain.product.service.ProductService;
 import com.cspinformatique.kubik.kos.model.product.Product;
-import com.cspinformatique.kubik.kos.model.product.ProductImage;
 import com.cspinformatique.kubik.kos.model.product.ProductImageSize;
 
 @Controller
@@ -56,15 +55,11 @@ public class ProductController {
 	@RequestMapping(value = "/{id}/image/{size}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody ResponseEntity<InputStreamResource> loadProductImage(@PathVariable int id,
 			@PathVariable ProductImageSize size) {
-		ProductImage productImage = productImageService.findByProductAndSize(productService.findOne(id), size);
-
-		if (productImage != null) {
-			HttpHeaders httpHeaders = new HttpHeaders();
-
+		try {
 			return new ResponseEntity<InputStreamResource>(
 					new InputStreamResource(productImageService.loadImageInputStream(productService.findOne(id), size)),
-					httpHeaders, HttpStatus.OK);
-		} else {
+					HttpStatus.OK);
+		} catch (ImageNotFoundException imageNotFoundEx) {
 			try {
 				InputStream inputStream = new ClassPathResource("resources/img/logos/dimension-fantastique-noir.png")
 						.getInputStream();
