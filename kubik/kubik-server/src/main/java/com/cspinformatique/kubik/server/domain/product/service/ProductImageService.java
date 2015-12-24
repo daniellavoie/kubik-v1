@@ -19,5 +19,7 @@ public interface ProductImageService {
 	
 	void persistDilicomImages(Product product);
 	
+	void persistImageFromUrlToAws(String url, Product product);
+	
 	void uploadImageToAws(byte[] imageBytes, Product product);
 }

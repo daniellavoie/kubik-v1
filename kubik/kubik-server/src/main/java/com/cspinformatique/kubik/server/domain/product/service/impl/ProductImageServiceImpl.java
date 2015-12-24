@@ -132,7 +132,32 @@ public class ProductImageServiceImpl implements ProductImageService {
 		}
 	}
 
-	private void loadImageFromUrlToAws(String url, Product product) {
+	@Override
+	public void persistAmazonImages(Product product) {
+		persistAmazonImage(product);
+	}
+
+	private void persistAmazonImage(Product product) {
+		if (product.getIsbn() != null && !product.getIsbn().trim().equals("")) {
+			try {
+				persistImageFromUrlToAws("http://images.amazon.com/images/P/" + product.getIsbn() + ".01.SCRM.jpg",
+						product);
+			} catch (ImageTooSmallException imageTooSmallEx) {
+				persistImageFromUrlToAws("http://images.amazon.com/images/P/" + product.getIsbn() + ".01.LZZ.jpg",
+						product);
+			}
+		}
+	}
+
+	@Override
+	public void persistDilicomImages(Product product) {
+		persistImageFromUrlToAws(
+				"http://images1.centprod.com/" + ean13 + "/" + product.getImageEncryptedKey() + "-cover-full.jpg",
+				product);
+	}
+	
+	@Override
+	public void persistImageFromUrlToAws(String url, Product product) {
 		try {
 			HttpURLConnection urlConnection = (HttpURLConnection) new URI(url).toURL().openConnection();
 			urlConnection.connect();
@@ -146,30 +171,6 @@ public class ProductImageServiceImpl implements ProductImageService {
 		} catch (AmazonClientException | IOException | URISyntaxException ex) {
 			throw new RuntimeException(ex);
 		}
-	}
-
-	@Override
-	public void persistAmazonImages(Product product) {
-		persistAmazonImage(product);
-	}
-
-	private void persistAmazonImage(Product product) {
-		if (product.getIsbn() != null && !product.getIsbn().trim().equals("")) {
-			try {
-				loadImageFromUrlToAws("http://images.amazon.com/images/P/" + product.getIsbn() + ".01.SCRM.jpg",
-						product);
-			} catch (ImageTooSmallException imageTooSmallEx) {
-				loadImageFromUrlToAws("http://images.amazon.com/images/P/" + product.getIsbn() + ".01.LZZ.jpg",
-						product);
-			}
-		}
-	}
-
-	@Override
-	public void persistDilicomImages(Product product) {
-		loadImageFromUrlToAws(
-				"http://images1.centprod.com/" + ean13 + "/" + product.getImageEncryptedKey() + "-cover-full.jpg",
-				product);
 	}
 
 	private void resizeAndPersitsImage(BufferedImage originalImage, Product product, ProductImageSize size) {

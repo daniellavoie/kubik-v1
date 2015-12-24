@@ -11,11 +11,13 @@
 		vm.downloadingImages = false;
 		vm.downloadImageFromAmazon = downloadImageFromAmazon;
 		vm.downloadImageFromDilicom = downloadImageFromDilicom;
+		vm.downloadImageFromUrl = downloadImageFromUrl;
 		vm.uploadCustomImage = uploadCustomImage;
 		
 		$scope.$on("productImages-setProduct", setProductEvent);
 		
 		function setProductEvent($event, product){
+			vm.url = "";
 			vm.product = product;
 			
 			vm.cacheKey = Math.random();
@@ -26,8 +28,13 @@
 		function downloadImage(provider){
 			vm.downloadingImages = true;
 			
+			var url = PRODUCT_URL + "/" + vm.product.id + "/image/" + provider;
+			if(provider == "url"){
+				url += "?url=" + vm.url; 
+			}
+			
 			$http
-				.get(PRODUCT_URL + "/" + vm.product.id + "/image/" + provider)
+				.get(url)
 				.then(downloadImageSuccess)
 				.finally(downloadImageCompleted);
 			
@@ -46,6 +53,10 @@
 		
 		function downloadImageFromDilicom(){
 			downloadImage("dilicom");
+		}
+		
+		function downloadImageFromUrl(){
+			downloadImage("url");
 		}
 		
 		function uploadCustomImage(){

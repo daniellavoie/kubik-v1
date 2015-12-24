@@ -1,7 +1,6 @@
 .file {
     position: relative;
     overflow: hidden;
-    margin: 10px;
 }
 
 .file input {
@@ -14,4 +13,9 @@
     cursor: pointer;
     opacity: 0;
     filter: alpha(opacity=0);
+}
+
+.upload-options > div{
+	margin-bottom: 10px;
+	margin-top: 10px;
 }

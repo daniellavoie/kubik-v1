@@ -247,6 +247,12 @@ public class ProductController {
 		productImageService.persistDilicomImages(productService.findOne(productId));
 	}
 
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@RequestMapping(value = "/{productId}/image/url", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void persistIamgesFromUrl(@PathVariable int productId, @RequestParam String url) {
+		productImageService.persistImageFromUrlToAws(url, productService.findOne(productId));
+	}
+
 	@ResponseBody
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Product save(@RequestBody Product product) {

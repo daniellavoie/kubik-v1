@@ -11,7 +11,7 @@
 		};
 		
 		function uploadProductImage(file, productId, success, error, complete){
-			var fd = new FormData($http, file);
+			var fd = new FormData();
 	        fd.append('file', file);
 	        
 	        var request = new XMLHttpRequest();
