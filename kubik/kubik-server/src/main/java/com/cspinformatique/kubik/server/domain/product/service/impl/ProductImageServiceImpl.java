@@ -211,7 +211,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 				ImageIO.write(originalImage, "jpg", outputStream);
 
-				uploadImageToAws(new ByteArrayInputStream(imageBytes), outputStream.size(), product,
+				uploadImageToAws(new ByteArrayInputStream(imageBytes), imageBytes.length, product,
 						ProductImageSize.FULL);
 			}
 
