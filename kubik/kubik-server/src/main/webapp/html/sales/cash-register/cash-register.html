@@ -62,6 +62,7 @@
 								</td>
 								<td>
 									<input 
+										ng-if="!cashRegisterCtrl.loading"
 										id="detail-{{detail.id}}"
 										ng-keyup="cashRegisterCtrl.invoiceChanged($event)"
 										ng-click="cashRegisterCtrl.invoiceChanged($event)"
@@ -71,15 +72,31 @@
 										min="1" 
 										max="99999"
 									/>
+									<input 
+										disabled="disabled"
+										ng-if="cashRegisterCtrl.loading"
+										ng-model="detail.quantity"
+										class="quantity form-control" 
+										type="number"
+									/>
 								</td>
 								
 								<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>
 								
 								<td>
 									<button
-										ng-click="cashRegisterCtrl.removeInvoiceDetail(detail)" 
 										type="button" 
 										class="btn btn-warning btn-xs"
+										ng-if="!cashRegisterCtrl.loading"
+										ng-click="cashRegisterCtrl.removeInvoiceDetail(detail)" 
+									>
+										<span class="glyphicon glyphicon-trash"></span>
+									</button>
+									<button
+										type="button" 
+										disabled="disabled"
+										class="btn btn-warning btn-xs"
+										ng-if="cashRegisterCtrl.loading"
 									>
 										<span class="glyphicon glyphicon-trash"></span>
 									</button>
@@ -109,38 +126,101 @@
 					</div>
 				</div>
 			</div>
-		
+		 
 			<footer class="footer text-center">
-				<div class="container">
-					<div class="col-sm-3">
-						<input ng-model="cashRegisterCtrl.ean13" ng-keyup="cashRegisterCtrl.searchProductKeyUp($event)" type="text" class="form-control ean13-input" placeholder="Ean13" />
+				<div class="row">
+					<div class="col-md-2">
+						<div class="input-group">
+  							<span class="input-group-addon">Remise</span>
+							<input 
+								type="number" 
+							 	placeholder="Remise"
+								ng-if="!cashRegisterCtrl.loading" 
+								class="form-control rebate-input"
+								ng-model="cashRegisterCtrl.invoice.rebatePercent" 
+								ng-keyup="cashRegisterCtrl.invoiceChanged($event)"
+								ng-click="cashRegisterCtrl.invoiceChanged($event)"
+							/>
+							<input 
+								type="number" 
+								disabled="disabled"
+							 	placeholder="Remise"
+								class="form-control rebate-input"
+								ng-if="cashRegisterCtrl.loading" 
+								ng-model="cashRegisterCtrl.invoice.rebatePercent" 
+							/>
+						</div>
 					</div>
-					
-					<div class="col-sm-2">
-						<button ng-click="cashRegisterCtrl.openProductSearch($event)" type="button" class="btn btn-primary form-control">Rechercher</button>
-					</div>
-					
-					<div class="col-sm-2">
-						<button ng-click="cashRegisterCtrl.confirmCancelInvoice()" type="button" class="btn btn-danger form-control">Annuler</button>
-					</div>
-					
-					<div class="col-sm-2">
+					<div class="col-md-3">
 						<input 
-						 	placeholder="Remise"
-							type="number" 
-							class="form-control rebate-input"
-							ng-model="cashRegisterCtrl.invoice.rebatePercent" 
-							ng-keyup="cashRegisterCtrl.invoiceChanged($event)"
-							ng-click="cashRegisterCtrl.invoiceChanged($event)"
+							type="text" 
+							placeholder="Ean13" 
+							class="form-control ean13-input" 
+							ng-if="!cashRegisterCtrl.loading"
+							ng-model="cashRegisterCtrl.ean13" 
+							ng-keyup="cashRegisterCtrl.searchProductKeyUp($event)" 
+						/>
+						<input 
+							type="text" 
+							disabled="disabled"
+							placeholder="Ean13" 
+							ng-if="cashRegisterCtrl.loading"
+							ng-model="cashRegisterCtrl.ean13" 
+							class="form-control ean13-input" 
 						/>
 					</div>
 					
-					<div class="col-sm-2">
-						<button ng-click="cashRegisterCtrl.checkoutInvoice()" type="button" class="checkout btn btn-success form-control">Encaisser</button>
+					<div class="col-md-3">
+						<button 
+							type="button" 
+							ng-if="!cashRegisterCtrl.loading"
+							class="btn btn-primary glyphicon glyphicon-search"
+							ng-click="cashRegisterCtrl.openProductSearch($event)" 
+						></button>
+						<button 
+							type="button" 
+							disabled="disabled"
+							ng-if="cashRegisterCtrl.loading"
+							class="btn btn-primary glyphicon glyphicon-search"
+						></button>
+						<button 
+							type="button" 
+							ng-if="!cashRegisterCtrl.loading" 
+							class="btn btn-danger"
+							ng-click="cashRegisterCtrl.confirmCancelInvoice()" 
+						>Annuler</button>
+						<button 
+							type="button" 
+							disabled="disabled"
+							ng-if="cashRegisterCtrl.loading" 
+							class="btn btn-danger"
+						>Annuler</button>
+						<button 
+							type="button" 
+							ng-if="!cashRegisterCtrl.loading" 
+							ng-click="cashRegisterCtrl.checkoutInvoice()" 
+							class="checkout btn btn-success"
+						>Encaisser</button>
+						<button 
+							type="button" 
+							disabled="disabled"
+							ng-if="cashRegisterCtrl.loading" 
+							class="checkout btn btn-success"
+						>Encaisser</button>
 					</div>
 					
-					<div class="col-sm-1">
-						<h4>{{cashRegisterCtrl.invoice.totalAmount | currency : '&euro;'}}</h4>
+					<div class="col-md-3">
+						<div class="input-group	">
+  							<span class="input-group-addon">Total</span>
+  							<span class="form-control">
+  							{{cashRegisterCtrl.invoice.totalAmount | currency : '&euro;'}}
+  							</span>
+						</div>
+						<h4></h4>
+					</div>
+					
+					<div class="col-md-1">
+						<img ng-if="cashRegisterCtrl.loading" th:src="@{/img/loading.gif}" />
 					</div>
 				</div>
 			</footer>
@@ -170,8 +250,6 @@
 										<input type="radio" autocomplete="off">{{paymentMethod.description}}
 									</label>
 								</div>
-								
-								
 								
 								<div class="row">	
 									<div class="col-sm-6 col-sm-offset-3">
@@ -260,6 +338,8 @@
 		
 		<script th:replace="util/import :: scripts"></script>
 			
-		<script type="text/javascript" th:src="@{/js/sales/cash-register.js}"></script>
+		<script type="text/javascript" th:src="@{/js/error/error-trace-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/sales/cash-register-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/sales/payment-controller.js}"></script>
 	</body>
 </html>

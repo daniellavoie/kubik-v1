@@ -12,6 +12,8 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.math3.util.Precision;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +39,8 @@ import com.cspinformatique.kubik.server.model.sales.InvoiceStatus.Types;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceServiceImpl.class);
+	
 	@Autowired
 	private DailyReportService dailyReportService;
 
@@ -370,9 +373,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 						paidInvoices.add(invoice);
 					}
 				}
+
 			}
 
 			invoice.setModificationDate(new Date());
+			
+			LOGGER.info("Changing invoice " + invoice.getId() + " modification date to " + invoice.getModificationDate().getTime());
 
 			// Calculate invoice amounts.
 			this.calculateInvoiceAmounts(invoice);

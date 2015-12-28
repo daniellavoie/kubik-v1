@@ -5,11 +5,14 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
+import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@ComponentScan
-@EnableAutoConfiguration(exclude = { ThymeleafAutoConfiguration.class,
-		ElasticsearchAutoConfiguration.class,
+@ComponentScan({ "com.cspinformatique.kubik.common", "com.cspinformatique.kubik.server" })
+@EntityScan(basePackages = { "com.cspinformatique.kubik.common", "com.cspinformatique.kubik.server" })
+@EnableJpaRepositories(basePackages = { "com.cspinformatique.kubik.common", "com.cspinformatique.kubik.server" })
+@EnableAutoConfiguration(exclude = { ThymeleafAutoConfiguration.class, ElasticsearchAutoConfiguration.class,
 		ElasticsearchRepositoriesAutoConfiguration.class })
 public class Kubik {
 	public static void main(String args[]) {

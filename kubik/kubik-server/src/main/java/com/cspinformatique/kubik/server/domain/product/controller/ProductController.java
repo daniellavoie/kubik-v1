@@ -35,7 +35,6 @@ import com.cspinformatique.kubik.server.domain.sales.service.CustomerCreditDetai
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceDetailService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.InventoryCountService;
 import com.cspinformatique.kubik.server.model.product.Product;
-import com.cspinformatique.kubik.server.model.product.ProductImage;
 import com.cspinformatique.kubik.server.model.product.ProductImageSize;
 import com.cspinformatique.kubik.server.model.product.ProductStats;
 import com.cspinformatique.kubik.server.model.purchase.Reception;
