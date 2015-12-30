@@ -41,7 +41,15 @@ public class KubikNotificationServiceImpl implements KubikNotificationService {
 
 	@Override
 	public KubikNotification createNewNotification(long kosId, Type type, Action action) {
-		return save(new KubikNotification(0l, kosId, Status.TO_PROCESS, action, type, new Date(), null, null, null));
+		KubikNotification kubikNotification = new KubikNotification();
+		
+		kubikNotification.setKosId(kosId);
+		kubikNotification.setStatus(Status.TO_PROCESS);
+		kubikNotification.setAction(action);
+		kubikNotification.setType(type);
+		kubikNotification.setCreationDate(new Date());
+		
+		return save(kubikNotification);
 	}
 
 	@Override

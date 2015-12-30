@@ -6,15 +6,16 @@ import javax.annotation.Resource;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cspinformatique.kubik.kos.domain.account.controller.wrapper.AccountWrapper;
 import com.cspinformatique.kubik.kos.domain.account.service.AccountService;
 import com.cspinformatique.kubik.kos.model.account.Account;
+import com.cspinformatique.kubik.kos.model.account.AccountWrapper;
 import com.cspinformatique.kubik.kos.model.account.Address;
 
 @Controller
@@ -31,6 +32,11 @@ public class AccountController {
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AccountWrapper getAccount(Principal principal) {
 		return new AccountWrapper(principal != null ? accountService.findByUsername(principal.getName()) : null, null);
+	}
+
+	@RequestMapping(value = "{/id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Account getAccount(@PathVariable long id) {
+		return accountService.findOne(id);
 	}
 
 	@RequestMapping({ "/create-account", "/creer-un-compte" })

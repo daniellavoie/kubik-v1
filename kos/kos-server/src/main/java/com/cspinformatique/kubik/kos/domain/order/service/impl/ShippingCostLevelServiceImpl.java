@@ -23,7 +23,7 @@ public class ShippingCostLevelServiceImpl implements ShippingCostLevelService {
 				new PageRequest(0, 1, Direction.ASC, "weight"));
 
 		if (shippingCostLevels.isEmpty()) {
-			throw new RuntimeException("Oversized order (" + weight + " grams).");
+			throw new RuntimeException("Shipping cost level not for the order weighting " + weight + " grams).");
 		}
 
 		return shippingCostLevels.get(0);

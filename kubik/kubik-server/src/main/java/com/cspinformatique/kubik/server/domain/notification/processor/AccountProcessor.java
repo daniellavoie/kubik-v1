@@ -15,7 +15,7 @@ public class AccountProcessor implements NotificationProcessor {
 
 	@Override
 	public void process(KubikNotification kubikNotification) {
-
+		customerService.processNotification(kubikNotification);
 	}
 
 	@Override

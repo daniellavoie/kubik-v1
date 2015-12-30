@@ -33,17 +33,8 @@ public class KubikNotification {
 	private Date errorDate;
 	private String error;
 
-	public KubikNotification(long id, long kosId, Status status, Action action, Type type, Date creationDate,
-			Date processedDate, Date errorDate, String error) {
-		this.id = id;
-		this.kosId = kosId;
-		this.status = status;
-		this.action = action;
-		this.type = type;
-		this.creationDate = creationDate;
-		this.processedDate = processedDate;
-		this.errorDate = errorDate;
-		this.error = error;
+	public KubikNotification() {
+		
 	}
 
 	@Id

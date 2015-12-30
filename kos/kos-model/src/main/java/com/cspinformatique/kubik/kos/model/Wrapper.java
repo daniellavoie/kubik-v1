@@ -1,4 +1,4 @@
-package com.cspinformatique.kubik.kos.rest;
+package com.cspinformatique.kubik.kos.model;
 
 import java.util.List;
 

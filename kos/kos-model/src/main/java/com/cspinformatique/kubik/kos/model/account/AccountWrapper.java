@@ -1,9 +1,8 @@
-package com.cspinformatique.kubik.kos.domain.account.controller.wrapper;
+package com.cspinformatique.kubik.kos.model.account;
 
 import java.util.List;
 
-import com.cspinformatique.kubik.kos.model.account.Account;
-import com.cspinformatique.kubik.kos.rest.Wrapper;
+import com.cspinformatique.kubik.kos.model.Wrapper;
 
 public class AccountWrapper extends Wrapper {
 	private Account account;

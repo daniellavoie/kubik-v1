@@ -68,6 +68,11 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
+	public Account findOne(long id) {
+		return accountRepository.findOne(id);
+	}
+
+	@Override
 	public Account save(Account account) {
 		if (account.isShippingAddressPreferedForBilling()) {
 			account.setBillingAddress(account.getShippingAddress());

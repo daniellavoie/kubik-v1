@@ -10,6 +10,8 @@ public interface AccountService extends UserDetailsService {
 	Account createAccount(String username, CharSequence password);
 
 	Account findByUsername(String username);
+	
+	Account findOne(long id);
 
 	Account save(Account account);
 
