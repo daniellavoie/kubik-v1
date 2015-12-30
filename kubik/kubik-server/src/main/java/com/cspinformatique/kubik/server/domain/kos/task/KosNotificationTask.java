@@ -1,6 +1,7 @@
 package com.cspinformatique.kubik.server.domain.kos.task;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,11 +16,15 @@ public class KosNotificationTask {
 	@Autowired
 	private KosNotificationService kosNotificationService;
 
+	@Value("${kos.notification.enabled}")
+	private boolean notificationEnabled;
+
 	@Scheduled(fixedDelay = 1000 * 1)
 	public void processPendingNotifications() {
-		for (KosNotification kosNotification : kosNotificationService.findByStatus(Status.TO_PROCESS,
-				new Sort(Direction.ASC, "id"))) {
-			kosNotificationService.process(kosNotification);
-		}
+		if (notificationEnabled)
+			for (KosNotification kosNotification : kosNotificationService.findByStatus(Status.TO_PROCESS,
+					new Sort(Direction.ASC, "id")))
+				kosNotificationService.process(kosNotification);
+
 	}
 }

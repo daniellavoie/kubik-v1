@@ -14,15 +14,17 @@ import org.springframework.stereotype.Component;
 import com.cspinformatique.kubik.server.domain.dilicom.model.Reference;
 import com.cspinformatique.kubik.server.domain.dilicom.model.ReferenceDTO;
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
+import com.cspinformatique.kubik.server.domain.product.service.SupplierService;
 
 @Component
-public class ReferenceItemProcessor implements
-		ItemProcessor<ReferenceDTO, Reference> {
-	private Logger logger = LoggerFactory
-			.getLogger(ReferenceItemProcessor.class);
+public class ReferenceItemProcessor implements ItemProcessor<ReferenceDTO, Reference> {
+	private Logger logger = LoggerFactory.getLogger(ReferenceItemProcessor.class);
 
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private SupplierService supplierService;
 
 	private DateFormat dateFormat;
 
@@ -46,11 +48,8 @@ public class ReferenceItemProcessor implements
 		try {
 			int pos = decimalPositionFromEnd;
 
-			return Double
-					.parseDouble(string.substring(0, string.length() - pos)
-							+ "."
-							+ string.substring(string.length() - pos,
-									string.length()));
+			return Double.parseDouble(string.substring(0, string.length() - pos) + "."
+					+ string.substring(string.length() - pos, string.length()));
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
@@ -67,13 +66,11 @@ public class ReferenceItemProcessor implements
 	@Override
 	public Reference process(ReferenceDTO referenceDTO) {
 		try {
-			if (referenceDTO.getMovementCode() == null
-					|| referenceDTO.getMovementCode().equals("S")) {
+			if (referenceDTO.getMovementCode() == null || referenceDTO.getMovementCode().equals("S")) {
 				return null;
 			}
 
-			if (referenceDTO.getEan13() == null
-					|| referenceDTO.getDistributorEan13() == null) {
+			if (referenceDTO.getEan13() == null || referenceDTO.getDistributorEan13() == null) {
 				return null;
 			}
 
@@ -90,58 +87,36 @@ public class ReferenceItemProcessor implements
 			boolean mainReference = true;
 			boolean secondaryReference = false;
 
-			if (referenceDTO.getPerishable() != null
-					&& referenceDTO.getPerishable().equals("3")) {
+			if (referenceDTO.getPerishable() != null && referenceDTO.getPerishable().equals("3")) {
 				mainReference = false;
 				secondaryReference = true;
 			}
 
 			boolean importedInKubik = false;
-			if (this.productService.getProductIdsCache().contains(referenceDTO.getEan13() + "-"
-					+ referenceDTO.getDistributorEan13())) {
+			if (this.productService.findByEan13AndSupplier(referenceDTO.getEan13(),
+					supplierService.findByEan13(referenceDTO.getDistributorEan13())) != null) {
 				importedInKubik = true;
 			}
 
-			return new Reference(null, referenceDTO.getEan13(),
-					referenceDTO.getDistributorEan13(),
-					convertDate(referenceDTO
-							.getPriceApplicationOrAvailabilityDate()),
-					referenceDTO.getAvailability(),
-					referenceDTO.getPriceType(),
-					convertPrice(referenceDTO.getPriceTaxIn()),
-					referenceDTO.getSchoolbook(),
-					convertRate(referenceDTO.getTvaRate1()),
-					convertPrice(referenceDTO.getPriceTaxOut1()),
-					convertRate(referenceDTO.getTvaRate2()),
-					convertPrice(referenceDTO.getPriceTaxOut2()),
-					convertRate(referenceDTO.getTvaRate3()),
-					convertPrice(referenceDTO.getPriceTaxOut3()),
-					referenceDTO.getReturnType(),
-					referenceDTO.getAvailableForOrder(),
-					convertDate(referenceDTO.getDatePublished()),
-					referenceDTO.getProductType(),
-					convertDate(referenceDTO.getPublishEndDate()),
-					referenceDTO.getStandardLabel(),
-					referenceDTO.getCashRegisterLabel(),
-					referenceDTO.getThickness(), referenceDTO.getWidth(),
-					referenceDTO.getHeight(), referenceDTO.getWeight(),
-					referenceDTO.getExtendedLabel(),
-					referenceDTO.getPublisher(), referenceDTO.getCollection(),
-					referenceDTO.getAuthor(),
-					referenceDTO.getPublisherPresentation(),
-					referenceDTO.getIsbn(),
-					referenceDTO.getSupplierReference(),
-					referenceDTO.getCollectionReference(),
-					referenceDTO.getTheme(), referenceDTO.getPublisherIsnb(),
-					replacesAReference, replacedByAReference,
-					replacesAReference ? referenceDTO.getLinkedReferenceEan13()
-							: null,
-					replacedByAReference ? referenceDTO
-							.getLinkedReferenceEan13() : null,
-					referenceDTO.getOrderableByUnit(),
-					referenceDTO.getBarcodeType(), mainReference,
-					secondaryReference, referenceDTO.getReferencesCount(),
-					importedInKubik, null, new Date(), new Date());
+			return new Reference(null, referenceDTO.getEan13(), referenceDTO.getDistributorEan13(),
+					convertDate(referenceDTO.getPriceApplicationOrAvailabilityDate()), referenceDTO.getAvailability(),
+					referenceDTO.getPriceType(), convertPrice(referenceDTO.getPriceTaxIn()),
+					referenceDTO.getSchoolbook(), convertRate(referenceDTO.getTvaRate1()),
+					convertPrice(referenceDTO.getPriceTaxOut1()), convertRate(referenceDTO.getTvaRate2()),
+					convertPrice(referenceDTO.getPriceTaxOut2()), convertRate(referenceDTO.getTvaRate3()),
+					convertPrice(referenceDTO.getPriceTaxOut3()), referenceDTO.getReturnType(),
+					referenceDTO.getAvailableForOrder(), convertDate(referenceDTO.getDatePublished()),
+					referenceDTO.getProductType(), convertDate(referenceDTO.getPublishEndDate()),
+					referenceDTO.getStandardLabel(), referenceDTO.getCashRegisterLabel(), referenceDTO.getThickness(),
+					referenceDTO.getWidth(), referenceDTO.getHeight(), referenceDTO.getWeight(),
+					referenceDTO.getExtendedLabel(), referenceDTO.getPublisher(), referenceDTO.getCollection(),
+					referenceDTO.getAuthor(), referenceDTO.getPublisherPresentation(), referenceDTO.getIsbn(),
+					referenceDTO.getSupplierReference(), referenceDTO.getCollectionReference(), referenceDTO.getTheme(),
+					referenceDTO.getPublisherIsnb(), replacesAReference, replacedByAReference,
+					replacesAReference ? referenceDTO.getLinkedReferenceEan13() : null,
+					replacedByAReference ? referenceDTO.getLinkedReferenceEan13() : null,
+					referenceDTO.getOrderableByUnit(), referenceDTO.getBarcodeType(), mainReference, secondaryReference,
+					referenceDTO.getReferencesCount(), importedInKubik, null, new Date(), new Date());
 
 			/*
 			 * this.publisherIsnb = publisherIsnb; this.replacesAReference =
@@ -150,10 +125,8 @@ public class ReferenceItemProcessor implements
 			 * this.replacedByEan13 = replacedByEan13;
 			 */
 		} catch (Exception ex) {
-			logger.error(
-					"Error while processing ean13 " + referenceDTO.getEan13()
-							+ " from supplier "
-							+ referenceDTO.getDistributorEan13() + ".", ex);
+			logger.error("Error while processing ean13 " + referenceDTO.getEan13() + " from supplier "
+					+ referenceDTO.getDistributorEan13() + ".", ex);
 
 			return null;
 		}

@@ -83,7 +83,8 @@ public class KosNotificationServiceImpl implements KosNotificationService {
 		do {
 			productPage = productService.findAll(pageRequest);
 
-			productPage.getContent().stream().forEach(product -> createNewNotification(product.getId(), Type.PRODUCT, Action.UPDATE));
+			productPage.getContent().stream()
+					.forEach(product -> createNewNotification(product.getId(), Type.PRODUCT, Action.UPDATE));
 
 			pageRequest = pageRequest.next();
 		} while (productPage.hasNext());
@@ -95,20 +96,15 @@ public class KosNotificationServiceImpl implements KosNotificationService {
 	@Transactional
 	public void process(KosNotification kosNotification) {
 		try {
-			if (notificationEnabled) {
-				ResponseEntity<Void> response = kosTemplate.exchange("/kosNotification", HttpMethod.POST,
-						kosNotification, Void.class);
+			ResponseEntity<Void> response = kosTemplate.exchange("/kosNotification", HttpMethod.POST, kosNotification,
+					Void.class);
 
-				if (!response.getStatusCode().equals(HttpStatus.NO_CONTENT)) {
-					throw new RuntimeException("Kos server did not process notification successfully. Status code : "
-							+ response.getStatusCode() + ".");
-				}
-
-				kosNotification.setStatus(Status.PROCESSED);
-			} else { 
-				kosNotification.setStatus(Status.SKIPPED);
-				kosNotification.setError("Kos notification are disabled.");
+			if (!response.getStatusCode().equals(HttpStatus.NO_CONTENT)) {
+				throw new RuntimeException("Kos server did not process notification successfully. Status code : "
+						+ response.getStatusCode() + ".");
 			}
+
+			kosNotification.setStatus(Status.PROCESSED);
 		} catch (Exception ex) {
 			LOGGER.error("Error while processing broadleaf notification " + kosNotification.getId() + ".", ex);
 
@@ -136,8 +132,8 @@ public class KosNotificationServiceImpl implements KosNotificationService {
 			}
 
 			return kosNotificationRepository.save(kosNotification);
-		} else {
+		} else
 			return kosNotification;
-		}
+
 	}
 }

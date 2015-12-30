@@ -34,8 +34,6 @@ public interface ProductService {
 	
 	Product findRandomByImagesValidated(boolean imagesValidated);
 	
-	Set<String> getProductIdsCache();
-	
 	void mergeProduct(Product sourceProduct, Product targetProduct);
 	
 	Product save(Product product);

@@ -7,8 +7,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -52,13 +50,6 @@ public class TiteLivreServiceImpl implements TiteLiveService {
 
 	private DecimalFormat decimalFormat;
 	private String remoteFileName;
-
-	@PostConstruct
-	public void init() {
-		if (environment.equals("development")) {
-			this.sendInventoryToTiteLiveServer();
-		}
-	}
 
 	@Override
 	public void sendInventoryToTiteLiveServer() {

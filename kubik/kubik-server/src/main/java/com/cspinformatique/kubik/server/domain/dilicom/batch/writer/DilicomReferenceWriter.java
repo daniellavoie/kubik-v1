@@ -40,16 +40,11 @@ public class DilicomReferenceWriter implements ItemWriter<Reference> {
 		Map<Integer, ReferenceNotification> notifications = new HashMap<Integer, ReferenceNotification>();
 		Map<String, Reference> references = new HashMap<String, Reference>();
 		for (Reference reference : items) {
-			if (this.productService.getProductIdsCache().contains(
-					reference.getEan13() + "-" + reference.getSupplierEan13())) {
-				Product product = this.productService.findByEan13AndSupplier(
-						reference.getEan13(), supplierService
-								.findByEan13(reference.getSupplierEan13()));
-				notifications.put(product.getId(), new ReferenceNotification(
-						null, product, ReferenceNotification.Status.NEW, null,
-						null));
-			}
-			
+			Product product = this.productService.findByEan13AndSupplier(reference.getEan13(),
+					supplierService.findByEan13(reference.getSupplierEan13()));
+			notifications.put(product.getId(),
+					new ReferenceNotification(null, product, ReferenceNotification.Status.NEW, null, null));
+
 			references.put(reference.getEan13() + "-" + reference.getSupplierEan13(), reference);
 		}
 

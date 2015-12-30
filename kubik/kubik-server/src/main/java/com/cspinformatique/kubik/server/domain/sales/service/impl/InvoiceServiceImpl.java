@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.server.domain.sales.service.impl;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -33,14 +35,14 @@ import com.cspinformatique.kubik.server.model.sales.CashRegisterSession;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
+import com.cspinformatique.kubik.server.model.sales.InvoiceStatus.Types;
 import com.cspinformatique.kubik.server.model.sales.InvoiceTaxAmount;
 import com.cspinformatique.kubik.server.model.sales.Payment;
-import com.cspinformatique.kubik.server.model.sales.InvoiceStatus.Types;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceServiceImpl.class);
-	
+
 	@Autowired
 	private DailyReportService dailyReportService;
 
@@ -152,7 +154,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 					/ (1 + (invoiceTaxAmount.getTaxRate() / 100)) * (invoiceTaxAmount.getTaxRate() / 100)), 2));
 			invoiceTaxAmount.setTaxableAmount(
 					Precision.round(invoiceTaxAmount.getTaxedAmount() - invoiceTaxAmount.getTaxAmount(), 2));
-			
+
 			totalTaxAmount += invoiceTaxAmount.getTaxAmount();
 			totalTaxableAmount += invoiceTaxAmount.getTaxableAmount();
 		}
@@ -273,8 +275,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 	@Override
 	public Invoice generateNewInvoice(CashRegisterSession session) {
 		return this.save(new Invoice(null, null, null, invoiceStatusRepository.findOne(Types.DRAFT.name()), null,
-				new Date(), null, null, null, null, 0d, 0d, 0d, new HashMap<Double, InvoiceTaxAmount>(), 0d, 0d, 0d,
-				new ArrayList<Payment>(), 0d, 0d, session, null, new ArrayList<InvoiceDetail>()));
+				Date.from(LocalDateTime.now().withNano(0).atZone(ZoneId.systemDefault()).toInstant()), null, null, null,
+				null, 0d, 0d, 0d, new HashMap<Double, InvoiceTaxAmount>(), 0d, 0d, 0d, new ArrayList<Payment>(), 0d, 0d,
+				session, null, new ArrayList<InvoiceDetail>()));
 	}
 
 	private String generateInvoiceNumber() {
@@ -376,9 +379,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 			}
 
-			invoice.setModificationDate(new Date());
-			
-			LOGGER.info("Changing invoice " + invoice.getId() + " modification date to " + invoice.getModificationDate().getTime());
+			invoice.setModificationDate(
+					Date.from(LocalDateTime.now().withNano(0).atZone(ZoneId.systemDefault()).toInstant()));
 
 			// Calculate invoice amounts.
 			this.calculateInvoiceAmounts(invoice);

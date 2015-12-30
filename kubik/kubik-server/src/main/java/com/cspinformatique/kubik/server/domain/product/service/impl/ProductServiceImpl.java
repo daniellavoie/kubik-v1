@@ -1,8 +1,6 @@
 package com.cspinformatique.kubik.server.domain.product.service.impl;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -10,7 +8,6 @@ import javax.transaction.Transactional;
 import org.apache.commons.math3.util.Precision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,7 +51,7 @@ import com.cspinformatique.kubik.server.model.sales.CustomerCreditDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 
 @Service
-public class ProductServiceImpl implements ProductService, InitializingBean {
+public class ProductServiceImpl implements ProductService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceImpl.class);
 
 	@Resource
@@ -101,29 +98,6 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
 	@Resource
 	private Environment env;
-
-	private Set<String> productIdsCache;
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		LOGGER.info("Caching products.");
-
-		productIdsCache = new HashSet<String>();
-
-		Pageable pageRequest = new PageRequest(0, 200);
-		Page<Product> page = null;
-		do {
-			page = findAll(pageRequest);
-
-			for (Product product : page.getContent()) {
-				productIdsCache.add(product.getEan13() + "-" + product.getSupplier().getEan13());
-			}
-
-			pageRequest = pageRequest.next();
-		} while (page != null && page.getContent().size() != 0);
-
-		LOGGER.info("Products product completed.");
-	};
 
 	@Override
 	public Product buildProductFromReference(Reference reference) {
@@ -269,11 +243,6 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate3() / 100), 2));
 		}
 	}
-
-	@Override
-	public Set<String> getProductIdsCache() {
-		return productIdsCache;
-	};
 
 	@Override
 	@Transactional
