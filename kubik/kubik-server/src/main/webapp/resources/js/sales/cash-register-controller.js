@@ -235,12 +235,13 @@
 			function loadInvoiceSuccess(invoices){
 				var existingInvoice = vm.lookupInvoice(vm.invoice, invoices);
 				
-				if(existingInvoice != null && Math.round(vm.invoice.modificationDate / 1000) == existingInvoice.modificationDate / 1000){
+				var offset = existingInvoice != null ? Math.round(vm.invoice.modificationDate / 1000) - existingInvoice.modificationDate / 1000 : 0;
+				if(offset == 0 || offset == -1 || offset == 1)
 					$http
 						.post(INVOICE_URL, vm.invoice)
 						.success(saveInvoiceSuccess)
 						.finally(saveInvoiceCompleted);
-				}else{
+				else{
 					errorTraceService.postError({
 						message : "Invoice " + vm.invoice.id + " state changed has changed it was loaded from cash register. Current modification date : " + 
 						Math.round(vm.invoice.modificationDate / 1000) + ". New modification date : " + existingInvoice.modificationDate / 1000});
