@@ -10,13 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.apache.commons.math3.util.Precision;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.purchase.service.RestockService;
+import com.cspinformatique.kubik.server.domain.sales.exception.InvoiceAlreadyPaidException;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceRepository;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceStatusRepository;
 import com.cspinformatique.kubik.server.domain.sales.service.DailyReportService;
@@ -41,24 +40,22 @@ import com.cspinformatique.kubik.server.model.sales.Payment;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceServiceImpl.class);
-
-	@Autowired
+	@Resource
 	private DailyReportService dailyReportService;
 
-	@Autowired
+	@Resource
 	private InvoiceRepository invoiceRepository;
 
-	@Autowired
+	@Resource
 	private InvoiceStatusRepository invoiceStatusRepository;
 
-	@Autowired
+	@Resource
 	private ProductInventoryService productInventoryService;
 
-	@Autowired
+	@Resource
 	private ProductService productService;
 
-	@Autowired
+	@Resource
 	private RestockService restockService;
 
 	private void calculateInvoiceAmounts(Invoice invoice) {
@@ -354,6 +351,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 		for (Invoice invoice : invoices) {
 			if (invoice.getId() != null) {
+				Invoice existingInvoice = findOne(invoice.getId());
+
+				if (InvoiceStatus.Types.PAID.toString().equals(existingInvoice.getStatus().getType()))
+					throw new InvoiceAlreadyPaidException(existingInvoice, invoice);
+
 				String status = invoice.getStatus().getType();
 
 				if (invoice.getStatus().equals(Types.CANCELED.name()) && invoice.getCancelDate() == null) {

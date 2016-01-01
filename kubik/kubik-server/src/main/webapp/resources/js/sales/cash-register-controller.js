@@ -102,7 +102,11 @@
 		}
 		
 		function checkoutInvoice(){
-			$scope.$broadcast("checkoutInvoice", vm.invoice);
+			vm.saveInvoice(saveInvoiceSuccess);
+			
+			function saveInvoiceSuccess(){
+				$scope.$broadcast("checkoutInvoice", vm.invoice)
+			}
 		}
 		
 		function confirmCancelInvoice(){
@@ -227,7 +231,7 @@
 			vm.saveInvoice();
 		}
 		
-		function saveInvoice(){
+		function saveInvoice(successCallback){
 			vm.loading = true;
 			
 			vm.loadInvoices(loadInvoiceSuccess);
@@ -235,16 +239,16 @@
 			function loadInvoiceSuccess(invoices){
 				var existingInvoice = vm.lookupInvoice(vm.invoice, invoices);
 				
-				var offset = existingInvoice != null ? Math.round(vm.invoice.modificationDate / 1000) - existingInvoice.modificationDate / 1000 : 0;
-				if(offset == 0 || offset == -1 || offset == 1)
+				if(existingInvoice != null && Math.round(vm.invoice.modificationDate / 1000) - existingInvoice.modificationDate / 1000 == 0)
 					$http
 						.post(INVOICE_URL, vm.invoice)
 						.success(saveInvoiceSuccess)
 						.finally(saveInvoiceCompleted);
 				else{
-					errorTraceService.postError({
-						message : "Invoice " + vm.invoice.id + " state changed has changed it was loaded from cash register. Current modification date : " + 
-						Math.round(vm.invoice.modificationDate / 1000) + ". New modification date : " + existingInvoice.modificationDate / 1000});
+					if(existingInvoice != null)
+						errorTraceService.postError({
+							message : "Invoice " + vm.invoice.id + " state changed has changed it was loaded from cash register. Current modification date : " + 
+							Math.round(vm.invoice.modificationDate / 1000) + ". New modification date : " + existingInvoice != null ? existingInvoice.modificationDate / 1000 : "null"});
 					
 					vm.loading = false;
 					vm.warnInvoiceClosed();
@@ -260,6 +264,9 @@
 					vm.invoice = invoice;
 					
 					vm.refreshInvoices();
+					
+					if(successCallback != undefined)
+						successCallback();
 				} 
 			}
 		}
