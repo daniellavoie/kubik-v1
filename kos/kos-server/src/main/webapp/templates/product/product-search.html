@@ -106,8 +106,7 @@
 						
 						<div ng-repeat="product in productSearchCtrl.productPage.content" ng-click="productSearchCtrl.openProductPage(product)" class="product row">
 							<div class="col-sm-3 text-center">
-								<img ng-if="product.images.length != 0" ng:src="/product/{{product.id}}/image/THUMB.jpg" />
-								<img ng-if="product.images.length == 0" th:src="@{/img/logos/dimension-fantastique-noir.png}" />
+								<img ng-src="/product/{{product.id}}/image/THUMB.jpg" />
 							</div>
 							<div class="col-sm-6">
 								<div><h4><a th:href="@{/product/{{product.id}}}">{{product.title}}</a></h4></div>
