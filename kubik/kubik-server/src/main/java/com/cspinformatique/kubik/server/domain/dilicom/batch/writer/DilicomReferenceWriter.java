@@ -15,6 +15,7 @@ import com.cspinformatique.kubik.server.domain.dilicom.service.ReferenceService;
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.product.service.SupplierService;
 import com.cspinformatique.kubik.server.model.product.Product;
+import com.cspinformatique.kubik.server.model.product.Supplier;
 
 @Component
 public class DilicomReferenceWriter implements ItemWriter<Reference> {
@@ -40,10 +41,16 @@ public class DilicomReferenceWriter implements ItemWriter<Reference> {
 		Map<Integer, ReferenceNotification> notifications = new HashMap<Integer, ReferenceNotification>();
 		Map<String, Reference> references = new HashMap<String, Reference>();
 		for (Reference reference : items) {
-			Product product = this.productService.findByEan13AndSupplier(reference.getEan13(),
-					supplierService.findByEan13(reference.getSupplierEan13()));
-			notifications.put(product.getId(),
-					new ReferenceNotification(null, product, ReferenceNotification.Status.NEW, null, null));
+			Supplier supplier = supplierService.findByEan13(reference.getSupplierEan13());
+			if (supplier != null) {
+				Product product = this.productService.findByEan13AndSupplier(reference.getEan13(),
+						supplierService.findByEan13(reference.getSupplierEan13()));
+
+				if (product != null) {
+					notifications.put(product.getId(),
+							new ReferenceNotification(null, product, ReferenceNotification.Status.NEW, null, null));
+				}
+			}
 
 			references.put(reference.getEan13() + "-" + reference.getSupplierEan13(), reference);
 		}

@@ -15,6 +15,7 @@ import com.cspinformatique.kubik.server.domain.dilicom.model.Reference;
 import com.cspinformatique.kubik.server.domain.dilicom.model.ReferenceDTO;
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.product.service.SupplierService;
+import com.cspinformatique.kubik.server.model.product.Supplier;
 
 @Component
 public class ReferenceItemProcessor implements ItemProcessor<ReferenceDTO, Reference> {
@@ -93,8 +94,9 @@ public class ReferenceItemProcessor implements ItemProcessor<ReferenceDTO, Refer
 			}
 
 			boolean importedInKubik = false;
-			if (this.productService.findByEan13AndSupplier(referenceDTO.getEan13(),
-					supplierService.findByEan13(referenceDTO.getDistributorEan13())) != null) {
+			Supplier supplier = supplierService.findByEan13(referenceDTO.getDistributorEan13());
+			if (supplier != null
+					&& this.productService.findByEan13AndSupplier(referenceDTO.getEan13(), supplier) != null) {
 				importedInKubik = true;
 			}
 
