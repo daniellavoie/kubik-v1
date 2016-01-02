@@ -95,7 +95,7 @@
 					<div class="input-group">
 						<input ng-keyup="menuSearchCtrl.searchKeyUp($event)" ng-model="menuSearchCtrl.searchParams.query" class="form-control" type="text" />
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+							<button class="btn btn-default" ng-click="menuSearchCtrl.search()" type="button"><span class="glyphicon glyphicon-search"></span></button>
 <!-- 							<button ng-click="menuSearchCtrl.search()" class="btn btn-default glyphicon glyphicon-search"></button> -->
 						</span>
 					</div>
