@@ -49,6 +49,8 @@
 		});
 		
 		$scope.$on("saleOver", function($event){
+			vm.invoice = null;
+			
 			vm.refreshInvoices();
 		});
 		
@@ -272,6 +274,8 @@
 		}
 		
 		function searchProductKeyUp($event){
+			vm.inputIdToFocus = $event.target.id;
+			
 			if($event.keyCode == 13){
 				vm.searchProduct();
 			}
@@ -279,6 +283,7 @@
 		
 		function searchProduct(){
 			vm.typedEan13 = vm.ean13;
+			
 			
 			if(vm.typedEan13 != "" && !vm.searchInProgress){
 				vm.searchInProgress = true;
