@@ -6,5 +6,5 @@ import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
 
 public interface InvoiceStatusRepository extends
 		CrudRepository<InvoiceStatus, String> {
-
+	InvoiceStatus findByType(String type);
 }

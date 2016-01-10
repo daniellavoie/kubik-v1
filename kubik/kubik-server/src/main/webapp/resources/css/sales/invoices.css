@@ -1,7 +1,0 @@
-table.invoices tbody tr:HOVER{
-	cursor: pointer;
-}
-
-.search-error{
-	margin-top: 10px;
-}

@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.cspinformatique.kubik.server.model.sales.PaymentMethod;
 
-public interface PaymentMethodRepository extends CrudRepository<PaymentMethod, String>{
-
+public interface PaymentMethodRepository extends CrudRepository<PaymentMethod, String> {
+	PaymentMethod findByType(String type);
 }

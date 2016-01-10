@@ -1,0 +1,276 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+
+	<head>
+		<title>La Dimension Fantastique - Caisse enregistreuse</title>
+		
+		<link th:replace="util/import :: head">
+		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/invoice/cash-register.css}" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/invoice/payment.css}" />
+	</head>
+	
+	<body ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container" ng-cloak ng-controller="CashRegisterCtrl as cashRegisterCtrl">
+			<div class="text-center">
+				<h1>Caisse enregistreuse</h1>
+				
+				<ul class="invoice-tabs nav nav-tabs">
+					<li ng-repeat="invoice in cashRegisterCtrl.invoices" id="invoice-tab-{{invoice.id}}" role="presentation" ng-click="cashRegisterCtrl.showInvoice(invoice)">
+						<a ng-if="invoice.customer == null" href="#">
+							<span>Client anoynme</span>
+							<span class="panel panel-default">	
+								<span ng-click="cashRegisterCtrl.openCustomerSearch($event)" class="pointer glyphicon glyphicon-search"></span>
+							</span>
+						</a>
+						<a ng-if="invoice.customer != null" href="#">
+							<span>{{invoice.customer.firstName}} {{invoice.customer.lastName}}</span>
+							<span class="panel panel-default">
+								<span ng-click="cashRegisterCtrl.openCustomerSearch($event)" class="pointer glyphicon glyphicon-search"></span>
+								<span ng-click="cashRegisterCtrl.openCustomerCard($event, invoice.customer)" class="pointer glyphicon glyphicon-user"></span>
+								<span ng-click="cashRegisterCtrl.removeCustomerFromInvoice()" class="pointer glyphicon glyphicon-remove"></span>
+							</span>
+						</a>
+					</li>
+					<li ng-click="cashRegisterCtrl.newInvoice()">
+						<a href="#">+</a>
+					</li>
+				</ul>
+				
+				<div ng-repeat="invoice in cashRegisterCtrl.invoices" ng-if="cashRegisterCtrl.isSelectedInvoice(invoice)">
+					<table class="panel panel-default table table-striped table-condensed">
+						<thead class="panel-heading">
+							<tr>
+								<th>Produit</th>
+								<th>Prix TTC</th>
+								<th>Taxe</th>
+								<th>Quantité</th>
+								<th>Montant</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="detail in cashRegisterCtrl.invoice.details">
+								<td><a href="#" ng-click="cashRegisterCtrl.openProductCard($event, detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
+								<td>{{detail.unitPrice | currency : '&euro;'}}
+								<td>
+									<div ng-repeat="taxAmount in cashRegisterCtrl.invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
+								</td>
+								<td>
+									<input 
+										ng-if="!cashRegisterCtrl.loading"
+										id="detail-{{detail.id}}"
+										ng-keyup="cashRegisterCtrl.invoiceChanged($event)"
+										ng-click="cashRegisterCtrl.invoiceChanged($event)"
+										ng-model="detail.quantity"
+										class="quantity form-control" 
+										type="number"
+										min="1" 
+										max="99999"
+									/>
+									<input 
+										disabled="disabled"
+										ng-if="cashRegisterCtrl.loading"
+										ng-model="detail.quantity"
+										class="quantity form-control" 
+										type="number"
+									/>
+								</td>
+								
+								<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>
+								
+								<td>
+									<button
+										type="button" 
+										class="btn btn-warning btn-xs"
+										ng-if="!cashRegisterCtrl.loading"
+										ng-click="cashRegisterCtrl.removeInvoiceDetail(detail)" 
+									>
+										<span class="glyphicon glyphicon-trash"></span>
+									</button>
+									<button
+										type="button" 
+										disabled="disabled"
+										class="btn btn-warning btn-xs"
+										ng-if="cashRegisterCtrl.loading"
+									>
+										<span class="glyphicon glyphicon-trash"></span>
+									</button>
+								</td>
+							</tr>
+							
+							<tr ng-if="cashRegisterCtrl.invoice.details.length == 0">
+								<td colspan="6">
+									Aucun produit dans le panier.
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<div class="confirm-cancel modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<p>Etes-vous sûr de vouloir annuler la annuler la vente ?</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
+								<button type="button" class="btn btn-danger" ng-click="cashRegisterCtrl.cancelInvoice()">Annuler la vente</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		 
+			<footer class="footer text-center">
+				<div class="row">
+					<div class="col-md-2">
+						<div class="input-group">
+  							<span class="input-group-addon">Remise</span>
+							<input 
+								type="number" 
+							 	placeholder="Remise"
+								ng-if="!cashRegisterCtrl.loading" 
+								class="form-control rebate-input"
+								ng-model="cashRegisterCtrl.invoice.rebatePercent" 
+								ng-keyup="cashRegisterCtrl.invoiceChanged($event)"
+								ng-click="cashRegisterCtrl.invoiceChanged($event)"
+							/>
+							<input 
+								type="number" 
+								disabled="disabled"
+							 	placeholder="Remise"
+								class="form-control rebate-input"
+								ng-if="cashRegisterCtrl.loading" 
+								ng-model="cashRegisterCtrl.invoice.rebatePercent" 
+							/>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<input 
+							type="text" 
+							id="search-ean13"
+							placeholder="Ean13" 
+							class="form-control ean13-input" 
+							ng-if="!cashRegisterCtrl.loading"
+							ng-model="cashRegisterCtrl.ean13" 
+							ng-keyup="cashRegisterCtrl.searchProductKeyUp($event)" 
+						/>
+						<input 
+							type="text" 
+							disabled="disabled"
+							placeholder="Ean13" 
+							ng-if="cashRegisterCtrl.loading"
+							ng-model="cashRegisterCtrl.ean13" 
+							class="form-control ean13-input" 
+						/>
+					</div>
+					
+					<div class="col-md-3">
+						<button 
+							type="button" 
+							ng-if="!cashRegisterCtrl.loading"
+							class="btn btn-primary glyphicon glyphicon-search"
+							ng-click="cashRegisterCtrl.openProductSearch($event)" 
+						></button>
+						<button 
+							type="button" 
+							disabled="disabled"
+							ng-if="cashRegisterCtrl.loading"
+							class="btn btn-primary glyphicon glyphicon-search"
+						></button>
+						<button 
+							type="button" 
+							ng-if="!cashRegisterCtrl.loading" 
+							class="btn btn-danger"
+							ng-click="cashRegisterCtrl.confirmCancelInvoice()" 
+						>Annuler</button>
+						<button 
+							type="button" 
+							disabled="disabled"
+							ng-if="cashRegisterCtrl.loading" 
+							class="btn btn-danger"
+						>Annuler</button>
+						<button 
+							type="button" 
+							ng-if="!cashRegisterCtrl.loading" 
+							ng-click="cashRegisterCtrl.checkoutInvoice()" 
+							class="checkout btn btn-success"
+						>Encaisser</button>
+						<button 
+							type="button" 
+							disabled="disabled"
+							ng-if="cashRegisterCtrl.loading" 
+							class="checkout btn btn-success"
+						>Encaisser</button>
+					</div>
+					
+					<div class="col-md-3">
+						<div class="input-group	">
+  							<span class="input-group-addon">Total</span>
+  							<span class="form-control">
+  							{{cashRegisterCtrl.invoice.totalAmount | currency : '&euro;'}}
+  							</span>
+						</div>
+						<h4></h4>
+					</div>
+					
+					<div class="col-md-1">
+						<img ng-if="cashRegisterCtrl.loading" th:src="@{/img/loading.gif}" />
+					</div>
+				</div>
+			</footer>
+			
+			<!-- Payment -->
+			<script th:replace="sales/invoice/payment-modal :: payment-modal"></script>
+		
+			<div class="product-not-found alert modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div class="alert alert-danger">
+								Aucune produit retrouvé pour l'ean13 {{cashRegisterCtrl.typedEan13}}.
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<div class="invoice-closed-modal alert modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div class="alert alert-warning">
+								Cette facture a été modifié par un autre utilisateur.
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		
+			<div th:replace="sales/customer/customers-modal :: customers-modal"></div>
+		
+			<div th:replace="product/products-modal :: products-modal"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+			
+		<script type="text/javascript" th:src="@{/js/error/error-trace-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/sales/customer/customer-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/sales/invoice/cash-register-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/sales/invoice/payment-controller.js}"></script>
+	</body>
+</html>

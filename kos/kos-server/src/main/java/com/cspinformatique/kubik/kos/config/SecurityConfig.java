@@ -24,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(accountService).passwordEncoder(passwordEncoder()).and().inMemoryAuthentication()
 				.withUser(env.getRequiredProperty("app.username")).password(env.getRequiredProperty("app.password"))
-				.roles("USER");
+				.roles("SYSTEM");
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				"/account", "/compte", "/account/create-account", "/compte/creer-un-compte",
 
 		// customer order
-				"/cart", "/panier", "/customer-order", "/commande-client",
+				"/cart", "/panier", "/customer-order/detail", "/commande-client/detail",
 
 		// Login
 				"/authenticate", "/account/sign-in", "/compte/connexion",

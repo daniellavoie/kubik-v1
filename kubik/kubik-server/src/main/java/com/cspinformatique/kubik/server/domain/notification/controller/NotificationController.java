@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.cspinformatique.kubik.kos.model.KubikNotification;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification;
 import com.cspinformatique.kubik.server.domain.notification.service.NotificationService;
 
 @Controller

@@ -1,85 +1,96 @@
 package com.cspinformatique.kubik.kos.domain.order.controller;
 
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.cspinformatique.kubik.common.rest.HtmlException;
+import com.cspinformatique.kubik.common.rest.RestException;
 import com.cspinformatique.kubik.kos.domain.account.service.AccountService;
 import com.cspinformatique.kubik.kos.domain.order.service.CustomerOrderService;
-import com.cspinformatique.kubik.kos.exception.BadRequestException;
+import com.cspinformatique.kubik.kos.domain.order.validator.CustomerOrderValidator;
+import com.cspinformatique.kubik.kos.exception.ResourceNotFoundException;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
-import com.cspinformatique.kubik.kos.model.order.CustomerOrderDetail;
+import com.cspinformatique.kubik.kos.model.order.CustomerOrder.Status;
+import com.mysema.query.types.Predicate;
 
 @Controller
 @Transactional
-@RequestMapping({ "/customer-order", "/commande-client", "/cart", "/panier" })
+@RequestMapping({ "/customer-order", "/commande-client" })
 public class CustomerOrderController {
+	private final List<Status> HISTORY_STATUS = Arrays.asList(new Status[] { Status.CONFIRMED, Status.PROCESSED });
+
 	@Resource
 	private AccountService accountService;
 
 	@Resource
-	private CustomerOrderService customerOrderService;
+	CustomerOrderService customerOrderService;
 
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/detail", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void addDetail(Principal principal, @CookieValue(required = false) String customerOrderUuid,
-			HttpServletResponse response, @RequestBody CustomerOrderDetail customerOrderDetail) {
-		customerOrderService.addDetail(findActiveCustomerOrder(principal, customerOrderUuid, response),
-				customerOrderDetail);
+	@Resource
+	CustomerOrderValidator customerOrderValidator;
+
+	@PreAuthorize("hasRole('SYSTEM')")
+	@RequestMapping(method = RequestMethod.GET, params = "search", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Page<CustomerOrder> findAll(@QuerydslPredicate(root = CustomerOrder.class) Predicate predicate,
+			Pageable pageable) {
+		return customerOrderService.findAll(predicate, pageable);
 	}
 
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody CustomerOrder findActiveCustomerOrder(Principal principal,
-			@CookieValue(required = false) String customerOrderUuid, HttpServletResponse response) {
-		CustomerOrder customerOrder = customerOrderService.loadOpenCustomerOrder(
-				principal != null ? accountService.findByUsername(principal.getName()) : null, customerOrderUuid);
-
-		if (principal == null)
-			response.addCookie(new Cookie("customerOrderUuid", customerOrder.getUuid()));
-
-		return customerOrder;
-	}
-
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-	public String getCustomerOrderPage() {
-		return "order/customer-order";
+	public Page<CustomerOrder> findByAccount(Pageable pageable, Principal principal) {
+		return customerOrderService.findByAccountAndStatusIn(accountService.findByPrincipal(principal),
+				HISTORY_STATUS, pageable);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public CustomerOrder getCustomerOrderConfirmation(@PathVariable long id, Principal principal) {
-		return getCustomerOrderForConfirmation(id, principal);
-	}
-
-	private CustomerOrder getCustomerOrderForConfirmation(long id, Principal principal) {
+	public @ResponseBody CustomerOrder findOne(@PathVariable long id, Principal principal,
+			@CookieValue(required = false) String customerOrderUuid) {
 		CustomerOrder customerOrder = customerOrderService.findOne(id);
 
-		if (customerOrder == null
-				|| customerOrder.getAccount().getId() != accountService.findByUsername(principal.getName()).getId()
-				|| customerOrder.getStatus().equals(CustomerOrder.Status.OPEN))
-			throw new BadRequestException();
+		if (customerOrder == null) {
+			throw new ResourceNotFoundException("Customer order " + id + " could not be found.");
+		}
 
-		return customerOrder;
+		customerOrderValidator.checkAccessRights(principal, customerOrder, customerOrderUuid);
+
+		return customerOrderService.findOne(id);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-	public String getCustomerOrderConfirmationPage(@PathVariable long id, Principal principal) {
-		getCustomerOrderForConfirmation(id, principal);
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	public String getCustomerOrdersHistoryPage(Principal principal) {
+		Assert.notNull(principal);
 
-		return "order/customer-order-confirmation";
+		return "order/customer-orders-history";
+	}
+
+	@RequestMapping(value = "/{id}", produces = MediaType.TEXT_HTML_VALUE)
+	public String getCustomerOrderPage(@PathVariable long id, @CookieValue(required = false) String customerOrderUuid,
+			Principal principal) {
+		try {
+			findOne(id, principal, customerOrderUuid);
+		} catch (RestException restEx) {
+			throw new HtmlException(restEx);
+		}
+
+		return "order/customer-order";
 	}
 
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

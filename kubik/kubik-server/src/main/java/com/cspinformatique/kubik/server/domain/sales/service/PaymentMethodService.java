@@ -6,4 +6,6 @@ public interface PaymentMethodService {
 	Iterable<PaymentMethod> findAll();
 	
 	PaymentMethod findOne(String id);
+	
+	PaymentMethod findByType(String type);
 }

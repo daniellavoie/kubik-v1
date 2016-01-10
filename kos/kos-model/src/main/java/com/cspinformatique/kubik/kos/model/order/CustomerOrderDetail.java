@@ -13,7 +13,8 @@ public class CustomerOrderDetail {
 	private long id;
 	private CustomerOrder customerOrder;
 	private Product product;
-	private int quantity;
+	private int quantityOrdered;
+	private int quantityShipped;
 	private Double unitPrice;
 	private Double totalAmount;
 
@@ -21,11 +22,12 @@ public class CustomerOrderDetail {
 
 	}
 
-	public CustomerOrderDetail(long id, CustomerOrder customerOrder, Product product, int quantity, Double unitPrice, Double totalAmount) {
+	public CustomerOrderDetail(long id, CustomerOrder customerOrder, Product product, int quantityOrdered, int quantityShipped, Double unitPrice, Double totalAmount) {
 		this.id = id;
 		this.customerOrder = customerOrder;
 		this.product = product;
-		this.quantity = quantity;
+		this.quantityOrdered = quantityOrdered;
+		this.quantityShipped = quantityShipped;
 		this.unitPrice = unitPrice;
 		this.totalAmount = totalAmount;
 	}
@@ -59,12 +61,20 @@ public class CustomerOrderDetail {
 		this.product = product;
 	}
 
-	public int getQuantity() {
-		return quantity;
+	public int getQuantityOrdered() {
+		return quantityOrdered;
 	}
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
+	public void setQuantityOrdered(int quantityOrdered) {
+		this.quantityOrdered = quantityOrdered;
+	}
+
+	public int getQuantityShipped() {
+		return quantityShipped;
+	}
+
+	public void setQuantityShipped(int quantityShipped) {
+		this.quantityShipped = quantityShipped;
 	}
 
 	public Double getUnitPrice() {

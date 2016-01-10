@@ -2,7 +2,6 @@ package com.cspinformatique.kubik.server.domain.sales.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,62 +25,74 @@ import com.cspinformatique.kubik.server.domain.purchase.service.RestockService;
 import com.cspinformatique.kubik.server.domain.sales.exception.InvoiceAlreadyPaidException;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceRepository;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceStatusRepository;
+import com.cspinformatique.kubik.server.domain.sales.service.CustomerService;
 import com.cspinformatique.kubik.server.domain.sales.service.DailyReportService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.sales.CashRegisterSession;
+import com.cspinformatique.kubik.server.model.sales.Customer;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus.Types;
 import com.cspinformatique.kubik.server.model.sales.InvoiceTaxAmount;
 import com.cspinformatique.kubik.server.model.sales.Payment;
+import com.mysema.query.types.Predicate;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
 	@Resource
-	private DailyReportService dailyReportService;
+	CustomerService customerService;
 
 	@Resource
-	private InvoiceRepository invoiceRepository;
+	DailyReportService dailyReportService;
 
 	@Resource
-	private InvoiceStatusRepository invoiceStatusRepository;
+	InvoiceRepository invoiceRepository;
 
 	@Resource
-	private ProductInventoryService productInventoryService;
+	InvoiceStatusRepository invoiceStatusRepository;
 
 	@Resource
-	private ProductService productService;
+	ProductInventoryService productInventoryService;
 
 	@Resource
-	private RestockService restockService;
+	ProductService productService;
+
+	@Resource
+	RestockService restockService;
 
 	private void calculateInvoiceAmounts(Invoice invoice) {
 		double totalAmount = 0d;
 		double totalRebateAmount = 0d;
 
-		for (InvoiceDetail detail : invoice.getDetails()) {
-			double quantity = detail.getQuantity();
+		if (invoice.getDetails() != null) {
+			for (InvoiceDetail detail : invoice.getDetails()) {
+				double quantity = detail.getQuantity();
 
-			Product product = productService.findOne(detail.getProduct().getId());
+				Product product = productService.findOne(detail.getProduct().getId());
 
-			// Calculate rebate amount for detail.
-			double rebateAmount = 0d;
-			if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d) {
-				rebateAmount = product.getPriceTaxIn() * (invoice.getRebatePercent() / 100);
+				// Calculate rebate amount for detail.
+				double rebateAmount = 0d;
+				if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d) {
+					rebateAmount = product.getPriceTaxIn() * (invoice.getRebatePercent() / 100);
+				}
+
+				// Increment total rebate amount.
+				totalRebateAmount += rebateAmount;
+
+				// Calculates customer credit details amounts
+				detail.setUnitPrice(product.getPriceTaxIn());
+				detail.setTotalAmount(detail.getUnitPrice() * quantity);
+
+				// Increment customer credit totals amount.
+				totalAmount += detail.getTotalAmount();
 			}
+		}
 
-			// Increment total rebate amount.
-			totalRebateAmount += rebateAmount;
-
-			// Calculates customer credit details amounts
-			detail.setUnitPrice(product.getPriceTaxIn());
-			detail.setTotalAmount(detail.getUnitPrice() * quantity);
-
-			// Increment customer credit totals amount.
-			totalAmount += detail.getTotalAmount();
+		if (invoice.getShippingCost() != null) {
+			totalAmount += invoice.getShippingCost();
 		}
 
 		totalRebateAmount = Precision.round(totalRebateAmount, 2);
@@ -102,12 +113,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 		invoice.setAmountReturned(invoice.getAmountPaid() - invoice.getTotalAmount());
 	}
 
-	public void calculateInvoiceRebatePercent(Invoice invoice) {
-		if (invoice.getRebateAmount() != 0d) {
-			invoice.setRebatePercent(Precision.round((invoice.getRebateAmount() * 100) / invoice.getTotalAmount(), 2));
-		}
-	}
-
 	@Override
 	public void calculateInvoiceTaxes(Invoice invoice) {
 		HashMap<Double, InvoiceTaxAmount> totalTaxesAmounts = new HashMap<Double, InvoiceTaxAmount>();
@@ -115,49 +120,58 @@ public class InvoiceServiceImpl implements InvoiceService {
 		double totalTaxableAmount = 0d;
 		double totalTaxAmount = 0d;
 
-		for (InvoiceTaxAmount invoiceTaxAmount : invoice.getTaxesAmounts().values()) {
-			invoiceTaxAmount.setTaxAmount(0d);
-			invoiceTaxAmount.setTaxableAmount(0d);
-			invoiceTaxAmount.setTaxedAmount(0d);
-		}
-
-		for (InvoiceDetail detail : invoice.getDetails()) {
-			Product product = productService.findOne(detail.getProduct().getId());
-
-			double quantity = detail.getQuantity();
-
-			// Calculate rebate amount for detail.
-			double rebateAmount = 0d;
-			if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d) {
-				rebateAmount = detail.getUnitPrice() * invoice.getRebatePercent() / 100;
-			}
-
-			double detailTotalAmount = detail.getUnitPrice().doubleValue() * quantity - rebateAmount;
-
-			// Increment taxed amounts.
-			InvoiceTaxAmount invoiceTaxAmount = totalTaxesAmounts.get(product.getTvaRate1());
-			if (invoiceTaxAmount == null) {
-				invoiceTaxAmount = new InvoiceTaxAmount(0, product.getTvaRate1(), 0d, 0d, 0d);
-			} else if (invoiceTaxAmount.getTaxedAmount() == null) {
+		if (invoice.getTaxesAmounts() != null) {
+			for (InvoiceTaxAmount invoiceTaxAmount : invoice.getTaxesAmounts().values()) {
+				invoiceTaxAmount.setTaxAmount(0d);
+				invoiceTaxAmount.setTaxableAmount(0d);
 				invoiceTaxAmount.setTaxedAmount(0d);
 			}
-			invoiceTaxAmount.setTaxedAmount(detailTotalAmount + invoiceTaxAmount.getTaxedAmount());
-
-			totalTaxesAmounts.put(product.getTvaRate1(), invoiceTaxAmount);
 		}
 
-		for (InvoiceTaxAmount invoiceTaxAmount : totalTaxesAmounts.values()) {
-			invoiceTaxAmount.setTaxAmount(Precision.round((invoiceTaxAmount.getTaxedAmount()
-					/ (1 + (invoiceTaxAmount.getTaxRate() / 100)) * (invoiceTaxAmount.getTaxRate() / 100)), 2));
-			invoiceTaxAmount.setTaxableAmount(
-					Precision.round(invoiceTaxAmount.getTaxedAmount() - invoiceTaxAmount.getTaxAmount(), 2));
+		if (invoice.getDetails() != null) {
+			for (InvoiceDetail detail : invoice.getDetails()) {
+				Product product = productService.findOne(detail.getProduct().getId());
 
-			totalTaxAmount += invoiceTaxAmount.getTaxAmount();
-			totalTaxableAmount += invoiceTaxAmount.getTaxableAmount();
+				double quantity = detail.getQuantity();
+
+				// Calculate rebate amount for detail.
+				double rebateAmount = 0d;
+				if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d) {
+					rebateAmount = detail.getUnitPrice() * invoice.getRebatePercent() / 100;
+				}
+
+				double detailTotalAmount = detail.getUnitPrice().doubleValue() * quantity - rebateAmount;
+
+				// Increment taxed amounts.
+				InvoiceTaxAmount invoiceTaxAmount = totalTaxesAmounts.get(product.getTvaRate1());
+				if (invoiceTaxAmount == null) {
+					invoiceTaxAmount = new InvoiceTaxAmount(0, product.getTvaRate1(), 0d, 0d, 0d);
+				} else if (invoiceTaxAmount.getTaxedAmount() == null) {
+					invoiceTaxAmount.setTaxedAmount(0d);
+				}
+				invoiceTaxAmount.setTaxedAmount(detailTotalAmount + invoiceTaxAmount.getTaxedAmount());
+
+				totalTaxesAmounts.put(product.getTvaRate1(), invoiceTaxAmount);
+			}
+		}
+
+		if (totalTaxesAmounts != null) {
+			for (InvoiceTaxAmount invoiceTaxAmount : totalTaxesAmounts.values()) {
+				invoiceTaxAmount.setTaxAmount(Precision.round((invoiceTaxAmount.getTaxedAmount()
+						/ (1 + (invoiceTaxAmount.getTaxRate() / 100)) * (invoiceTaxAmount.getTaxRate() / 100)), 2));
+				invoiceTaxAmount.setTaxableAmount(
+						Precision.round(invoiceTaxAmount.getTaxedAmount() - invoiceTaxAmount.getTaxAmount(), 2));
+
+				totalTaxAmount += invoiceTaxAmount.getTaxAmount();
+				totalTaxableAmount += invoiceTaxAmount.getTaxableAmount();
+			}
 		}
 
 		invoice.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));
-		invoice.setTotalTaxLessAmount(Precision.round(totalTaxableAmount, 2));
+
+		// Adds shipping fees to tax less amount.
+		invoice.setTotalTaxLessAmount(Precision
+				.round(totalTaxableAmount + (invoice.getShippingCost() != null ? invoice.getShippingCost() : 0), 2));
 
 		if (invoice.getTaxesAmounts() != null) {
 			invoice.getTaxesAmounts().clear();
@@ -188,6 +202,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 	@Override
 	public Page<Invoice> findAll(Pageable pageable) {
 		return this.invoiceRepository.findAll(pageable);
+	}
+
+	@Override
+	public Page<Invoice> findAll(Predicate predicate, Pageable pageable) {
+		return invoiceRepository.findAll(predicate, pageable);
 	}
 
 	@Override
@@ -259,8 +278,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 	}
 
 	@Override
-	public double findProductQuantitySold(int productId) {
-		Double result = this.invoiceRepository.findProductQuantityPurchased(productId);
+	public double findProductQuantityOnHold(int productId) {
+		Double result = this.invoiceRepository.findProductQuantityOnHold(productId);
 
 		if (result == null) {
 			return 0d;
@@ -270,11 +289,44 @@ public class InvoiceServiceImpl implements InvoiceService {
 	}
 
 	@Override
+	public double findProductQuantitySold(int productId) {
+		Double result = this.invoiceRepository.findProductQuantitySold(productId);
+
+		if (result == null) {
+			return 0d;
+		}
+
+		return result;
+	}
+
+	@Override
+	public Invoice generateNewInvoice(Long customerOrderId, Double shippingCost) {
+		return generateNewInvoice(invoiceStatusRepository.findOne(Types.DRAFT.name()), null, null, customerOrderId,
+				shippingCost);
+	}
+
+	@Override
 	public Invoice generateNewInvoice(CashRegisterSession session) {
-		return this.save(new Invoice(null, null, null, invoiceStatusRepository.findOne(Types.DRAFT.name()), null,
-				Date.from(LocalDateTime.now().withNano(0).atZone(ZoneId.systemDefault()).toInstant()), null, null, null,
-				null, 0d, 0d, 0d, new HashMap<Double, InvoiceTaxAmount>(), 0d, 0d, 0d, new ArrayList<Payment>(), 0d, 0d,
-				session, null, new ArrayList<InvoiceDetail>()));
+		return generateNewInvoice(invoiceStatusRepository.findOne(Types.DRAFT.name()), null, session, null, null);
+	}
+
+	private Invoice generateNewInvoice(InvoiceStatus status, Customer customer, CashRegisterSession session,
+			Long customerOrderId, Double shippingCost) {
+		Invoice invoice = new Invoice();
+		invoice.setStatus(status);
+		invoice.setCustomer(customer);
+		invoice.setDate(Date.from(LocalDateTime.now().withNano(0).atZone(ZoneId.systemDefault()).toInstant()));
+		invoice.setCashRegisterSession(session);
+		invoice.setShippingCost(shippingCost);
+
+		return this.save(invoice);
+	}
+
+	@Override
+	public Invoice generateNewOrder(int customerId) {
+		return generateNewInvoice(invoiceStatusRepository.findOne(Types.ORDER.name()),
+				customerService.findOne(customerId), null, null, null);
+
 	}
 
 	private String generateInvoiceNumber() {
@@ -347,23 +399,33 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	private Iterable<Invoice> save(Iterable<Invoice> invoices) {
 		Set<Long> datesForDailyReport = new HashSet<Long>();
-		Set<Invoice> paidInvoices = new HashSet<Invoice>();
+		Set<Invoice> invoicesWithAlteredInventory = new HashSet<Invoice>();
 
 		for (Invoice invoice : invoices) {
 			if (invoice.getId() != null) {
 				Invoice existingInvoice = findOne(invoice.getId());
 
-				if (InvoiceStatus.Types.PAID.toString().equals(existingInvoice.getStatus().getType()))
+				if (invoice.getPaidDate() != null)
 					throw new InvoiceAlreadyPaidException(existingInvoice, invoice);
 
 				String status = invoice.getStatus().getType();
 
-				if (invoice.getStatus().equals(Types.CANCELED.name()) && invoice.getCancelDate() == null) {
+				if (Types.CANCELED.name().equals(status) && invoice.getCancelDate() == null){
 					invoice.setCancelDate(new Date());
+					
+					if(invoice.getConfirmedDate() != null){
+						invoicesWithAlteredInventory.add(invoice);
+					}
 				}
 
-				if (status.equals(Types.PAID.name())) {
+				if (Types.ORDER_CONFIRMED.name().equals(status)
+						&& invoice.getConfirmedDate() == null) {
+					invoice.setConfirmedDate(new Date());
 
+					invoicesWithAlteredInventory.add(invoice);
+				}
+
+				if (Types.PAID.name().equals(status)) {
 					if (invoice.getNumber() == null) {
 						String number = this.generateInvoiceNumber();
 
@@ -375,10 +437,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 					if (invoice.getPaidDate() == null) {
 						invoice.setPaidDate(new Date());
 
-						paidInvoices.add(invoice);
+						invoicesWithAlteredInventory.add(invoice);
 					}
 				}
-
 			}
 
 			invoice.setModificationDate(
@@ -399,7 +460,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 			this.dailyReportService.generateDailyReport(new Date(dateForDailyReport));
 		}
 
-		for (Invoice invoice : paidInvoices) {
+		for (Invoice invoice : invoicesWithAlteredInventory) {
 			this.updateInventory(invoice);
 		}
 

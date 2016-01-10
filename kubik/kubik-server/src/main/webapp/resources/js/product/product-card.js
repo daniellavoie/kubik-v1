@@ -23,10 +23,16 @@
 										sortBy : "customerCredit.completeDate",
 										direction : "DESC" }
 								}, 
-								invoice : {	searchParams : {
+								paidInvoice : {	searchParams : {
 									page : 0,
 									resultPerPage : 20,
 									sortBy : "invoice.paidDate",
+									direction : "DESC"  }
+								}, 
+								confirmedInvoice : {	searchParams : {
+									page : 0,
+									resultPerPage : 20,
+									sortBy : "invoice.confirmedDate",
 									direction : "DESC"  }
 								}, 
 								reception : {	searchParams : {

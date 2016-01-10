@@ -15,7 +15,7 @@
 					
 					<div class="modal-body">
 						<div class="text-center">
-							<img src="http://images1.centprod.com/{{productCardCtrl.company.ean13}}/{{productCardCtrl.product.imageEncryptedKey}}-cover-medium.jpg">
+							<img ng-src="/product/{{productCardCtrl.product.id}}/image/MEDIUM.jpg" />
 						</div>
 					
 						<ul class="nav nav-tabs">
@@ -358,7 +358,8 @@
 							
 							<ul class="nav nav-tabs">
 								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('reception')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'reception']"><a href="#">Commandes</a></li>
-								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('invoice')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'invoice']"><a href="#">Ventes</a></li>
+								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('paidInvoice')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'paidInvoice']"><a href="#">Ventes</a></li>
+								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('confirmedInvoice')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'confirmedInvoice']"><a href="#">Mises de côté</a></li>
 								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('rma')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'rma']"><a href="#">Retours fournisseurs</a></li>
 								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('customerCredit')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'customerCredit']"><a href="#">Retours clients</a></li>
 								<li role="presentation" ng-click="productCardCtrl.changeInventoryTab('inventoryCount')" ng-class="{true : 'active'}[productCardCtrl.inventoryTab == 'inventoryCount']"><a href="#">Décomptes</a></li>
@@ -414,7 +415,7 @@
 									</table>
 								</div>
 							
-								<div class="tab invoice" ng-class="{true : 'hidden'}[productCardCtrl.inventoryTab != 'invoice']">							 
+								<div class="tab invoice" ng-class="{true : 'hidden'}[productCardCtrl.inventoryTab != 'paidInvoice']">							 
 									<table class="table table-condensed">
 										<tbody>
 											<tr>
@@ -424,13 +425,35 @@
 											</tr>
 										</tbody>
 										<tbody>
-											<tr ng-repeat="detail in productCardCtrl.inventoryTabs.invoice.result.content">
+											<tr ng-repeat="detail in productCardCtrl.inventoryTabs.paidInvoice.result.content">
 												<td><a href="/invoice/{{detail.invoice.id}}" target="_blank">{{detail.invoice.id}}</a></td>
 												<td>{{detail.invoice.paidDate | date}}</td>
 												<td>{{detail.quantity}}</td>
 											</tr>
 											<tr ng-if="productCardCtrl.inventoryTabs.invoice.result.content.length == 0">
 												<td colspan="3">Aucune facture pour ce produit</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							
+								<div class="tab invoice" ng-class="{true : 'hidden'}[productCardCtrl.inventoryTab != 'confirmedInvoice']">							 
+									<table class="table table-condensed">
+										<tbody>
+											<tr>
+												<th>Facture</th>
+												<th>Date</th>
+												<th>Quantité</th>
+											</tr>
+										</tbody>
+										<tbody>
+											<tr ng-repeat="detail in productCardCtrl.inventoryTabs.confirmedInvoice.result.content">
+												<td><a href="/invoice/{{detail.invoice.id}}" target="_blank">{{detail.invoice.id}}</a></td>
+												<td>{{detail.invoice.confirmedDate | date}}</td>
+												<td>{{detail.quantity}}</td>
+											</tr>
+											<tr ng-if="productCardCtrl.inventoryTabs.invoice.result.content.length == 0">
+												<td colspan="3">Aucune commande client pour ce produit</td>
 											</tr>
 										</tbody>
 									</table>

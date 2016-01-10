@@ -2,14 +2,15 @@ package com.cspinformatique.kubik.server.domain.sales.service.impl;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import com.cspinformatique.kubik.kos.model.KubikNotification;
 import com.cspinformatique.kubik.kos.model.account.Account;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification;
 import com.cspinformatique.kubik.server.domain.kos.rest.KosTemplate;
 import com.cspinformatique.kubik.server.domain.sales.repository.CustomerRepository;
 import com.cspinformatique.kubik.server.domain.sales.service.CustomerService;
@@ -19,10 +20,10 @@ import com.cspinformatique.kubik.server.model.sales.Customer;
 public class CustomerServiceImpl implements CustomerService {
 	private static final String CUSTOMER_ACCOUNT_PREFIX = "411";
 
-	@Autowired
+	@Resource
 	private CustomerRepository customerRepository;
 
-	@Autowired
+	@Resource
 	private KosTemplate kosTemplate;
 
 	@Override
@@ -53,8 +54,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public void processNotification(KubikNotification kubikNotification) {
-		Account account = kosTemplate
-				.exchange("/account/" + kubikNotification.getKosId(), HttpMethod.GET, Account.class).getBody();
+		Account account = kosTemplate.exchange("/account/" + kubikNotification.getKosId(), HttpMethod.GET,
+				Account.class);
 
 		Customer customer = customerRepository.findByEmail(account.getUsername());
 
@@ -63,8 +64,10 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.setEmail(account.getUsername());
 		}
 
-		customer.setFirstName(account.getBillingAddress().getFirstName());
-		customer.setLastName(account.getBillingAddress().getLastName());
+		if (account.getBillingAddress() != null) {
+			customer.setFirstName(account.getBillingAddress().getFirstName());
+			customer.setLastName(account.getBillingAddress().getLastName());
+		}
 
 		save(customer);
 	}

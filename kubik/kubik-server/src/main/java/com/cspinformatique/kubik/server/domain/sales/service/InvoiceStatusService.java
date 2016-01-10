@@ -4,4 +4,6 @@ import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
 
 public interface InvoiceStatusService {
 	InvoiceStatus findOne(String id);
+	
+	InvoiceStatus findByType(String type);
 }

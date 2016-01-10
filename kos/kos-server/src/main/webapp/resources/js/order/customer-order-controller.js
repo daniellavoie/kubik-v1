@@ -1,5 +1,5 @@
 (function(){
-	var CUSTOMER_ORDER_URL = "/customer-order";
+	var customerOrderId = window.location.pathname.split("/")[2];
 	
 	angular
 		.module("kos")
@@ -31,7 +31,7 @@
 		
 		function loadCustomerOrder(){
 			customerOrderService
-				.loadOpenCustomerOrder()
+				.loadCustomerOrder(customerOrderId)
 				.then(loadCustomerOrderSuccess);
 			
 			function loadCustomerOrderSuccess(customerOrder){

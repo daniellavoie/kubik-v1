@@ -1,8 +1,6 @@
 .product{
 	padding-top: 20px;
 	padding-bottom: 20px;
-	margin-left: 0px;
-	margin-right: 0px;
 }
 
 .product h3{
@@ -15,4 +13,8 @@
 
 .technical-info{
 	margin-top: 30px;
+}
+
+.order{
+	margin-bottom: 10px;
 }

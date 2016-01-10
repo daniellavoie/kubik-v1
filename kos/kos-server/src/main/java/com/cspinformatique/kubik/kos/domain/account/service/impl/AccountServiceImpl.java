@@ -1,5 +1,6 @@
 package com.cspinformatique.kubik.kos.domain.account.service.impl;
 
+import java.security.Principal;
 import java.util.Arrays;
 
 import javax.annotation.Resource;
@@ -9,18 +10,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.cspinformatique.kubik.kos.domain.account.repository.AccountRepository;
 import com.cspinformatique.kubik.kos.domain.account.service.AccountService;
 import com.cspinformatique.kubik.kos.domain.account.service.RoleService;
 import com.cspinformatique.kubik.kos.domain.kubik.service.KubikNotificationService;
 import com.cspinformatique.kubik.kos.exception.ValidationException;
-import com.cspinformatique.kubik.kos.model.KubikNotification;
-import com.cspinformatique.kubik.kos.model.KubikNotification.Action;
 import com.cspinformatique.kubik.kos.model.account.Account;
 import com.cspinformatique.kubik.kos.model.account.Address;
 import com.cspinformatique.kubik.kos.model.account.Role;
 import com.cspinformatique.kubik.kos.model.account.Role.Type;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification.Action;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -68,6 +70,11 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
+	public Account findByPrincipal(Principal principal) {
+		return principal != null ? findByUsername(principal.getName()) : null;
+	}
+
+	@Override
 	public Account findOne(long id) {
 		return accountRepository.findOne(id);
 	}
@@ -83,6 +90,8 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public Address saveAddress(Account account, Address address, boolean shippingAddressPreferedForBilling) {
+		Assert.notNull(account);
+
 		account.setShippingAddressPreferedForBilling(shippingAddressPreferedForBilling);
 
 		if (address.getType().equals(Address.Type.BILLING))

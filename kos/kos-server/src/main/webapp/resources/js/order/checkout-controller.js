@@ -11,7 +11,7 @@
 
 		vm.workflowStep = "shipping";
 		
-		loadCustomerOrder();
+		loadCart();
 		
 		vm.confirmShippingMethod = confirmShippingMethod;
 		vm.modifyAddress = modifyAddress;
@@ -27,12 +27,12 @@
 			}
 		}
 		
-		function loadCustomerOrder(){
+		function loadCart(){
 			customerOrderService
-				.loadOpenCustomerOrder()
-				.then(loadCustomerOrderSuccess);
+				.loadCart()
+				.then(loadCartSuccess);
 			
-			function loadCustomerOrderSuccess(customerOrder){
+			function loadCartSuccess(customerOrder){
 				vm.customerOrder = customerOrder;
 			}
 		}
@@ -42,10 +42,10 @@
 			vm.shippingAddress = shippingAddress;
 			
 			$modifyAddressModal.modal();
-		}
+		}	
 		
 		function saveAddress(){
-			accountService.saveAddress(vm.address, vm.account.);
+//			accountService.saveAddress(vm.address, vm.account.);
 		}
 		
 		function saveCustomerOrder(){

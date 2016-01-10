@@ -129,6 +129,17 @@ public class ProductController {
 	}
 
 	@ResponseBody
+	@RequestMapping(value = "/{productId}/confirmedInvoice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Page<InvoiceDetail> findProductConfirmedInvoices(@PathVariable("productId") int productId,
+			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
+			@RequestParam(defaultValue = "DESC") Direction direction,
+			@RequestParam(defaultValue = "invoice.confirmedDate") String sortBy) {
+		return invoiceDetailService.findByProductAndInvoiceStatus(productService.findOne(productId),
+				new InvoiceStatus(InvoiceStatus.Types.ORDER_CONFIRMED.name(), null),
+				new PageRequest(page, resultPerPage, direction, sortBy));
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/{productId}/customerCredit", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<CustomerCreditDetail> findProductCustomerCredits(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
@@ -150,8 +161,8 @@ public class ProductController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{productId}/invoice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<InvoiceDetail> findProductInvoices(@PathVariable("productId") int productId,
+	@RequestMapping(value = "/{productId}/paidInvoice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Page<InvoiceDetail> findProductPaidInvoices(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(defaultValue = "DESC") Direction direction,
 			@RequestParam(defaultValue = "invoice.paidDate") String sortBy) {

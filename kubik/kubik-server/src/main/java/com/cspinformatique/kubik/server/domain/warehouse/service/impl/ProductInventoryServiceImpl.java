@@ -101,19 +101,22 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 		int productId = productInventory.getProduct().getId();
 
 		double oldQuantityOnHand = productInventory.getQuantityOnHand();
+		double oldQuantityOnHold = productInventory.getQuantityOnHold();
 		double quantityReceived = receptionService.findProductQuantityReceived(productId);
 		double quantityCustomerReturned = customerCreditService.findProductQuantityReturnedByCustomer(productId);
 		double quantityReturnedToSupplier = rmaService.findProductQuantityReturnedToSupplier(productId);
 		double quantitySold = invoiceService.findProductQuantitySold(productId);
 		double quantityCounted = inventoryCountService.findProductQuantityCounted(productId);
+		double quantityOnHold = invoiceService.findProductQuantityOnHold(productId);
 
 		double quantityOnHand = quantityReceived + quantityCustomerReturned - quantitySold - quantityReturnedToSupplier
-				+ quantityCounted;
+				- quantityOnHold + quantityCounted;
 
 		productInventory.setQuantityOnHand(quantityOnHand);
+		productInventory.setQuantityOnHold(quantityOnHold);
 
-		LOGGER.info("Updating inventory for product " + productId + " from " + oldQuantityOnHand + " to "
-				+ quantityOnHand + ".");
+		LOGGER.info("Updating inventory for product " + productId + ". On Hand : " + oldQuantityOnHand + " to "
+				+ quantityOnHand + ". On Hold : " + oldQuantityOnHold + " to " + quantityOnHold + ".");
 
 		productInventory = save(productInventory);
 

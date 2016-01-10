@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Result;
@@ -32,15 +33,23 @@ public class CheckoutServiceImpl implements CheckoutService {
 		if (customerOrder.getTotalAmount() < 0d)
 			throw new RuntimeException("Order total amount should be over 0.");
 
-		TransactionRequest request = new TransactionRequest().amount(new BigDecimal(customerOrder.getTotalAmount().toString()))
-				.paymentMethodNonce(nonce);
+		TransactionRequest request = new TransactionRequest()
+				.amount(new BigDecimal(customerOrder.getTotalAmount().toString())).paymentMethodNonce(nonce);
 
 		Result<Transaction> result = braintreeGateway.transaction().sale(request);
 
 		if (result.getErrors() != null)
 			throw new TransactionException(result.getMessage(), result);
 
+		Transaction transaction = result.getTarget();
+
+		Assert.notNull(transaction);
+
+		String transactionId = transaction.getId();
+		Assert.notNull(transactionId);
+
 		customerOrder.setStatus(CustomerOrder.Status.CONFIRMED);
+		customerOrder.setTransactionId(transactionId);
 	}
 
 	@Override

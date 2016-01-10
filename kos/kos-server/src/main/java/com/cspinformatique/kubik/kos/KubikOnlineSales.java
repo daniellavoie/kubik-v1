@@ -30,4 +30,24 @@ public class KubikOnlineSales {
 	public String getContactUsEmail() {
 		return contactUsEmail;
 	}
+	
+	@RequestMapping("/400")
+	public String getBadRequestPage(){
+		return "400";
+	}
+
+	@RequestMapping("/403")
+	public String getForbiddenPage(){
+		return "403";
+	}
+
+	@RequestMapping("/404")
+	public String getResourceNotFoundPage(){
+		return "404";
+	}
+
+	@RequestMapping("/500")
+	public String getInternalErrorPage(){
+		return "500";
+	}
 }

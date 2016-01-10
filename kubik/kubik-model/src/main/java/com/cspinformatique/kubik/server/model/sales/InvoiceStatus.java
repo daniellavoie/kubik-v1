@@ -9,7 +9,7 @@ import org.hibernate.envers.Audited;
 @Audited
 public class InvoiceStatus {
 	public enum Types{
-		DRAFT, CANCELED, PAID, REFUND
+		DRAFT, ORDER, ORDER_CONFIRMED, CANCELED, PAID, REFUND
 	}
 	
 	private String type;

@@ -4,8 +4,8 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.cspinformatique.kubik.kos.model.KubikNotification;
-import com.cspinformatique.kubik.kos.model.KubikNotification.Type;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification.Type;
 import com.cspinformatique.kubik.server.domain.sales.service.CustomerService;
 
 @Component

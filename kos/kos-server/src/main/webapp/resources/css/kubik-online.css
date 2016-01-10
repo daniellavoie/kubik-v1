@@ -24,6 +24,12 @@ ul {
 	border-radius: 5px 5px 5px 5px;
 }
 
+.content.row{
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-top: 15px;
+}
+
 .content-top {
 	border-radius: 5px 5px 0px 0px;
 }

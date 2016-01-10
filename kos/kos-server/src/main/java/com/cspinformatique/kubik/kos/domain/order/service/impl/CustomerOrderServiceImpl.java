@@ -5,27 +5,34 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.math3.util.Precision;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.kos.domain.order.repository.CustomerOrderRepository;
 import com.cspinformatique.kubik.kos.domain.order.service.CustomerOrderService;
 import com.cspinformatique.kubik.kos.domain.order.service.ShippingCostLevelService;
+import com.cspinformatique.kubik.kos.domain.product.exception.ProductWithoutWeightException;
 import com.cspinformatique.kubik.kos.domain.product.service.ProductService;
 import com.cspinformatique.kubik.kos.model.account.Account;
 import com.cspinformatique.kubik.kos.model.account.Address;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
-import com.cspinformatique.kubik.kos.model.order.CustomerOrderDetail;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder.ShippingMethod;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder.Status;
+import com.cspinformatique.kubik.kos.model.order.CustomerOrderDetail;
 import com.cspinformatique.kubik.kos.model.product.Product;
+import com.mysema.query.types.Predicate;
 
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerOrderServiceImpl.class);
+
 	@Resource
 	private CustomerOrderRepository customerOrderRepository;
 
@@ -37,17 +44,28 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 	@Override
 	public CustomerOrder addDetail(CustomerOrder customerOrder, CustomerOrderDetail customerOrderDetail) {
+		LOGGER.info("Adding " + customerOrderDetail.getQuantityOrdered() + " product "
+				+ customerOrderDetail.getProduct().getId() + " to order " + customerOrder.getId() + ".");
+
 		Product product = productService.findOne(customerOrderDetail.getProduct().getId());
 
 		customerOrderDetail.setProduct(product);
+		customerOrderDetail.setCustomerOrder(customerOrder);
 
 		// Retreives the id and the quantity of an existing detail.
 		Optional<CustomerOrderDetail> detailOptional = customerOrder.getCustomerOrderDetails().stream()
 				.filter(existingDetail -> existingDetail.getProduct().getId() == product.getId()).findAny();
 
+		int quantity = getDetailQuantity(customerOrderDetail);
 		if (detailOptional.isPresent()) {
 			CustomerOrderDetail existingDetail = detailOptional.get();
-			existingDetail.setQuantity(existingDetail.getQuantity() + customerOrderDetail.getQuantity());
+
+			int newQuantity = getDetailQuantity(existingDetail) + quantity;
+
+			existingDetail.setQuantityOrdered(newQuantity);
+
+			if (Status.OPEN.equals(customerOrderDetail.getCustomerOrder().getStatus()))
+				existingDetail.setQuantityShipped(newQuantity);
 
 			customerOrderDetail = existingDetail;
 		} else {
@@ -56,7 +74,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		}
 
 		customerOrderDetail.setUnitPrice(customerOrderDetail.getProduct().getPrice());
-		customerOrderDetail.setTotalAmount(customerOrderDetail.getUnitPrice() * customerOrderDetail.getQuantity());
+		customerOrderDetail.setTotalAmount(customerOrderDetail.getUnitPrice() * getDetailQuantity(customerOrderDetail));
 
 		return save(customerOrder);
 	}
@@ -67,15 +85,36 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		Double subTotal = 0d;
 
 		for (CustomerOrderDetail detail : customerOrder.getCustomerOrderDetails()) {
-			totalQuantity += detail.getQuantity();
-			totalWeight += detail.getProduct().getWeight() * detail.getQuantity();
-			subTotal += detail.getProduct().getPrice() * detail.getQuantity();
+			int quantity = getDetailQuantity(detail);
+
+			totalQuantity += quantity;
+
+			Integer productWeight = detail.getProduct().getWeight();
+			if (productWeight == null || productWeight == 0) {
+				ProductWithoutWeightException ex = new ProductWithoutWeightException(detail.getProduct());
+
+				LOGGER.error(ex.getMessage());
+
+				throw ex;
+			}
+			totalWeight += productWeight * quantity;
+			subTotal += detail.getProduct().getPrice() * quantity;
 		}
 
 		customerOrder.setTotalQuantity(totalQuantity);
 		customerOrder.setSubTotal(Precision.round(subTotal, 2));
 		customerOrder.setTotalAmount(Precision.round(customerOrder.getSubTotal() + customerOrder.getShippingCost(), 2));
 		customerOrder.setTotalWeight(totalWeight);
+	}
+
+	@Override
+	public Page<CustomerOrder> findAll(Predicate predicate, Pageable pageable) {
+		return customerOrderRepository.findAll(predicate, pageable);
+	}
+
+	@Override
+	public Page<CustomerOrder> findByAccountAndStatusIn(Account account, List<Status> status, Pageable pageable) {
+		return customerOrderRepository.findByAccountAndStatusIn(account, status, pageable);
 	}
 
 	@Override
@@ -96,7 +135,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 					: account.getBillingAddress();
 
 		return save(new CustomerOrder(0, uuid, new ArrayList<>(), account, Status.OPEN, null, null, null, null, null,
-				null, 0d, 0d, 0, 0, 0d, null, ShippingMethod.COLISSIMO, shippingAddress, billingAddress, null, null));
+				null, 0d, 0d, 0, 0, 0d, null, ShippingMethod.COLISSIMO, shippingAddress, billingAddress, null, null,
+				null));
 	}
 
 	private String generateNewUUid() {
@@ -113,6 +153,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		return uuid;
 	}
 
+	private int getDetailQuantity(CustomerOrderDetail detail) {
+		if (Status.OPEN.equals(detail.getCustomerOrder().getStatus()))
+			return detail.getQuantityOrdered();
+		else
+			return detail.getQuantityShipped();
+	}
+	
+	@Override
+	public boolean isActivated(){
+		return false;
+	}
+
 	@Override
 	public CustomerOrder loadOpenCustomerOrder(Account account, String uuid) {
 		List<CustomerOrder> customerOrders = customerOrderRepository.findByStatusAndAccountOrUuid(Status.OPEN, account,
@@ -120,19 +172,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 		CustomerOrder customerOrder = null;
 
-		if (customerOrders.size() == 1)
+		if (customerOrders.size() > 0)
 			customerOrder = customerOrders.get(0);
-		else if (customerOrders.size() > 1) {
-			customerOrders = customerOrders.stream()
-					.filter(customerOrderToFilter -> customerOrderToFilter.getCustomerOrderDetails().size() != 0)
-					.collect(Collectors.toList());
-
-			if (customerOrders.size() == 1)
-				customerOrder = customerOrders.get(0);
-			else if (customerOrders.size() > 1)
-				customerOrder = customerOrders.stream()
-						.filter(customerOrderToFilter -> customerOrderToFilter.getAccount() == null).findAny().get();
-		}
 
 		if (customerOrder != null) {
 			if (customerOrder.getAccount() == null && account != null) {
@@ -142,6 +183,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		} else
 			customerOrder = generateNewCustomerOrder(account);
 
+		LOGGER.info("Found open order " + customerOrder.getId() + " for "
+				+ (account != null ? account.getUsername() : "anonymus account") + ".");
+
 		return customerOrder;
 	}
 
@@ -149,9 +193,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	public CustomerOrder save(CustomerOrder customerOrder) {
 		customerOrder.getCustomerOrderDetails().forEach(detail -> detail.setCustomerOrder(customerOrder));
 
-		if (customerOrder.getStatus().equals(Status.OPEN) && customerOrder.getOpenDate() == null) {
+		if (customerOrder.getStatus().equals(Status.OPEN) && customerOrder.getOpenDate() == null)
 			customerOrder.setOpenDate(new Date());
-		}
+
+		if (customerOrder.getStatus().equals(Status.CONFIRMED) && customerOrder.getConfirmedDate() == null)
+			customerOrder.setConfirmedDate(new Date());
 
 		if (ShippingMethod.COLISSIMO.equals(customerOrder.getShippingMethod())) {
 			customerOrder.setApplicableShippingCostLevel(

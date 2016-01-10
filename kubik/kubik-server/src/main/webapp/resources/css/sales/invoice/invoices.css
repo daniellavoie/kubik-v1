@@ -1,0 +1,11 @@
+table.invoices tbody tr:HOVER{
+	cursor: pointer;
+}
+
+.search-error{
+	margin-top: 10px;
+}
+
+.search-options > div{
+	margin-bottom: 5px;
+}

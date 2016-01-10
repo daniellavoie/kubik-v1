@@ -5,6 +5,7 @@
 >
 	<head>
 		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/the-library.css}" />
 	</head>
 	
 	<body ng-controller="LibraryCtrl as libraryCtrl">
@@ -63,7 +64,7 @@
 					</div>
 				</div>
 				
-				<div class="row library-presentation">
+				<div class="library-presentation content row">
 					<h3>La Dimension Fantastique</h3>
 					<p class="text-justify">
 						La dimension fantastique, c’est Guix et Ju, deux libraires passionnés de bandes 
@@ -77,7 +78,7 @@
 					</p>
 				</div>
 				
-				<div class="row practical-info">
+				<div class="content row practical-info">
 					<div class="map-wrapper col-md-9">
 						<div class="map">
 							<iframe 
@@ -107,10 +108,10 @@
 					</div>
 				</div>
 					
-				<div class="row contact-info-row">
+				<div class="content row contact-info-row">
 				</div>
 				
-				<div class="row the-librarians text-center">
+				<div class="content row the-librarians text-center">
 					<div class="col-sm-6">
 						<img th:src="@{/img/store/guix-s.png}" />
 						<div>
@@ -169,7 +170,6 @@
 			<script th:replace="util/footer :: footer"></script>
 		</div>
 		<script th:replace="util/import :: scripts"></script>
-		<link rel="stylesheet" type="text/css" th:href="@{/css/the-library.css}" />
 		<script type="text/javascript" th:src="@{/js/store-controller.js}"></script>
 	</body>
 </html>

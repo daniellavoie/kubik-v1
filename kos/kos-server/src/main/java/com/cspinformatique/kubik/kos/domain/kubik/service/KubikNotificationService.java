@@ -6,10 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import com.cspinformatique.kubik.kos.model.KubikNotification;
-import com.cspinformatique.kubik.kos.model.KubikNotification.Action;
-import com.cspinformatique.kubik.kos.model.KubikNotification.Status;
-import com.cspinformatique.kubik.kos.model.KubikNotification.Type;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification.Action;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification.Status;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification.Type;
 
 public interface KubikNotificationService {
 	KubikNotification createNewNotification(long kubikId, Type type, Action action);

@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
+import com.cspinformatique.kubik.server.model.misc.Address;
 import com.cspinformatique.kubik.server.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -37,6 +38,7 @@ public class Invoice {
 	private Date invoiceDate;
 	private Date paidDate;
 	private Date refundDate;
+	private Date confirmedDate;
 	private Double totalTaxLessAmount;
 	private Double rebateAmount;
 	private Double rebatePercent;
@@ -49,42 +51,13 @@ public class Invoice {
 	private Double amountReturned;
 	private CashRegisterSession cashRegisterSession;
 	private Date modificationDate;
-
 	private List<InvoiceDetail> details;
+	private Long customerOrderId;
+	private Double shippingCost;
+	private Address billingAddress;
 
 	public Invoice() {
 
-	}
-
-	public Invoice(Integer id, String number, User user, InvoiceStatus status, Customer customer, Date date,
-			Date cancelDate, Date invoiceDate, Date paidDate, Date refundDate, Double totalTaxLessAmount,
-			Double rebateAmount, Double rebatePercent, Map<Double, InvoiceTaxAmount> taxesAmounts,
-			Double totalTaxAmount, Double totalAmount, Double totalAmountRebateOut, List<Payment> payments,
-			Double amountPaid, Double amountReturned, CashRegisterSession cashRegisterSession, Date modificationDate,
-			List<InvoiceDetail> details) {
-		this.id = id;
-		this.number = number;
-		this.user = user;
-		this.status = status;
-		this.customer = customer;
-		this.date = date;
-		this.cancelDate = cancelDate;
-		this.invoiceDate = invoiceDate;
-		this.paidDate = paidDate;
-		this.refundDate = refundDate;
-		this.totalTaxLessAmount = totalTaxLessAmount;
-		this.rebateAmount = rebateAmount;
-		this.rebatePercent = rebatePercent;
-		this.taxesAmounts = taxesAmounts;
-		this.totalTaxAmount = totalTaxAmount;
-		this.totalAmount = totalAmount;
-		this.totalAmountRebateOut = totalAmountRebateOut;
-		this.payments = payments;
-		this.amountPaid = amountPaid;
-		this.amountReturned = amountReturned;
-		this.cashRegisterSession = cashRegisterSession;
-		this.modificationDate = modificationDate;
-		this.details = details;
 	}
 
 	@Id
@@ -176,6 +149,14 @@ public class Invoice {
 
 	public void setRefundDate(Date refundDate) {
 		this.refundDate = refundDate;
+	}
+
+	public Date getConfirmedDate() {
+		return confirmedDate;
+	}
+
+	public void setConfirmedDate(Date confirmedDate) {
+		this.confirmedDate = confirmedDate;
 	}
 
 	public Double getTotalTaxLessAmount() {
@@ -285,5 +266,30 @@ public class Invoice {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public Long getCustomerOrderId() {
+		return customerOrderId;
+	}
+
+	public void setCustomerOrderId(Long customerOrderId) {
+		this.customerOrderId = customerOrderId;
+	}
+
+	public Double getShippingCost() {
+		return shippingCost;
+	}
+
+	public void setShippingCost(Double shippingCost) {
+		this.shippingCost = shippingCost;
+	}
+
+	@ManyToOne
+	public Address getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(Address billingAddress) {
+		this.billingAddress = billingAddress;
 	}
 }

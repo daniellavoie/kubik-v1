@@ -9,11 +9,16 @@ import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
 
 @Service
 public class InvoiceStatusServiceImpl implements InvoiceStatusService {
-	@Autowired private InvoiceStatusRepository invoiceStatusRepository;
-	
+	@Autowired
+	private InvoiceStatusRepository invoiceStatusRepository;
+
 	@Override
 	public InvoiceStatus findOne(String id) {
 		return this.invoiceStatusRepository.findOne(id);
 	}
 
+	@Override
+	public InvoiceStatus findByType(String type) {
+		return invoiceStatusRepository.findByType(type);
+	}
 }

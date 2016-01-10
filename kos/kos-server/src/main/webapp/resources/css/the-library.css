@@ -24,10 +24,12 @@ iframe{
 	padding: 10px;
 }
 
-.library-presentation{
+.library-presentation.content.row{
 	background-color: #f0f0f0;
 	margin: 10px;
 	padding: 10px;
+	margin-left: 0xp;
+	margin-right: 0xp;
 }
 
 .practical-info{

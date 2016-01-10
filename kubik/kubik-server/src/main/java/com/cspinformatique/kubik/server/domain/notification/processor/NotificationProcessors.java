@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import com.cspinformatique.kubik.kos.model.KubikNotification.Type;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification.Type;
 
 @Component
 public class NotificationProcessors {

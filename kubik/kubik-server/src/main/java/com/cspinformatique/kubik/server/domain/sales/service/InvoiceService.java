@@ -10,6 +10,7 @@ import com.cspinformatique.kubik.server.model.sales.CashRegisterSession;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
+import com.mysema.query.types.Predicate;
 
 public interface InvoiceService {
 	void calculateInvoiceTaxes(Invoice invoice);
@@ -18,9 +19,15 @@ public interface InvoiceService {
 	
 	Iterable<Invoice> findInvoiceByCashRegisterSessionAndInDraft(CashRegisterSession session);
 	
+	Invoice generateNewInvoice(Long customerOrderId, Double shippingCost);
+	
 	Invoice generateNewInvoice(CashRegisterSession session);
 	
+	Invoice generateNewOrder(int customerId);
+		
 	Page<Invoice> findAll(Pageable pageable);
+	
+	Page<Invoice> findAll(Predicate predicate, Pageable pageable);
 	
 	Invoice findByNumber(String number);
 	
@@ -38,6 +45,8 @@ public interface InvoiceService {
 	Invoice findOne(int id);
 	
 	Integer findPrevious(int id);
+	
+	double findProductQuantityOnHold(int productId);
 	
 	double findProductQuantitySold(int productId);
 	

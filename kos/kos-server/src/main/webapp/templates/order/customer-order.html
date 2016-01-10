@@ -8,83 +8,114 @@
 		<link rel="stylesheet" type="text/css" th:href="@{/css/order/customer-order.css}" />
 	</head>
 	
-	<body ng-app="kos">
+	<body ng-app="kos" ng-controller="CustomerOrderCtrl as customerOrderCtrl">
 		<div th:replace="util/header :: header"></div>
 		
 		<div class="main container">
-			<div th:include="util/menu :: menu"></div>
+			<div th:replace="util/menu :: menu"></div>
 			
-			<div ng-controller="CustomerOrderCtrl as customerOrderCtrl" class="content ng-cloak" ng-cloak="">
-				<div class="row">
-					<div class="col-sm-9">
-						<div 
-							class="product row"
-							ng-click="customerOrderCtrl.openProductPage(detail.product)" 
-							ng-repeat="detail in customerOrderCtrl.customerOrder.customerOrderDetails" 
-						>
-							<div class="col-sm-3 text-center">
-								<img src="http://images.amazon.com/images/P/{{detail.product.isbn}}.01._SCMZZZZZZZ_.jpg" />
-		<!-- 							<img ng-if="product.images.length == 0" th:src="@{/img/logos/dimension-fantastique-noir.png}" /> -->
-							</div>
-							<div class="col-sm-5">
-								<div><h4><a th:href="@{/product/{{detail.product.id}}}">{{detail.product.title}}</a></h4></div>
-								<div><h5>De {{detail.product.author}}</h5></div>
-								<div>
-									Parue le {{detail.product.datePublished | date : "shortDate"}}
-									chez {{detail.product.manufacturer}}
+			<div class="customer-order content row" ng-cloak="">
+				<h3>
+					<span ng-if="customerOrderCtrl.customerOrder.status == 'OPEN'">Panier</span>
+					<span ng-if="customerOrderCtrl.customerOrder.status != 'OPEN'">Commande {{customerOrderCtrl.customerOrder.id}}</span>
+				</h3>
+				<h4>
+					<span ng-if="customerOrderCtrl.customerOrder.status == 'CONFIRMED'">
+						Confirmée le {{customerOrderCtrl.customerOrder.confirmedDate | date : 'shortDate'}}
+					</span>
+					<span ng-if="customerOrderCtrl.customerOrder.status == 'PROCESSED'">
+						Traitée le {{customerOrderCtrl.customerOrder.processedDate | date : 'shortDate'}}
+					</span>
+				</h4>
+				<div class="col-sm-9">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div 
+								class="product row"
+								ng-click="customerOrderCtrl.openProductPage(detail.product)" 
+								ng-repeat="detail in customerOrderCtrl.customerOrder.customerOrderDetails" 
+							>
+								<div class="col-sm-3 text-center">
+									<img src="http://images.amazon.com/images/P/{{detail.product.isbn}}.01._SCMZZZZZZZ_.jpg" />
+			<!-- 							<img ng-if="product.images.length == 0" th:src="@{/img/logos/dimension-fantastique-noir.png}" /> -->
 								</div>
-								<div>{{detail.product.category.name}}</div>
-							</div>
-							<div class="col-sm-2">
-								{{detail.unitPrice | number : 2}} &euro;
-							</div>
-							<div class="col-sm-2">
-								<div>
-									<input 
-										type="number" 
-										class="form-control" 
-										ng-model="detail.quantity"
-										ng-change="customerOrderCtrl.saveCustomerOrder()"
-									 />
+								<div class="col-sm-5">
+									<div><h4><a th:href="@{/product/{{detail.product.id}}}">{{detail.product.title}}</a></h4></div>
+									<div><h5>De {{detail.product.author}}</h5></div>
+									<div>
+										Parue le {{detail.product.datePublished | date : "shortDate"}}
+										chez {{detail.product.manufacturer}}
+									</div>
+									<div>{{detail.product.category.name}}</div>
 								</div>
-								<div>
-									<a href="#" target="" ng-click="customerOrderCtrl.deleteDetail($event, detail)">Supprimer</a>
+								<div class="col-sm-2">
+									{{detail.unitPrice | number : 2}} &euro;
 								</div>
+								<div class="col-sm-2">
+									<div>
+										<input 
+											type="number" 
+											class="form-control" 
+											ng-model="detail.quantityOrdered"
+											ng-change="customerOrderCtrl.saveCustomerOrder()"
+											ng-if="customerOrderCtrl.customerOrder.status == 'OPEN'"
+										 />
+										 <div ng-if="customerOrderCtrl.customerOrder.status != 'OPEN'">
+										 	<div>{{detail.quantityOrdered}} commandé(s)</div>
+										 	<div ng-if="detail.quantityOrdered != detail.quantityShipped">{{detail.quantityShipped}} expédié(s)</div>
+										 </div>
+									</div>
+									<div>
+										<a 
+											href="#" 
+											target="" 
+											ng-if="customerOrderCtrl.customerOrder.status == 'OPEN'"
+											ng-click="customerOrderCtrl.deleteDetail($event, detail)"
+										>Supprimer</a>
+									</div>
+								</div>
+							</div>
+							
+							<div ng-if="customerOrderCtrl.customerOrder.customerOrderDetails.length == 0">
+								Panier vide
 							</div>
 						</div>
-					</div>
-					<div class="col-sm-3 checkout text-center">
-						<div>
-							Sous-total 
-							({{customerOrderCtrl.customerOrder.totalQuantity}} articles):
-						</div>
-						<div>
-							{{customerOrderCtrl.customerOrder.subTotal | number : 2}} &euro;
-						</div>
-						
-						<button 
-							disabled="disabled" 
-							class="btn btn-primary"
-							ng-if="customerOrderCtrl.loading" 
-						>Passer la commande</button>
-						
-						<a	target="_self"
-							th:href="@{/checkout}"
-							ng-if="!customerOrderCtrl.loading"							
-						>
-							<button 
-								class="btn btn-primary" 
-								ng-click="customerOrderCtrl.checkout()"
-							>Passer la commande</button>
-						</a>
 					</div>
 				</div>
-				
-				<div class="row">
-					<div class="col-sm-12">
-						Sous-total 
-						({{customerOrderCtrl.customerOrder.totalQuantity}} articles):
-						{{customerOrderCtrl.customerOrder.subTotal | number : 2}} &euro;
+				<div class="col-sm-3 checkout text-center">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div>
+								Sous-total 
+								({{customerOrderCtrl.customerOrder.totalQuantity}} articles):
+							</div>
+							<div>
+								{{customerOrderCtrl.customerOrder.subTotal | number : 2}} &euro;
+							</div>
+							
+							<div ng-if="customerOrderCtrl.customerOrder.status == 'OPEN'">
+								<button 
+									disabled="disabled" 
+									class="btn btn-primary"
+									ng-if="customerOrderCtrl.loading" 
+								>Passer la commande</button>
+								
+								<a	target="_self"
+									th:href="@{/checkout}"
+									ng-if="!customerOrderCtrl.loading"							
+								>
+									<button 
+										class="btn btn-primary" 
+										ng-click="customerOrderCtrl.checkout()"
+									>Passer la commande</button>
+								</a>
+							</div>
+							
+							<div ng-if="customerOrderCtrl.customerOrder.status != 'OPEN'">
+								<div>Commande passée le</div>
+								<div>{{customerOrderCtrl.customerOrder.confirmedDate | date : 'shortDate'}}</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

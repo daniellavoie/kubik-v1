@@ -1,0 +1,3 @@
+.customer-orders tbody tr:HOVER {
+	cursor: pointer;
+}

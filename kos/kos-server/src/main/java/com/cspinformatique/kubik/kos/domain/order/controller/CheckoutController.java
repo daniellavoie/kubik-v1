@@ -33,7 +33,7 @@ public class CheckoutController {
 	@RequestMapping(method = RequestMethod.POST, params = "payment_method_nonce")
 	public String checkout(@RequestParam(value = "payment_method_nonce") String nonce, Principal principal) {
 		CustomerOrder customerOrder = customerOrderService
-				.loadOpenCustomerOrder(accountService.findByUsername(principal.getName()), null);
+				.loadOpenCustomerOrder(accountService.findByPrincipal(principal), null);
 
 		checkoutService.checkout(customerOrder, nonce);
 

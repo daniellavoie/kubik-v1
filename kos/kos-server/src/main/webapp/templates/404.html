@@ -1,0 +1,28 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html 
+	ng-app="kos" 
+	ng-controller="KosCtrl as kosCtrl"
+>
+	<head>
+		<link th:replace="util/import :: head" />
+	</head>
+	
+	<body ng-controller="LibraryCtrl as libraryCtrl">
+		<div th:replace="util/header :: header"></div>
+		
+		<div class="main container">
+			<div th:replace="util/menu :: menu"></div>
+			
+			<div class="content">
+				<div class="row">
+					<div class="the-library col-sm-9">La page que vous désirez accéder n'existe pas.</div>
+				</div>
+			</div>
+			
+			<script th:replace="util/footer :: footer"></script>
+		</div>
+		<script th:replace="util/import :: scripts"></script>
+		<link rel="stylesheet" type="text/css" th:href="@{/css/the-library.css}" />
+		<script type="text/javascript" th:src="@{/js/store-controller.js}"></script>
+	</body>
+</html>

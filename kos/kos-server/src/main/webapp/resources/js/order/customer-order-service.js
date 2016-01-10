@@ -1,5 +1,6 @@
 (function(){
 	var CUSTOMER_ORDER_URL = "/customer-order";
+	var CART_URL = "/cart";
 	
 	angular
 		.module("kos")
@@ -9,12 +10,14 @@
 		return {
 			addProductToCustomerOrder : addProductToCustomerOrder,
 			calculateTotalQuantity : calculateTotalQuantity,
-			loadOpenCustomerOrder : loadOpenCustomerOrder,
+			loadCart : loadCart,
+			loadCustomerOrder : loadCustomerOrder,
+			loadCustomerOrdersHistory : loadCustomerOrdersHistory,
 			saveCustomerOrder : saveCustomerOrder
 		};
 		
 		function addProductToCustomerOrder(product, quantity){
-			return $http.put(CUSTOMER_ORDER_URL + "/detail", {product : {id : product.id}, quantity : quantity});
+			return $http.put(CART_URL + "/detail", {product : {id : product.id}, quantityOrdered : quantity});
 		}
 		
 		function calculateTotalQuantity(customerOrder){
@@ -23,17 +26,37 @@
 			angular.forEach(customerOrder.customerOrderDetails, onDetail);
 			
 			function onDetail(detail, index){
-				totalQuantity += detail.quantity;
+				totalQuantity += detail.quantityOrdered;
 			}
 			
 			return totalQuantity;
 		}
 		
-		function loadOpenCustomerOrder(){
-			return $http.get(CUSTOMER_ORDER_URL)
-				.then(loadOpenCustomerOrderSuccess);
+		function loadCustomerOrder(customerOrderId){
+			return $http
+				.get(CUSTOMER_ORDER_URL + "/" + customerOrderId)
+				.then(loadCustomerOrderSuccess);
 			
-			function loadOpenCustomerOrderSuccess(response){
+			function loadCustomerOrderSuccess(response){
+				return response.data;
+			}
+		}
+		
+		function loadCustomerOrdersHistory(params){
+			return $http
+				.get(CUSTOMER_ORDER_URL + "?" + $.param(params))
+				.then(loadCustomerOrdersHistorySuccess);
+			
+			function loadCustomerOrdersHistorySuccess(response){
+				return response.data;
+			}
+		}
+		
+		function loadCart(){
+			return $http.get(CART_URL)
+				.then(loadCartSuccess);
+			
+			function loadCartSuccess(response){
 				return response.data;
 			}
 		}

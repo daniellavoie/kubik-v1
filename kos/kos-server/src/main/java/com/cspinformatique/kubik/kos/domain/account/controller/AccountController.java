@@ -31,10 +31,10 @@ public class AccountController {
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AccountWrapper getAccount(Principal principal) {
-		return new AccountWrapper(principal != null ? accountService.findByUsername(principal.getName()) : null, null);
+		return new AccountWrapper(accountService.findByPrincipal(principal), null);
 	}
 
-	@RequestMapping(value = "{/id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Account getAccount(@PathVariable long id) {
 		return accountService.findOne(id);
 	}
@@ -52,7 +52,7 @@ public class AccountController {
 	@RequestMapping(value = "/address", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Address saveAddress(@RequestBody Address address,
 			@RequestParam(defaultValue = "false") boolean shippingAddressPreferedForBilling, Principal principal) {
-		return accountService.saveAddress(accountService.findByUsername(principal.getName()), address,
+		return accountService.saveAddress(accountService.findByPrincipal(principal), address,
 				shippingAddressPreferedForBilling);
 	}
 }

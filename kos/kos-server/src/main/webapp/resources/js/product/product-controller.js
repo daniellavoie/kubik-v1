@@ -33,7 +33,7 @@
 			function addProductToCustomerOrderSuccess(){
 				vm.productAdded = true;
 				
-				$scope.$broadcast("loadCustomerOrderSummary");
+				$scope.$broadcast("loadCartSummary");
 			}
 		}
 		

@@ -54,6 +54,7 @@ public class CustomerOrder {
 	private Address billingAddress;
 	private TransactionGateway transactionGateway;
 	private String transactionId;
+	private Long invoiceId;
 
 	public CustomerOrder() {
 
@@ -64,7 +65,7 @@ public class CustomerOrder {
 			Date processedDate, Date errorDate, Double subTotal, Double totalAmount, int totalQuantity,
 			Integer totalWeight, Double shippingCost, ShippingCostLevel applicableShippingCostLevels,
 			ShippingMethod shippingMethod, Address shippingAddress, Address billingAddress,
-			TransactionGateway transactionGateway, String transactionId) {
+			TransactionGateway transactionGateway, String transactionId, Long invoiceId) {
 		this.id = id;
 		this.uuid = uuid;
 		this.customerOrderDetails = customerOrderDetails;
@@ -87,6 +88,7 @@ public class CustomerOrder {
 		this.billingAddress = billingAddress;
 		this.transactionGateway = transactionGateway;
 		this.transactionId = transactionId;
+		this.invoiceId = invoiceId;
 	}
 
 	@Id
@@ -273,5 +275,13 @@ public class CustomerOrder {
 
 	public void setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
+	}
+
+	public Long getInvoiceId() {
+		return invoiceId;
+	}
+
+	public void setInvoiceId(Long invoiceId) {
+		this.invoiceId = invoiceId;
 	}
 }

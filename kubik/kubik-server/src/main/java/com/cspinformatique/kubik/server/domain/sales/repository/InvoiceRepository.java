@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.cspinformatique.kubik.server.model.sales.CashRegisterSession;
@@ -14,7 +15,7 @@ import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
 
 public interface InvoiceRepository extends
-		PagingAndSortingRepository<Invoice, Integer> {
+		PagingAndSortingRepository<Invoice, Integer>, QueryDslPredicateExecutor<Invoice> {
 	List<Invoice> findByCashRegisterSessionAndStatus(
 			CashRegisterSession session, InvoiceStatus invoiceStatus);
 
@@ -40,6 +41,9 @@ public interface InvoiceRepository extends
 	@Query("SELECT id FROM Invoice invoice WHERE id < ?1")
 	Page<Integer> findIdByIdLessThan(int id, Pageable pageable);
 	
+	@Query("SELECT sum(detail.quantity) FROM InvoiceDetail detail WHERE detail.product.id = ?1 AND detail.invoice.status.type = 'ORDER_CONFIRMED'")
+	Double findProductQuantityOnHold(int productId);
+	
 	@Query("SELECT sum(detail.quantity) FROM InvoiceDetail detail WHERE detail.product.id = ?1 AND detail.invoice.status.type = 'PAID'")
-	Double findProductQuantityPurchased(int productId);
+	Double findProductQuantitySold(int productId);
 }

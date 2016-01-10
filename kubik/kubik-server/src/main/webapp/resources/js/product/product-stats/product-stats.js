@@ -24,6 +24,7 @@
 		loadProductsStats();
 		
 		vm.orderAttributes = [	{key : 'inventory', label : 'Inventaire'},
+		                      	{key : 'onHold', label : 'Mises de coté'},
 		                      	{key : 'ordered', label : 'Commandés'},
 		                      	{key : 'received', label : 'Réceptionnés'},
 		                      	{key : 'sold', label : 'Vendus'},

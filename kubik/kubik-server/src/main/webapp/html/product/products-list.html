@@ -91,7 +91,7 @@
 								<td>{{product.author}}</td>
 								<td>{{product.publisher}}</td>
 								<td>{{product.datePublished | date}}</td>
-								<td><img id="product-image-{{product.id}}" class="product-image" /></td>
+								<td><img class="thumb" ng-src="/product/{{product.id}}/image/THUMB.jpg" /></td>
 								<td>
 									<span ng-if="product.productInventory != null">{{product.productInventory.quantityOnHand}}</span>
 									<span ng-if="product.productInventory == null">0</span>

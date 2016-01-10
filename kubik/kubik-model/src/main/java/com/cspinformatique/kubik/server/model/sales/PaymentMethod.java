@@ -9,21 +9,23 @@ import org.hibernate.envers.Audited;
 @Audited
 public class PaymentMethod {
 	public enum Types{
-		CASH, CARD, CHECK, CREDIT, KADEOS, LIRE, WIRE
+		CASH, CARD, CHECK, CREDIT, KADEOS, LIRE, WIRE, BRAINTREE
 	}
 	
 	private String type;
 	private String description;
 	private String accountingCode;
+	private boolean availableToCashRegister;
 	
 	public PaymentMethod(){
 		
 	}
 	
-	public PaymentMethod(String type, String description, String accountingCode){
+	public PaymentMethod(String type, String description, String accountingCode, boolean availableToCashRegister){
 		this.type = type;
 		this.description = description;
 		this.accountingCode = accountingCode;
+		this.availableToCashRegister = availableToCashRegister;
 	}
 
 	@Id
@@ -49,5 +51,13 @@ public class PaymentMethod {
 
 	public void setAccountingCode(String accountingCode) {
 		this.accountingCode = accountingCode;
+	}
+
+	public boolean isAvailableToCashRegister() {
+		return availableToCashRegister;
+	}
+
+	public void setAvailableToCashRegister(boolean availableToCashRegister) {
+		this.availableToCashRegister = availableToCashRegister;
 	}
 }

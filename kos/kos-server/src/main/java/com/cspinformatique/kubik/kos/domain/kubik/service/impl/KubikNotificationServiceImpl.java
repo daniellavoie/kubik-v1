@@ -20,10 +20,10 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.kos.domain.kubik.repository.KubikNotificationRepository;
 import com.cspinformatique.kubik.kos.domain.kubik.service.KubikNotificationService;
-import com.cspinformatique.kubik.kos.model.KubikNotification;
-import com.cspinformatique.kubik.kos.model.KubikNotification.Action;
-import com.cspinformatique.kubik.kos.model.KubikNotification.Status;
-import com.cspinformatique.kubik.kos.model.KubikNotification.Type;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification.Action;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification.Status;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification.Type;
 import com.cspinformatique.kubik.kos.rest.KubikTemplate;
 
 @Service

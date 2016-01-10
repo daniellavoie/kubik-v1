@@ -16,8 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.server.domain.kos.repository.KosNotificationRepository;
@@ -96,13 +94,8 @@ public class KosNotificationServiceImpl implements KosNotificationService {
 	@Transactional
 	public void process(KosNotification kosNotification) {
 		try {
-			ResponseEntity<Void> response = kosTemplate.exchange("/kosNotification", HttpMethod.POST, kosNotification,
+			kosTemplate.exchange("/kosNotification", HttpMethod.POST, kosNotification,
 					Void.class);
-
-			if (!response.getStatusCode().equals(HttpStatus.NO_CONTENT)) {
-				throw new RuntimeException("Kos server did not process notification successfully. Status code : "
-						+ response.getStatusCode() + ".");
-			}
 
 			kosNotification.setStatus(Status.PROCESSED);
 		} catch (Exception ex) {

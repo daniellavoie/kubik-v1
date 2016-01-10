@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.kos.config;
 
+import java.util.List;
+
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
@@ -9,11 +11,18 @@ import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomize
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
+
+	@Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+		argumentResolvers.add(new PageableHandlerMethodArgumentResolver());
+	}
 
 	@Bean
 	public EmbeddedServletContainerCustomizer servletContainerCustomizer() {

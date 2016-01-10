@@ -61,6 +61,10 @@
 			<groupId>com.cspinformatique.kubik</groupId>
 			<artifactId>kos-model</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.cspinformatique.kubik</groupId>
+			<artifactId>kubik-common</artifactId>
+		</dependency>
 
 		<!-- Spring Dependencies -->
 		<dependency>
@@ -105,10 +109,10 @@
 			<groupId>com.braintreepayments.gateway</groupId>
 			<artifactId>braintree-java</artifactId>
 		</dependency>	
-	    <dependency>
-	      <groupId>com.typesafe.akka</groupId>
-	      <artifactId>akka-actor_2.11</artifactId>
-	    </dependency>
+		<dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+		</dependency>
 	    <dependency>
 	    	<groupId>commons-io</groupId>
 	    	<artifactId>commons-io</artifactId>

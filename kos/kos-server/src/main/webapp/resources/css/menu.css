@@ -52,6 +52,11 @@
 	padding-top: 10px;
 }
 
+.search-bar.row{
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
 .search-bar .input-group{
 	padding-bottom: 7px;
 }

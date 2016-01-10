@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.cspinformatique.kubik.kos.domain.kubik.service.KubikNotificationService;
-import com.cspinformatique.kubik.kos.model.KubikNotification;
+import com.cspinformatique.kubik.kos.model.kubik.KubikNotification;
 
 @Component
 public class KosNotificationTask {

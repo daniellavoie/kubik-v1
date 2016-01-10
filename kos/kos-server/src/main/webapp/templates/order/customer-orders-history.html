@@ -1,0 +1,94 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html 
+	ng-app="kos" 
+	ng-controller="KosCtrl as kosCtrl"
+>
+	<head>		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/order/customer-orders-history.css}" />
+	</head>
+	
+	<body ng-app="kos" ng-controller="CustomerOrdersHistoryCtrl as customerOrdersHistoryCtrl">
+		<div th:replace="util/header :: header"></div>
+		
+		<div class="main container">
+			<div th:replace="util/menu :: menu"></div>
+			
+			<div class="customer-orders-history content" ng-cloak="">
+				<h3>Vos commandes</h3>
+				
+				<div class="row text-center" ng-cloak="" >
+					<div class="col-sm-3 col-md-2">
+						<a 
+							href="#"
+							ng-if="!customerOrdersHistoryCtrl.historyPage.first"
+							ng-click="!customerOrdersHistoryCtrl.changePage(customerOrdersHistoryCtrl.historyPage.number-1, true)" 
+						><button 
+							class="btn btn-default"
+							ng-attr-disabled="customerOrdersHistoryCtrl.loading &amp;&amp; 'disabled' || undefined"
+						>Précédente</button></a>
+					</div>
+					
+					<div ng-if="!productSearchCtrl.loading" class="col-sm-6 col-md-8">
+						<div>Page {{customerOrdersHistoryCtrl.historyPage.number+1}} sur {{customerOrdersHistoryCtrl.historyPage.totalPages}}</div>
+						<div>{{customerOrdersHistoryCtrl.historyPage.totalElements}} commandes</div>
+					</div>
+					
+					<div class="loading col-sm-6 col-md-8" ng-if="customerOrdersHistoryCtrl.loading">
+						<div><img th:src="@{/img/icons/loading.gif}" /></div>
+						<div>... chargement ...</div>
+					</div>
+					
+					<div class="col-sm-3 col-md-2">
+						<a 
+							href="#"
+							ng-if="!customerOrdersHistoryCtrl.historyPage.last" 
+							ng-click="customerOrdersHistoryCtrl.changePage(customerOrdersHistoryCtrl.historyPage.number+1, true)" 
+						><button 
+							class="btn btn-default"
+							ng-attr-disabled="customerOrdersHistoryCtrl.loading &amp;&amp; 'disabled' || undefined"
+						>Suivante</button></a>
+					</div>
+				</div>
+				
+				<div>
+					<div 
+						ng-click="customerOrdersHistoryCtrl.openCustomerOrder(customerOrder.id)"
+						class="customer-order panel panel-default" 
+						ng-repeat="customerOrder in customerOrdersHistoryCtrl.historyPage.content"
+					>
+						<div class="panel-body text-center">
+							<div class="col-sm-3">
+								<div>Commande réalisée le</div>
+								<div>{{customerOrder.confirmedDate | date : 'shortDate'}}</div>
+							</div>
+							<div class="col-sm-2">
+								<div>Total</div>
+								<div>{{customerOrder.totalAmount | number : 2}} &euro;</div>
+							</div>
+							<div class="col-sm-2">
+								<div>Nombre de produits</div>
+								<div>{{customerOrder.totalQuantity}}</div>
+							</div>
+							<div class="col-sm-3">
+								<div>Numéro de commande</div>
+								<div>{{customerOrder.id}}</div>
+							</div>
+							<div class="col-sm-2">
+								<div>Statut</div>
+								<div ng-switch="customerOrder.status">
+									<span ng-switch-when="CONFIRMED" class="label label-info">En préparation</span>
+									<span ng-switch-when="PROCESSED" class="label label-success">Expédiée</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<script th:replace="util/footer :: footer"></script>
+		</div>
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/order/customer-orders-history-controller.js}"></script>
+	</body>
+</html>

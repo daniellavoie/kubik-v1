@@ -20,5 +20,10 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 	public PaymentMethod findOne(String id) {
 		return this.paymentMethodRepository.findOne(id);
 	}
+	
+	@Override
+	public PaymentMethod findByType(String type) {
+		return paymentMethodRepository.findByType(type);
+	}
 
 }
