@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.purchase.service.RestockService;
-import com.cspinformatique.kubik.server.domain.sales.exception.InvoiceAlreadyPaidException;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceRepository;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceStatusRepository;
 import com.cspinformatique.kubik.server.domain.sales.service.CustomerService;
@@ -403,11 +402,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 		for (Invoice invoice : invoices) {
 			if (invoice.getId() != null) {
-				Invoice existingInvoice = findOne(invoice.getId());
-
-				if (invoice.getPaidDate() != null)
-					throw new InvoiceAlreadyPaidException(existingInvoice, invoice);
-
 				String status = invoice.getStatus().getType();
 
 				if (Types.CANCELED.name().equals(status) && invoice.getCancelDate() == null){
