@@ -21,12 +21,12 @@ import org.hibernate.envers.NotAudited;
 import com.cspinformatique.kubik.server.model.misc.Address;
 import com.cspinformatique.kubik.server.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Audited
 @Table(indexes = @Index(columnList = "paidDate") )
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
 public class Invoice {
 	private Integer id;
 	private String number;
@@ -241,6 +241,7 @@ public class Invoice {
 		this.amountReturned = amountReturned;
 	}
 
+	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	public List<InvoiceDetail> getDetails() {
 		return details;

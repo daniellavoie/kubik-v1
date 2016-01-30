@@ -2,6 +2,7 @@ package com.cspinformatique.kubik.server.domain.sales.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -317,6 +318,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 		invoice.setDate(Date.from(LocalDateTime.now().withNano(0).atZone(ZoneId.systemDefault()).toInstant()));
 		invoice.setCashRegisterSession(session);
 		invoice.setShippingCost(shippingCost);
+		invoice.setDetails(new ArrayList<>());
+		invoice.setPayments(new ArrayList<>());
 
 		return this.save(invoice);
 	}
@@ -404,16 +407,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 			if (invoice.getId() != null) {
 				String status = invoice.getStatus().getType();
 
-				if (Types.CANCELED.name().equals(status) && invoice.getCancelDate() == null){
+				if (Types.CANCELED.name().equals(status) && invoice.getCancelDate() == null) {
 					invoice.setCancelDate(new Date());
-					
-					if(invoice.getConfirmedDate() != null){
+
+					if (invoice.getConfirmedDate() != null) {
 						invoicesWithAlteredInventory.add(invoice);
 					}
 				}
 
-				if (Types.ORDER_CONFIRMED.name().equals(status)
-						&& invoice.getConfirmedDate() == null) {
+				if (Types.ORDER_CONFIRMED.name().equals(status) && invoice.getConfirmedDate() == null) {
 					invoice.setConfirmedDate(new Date());
 
 					invoicesWithAlteredInventory.add(invoice);
