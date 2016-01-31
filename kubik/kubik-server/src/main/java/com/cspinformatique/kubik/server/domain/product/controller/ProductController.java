@@ -3,12 +3,15 @@ package com.cspinformatique.kubik.server.domain.product.controller;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,6 +48,7 @@ import com.cspinformatique.kubik.server.model.sales.CustomerCredit;
 import com.cspinformatique.kubik.server.model.sales.CustomerCreditDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
+import com.cspinformatique.kubik.server.model.sales.ProductInvoice;
 import com.cspinformatique.kubik.server.model.warehouse.InventoryCount;
 
 @Controller
@@ -130,13 +134,19 @@ public class ProductController {
 
 	@ResponseBody
 	@RequestMapping(value = "/{productId}/confirmedInvoice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<InvoiceDetail> findProductConfirmedInvoices(@PathVariable("productId") int productId,
+	public Page<ProductInvoice> findProductConfirmedInvoices(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(defaultValue = "DESC") Direction direction,
 			@RequestParam(defaultValue = "invoice.confirmedDate") String sortBy) {
-		return invoiceDetailService.findByProductAndInvoiceStatus(productService.findOne(productId),
-				new InvoiceStatus(InvoiceStatus.Types.ORDER_CONFIRMED.name(), null),
-				new PageRequest(page, resultPerPage, direction, sortBy));
+		Pageable pageable = new PageRequest(page, resultPerPage, direction, sortBy);
+
+		Page<InvoiceDetail> invoiceDetailPage = invoiceDetailService.findByProductAndInvoiceStatus(
+				productService.findOne(productId), new InvoiceStatus(InvoiceStatus.Types.ORDER_CONFIRMED.name(), null),
+				pageable);
+
+		return new PageImpl<>(invoiceDetailPage.getContent().stream()
+				.map(detail -> new ProductInvoice(detail, detail.getInvoice())).collect(Collectors.toList()), pageable,
+				invoiceDetailPage.getTotalElements());
 	}
 
 	@ResponseBody
@@ -162,13 +172,17 @@ public class ProductController {
 
 	@ResponseBody
 	@RequestMapping(value = "/{productId}/paidInvoice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<InvoiceDetail> findProductPaidInvoices(@PathVariable("productId") int productId,
+	public Page<ProductInvoice> findProductPaidInvoices(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(defaultValue = "DESC") Direction direction,
 			@RequestParam(defaultValue = "invoice.paidDate") String sortBy) {
-		return invoiceDetailService.findByProductAndInvoiceStatus(productService.findOne(productId),
-				new InvoiceStatus(InvoiceStatus.Types.PAID.name(), null),
-				new PageRequest(page, resultPerPage, direction, sortBy));
+		Pageable pageable = new PageRequest(page, resultPerPage, direction, sortBy);
+		Page<InvoiceDetail> detailsPage = invoiceDetailService.findByProductAndInvoiceStatus(
+				productService.findOne(productId), new InvoiceStatus(InvoiceStatus.Types.PAID.name(), null), pageable);
+
+		return new PageImpl<>(detailsPage.getContent().stream()
+				.map(detail -> new ProductInvoice(detail, detail.getInvoice())).collect(Collectors.toList()), pageable,
+				detailsPage.getTotalElements());
 	}
 
 	@ResponseBody

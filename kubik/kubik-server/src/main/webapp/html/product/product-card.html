@@ -425,10 +425,10 @@
 											</tr>
 										</tbody>
 										<tbody>
-											<tr ng-repeat="detail in productCardCtrl.inventoryTabs.paidInvoice.result.content">
-												<td><a href="/invoice/{{detail.invoice.id}}" target="_blank">{{detail.invoice.id}}</a></td>
-												<td>{{detail.invoice.paidDate | date}}</td>
-												<td>{{detail.quantity}}</td>
+											<tr ng-repeat="productInvoice in productCardCtrl.inventoryTabs.paidInvoice.result.content">
+												<td><a href="/invoice/{{productInvoice.invoice.id}}" target="_blank">{{productInvoice.invoice.id}}</a></td>
+												<td>{{productInvoice.invoice.paidDate | date}}</td>
+												<td>{{productInvoice.invoiceDetail.quantity}}</td>
 											</tr>
 											<tr ng-if="productCardCtrl.inventoryTabs.invoice.result.content.length == 0">
 												<td colspan="3">Aucune facture pour ce produit</td>
@@ -447,10 +447,10 @@
 											</tr>
 										</tbody>
 										<tbody>
-											<tr ng-repeat="detail in productCardCtrl.inventoryTabs.confirmedInvoice.result.content">
-												<td><a href="/invoice/{{detail.invoice.id}}" target="_blank">{{detail.invoice.id}}</a></td>
-												<td>{{detail.invoice.confirmedDate | date}}</td>
-												<td>{{detail.quantity}}</td>
+											<tr ng-repeat="productInvoice in productCardCtrl.inventoryTabs.confirmedInvoice.result.content">
+												<td><a href="/invoice/{{productInvoice.invoice.id}}" target="_blank">{{productInvoice.invoice.id}}</a></td>
+												<td>{{productInvoice.invoice.confirmedDate | date}}</td>
+												<td>{{productInvoice.invoiceDetail.quantity}}</td>
 											</tr>
 											<tr ng-if="productCardCtrl.inventoryTabs.invoice.result.content.length == 0">
 												<td colspan="3">Aucune commande client pour ce produit</td>
