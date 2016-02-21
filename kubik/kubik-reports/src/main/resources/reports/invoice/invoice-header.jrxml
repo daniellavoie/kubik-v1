@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-02-21T13:04:35 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rma" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="INVOICE_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[6573]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select
+	paid_date,
+	number,
+	source,
+	tva_number,
+	shipping_method,
+	billingAddress.street_line1 billingStreetLine1,
+	billingAddress.street_line2 billingStreetLine2,
+	billingAddress.city billingCity,
+	billingAddress.first_name billingFirstName,
+	billingAddress.last_name billingLastName,
+	billingAddress.zip_code billingZipCode,
+	billingAddress.country billingCountry,
+	shippingAddress.street_line1 shippingStreetLine1,
+	shippingAddress.street_line2 shippingStreetLine2,
+	shippingAddress.city shippingCity,
+	shippingAddress.first_name shippingFirstName,
+	shippingAddress.last_name shippingLastName,
+	shippingAddress.zip_code shippingZipCode,
+	shippingAddress.country shippingCountry
+FROM
+	invoice
+LEFT JOIN address billingAddress on invoice.billing_address_id = billingAddress.id
+LEFT JOIN address shippingAddress on invoice.shipping_address_id = shippingAddress.id
+WHERE
+	invoice.id = $P{INVOICE_ID}]]>
+	</queryString>
+	<field name="paid_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="number" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="source" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="billingStreetLine1" class="java.lang.String"/>
+	<field name="billingStreetLine2" class="java.lang.String"/>
+	<field name="billingCity" class="java.lang.String"/>
+	<field name="billingFirstName" class="java.lang.String"/>
+	<field name="billingLastName" class="java.lang.String"/>
+	<field name="billingZipCode" class="java.lang.String"/>
+	<field name="billingCountry" class="java.lang.String"/>
+	<field name="shippingStreetLine1" class="java.lang.String"/>
+	<field name="shippingStreetLine2" class="java.lang.String"/>
+	<field name="shippingCity" class="java.lang.String"/>
+	<field name="shippingFirstName" class="java.lang.String"/>
+	<field name="shippingLastName" class="java.lang.String"/>
+	<field name="shippingZipCode" class="java.lang.String"/>
+	<field name="shippingCountry" class="java.lang.String"/>
+	<field name="tva_number" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shipping_method" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<pageHeader>
+		<band height="219">
+			<textField pattern="dd/MM/YYYY">
+				<reportElement x="449" y="50" width="106" height="20" uuid="bb10dbe1-0a4f-4722-9953-c163b63cf979"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="290" y="28" width="265" height="22" uuid="3836ce65-eca3-4cad-a6de-b1818def0a2b"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Facture N° " + $F{number}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="130" y="-13" width="315" height="26" uuid="e622555d-198b-4ccd-a4a1-c59c53304058">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="19" isBold="true"/>
+				</textElement>
+				<text><![CDATA[La Dimension Fantastique]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="58" width="160" height="15" uuid="b8cc42fd-b569-497d-834d-7e854040ad18"/>
+				<text><![CDATA[09 82 42 23 21]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="13" width="205" height="15" uuid="c226e44d-3bb5-4145-b0b3-903bf1d79fde"/>
+				<text><![CDATA[106, rue La Fayette 75010 Paris]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="43" width="160" height="15" uuid="b96f7183-44f8-43ad-ba60-43d8fbf50b6e"/>
+				<text><![CDATA[contact@dimensionfantastique.com]]></text>
+			</staticText>
+			<image>
+				<reportElement x="0" y="-13" width="130" height="101" uuid="3e7c271f-256a-4954-8307-2cb2ffce6e5d"/>
+				<imageExpression><![CDATA["reports/images/Logo-OK-noir.png"]]></imageExpression>
+			</image>
+			<rectangle>
+				<reportElement x="279" y="109" width="276" height="100" backcolor="rgba(255, 255, 255, 0.0)" uuid="55cc8d66-5a9d-479f-a393-b36a005609db"/>
+			</rectangle>
+			<textField pattern="dd/MM/YYYY">
+				<reportElement x="289" y="119" width="260" height="14" uuid="7dc3a0dd-b8d7-400f-92c6-2954cea6bd66"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[IF($F{billingLastName} != null, $F{billingLastName} + " " + $F{billingFirstName}, "Facture anonyme")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="279" y="94" width="245" height="15" uuid="2d40b752-f353-48bb-88c7-e212d4b01fd5"/>
+				<text><![CDATA[Adresse de facturation]]></text>
+			</staticText>
+			<textField pattern="dd/MM/YYYY">
+				<reportElement x="289" y="133" width="260" height="14" uuid="96413704-496e-4166-a9d5-c98c8e18c06b">
+					<printWhenExpression><![CDATA[$F{billingLastName} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{billingStreetLine1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYYY">
+				<reportElement x="289" y="147" width="260" height="14" uuid="e3c7250c-4ef5-4ac7-b91a-03486ff300e2">
+					<printWhenExpression><![CDATA[$F{billingLastName} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{billingStreetLine2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYYY">
+				<reportElement x="289" y="161" width="260" height="14" uuid="b2cf2b2f-8b23-45e2-9e44-2ba234dede3a">
+					<printWhenExpression><![CDATA[$F{billingLastName} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[ $F{billingZipCode} + " " + $F{billingCity}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYYY">
+				<reportElement x="289" y="175" width="260" height="14" uuid="63306ff9-cabc-48f7-960c-00edc6ad0799">
+					<printWhenExpression><![CDATA[$F{billingCountry} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{billingCountry}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYYY">
+				<reportElement x="289" y="189" width="260" height="14" uuid="dde88683-0636-406f-b543-e1f99a7ab377">
+					<printWhenExpression><![CDATA[$F{tva_number} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["N° TVA: " + $F{tva_number}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement x="0" y="88" width="278" height="120" uuid="d43bcc05-bbd3-4ba1-8125-c2f069f6498c">
+					<printWhenExpression><![CDATA[!($F{shipping_method}.equals("TAKEOUT"))]]></printWhenExpression>
+				</reportElement>
+				<staticText>
+					<reportElement x="10" y="5" width="245" height="15" uuid="9b792be7-b824-4f8f-a8ac-4fb34e7e0983"/>
+					<text><![CDATA[Adresse de livraison]]></text>
+				</staticText>
+				<textField pattern="dd/MM/YYYY">
+					<reportElement x="13" y="30" width="260" height="14" uuid="9e01ae2b-331b-4481-b7f0-1c6aa4628b0f"/>
+					<textElement textAlignment="Left"/>
+					<textFieldExpression><![CDATA[$F{billingLastName} + " " + $F{billingFirstName}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/YYYY">
+					<reportElement x="13" y="58" width="260" height="14" uuid="a6963485-d5e0-4e88-bd19-997f8c561733"/>
+					<textElement textAlignment="Left"/>
+					<textFieldExpression><![CDATA[IF($F{billingStreetLine2} != null, $F{billingStreetLine2}, "")]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/YYYY">
+					<reportElement x="13" y="86" width="260" height="14" uuid="2a859d29-0252-48a2-b291-fa773ee7d6c8">
+						<printWhenExpression><![CDATA[$F{shippingCountry} != null]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Left"/>
+					<textFieldExpression><![CDATA[$F{billingCountry}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/YYYY">
+					<reportElement x="13" y="72" width="260" height="14" uuid="2e94956d-d100-4e23-a09f-b5b36c9679b2"/>
+					<textElement textAlignment="Left"/>
+					<textFieldExpression><![CDATA[$F{shippingZipCode} + " " + $F{billingCity}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/YYYY">
+					<reportElement x="13" y="44" width="260" height="14" uuid="159a035b-001c-4472-9fae-6fd8165f0d55"/>
+					<textElement textAlignment="Left"/>
+					<textFieldExpression><![CDATA[$F{billingStreetLine1}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement x="130" y="28" width="160" height="15" uuid="58cfcf35-9bff-4244-b765-0d991206409e"/>
+				<text><![CDATA[http://www.dimensionfantastique.com]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+</jasperReport>

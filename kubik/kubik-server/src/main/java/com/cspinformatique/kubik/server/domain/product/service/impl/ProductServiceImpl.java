@@ -2,6 +2,7 @@ package com.cspinformatique.kubik.server.domain.product.service.impl;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
@@ -137,6 +138,25 @@ public class ProductServiceImpl implements ProductService {
 				null, true, null, null, false);
 	}
 
+	private void calculateImageEncryptedKey(Product product) {
+		if (product.getSupplier() != null) {
+			product.setImageEncryptedKey(
+					dilicomImageService.getEncryptedUrl(product.getEan13(), product.getSupplier().getEan13()));
+		}
+	}
+
+	private void calculateTaxesAmounts(Product product) {
+		if (product.getTvaRate1() != null) {
+			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate1() / 100), 2));
+		}
+		if (product.getTvaRate2() != null) {
+			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate2() / 100), 2));
+		}
+		if (product.getTvaRate3() != null) {
+			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate3() / 100), 2));
+		}
+	}
+
 	@Override
 	public int countByCategory(Category category) {
 		return productRepository.countByCategory(category);
@@ -225,22 +245,11 @@ public class ProductServiceImpl implements ProductService {
 		return result.getContent().get(0);
 	}
 
-	private void calculateImageEncryptedKey(Product product) {
-		if (product.getSupplier() != null) {
-			product.setImageEncryptedKey(
-					dilicomImageService.getEncryptedUrl(product.getEan13(), product.getSupplier().getEan13()));
-		}
-	}
+	@PostConstruct
+	private void init() {
+		for (Product product : productRepository.findInvalidEan13()) {
 
-	private void calculateTaxesAmounts(Product product) {
-		if (product.getTvaRate1() != null) {
-			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate1() / 100), 2));
-		}
-		if (product.getTvaRate2() != null) {
-			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate2() / 100), 2));
-		}
-		if (product.getTvaRate3() != null) {
-			product.setPriceTaxOut1(Precision.round(product.getPriceTaxIn() / (1 + product.getTvaRate3() / 100), 2));
+			save(product);
 		}
 	}
 
@@ -307,6 +316,13 @@ public class ProductServiceImpl implements ProductService {
 	public Product save(Product product, boolean skipKosNotification) {
 		boolean updatePurchaseOrders = false;
 		Product oldVersion = null;
+
+		if (product.getEan13().length() < 12) {
+			while (product.getEan13().length() < 12)
+				product.setEan13("0" + product.getEan13());
+
+			LOGGER.info("Fixing padding issue on product " + product.getEan13());
+		}
 
 		if (product.getId() != null) {
 			oldVersion = findOne(product.getId());

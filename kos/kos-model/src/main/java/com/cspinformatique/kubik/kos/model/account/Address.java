@@ -21,24 +21,11 @@ public class Address {
 	private String city;
 	private String state;
 	private String postalCode;
+	private String country;
 	private Type type;
 
 	public Address() {
 
-	}
-
-	public Address(long id, String firstName, String lastName, String phone, String address1, String address2,
-			String city, String state, String postalCode, Type type) {
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.phone = phone;
-		this.address1 = address1;
-		this.address2 = address2;
-		this.city = city;
-		this.state = state;
-		this.postalCode = postalCode;
-		this.type = type;
 	}
 
 	@Id
@@ -113,6 +100,14 @@ public class Address {
 
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
 	@Enumerated(EnumType.STRING)

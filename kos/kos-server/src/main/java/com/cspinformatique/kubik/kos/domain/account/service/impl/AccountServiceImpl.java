@@ -81,18 +81,12 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public Account save(Account account) {
-		if (account.isShippingAddressPreferedForBilling()) {
-			account.setBillingAddress(account.getShippingAddress());
-		}
-
 		return accountRepository.save(account);
 	}
 
 	@Override
-	public Address saveAddress(Account account, Address address, boolean shippingAddressPreferedForBilling) {
+	public Address saveAddress(Account account, Address address) {
 		Assert.notNull(account);
-
-		account.setShippingAddressPreferedForBilling(shippingAddressPreferedForBilling);
 
 		if (address.getType().equals(Address.Type.BILLING))
 			account.setBillingAddress(address);
@@ -106,5 +100,4 @@ public class AccountServiceImpl implements AccountService {
 		else
 			return account.getShippingAddress();
 	}
-
 }

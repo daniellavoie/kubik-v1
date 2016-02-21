@@ -1,11 +1,6 @@
 package com.cspinformatique.kubik.server.domain.purchase.controller;
 
-import java.io.IOException;
-
-import javax.servlet.ServletResponse;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +24,9 @@ import com.cspinformatique.kubik.server.jasper.service.ReportService;
 import com.cspinformatique.kubik.server.model.purchase.Rma;
 import com.cspinformatique.kubik.server.model.purchase.RmaDetail;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+
 @Controller
 @RequestMapping("/rma")
 public class RmaController {
@@ -37,19 +35,17 @@ public class RmaController {
 
 	@Autowired
 	private RmaService rmaService;
-	
+
 	@Autowired
 	private ProductInventoryService productInventoryService;
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<Rma> findAll(
-			@RequestParam(required = false) String status,
-			@RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "50") Integer resultPerPage,
+	public @ResponseBody Page<Rma> findAll(@RequestParam(required = false) String status,
+			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
 			@RequestParam(defaultValue = "openDate") String sortBy) {
-		return this.rmaService.findAll(new PageRequest(page, resultPerPage,
-				direction != null ? direction : Direction.DESC, sortBy));
+		return this.rmaService
+				.findAll(new PageRequest(page, resultPerPage, direction != null ? direction : Direction.DESC, sortBy));
 	}
 
 	@RequestMapping(value = "/{id}/next", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,16 +63,14 @@ public class RmaController {
 		return this.rmaService.findPrevious(id);
 	}
 
+	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{rmaId}/report", method = RequestMethod.GET, produces = "application/pdf")
-	public void generateRmaPdf(@PathVariable int rmaId, ServletResponse response) {
+	public byte[] generateRmaPdf(@PathVariable int rmaId, HttpServletResponse response) {
 		try {
-			JasperExportManager.exportReportToPdfStream(this.reportService
-					.generateRmaReport(this.rmaService.findOne(rmaId)),
-					response.getOutputStream());
-
-			response.setContentType("application/pdf");
-		} catch (JRException | IOException ex) {
+			return JasperExportManager
+					.exportReportToPdf(this.reportService.generateRmaReport(this.rmaService.findOne(rmaId)));
+		} catch (JRException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
@@ -110,7 +104,7 @@ public class RmaController {
 			for (RmaDetail detail : rma.getDetails()) {
 				this.productInventoryService.updateInventory(detail.getProduct());
 			}
-			
+
 		}
 
 		return this.getRmasPage();

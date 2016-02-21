@@ -14,6 +14,7 @@
 		vm.closeSale = closeSale;
 		vm.loadPaymentMethods = loadPaymentMethods;
 		vm.newPaymentMethodSelected = newPaymentMethodSelected;
+		vm.openInvoice = openInvoice;
 		vm.openReceipt = openReceipt;
 		vm.printReceipt = printReceipt;
 		vm.selectPaymentMethod = selectPaymentMethod;
@@ -75,6 +76,13 @@
 			function loadPaymentMethodSuccess(paymentMethods){
 				vm.paymentMethods = paymentMethods;
 			}
+		}
+		
+		
+		function openInvoice(){
+			window.open("/invoice/" + vm.invoice.id);
+			
+			vm.closeSale();
 		}
 		
 		function newPaymentMethodSelected(paymentMethod){

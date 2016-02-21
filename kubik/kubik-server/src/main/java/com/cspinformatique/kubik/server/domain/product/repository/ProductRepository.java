@@ -27,6 +27,9 @@ public interface ProductRepository extends
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
 
 	Iterable<Product> findBySupplier(Supplier supplier);
+	
+	@Query("SELECT product FROM Product product WHERE LENGTH(ean13) < 12")
+	List<Product> findInvalidEan13();
 
 	@Query("SELECT product FROM Product product WHERE category = ?1 ORDER BY RAND()")
 	Page<Product> findRandomByCategory(Category category, Pageable pageable);

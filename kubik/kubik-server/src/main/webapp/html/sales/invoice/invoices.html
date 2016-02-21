@@ -120,6 +120,7 @@
 							<td>
 								<span ng-repeat="payment in invoice.payments">
 									<span ng-switch="payment.paymentMethod.type">
+										<span ng-switch-when="BRAINTREE" title="Internet - {{payment.amount | currency : '&euro;'}}" class="glyphicon glyphicon-globe">&nbsp;</span>
 										<span ng-switch-when="CARD" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
 										<span ng-switch-when="CASH" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
 										<span ng-switch-when="CHECK" title="Chèque - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>

@@ -36,8 +36,7 @@
 								ng-repeat="detail in customerOrderCtrl.customerOrder.customerOrderDetails" 
 							>
 								<div class="col-sm-3 text-center">
-									<img src="http://images.amazon.com/images/P/{{detail.product.isbn}}.01._SCMZZZZZZZ_.jpg" />
-			<!-- 							<img ng-if="product.images.length == 0" th:src="@{/img/logos/dimension-fantastique-noir.png}" /> -->
+									<img ng-src="/product/{{detail.product.id}}/image/THUMB.jpg" />
 								</div>
 								<div class="col-sm-5">
 									<div><h4><a th:href="@{/product/{{detail.product.id}}}">{{detail.product.title}}</a></h4></div>
@@ -62,7 +61,7 @@
 										 />
 										 <div ng-if="customerOrderCtrl.customerOrder.status != 'OPEN'">
 										 	<div>{{detail.quantityOrdered}} commandé(s)</div>
-										 	<div ng-if="detail.quantityOrdered != detail.quantityShipped">{{detail.quantityShipped}} expédié(s)</div>
+										 	<div ng-if="customerOrderCtrl.customerOrder.status == 'PROCESSED' &amp;&amp; detail.quantityOrdered != detail.quantityShipped">{{detail.quantityShipped}} expédié(s)</div>
 										 </div>
 									</div>
 									<div>
@@ -85,15 +84,22 @@
 				<div class="col-sm-3 checkout text-center">
 					<div class="panel panel-default">
 						<div class="panel-body">
-							<div>
-								Sous-total 
-								({{customerOrderCtrl.customerOrder.totalQuantity}} articles):
-							</div>
-							<div>
-								{{customerOrderCtrl.customerOrder.subTotal | number : 2}} &euro;
+							<div ng-if="customerOrderCtrl.customerOrder.status != 'OPEN'">
+								<div>Sous total : {{customerOrderCtrl.customerOrder.subTotal| number : 2}} &euro;</div>
+								
+								<div>Livraison : {{customerOrderCtrl.customerOrder.shippingCost | number : 2}} &euro;</div>
+								
+								<div>Montant total : {{customerOrderCtrl.customerOrder.totalAmount | number : 2}} &euro;</div>
 							</div>
 							
 							<div ng-if="customerOrderCtrl.customerOrder.status == 'OPEN'">
+								<div>
+									Sous-total 
+									({{customerOrderCtrl.customerOrder.totalQuantity}} articles):
+								</div>
+								<div>
+									{{customerOrderCtrl.customerOrder.subTotal | number : 2}} &euro;
+								</div>
 								<button 
 									disabled="disabled" 
 									class="btn btn-primary"

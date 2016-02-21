@@ -12,12 +12,12 @@ public interface AccountService extends UserDetailsService {
 	Account createAccount(String username, CharSequence password);
 
 	Account findByUsername(String username);
-	
+
 	Account findByPrincipal(Principal principal);
-	
+
 	Account findOne(long id);
 
 	Account save(Account account);
 
-	Address saveAddress(Account account, Address address, boolean shippingAddressPreferedForBilling);
+	Address saveAddress(Account account, Address address);
 }

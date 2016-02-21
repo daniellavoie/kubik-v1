@@ -7,6 +7,8 @@ import com.cspinformatique.kubik.server.model.sales.Invoice;
 import net.sf.jasperreports.engine.JasperPrint;
 
 public interface ReportService {
+	JasperPrint generateInvoiceReport(Invoice invoice);
+	
 	JasperPrint generatePurchaseOrderReport(PurchaseOrder purchaseOrder);
 	
 	JasperPrint generateReceiptReport(Invoice invoice);

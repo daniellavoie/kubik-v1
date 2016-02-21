@@ -64,6 +64,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.cspinformatique.kubik</groupId>
+			<artifactId>kubik-reports</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.cspinformatique.kubik</groupId>
 			<artifactId>kos-model</artifactId>
 		</dependency>
 		<dependency>

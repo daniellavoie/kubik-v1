@@ -20,6 +20,7 @@ import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder.Status;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrderDetail;
 import com.cspinformatique.kubik.server.domain.kos.rest.KosTemplate;
+import com.cspinformatique.kubik.server.domain.misc.service.AddressService;
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.sales.exception.InvalidTransactionStatus;
 import com.cspinformatique.kubik.server.domain.sales.exception.TransactionDotNotMatchOrderException;
@@ -34,6 +35,7 @@ import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
 import com.cspinformatique.kubik.server.model.sales.Payment;
 import com.cspinformatique.kubik.server.model.sales.PaymentMethod;
+import com.cspinformatique.kubik.server.model.sales.Invoice.ShippingMethod;
 
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -46,6 +48,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 			new Transaction.Status[] { Transaction.Status.AUTHORIZED, Transaction.Status.SUBMITTED_FOR_SETTLEMENT,
 					Transaction.Status.SETTLING, Transaction.Status.SETTLEMENT_PENDING,
 					Transaction.Status.SETTLEMENT_CONFIRMED, Transaction.Status.SETTLED });
+
+	@Resource
+	AddressService addressService;
 
 	@Resource
 	InvoiceService invoiceService;
@@ -75,9 +80,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		return kosTemplate.exchange(CUSTOMER_ORDER_RESOURCE + "/" + id, HttpMethod.GET, CustomerOrder.class);
 	}
 
+	/**
+	 * @param customerOrder
+	 */
 	private void processCustomerOrder(CustomerOrder customerOrder) {
 		// Generate an invoice.
-		Invoice invoice = invoiceService.generateNewInvoice(customerOrder.getId(), customerOrder.getShippingCost());
+		Invoice invoice = invoiceService.generateNewInvoice(customerOrder.getId(), customerOrder.getShippingCost(),
+				ShippingMethod.valueOf(customerOrder.getShippingMethod().name()));
 
 		// Add details to invoice.
 		for (CustomerOrderDetail customerOrderDetail : customerOrder.getCustomerOrderDetails()) {
@@ -85,7 +94,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 			invoice.getDetails()
 					.add(new InvoiceDetail(null, invoice, product, (double) customerOrderDetail.getQuantityShipped(),
-							0d, null, product.getPriceTaxIn(), 0d, 0d, 0d, 0d));
+							0d, null, product.getPriceTaxIn(), 0d, 0d, 0d, 0d, 0d, product.getTvaRate1(), 0d));
 		}
 
 		// Validate the transaction state.
@@ -102,6 +111,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 		paymentService.save(invoice.getPayments());
 
+		// Transcode address.
+		invoice.setBillingAddress(addressService.transcodeFromKos(customerOrder.getBillingAddress()));
+		invoice.setShippingAddress(addressService.transcodeFromKos(customerOrder.getShippingAddress()));
+
 		// Close the invoice.
 		invoice.setStatus(invoiceStatusService.findByType(InvoiceStatus.Types.PAID.name()));
 
@@ -111,27 +124,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 		// Flag the customer order as closed.
 		customerOrder.setProcessedDate(new Date());
-
-		// } catch (RuntimeException runtimeEx) {
-		// // Voids the transactions that has been previously settled.
-		// try {
-		// paymentService.voidPaymentGatewayTransaction(customerOrder.getTransactionId());
-		// } catch (RuntimeException runtimeEx2) {
-		// LOGGER.error(
-		// "TRANSACTION " + customerOrder.getTransactionId() + " for customer
-		// order "
-		// + customerOrder.getId() + "COULD NOT BE REFUNDED, INVESTIGATE
-		// IMMEDIATELY !!!",
-		// runtimeEx2);
-		// }
-		//
-		// throw runtimeEx;
-		// }
 	}
 
 	@Override
 	@Transactional
 	public CustomerOrder save(CustomerOrder customerOrder) {
+		if (Status.OPEN.equals(customerOrder.getStatus()))
+			customerOrder.setStatus(Status.PROCESSING);
+
 		if (Status.PROCESSED.equals(customerOrder.getStatus()) && customerOrder.getProcessedDate() == null)
 			processCustomerOrder(customerOrder);
 

@@ -1,8 +1,6 @@
 package com.cspinformatique.kubik.server.domain.sales.controller;
 
-import java.io.IOException;
-
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -57,17 +55,27 @@ public class InvoiceController {
 		customerCreditService.recalculateCustomerCreditsTaxes();
 	}
 
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/{id}/receipt", method = RequestMethod.GET, produces = "application/pdf")
-	public void generateReceiptPdf(@PathVariable int id, ServletResponse response) {
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/{id}", params = "pdf", method = RequestMethod.GET, produces = "application/pdf")
+	public byte[] generateInvoicePdf(@PathVariable int id, HttpServletResponse response) {
 		try {
-			JasperExportManager.exportReportToPdfStream(
-					reportService.generateReceiptReport(invoiceService.findOne(id)),
-					response.getOutputStream());
+			return JasperExportManager
+					.exportReportToPdf(reportService.generateInvoiceReport(invoiceService.findOne(id)));
+		} catch (JRException jrEx) {
+			throw new RuntimeException(jrEx);
+		}
+	}
 
-			response.setContentType("application/pdf");
-		} catch (JRException | IOException ex) {
-			throw new RuntimeException(ex);
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/{id}/receipt", method = RequestMethod.GET, produces = "application/pdf")
+	public byte[] generateReceiptPdf(@PathVariable int id, HttpServletResponse response) {
+		try {
+			return JasperExportManager
+					.exportReportToPdf(reportService.generateReceiptReport(invoiceService.findOne(id)));
+		} catch (JRException jrEx) {
+			throw new RuntimeException(jrEx);
 		}
 	}
 
@@ -85,8 +93,7 @@ public class InvoiceController {
 
 	@ResponseBody
 	@RequestMapping(value = "/{id}/detail/product/ean13/{ean13}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public InvoiceDetail findDetailByInvoiceIdAndProductEan13(@PathVariable int id,
-			@PathVariable String ean13) {
+	public InvoiceDetail findDetailByInvoiceIdAndProductEan13(@PathVariable int id, @PathVariable String ean13) {
 		return invoiceService.findDetailByInvoiceIdAndProductEan13(id, ean13);
 	}
 
@@ -113,10 +120,10 @@ public class InvoiceController {
 	public Integer findPreviousInvoice(@PathVariable int id) {
 		return invoiceService.findPrevious(id);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, params = "new", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Invoice generateNewOrder(@RequestParam int customerId){
+	public Invoice generateNewOrder(@RequestParam int customerId) {
 		return invoiceService.generateNewOrder(customerId);
 	}
 

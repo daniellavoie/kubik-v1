@@ -18,27 +18,14 @@ public class Address {
 	private String streetLine2;
 	private String city;
 	private String state;
+	private String country;
 	private String zipCode;
 	
 	private long kosId;
 	
 	public Address(){
 		
-	}
-
-	public Address(int id, String firstName, String lastName, String phone, String streetLine1, String streetLine2, String city,
-			String state, String zipCode, long kosId) {
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.phone = phone;
-		this.streetLine1 = streetLine1;
-		this.streetLine2 = streetLine2;
-		this.city = city;
-		this.state = state;
-		this.zipCode = zipCode;
-		this.kosId = kosId;
-	}
+	}		
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -105,6 +92,15 @@ public class Address {
 	public void setState(String state) {
 		this.state = state;
 	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
 
 	public String getZipCode() {
 		return zipCode;

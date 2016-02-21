@@ -99,8 +99,23 @@
 					<div class="col-md-4">
 						<div class="panel panel-default">
 							<div class="panel-heading">Adresse de livraison</div>
-							<div class="panel-body">
-								
+							<div class="panel-body" ng-if="customerOrderDetailsCtrl.customerOrder != undefined">
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.lastName}}
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.firstName}}
+								</div>
+								<div>{{customerOrderDetailsCtrl.customerOrder.shippingAddress.address1}}</div>
+								<div>{{customerOrderDetailsCtrl.customerOrdershippingAddress.address2}}</div>
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.city}},
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.postalCode}}</div>
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.country}}
+								</div>
+								<div>
+									Téléphone
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.phone}}
+								</div>
 							</div>
 						</div>
 					</div>
@@ -109,8 +124,19 @@
 					<div class="col-md-4">
 						<div class="panel panel-default">
 							<div class="panel-heading">Adresse de facturation</div>
-							<div class="panel-body">
-							
+							<div class="panel-body" ng-if="customerOrderDetailsCtrl.customerOrder != undefined">
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.billingAddress.lastName}}
+									{{customerOrderDetailsCtrl.customerOrder.billingAddress.firstName}}
+								</div>
+								<div>{{customerOrderDetailsCtrl.customerOrder.billingAddress.address1}}</div>
+								<div>{{customerOrderDetailsCtrl.customerOrder.billingAddress.address2}}</div>
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.billingAddress.city}},
+									{{customerOrderDetailsCtrl.customerOrder.billingAddress.postalCode}}</div>
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.billingAddress.country}}
+								</div>
 							</div>
 						</div>
 					</div>

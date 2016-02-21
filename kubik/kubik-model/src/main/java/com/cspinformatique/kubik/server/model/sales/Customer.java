@@ -28,6 +28,7 @@ public class Customer {
 	private String internalNote;
 	private Address address;
 	private Date creationDate;
+	private String tvaNumber;
 
 	public Customer() {
 
@@ -38,7 +39,7 @@ public class Customer {
 	}
 
 	public Customer(Integer id, String lastName, String firstName, String companyName, String fixedPhone,
-			String mobilePhone, String email, String ean13, String internalNote, Address address, Date creationDate) {
+			String mobilePhone, String email, String ean13, String internalNote, Address address, Date creationDate, String tvaNumber) {
 		this.id = id;
 		this.lastName = lastName;
 		this.firstName = firstName;
@@ -50,6 +51,7 @@ public class Customer {
 		this.internalNote = internalNote;
 		this.address = address;
 		this.creationDate = creationDate;
+		this.tvaNumber = tvaNumber;
 	}
 
 	@Id
@@ -142,5 +144,13 @@ public class Customer {
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public String getTvaNumber() {
+		return tvaNumber;
+	}
+
+	public void setTvaNumber(String tvaNumber) {
+		this.tvaNumber = tvaNumber;
 	}
 }

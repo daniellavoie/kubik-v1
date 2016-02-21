@@ -25,7 +25,7 @@
 							ng-click="!customerOrdersHistoryCtrl.changePage(customerOrdersHistoryCtrl.historyPage.number-1, true)" 
 						><button 
 							class="btn btn-default"
-							ng-attr-disabled="customerOrdersHistoryCtrl.loading &amp;&amp; 'disabled' || undefined"
+							ng-disabled="customerOrdersHistoryCtrl.loading || undefined"
 						>Précédente</button></a>
 					</div>
 					
@@ -46,7 +46,7 @@
 							ng-click="customerOrdersHistoryCtrl.changePage(customerOrdersHistoryCtrl.historyPage.number+1, true)" 
 						><button 
 							class="btn btn-default"
-							ng-attr-disabled="customerOrdersHistoryCtrl.loading &amp;&amp; 'disabled' || undefined"
+							ng-disabled="customerOrdersHistoryCtrl.loading || undefined"
 						>Suivante</button></a>
 					</div>
 				</div>

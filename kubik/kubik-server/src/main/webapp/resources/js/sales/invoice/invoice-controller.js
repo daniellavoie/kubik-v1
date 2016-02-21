@@ -5,19 +5,27 @@
 		.module("Kubik")
 		.controller("InvoiceDetailsCtrl", InvoiceDetailsCtrl);
 	
-	function InvoiceDetailsCtrl(invoiceService, productService, $scope){
+	function InvoiceDetailsCtrl(invoiceService, productService, $scope, $timeout){
 		var vm = this;
+		
+		vm.anonymousInvoice = false;
 
+		vm.anonymousChanged = anonymousChanged;
+		vm.cancelConfirmAddress = cancelConfirmAddress;
 		vm.cancelInvoice = cancelInvoice;
 		vm.changeInvoice = changeInvoice;
 		vm.changePaymentMethod = changePaymentMethod;
-		vm.checkoutInvoice = checkoutInvoice
+		vm.checkoutInvoice = checkoutInvoice;
+		vm.confirmInvoiceAddress = confirmInvoiceAddress;
 		vm.confirmOrder = confirmOrder;
 		vm.confirmRefund = confirmRefund;
+		vm.generateInvoicePdf = generateInvoicePdf;
+		vm.isAddressInfoValid = isAddressInfoValid;
 		vm.loadInvoice = loadInvoice;
 		vm.loadNextInvoice = loadNextInvoice;
 		vm.loadPreviousInvoice = loadPreviousInvoice;
 		vm.openCustomerCard = openCustomerCard;
+		vm.openInvoicePdf = openInvoicePdf;
 		vm.openProductCard = openProductCard;
 		vm.openProductSearch = openProductSearch;
 		vm.openReceipt = openReceipt;
@@ -60,6 +68,15 @@
 			$("html, body").animate({ scrollTop: $(document).height() }, 500);
 		}
 		
+		function anonymousChanged(){
+			if(vm.anonymousInvoice)
+				vm.takeoutInvoice = true;
+		}
+		
+		function cancelConfirmAddress(){
+			$(".confirm-address").modal("hide");
+		}
+		
 		function cancelInvoice(){
 			invoiceService
 				.cancelInvoice(vm.invoice)
@@ -90,6 +107,10 @@
 			$scope.$broadcast("checkoutInvoice", vm.invoice);
 		}
 		
+		function confirmInvoiceAddress(){			
+			$(".confirm-address").modal();
+		}
+		
 		function confirmOrder(){
 			vm.invoice.status = {type : 'ORDER_CONFIRMED'};
 			
@@ -98,6 +119,17 @@
 		
 		function confirmRefund(){
 			$(".refund-modal").modal();
+		}
+		
+		function generateInvoicePdf(){
+			save()
+				.then(saveSuccess);
+			
+			function saveSuccess(invoice){
+				openInvoicePdf();
+				
+				cancelConfirmAddress();
+			}
 		}
 		
 		function getDetail(product){
@@ -110,6 +142,41 @@
 			return null;	
 		}
 		
+		function isAddressInfoValid(){
+			if(vm.invoice != undefined){
+				var shippingAddress = vm.invoice.shippingAddress;
+				
+				return vm.anonymousInvoice || 
+					(vm.invoice.shippingMethod == "TAKEOUT" && isBillingAddressValid()) ||
+					(vm.invoice.shippingMethod != "TAKEOUT" && isBillingAddressValid() && isShippingAddressValid());
+			}
+			
+			return false;
+			
+			function isBillingAddressValid(){
+				return isFieldValid(vm.invoice.billingAddress.firstName) && 
+					isFieldValid(vm.invoice.billingAddress.lastName) &&
+					isFieldValid(vm.invoice.billingAddress.streetLine1) && 
+					isFieldValid(vm.invoice.billingAddress.city) &&
+					isFieldValid(vm.invoice.billingAddress.zipCode) && 
+					isFieldValid(vm.invoice.billingAddress.country);
+			}
+			
+			function isFieldValid(field){
+				return field != undefined && field != "";
+			}
+			
+			function isShippingAddressValid(){
+				return isFieldValid(vm.invoice.shippingAddress.firstName) && 
+					isFieldValid(vm.invoice.shippingAddress.lastName) &&
+					isFieldValid(vm.invoice.shippingAddress.streetLine1) && 
+					isFieldValid(vm.invoice.shippingAddress.city) &&
+					isFieldValid(vm.invoice.shippingAddress.zipCode) && 
+					isFieldValid(vm.invoice.shippingAddress.country) &&
+					isFieldValid(vm.invoice.shippingAddress.phone);
+			}
+		}
+		
 		function loadInvoice(){
 			invoiceService
 				.findOne(invoiceId)
@@ -117,6 +184,17 @@
 			
 			function findOneSuccess(invoice){
 				vm.invoice = invoice;
+				
+				if(invoice.shippingMethod == "TAKEOUT")
+					vm.confirmAddress = "billing";
+				else
+					vm.confirmAddress = "shipping";
+				
+				if(invoice.billingAddress == undefined)
+					invoice.billingAddress = {};
+				
+				if(invoice.shippingAddress == undefined)
+					invoice.shippingAddress = {};
 			}
 		}
 		
@@ -151,6 +229,10 @@
 			
 			$scope.$broadcast("openCustomerCard", customer);
 		}
+
+		function openInvoicePdf(){
+			window.open(vm.invoice.id + "?pdf", "Facture " + vm.invoice.number, "pdf");
+		}
 		
 		function openProductCard($event, product){
 			$event.stopPropagation();
@@ -163,7 +245,7 @@
 		}
 
 		function openReceipt(){
-			window.open(vm.invoice.id + "/receipt.pdf", "Ticket de caisse", "pdf");
+			window.open(vm.invoice.id + "/receipt.pdf", "Ticket" + vm.invoice.number, "pdf");
 		}
 		
 		function printReceipt(){
@@ -190,12 +272,14 @@
 		}
 		
 		function save(){
-			invoiceService
+			return invoiceService
 				.save(vm.invoice)
 				.then(saveSuccess);
 			
 			function saveSuccess(invoice){
 				vm.invoice = invoice;
+				
+				return invoice;
 			}
 		}
 		

@@ -65,6 +65,7 @@
 								<td>
 									<div ng-repeat="payment in invoiceDetailsCtrl.invoice.payments" class="{{invoiceDetailsCtrl.invoice.status.type == 'PAID' ? 'dropdown' : ''}}">
 										<div ng-switch="payment.paymentMethod.type">
+											<span ng-switch-when="BRAINTREE" title="Internet - {{payment.amount | currency : '&euro;'}}" class="glyphicon glyphicon-globe">&nbsp;</span>
 											<span data-toggle="dropdown" ng-switch-when="CARD" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
 											<span data-toggle="dropdown" ng-switch-when="CASH" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
 											<span data-toggle="dropdown" ng-switch-when="CHECK" title="Chèque - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
@@ -119,7 +120,7 @@
 									ng-click="invoiceDetailsCtrl.save()"
 									ng-keyup="invoiceDetailsCtrl.save()"
 									ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER'"
-									ng-attr-disabled="invoiceDetailsCtrl.loading || undefined"
+									ng-disabled="invoiceDetailsCtrl.loading || undefined"
 								/>
 							</td>						
 							<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>
@@ -129,7 +130,7 @@
 									class="btn btn-warning btn-xs"
 									ng-click="invoiceDetailsCtrl.removeDetail(detail)" 
 									ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER'"
-									ng-attr-disabled="invoiceDetailsCtrl.loading || undefined"
+									ng-disabled="invoiceDetailsCtrl.loading || undefined"
 								>
 									<span class="glyphicon glyphicon-trash"></span>
 								</button>
@@ -145,40 +146,44 @@
 				</table>
 				
 				<div class="row">
-					<div class="col-md-3" ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER'">
-						<div class="input-group">
- 							<span class="input-group-addon">Remise</span>
+					<div class="col-md-3" >
+						<div ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER'">
+							<div class="input-group">
+	 							<span class="input-group-addon">Remise</span>
+								<input 
+									type="number" 
+								 	placeholder="Remise"
+									class="form-control rebate-input"
+									ng-keyup="invoiceDetailsCtrl.save()"
+									ng-click="invoiceDetailsCtrl.save()"
+									ng-model="invoiceDetailsCtrl.invoice.rebatePercent" 
+									ng-disabled="!invoiceDetailsCtrl.loading || undefined" 
+								/>
+								<input 
+									type="number" 
+									disabled="disabled"
+								 	placeholder="Remise"
+									class="form-control rebate-input"
+									ng-if="cashRegisterCtrl.loading" 
+									ng-model="cashRegisterCtrl.invoice.rebatePercent" 
+								/>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER'">
 							<input 
-								type="number" 
-							 	placeholder="Remise"
-								class="form-control rebate-input"
-								ng-keyup="invoiceDetailsCtrl.save()"
-								ng-click="invoiceDetailsCtrl.save()"
-								ng-model="invoiceDetailsCtrl.invoice.rebatePercent" 
-								ng-attr-disabled="!invoiceDetailsCtrl.loading || undefined" 
-							/>
-							<input 
-								type="number" 
-								disabled="disabled"
-							 	placeholder="Remise"
-								class="form-control rebate-input"
-								ng-if="cashRegisterCtrl.loading" 
-								ng-model="cashRegisterCtrl.invoice.rebatePercent" 
+								type="text" 
+								placeholder="Ean13" 
+								class="ean13 form-control"
+								ng-keyup="invoiceDetailsCtrl.searchProductKeyUp($event)" 
+								ng-model="invoiceDetailsCtrl.search.ean13" 
 							/>
 						</div>
 					</div>
-					
-					<div class="col-md-4">
-						<input 
-							type="text" 
-							placeholder="Ean13" 
-							class="ean13 form-control"
-							ng-keyup="invoiceDetailsCtrl.searchProductKeyUp($event)" 
-							ng-model="invoiceDetailsCtrl.search.ean13" 
-						/>
-					</div>
 					<div class="col-md-5">
 						<button 
+							ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER'"
 							class="btn btn-success glyphicon glyphicon-search" 
 							ng-click="invoiceDetailsCtrl.openProductSearch()">
 						</button>
@@ -212,6 +217,12 @@
 								class="btn btn-primary"
 								ng-click="invoiceDetailsCtrl.openReceipt()" 
 							>Afficher le reçu</button>
+							
+							<button 
+								type="button" 
+								class="btn btn-primary"
+								ng-click="invoiceDetailsCtrl.confirmInvoiceAddress()" 
+							>Générer la facture</button>
 						</span>
 					</div>
 				</div>
@@ -265,6 +276,130 @@
 			<div th:replace="product/products-modal :: products-modal"></div>
 		
 			<div th:replace="sales/customer/customer-card :: customer-card"></div>
+			
+			<!-- Invoice address confirmations -->
+			<div class="confirm-address modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Générer la facture</h4>
+						</div>
+						
+						<div class="modal-body">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<div class="col-sm-offset-1 col-sm-9">
+										<div class="checkbox">
+											<label ng-click="invoiceDetailsCtrl.anonymousChanged()">
+												<input type="checkbox" ng-model="invoiceDetailsCtrl.anonymousInvoice"/>Facture anonyme
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- Nav tabs -->
+							<ul ng-if="!invoiceDetailsCtrl.anonymousInvoice" class="nav nav-tabs" role="tablist">
+								<li 
+									ng-if="invoiceDetailsCtrl.invoice.shippingMethod != 'TAKEOUT'" 
+									ng-class="{true : 'active', false : 'coliss'}[invoiceDetailsCtrl.confirmAddress == 'shipping']" 
+									ng-click="invoiceDetailsCtrl.confirmAddress = 'shipping'"
+								>
+									<a href="#">Addresse de livraison</a>
+								</li>
+								<li 
+									ng-class="{true : 'active', false : 'coliss'}[invoiceDetailsCtrl.confirmAddress == 'billing']" 
+									ng-click="invoiceDetailsCtrl.confirmAddress = 'billing'"
+								>
+									<a href="#">Addresse de facturation</a>
+								</li>
+							</ul>
+
+							<!-- Tab panes -->
+							<div ng-if="!invoiceDetailsCtrl.anonymousInvoice" class="tab-content">
+								<div class="tab-pane" ng-keyup="isAddressInfoValid" ng-class="{true : 'active'}[invoiceDetailsCtrl.confirmAddress == 'shipping']">
+									<div class="form-group">
+										<label>Prénom</label>
+		   								<input type="text" class="form-control" placeholder="Prénom" ng-model="invoiceDetailsCtrl.invoice.shippingAddress.firstName" />
+		 							</div>
+									<div class="form-group">
+										<label>Nom</label>
+		   								<input type="text" class="form-control" placeholder="Nom" ng-model="invoiceDetailsCtrl.invoice.shippingAddress.lastName" />
+		 							</div>
+									<div class="form-group">
+										<label>Adresse 1</label>
+		   								<input type="text" class="form-control" placeholder="Adresse 1" ng-model="invoiceDetailsCtrl.invoice.shippingAddress.streetLine1" />
+		 							</div>
+									<div class="form-group">
+										<label>Adresse 2</label>
+		   								<input type="text" class="form-control" placeholder="Adresse 2" ng-model="invoiceDetailsCtrl.invoice.shippingAddress.streetLine2" />
+		 							</div>
+									<div class="form-group">
+										<label>Ville</label>
+		   								<input type="text" class="form-control" placeholder="Ville" ng-model="invoiceDetailsCtrl.invoice.shippingAddress.city" />
+									</div>
+									<div class="form-group">
+										<label>Code postal</label>
+		   								<input type="text" class="form-control" placeholder="Code postal" ng-model="invoiceDetailsCtrl.invoice.shippingAddress.zipCode" />
+									</div>
+									<div class="form-group">
+										<label>Pays</label>
+		   								<input type="text" class="form-control" placeholder="Pays" ng-model="invoiceDetailsCtrl.invoice.shippingAddress.country" />
+									</div>
+									<div class="form-group" ng-if="invoiceDetailsCtrl.invoice.shippingAddress.type == 'SHIPPING'">
+										<label>Téléphone</label>
+		   								<input type="text" class="form-control" placeholder="Téléphone" ng-model="invoiceDetailsCtrl.invoice.shippingAddress.phone" />
+		 							</div>
+								</div>
+								
+								<div class="tab-pane" ng-class="{true : 'active'}[invoiceDetailsCtrl.confirmAddress == 'billing']">
+									<div class="form-group">
+										<label>Prénom</label>
+	   									<input type="text" class="form-control" placeholder="Prénom" ng-model="invoiceDetailsCtrl.invoice.billingAddress.firstName" />
+		 							</div>
+									<div class="form-group">
+										<label>Nom</label>
+		   								<input type="text" class="form-control" placeholder="Nom" ng-model="invoiceDetailsCtrl.invoice.billingAddress.lastName" />
+		 							</div>
+									<div class="form-group">
+										<label>Adresse 1</label>
+		   								<input type="text" class="form-control" placeholder="Adresse 1" ng-model="invoiceDetailsCtrl.invoice.billingAddress.streetLine1" />
+		 							</div>
+									<div class="form-group">
+										<label>Adresse 2</label>
+		   								<input type="text" class="form-control" placeholder="Adresse 2" ng-model="invoiceDetailsCtrl.invoice.billingAddress.streetLine2" />
+		 							</div>
+									<div class="form-group">
+										<label>Ville</label>
+		   								<input type="text" class="form-control" placeholder="Ville" ng-model="invoiceDetailsCtrl.invoice.billingAddress.city" />
+									</div>
+									<div class="form-group">
+										<label>Code postal</label>
+		   								<input type="text" class="form-control" placeholder="Code postal" ng-model="invoiceDetailsCtrl.invoice.billingAddress.zipCode" />
+									</div>
+									<div class="form-group">
+										<label>Pays</label>
+		   								<input type="text" class="form-control" placeholder="Pays" ng-model="invoiceDetailsCtrl.invoice.billingAddress.country" />
+									</div>
+									<div class="form-group" ng-if="invoiceDetailsCtrl.invoice.billingAddress.type == 'SHIPPING'">
+										<label>Téléphone</label>
+		   								<input type="text" class="form-control" placeholder="Téléphone" ng-model="invoiceDetailsCtrl.invoice.billingAddress.phone" />
+		 							</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<button class="btn btn-default" ng-click="invoiceDetailsCtrl.cancelConfirmAddress()">Annuler</button>
+							<button 
+								class="btn btn-primary" 
+								ng-click="invoiceDetailsCtrl.generateInvoicePdf()"
+								ng-disabled="!invoiceDetailsCtrl.isAddressInfoValid()"
+							>Générer</button>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		
 		<script th:replace="util/import :: scripts"></script>

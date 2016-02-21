@@ -154,15 +154,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	}
 
 	private int getDetailQuantity(CustomerOrderDetail detail) {
-		if (Status.OPEN.equals(detail.getCustomerOrder().getStatus()))
+		if (Status.OPEN.equals(detail.getCustomerOrder().getStatus())
+				|| Status.CONFIRMED.equals(detail.getCustomerOrder().getStatus()))
 			return detail.getQuantityOrdered();
 		else
 			return detail.getQuantityShipped();
 	}
-	
+
 	@Override
-	public boolean isActivated(){
-		return false;
+	public boolean isActivated() {
+		return true;
 	}
 
 	@Override
@@ -203,9 +204,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 			customerOrder.setApplicableShippingCostLevel(
 					shippingCostLevelService.calculateShippingCostLevel(customerOrder.getTotalWeight()));
 			customerOrder.setShippingCost(customerOrder.getApplicableShippingCostLevel().getCost());
-		} else {
+		} else
 			customerOrder.setShippingCost(0d);
-		}
+
+		if (customerOrder.getAccount() != null && customerOrder.getAccount().isShippingAddressPreferedForBilling())
+			customerOrder.setBillingAddress(customerOrder.getShippingAddress());
+		else if (customerOrder.getShippingAddress() != null && customerOrder.getBillingAddress() != null
+				&& customerOrder.getShippingAddress().getId() == customerOrder.getBillingAddress().getId())
+			customerOrder.setBillingAddress(null);
 
 		calculateAmounts(customerOrder);
 

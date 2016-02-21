@@ -21,7 +21,7 @@ import com.cspinformatique.kubik.kos.model.account.Address;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "uuid") )
 public class CustomerOrder {
 	public enum Status {
-		OPEN, ABANDONED, TO_CONFIRM, CONFIRMED, PROCESSED, ERROR
+		OPEN, ABANDONED, TO_CONFIRM, CONFIRMED, PROCESSING, PROCESSED, ERROR
 	}
 
 	public enum ShippingMethod {
@@ -242,7 +242,7 @@ public class CustomerOrder {
 		this.shippingMethod = shippingMethod;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE})
 	public Address getShippingAddress() {
 		return shippingAddress;
 	}
@@ -251,7 +251,7 @@ public class CustomerOrder {
 		this.shippingAddress = shippingAddress;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	public Address getBillingAddress() {
 		return billingAddress;
 	}

@@ -11,7 +11,8 @@
 			createAccount : createAccount,
 			loadAccount : loadAccount,
 			saveAddress : saveAddress,
-			signIn : signIn
+			signIn : signIn,
+			updateShippingAddressPreferedForBilling : updateShippingAddressPreferedForBilling
 		};
 		
 		function createAccount(username, password){
@@ -34,14 +35,29 @@
 			}
 		}
 		
-		function saveAddress(address, shippingAddressPreferedForBilling){
+		function saveAddress(address){
 			return $http
-				.post(ACCOUNT_URL + "/address?shippingAddressPreferedForBilling=" + shippingAddressPreferedForBilling, address);
+				.post(ACCOUNT_URL + "/address", address)
+				.then(saveAddressSuccess);
+			
+			function saveAddressSuccess(response){
+				return response.data;
+			}
 		}
 		
 		function signIn(username, password){
 			return $http
 				.post(AUTHENTICATE + "?username=" + username + "&password=" + password);
+		}
+		
+		function updateShippingAddressPreferedForBilling(shippingAddressPreferedForBilling){
+			return $http
+				.post(ACCOUNT_URL + "?shippingAddressPreferedForBilling=" + shippingAddressPreferedForBilling)
+				.then(updateSuccess);
+				
+			function updateSuccess(response){
+				return response.data;
+			}
 		}
 	}
 })();

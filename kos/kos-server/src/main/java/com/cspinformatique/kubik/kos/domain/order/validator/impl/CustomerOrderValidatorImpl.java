@@ -4,6 +4,7 @@ import java.security.Principal;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.kos.domain.account.service.AccountService;
@@ -16,19 +17,20 @@ import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
 public class CustomerOrderValidatorImpl implements CustomerOrderValidator {
 	@Resource
 	AccountService accountService;
-	
-	public void checkAccessRights(Principal principal, CustomerOrder customerOrder,
-			String customerOrderUuid) {
+
+	@Value("${app.username}")
+	private String appUsername;
+
+	public void checkAccessRights(Principal principal, CustomerOrder customerOrder, String customerOrderUuid) {
 		Account account = accountService.findByPrincipal(principal);
 
-		boolean systemUser = account.getAuthorities().stream().filter(role -> role.getName().equals("SYSTEM")).findAny()
-				.isPresent();
+		boolean systemUser = appUsername.equals(principal.getName());
 
 		boolean accountDoesNotMatch = customerOrder.getAccount() != null && account != null && !systemUser
 				&& customerOrder.getAccount().getId() != account.getId();
 
-		boolean uuidDoesNotMatchForAnonymusOrder = principal == null && customerOrder.getUuid() != null && customerOrderUuid != null
-				&& !customerOrderUuid.equals(customerOrder.getUuid());
+		boolean uuidDoesNotMatchForAnonymusOrder = principal == null && customerOrder.getUuid() != null
+				&& customerOrderUuid != null && !customerOrderUuid.equals(customerOrder.getUuid());
 
 		if (accountDoesNotMatch || uuidDoesNotMatchForAnonymusOrder) {
 			String message;

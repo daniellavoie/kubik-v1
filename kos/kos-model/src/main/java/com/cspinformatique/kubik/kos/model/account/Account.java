@@ -2,6 +2,7 @@ package com.cspinformatique.kubik.kos.model.account;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -120,7 +121,7 @@ public class Account implements UserDetails {
 		this.shippingAddressPreferedForBilling = shippingAddressPreferedForBilling;
 	}
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	public Address getBillingAddress() {
 		return billingAddress;
 	}
@@ -129,7 +130,7 @@ public class Account implements UserDetails {
 		this.billingAddress = billingAddress;
 	}
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	public Address getShippingAddress() {
 		return shippingAddress;
 	}

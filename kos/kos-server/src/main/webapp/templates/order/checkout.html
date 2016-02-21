@@ -5,6 +5,8 @@
 >
 	<head>		
 		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/libs/font-awesome-4.5.0/font-awesome.min.css}" />
+		<link rel="stylesheet" type="text/css" th:href="@{/libs/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css}" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/order/checkout.css}" />
 	</head>
 	
@@ -56,32 +58,85 @@
 										<div class="row">
 											<div ng-if="checkoutCtrl.customerOrder.shippingMethod == 'COLISSIMO'" class="col-sm-6">
 												<h3>Adresse d'expédition</h3>
-												<div>
+												<div ng-switch="checkoutCtrl.customerOrder.shippingAddress == undefined">
 													<a	href="#" 
-														ng-click="checkoutCtrl.modifyAddress(checkoutCtrl.customerOrder.shippingAddress, true)"
+														ng-switch-when="true"
+														ng-click="checkoutCtrl.editAddress({type : 'SHIPPING'})"
+													>Ajouter</a>													
+													<a	href="#" 
+														ng-switch-when="false"
+														ng-click="checkoutCtrl.editAddress(checkoutCtrl.customerOrder.shippingAddress)"
 													>Modifier</a>
 												</div>
 												
-												<div>Lavoie Daniel</div>
-												<div>589 Terrasse De L'Arche</div>
-												<div>Batiment B, 1er etage, Appartement 122</div>
-												<div>NANTERRE, 92000</div>
-												<div>France</div>
-												<div>Téléhone 06 45 97 73 33</div>
+												<div ng-if="checkoutCtrl.customerOrder.shippingAddress != undefined">
+													<div>
+														{{checkoutCtrl.customerOrder.shippingAddress.lastName}}
+														{{checkoutCtrl.customerOrder.shippingAddress.firstName}}
+													</div>
+													<div>{{checkoutCtrl.customerOrder.shippingAddress.address1}}</div>
+													<div>{{checkoutCtrl.customerOrder.shippingAddress.address2}}</div>
+													<div>
+														{{checkoutCtrl.customerOrder.shippingAddress.city}},
+														{{checkoutCtrl.customerOrder.shippingAddress.postalCode}}</div>
+													<div>
+														{{checkoutCtrl.customerOrder.shippingAddress.country}}
+													</div>
+													<div>
+														Téléphone
+														{{checkoutCtrl.customerOrder.shippingAddress.phone}}
+													</div>
+												</div>
 											</div>
 											<div class="col-sm-6">
 												<h3>Adresse de facturation</h3>
 												<div>
-													<a	href="#" 
-														ng-click="checkoutCtrl.modifyAddress(checkoutCtrl.customerOrder.billingAddress, false)"
-													>Modifier</a>
+													<div
+														ng-switch="checkoutCtrl.customerOrder.billingAddress == undefined"
+														ng-if="!checkoutCtrl.customerOrder.account.shippingAddressPreferedForBilling"
+													> 
+														<a	href="#" 
+															ng-switch-when="true"
+															ng-click="checkoutCtrl.editAddress({type : 'BILLING'})"
+														>Ajouter</a>													
+														<a	href="#" 
+															ng-switch-when="false"
+															ng-click="checkoutCtrl.editAddress(checkoutCtrl.customerOrder.billingAddress)"
+														>Modifier</a>
+													</div>
+													&nbsp;
 												</div>
 												
-												<div>Lavoie Daniel</div>
-												<div>589 Terrasse De L'Arche</div>
-												<div>Batiment B, 1er etage, Appartement 122</div>
-												<div>NANTERRE, 92000</div>
-												<div>France</div>
+												<div ng-if="checkoutCtrl.customerOrder.billingAddress != undefined">
+													<div>
+														{{checkoutCtrl.customerOrder.billingAddress.lastName}}
+														{{checkoutCtrl.customerOrder.billingAddress.firstName}}
+													</div>
+													<div>{{checkoutCtrl.customerOrder.billingAddress.address1}}</div>
+													<div>{{checkoutCtrl.customerOrder.billingAddress.address2}}</div>
+													<div>
+														{{checkoutCtrl.customerOrder.billingAddress.city}},
+														{{checkoutCtrl.customerOrder.billingAddress.postalCode}}</div>
+													<div>
+														{{checkoutCtrl.customerOrder.billingAddress.country}}
+													</div>
+												</div>
+											</div>
+										</div>
+										
+										<div class="row">
+											<div class="col-xs-12">
+												<div class="checkbox checkbox-primary">
+													<input 
+														type="checkbox" 
+														id="shipping-address-as-billing"
+														ng-model="checkoutCtrl.customerOrder.account.shippingAddressPreferedForBilling"
+														ng-change="checkoutCtrl.updateShippingAddressPreferedForBilling()"
+													/>
+													<label 
+														for="shipping-address-as-billing"
+													>Utiliser mon addresse de livraison pour la facturation</label>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -109,68 +164,27 @@
 								<div>Montant total : {{checkoutCtrl.customerOrder.totalAmount | number : 2}} &euro;</div>
 								
 								<div ng-if="checkoutCtrl.workflowStep == 'shipping'">
-									<button class="btn btn-primary" ng-click="checkoutCtrl.confirmShippingMethod()">Acheter</button>
+									<button 
+										class="btn btn-primary" 
+										ng-click="checkoutCtrl.confirmShippingMethod()"
+										ng-disabled="!checkoutCtrl.confirmCheckoutActivated || undefined"
+									>Acheter</button>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 				
-				<div class="modify-address modal fade" role="dialog" ng-controller="AddressModificationCtrl as addressModificationCtrl">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h4 class="modal-title">
-									Modifier l'adresse de 
-									<span ng-if="checkoutCtrl.shippingAddress">livraison.</span>
-									<span ng-if="!checkoutCtrl.shippingAddress">facturation.</span>
-								</h4>
-							</div>
-							<div class="modal-body">
-								<div class="form-group">
-									<label>Prénom</label>
-    								<input type="text" class="form-control" placeholder="Prénom" ng-value="checkoutCtrl.address.firstName" />
-  								</div>
-								<div class="form-group">
-									<label>Nom</label>
-    								<input type="text" class="form-control" placeholder="Nom" ng-value="checkoutCtrl.address.lastName" />
-  								</div>
-								<div class="form-group">
-									<label>Adresse 1</label>
-    								<input type="text" class="form-control" placeholder="Adresse 1" ng-value="checkoutCtrl.address.address1" />
-  								</div>
-								<div class="form-group">
-									<label>Adresse 2</label>
-    								<input type="text" class="form-control" placeholder="Adresse 2" ng-value="checkoutCtrl.address.address2" />
-  								</div>
-								<div class="form-group">
-									<label>Ville</label>
-    								<input type="text" class="form-control" placeholder="Ville" ng-value="checkoutCtrl.address.city" />
-  								</div>
-								<div class="form-group">
-									<label>Code postal</label>
-    								<input type="text" class="form-control" placeholder="Code postal" ng-value="checkoutCtrl.address.postalCode" />
-  								</div>
-								<div class="form-group">
-									<label>Téléphone</label>
-    								<input type="text" class="form-control" placeholder="Téléphone" ng-value="checkoutCtrl.address.phone" />
-  								</div>
-							</div>
-							
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-        						<button type="button" class="btn btn-primary">Enregistrer</button>
-							</div>
-						</div>
-					</div>
-				</div>
+				<!-- Edit Address Modal -->
+				<script th:replace="account/edit-address-modal :: edit-address-modal"></script>
 			</div>
 			
 			<script th:replace="util/footer :: footer"></script>
 		</div>
 		<script th:replace="util/import :: scripts"></script>
 		<script src="https://js.braintreegateway.com/v2/braintree.js"></script>
-		<script type="text/javascript" th:src="@{/js/account/address-modification-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/account/address-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/account/edit-address-controller.js}"></script>
 		<script type="text/javascript" th:src="@{/js/order/braintree-service.js}"></script>
 		<script type="text/javascript" th:src="@{/js/order/checkout-controller.js}"></script>
 	</body>

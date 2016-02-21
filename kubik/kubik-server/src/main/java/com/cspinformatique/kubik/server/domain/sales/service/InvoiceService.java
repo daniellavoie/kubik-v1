@@ -10,6 +10,7 @@ import com.cspinformatique.kubik.server.model.sales.CashRegisterSession;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
+import com.cspinformatique.kubik.server.model.sales.Invoice.ShippingMethod;
 import com.mysema.query.types.Predicate;
 
 public interface InvoiceService {
@@ -19,7 +20,7 @@ public interface InvoiceService {
 	
 	Iterable<Invoice> findInvoiceByCashRegisterSessionAndInDraft(CashRegisterSession session);
 	
-	Invoice generateNewInvoice(Long customerOrderId, Double shippingCost);
+	Invoice generateNewInvoice(Long customerOrderId, Double shippingCost, ShippingMethod shippingMethod);
 	
 	Invoice generateNewInvoice(CashRegisterSession session);
 	

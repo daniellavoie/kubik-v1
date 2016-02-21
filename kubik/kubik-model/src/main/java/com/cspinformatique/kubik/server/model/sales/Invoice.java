@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,14 +22,20 @@ import org.hibernate.envers.NotAudited;
 
 import com.cspinformatique.kubik.server.model.misc.Address;
 import com.cspinformatique.kubik.server.model.user.User;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Audited
 @Table(indexes = @Index(columnList = "paidDate") )
 public class Invoice {
+	public enum Source {
+		CASH_REGISTER, CUSTOMER_ORDER, WEB_ORDER
+	}
+
+	public enum ShippingMethod {
+		TAKEOUT, COLISSIMO
+	}
+
 	private Integer id;
 	private String number;
 	private User user;
@@ -55,6 +63,10 @@ public class Invoice {
 	private Long customerOrderId;
 	private Double shippingCost;
 	private Address billingAddress;
+	private Address shippingAddress;
+	private Source source;
+	private String tvaNumber;
+	private ShippingMethod shippingMethod;
 
 	public Invoice() {
 
@@ -285,12 +297,47 @@ public class Invoice {
 		this.shippingCost = shippingCost;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	public Address getBillingAddress() {
 		return billingAddress;
 	}
 
 	public void setBillingAddress(Address billingAddress) {
 		this.billingAddress = billingAddress;
+	}
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	public Address getShippingAddress() {
+		return shippingAddress;
+	}
+
+	public void setShippingAddress(Address shippingAddress) {
+		this.shippingAddress = shippingAddress;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public Source getSource() {
+		return source;
+	}
+
+	public void setSource(Source source) {
+		this.source = source;
+	}
+
+	public String getTvaNumber() {
+		return tvaNumber;
+	}
+
+	public void setTvaNumber(String tvaNumber) {
+		this.tvaNumber = tvaNumber;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public ShippingMethod getShippingMethod() {
+		return shippingMethod;
+	}
+
+	public void setShippingMethod(ShippingMethod shippingMethod) {
+		this.shippingMethod = shippingMethod;
 	}
 }

@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,9 +51,19 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/address", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Address saveAddress(@RequestBody Address address,
-			@RequestParam(defaultValue = "false") boolean shippingAddressPreferedForBilling, Principal principal) {
-		return accountService.saveAddress(accountService.findByPrincipal(principal), address,
-				shippingAddressPreferedForBilling);
+	public @ResponseBody Address saveAddress(@RequestBody Address address, Principal principal) {
+		return accountService.saveAddress(accountService.findByPrincipal(principal), address);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = "shippingAddressPreferedForBilling", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Account updateShippingAddressPreferedForBilling(
+			@RequestParam("shippingAddressPreferedForBilling") boolean shippingAddressPreferedForBilling,
+			Principal principal) {
+		Assert.notNull(principal);
+
+		Account account = accountService.findByPrincipal(principal);
+		account.setShippingAddressPreferedForBilling(shippingAddressPreferedForBilling);
+
+		return accountService.save(account);
 	}
 }

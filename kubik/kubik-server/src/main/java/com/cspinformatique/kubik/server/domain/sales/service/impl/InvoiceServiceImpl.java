@@ -33,6 +33,8 @@ import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.sales.CashRegisterSession;
 import com.cspinformatique.kubik.server.model.sales.Customer;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
+import com.cspinformatique.kubik.server.model.sales.Invoice.ShippingMethod;
+import com.cspinformatique.kubik.server.model.sales.Invoice.Source;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus.Types;
@@ -76,15 +78,22 @@ public class InvoiceServiceImpl implements InvoiceService {
 				// Calculate rebate amount for detail.
 				double rebateAmount = 0d;
 				if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d) {
-					rebateAmount = product.getPriceTaxIn() * (invoice.getRebatePercent() / 100);
+					rebateAmount = product.getPriceTaxIn() * (invoice.getRebatePercent() / 100) * detail.getQuantity();
 				}
+
+				detail.setRebate(rebateAmount);
+				detail.setTaxRate(product.getTvaRate1());
 
 				// Increment total rebate amount.
 				totalRebateAmount += rebateAmount;
 
 				// Calculates customer credit details amounts
 				detail.setUnitPrice(product.getPriceTaxIn());
+				detail.setUnitPriceTaxLess(Precision
+						.round(detail.getUnitPrice() - (detail.getUnitPrice() * (detail.getTaxRate() / 100)), 2));
 				detail.setTotalAmount(detail.getUnitPrice() * quantity);
+				detail.setTotalTaxLessAmount(Precision.round(detail.getTotalAmount()
+						- ((detail.getTotalAmount() - rebateAmount) * (detail.getTaxRate() / 100)), 2));
 
 				// Increment customer credit totals amount.
 				totalAmount += detail.getTotalAmount();
@@ -300,18 +309,19 @@ public class InvoiceServiceImpl implements InvoiceService {
 	}
 
 	@Override
-	public Invoice generateNewInvoice(Long customerOrderId, Double shippingCost) {
+	public Invoice generateNewInvoice(Long customerOrderId, Double shippingCost, ShippingMethod shippingMethod) {
 		return generateNewInvoice(invoiceStatusRepository.findOne(Types.DRAFT.name()), null, null, customerOrderId,
-				shippingCost);
+				shippingCost, Source.WEB_ORDER, shippingMethod);
 	}
 
 	@Override
 	public Invoice generateNewInvoice(CashRegisterSession session) {
-		return generateNewInvoice(invoiceStatusRepository.findOne(Types.DRAFT.name()), null, session, null, null);
+		return generateNewInvoice(invoiceStatusRepository.findOne(Types.DRAFT.name()), null, session, null, null,
+				Source.CASH_REGISTER, ShippingMethod.TAKEOUT);
 	}
 
 	private Invoice generateNewInvoice(InvoiceStatus status, Customer customer, CashRegisterSession session,
-			Long customerOrderId, Double shippingCost) {
+			Long customerOrderId, Double shippingCost, Source source, ShippingMethod shippingMethod) {
 		Invoice invoice = new Invoice();
 		invoice.setStatus(status);
 		invoice.setCustomer(customer);
@@ -320,6 +330,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 		invoice.setShippingCost(shippingCost);
 		invoice.setDetails(new ArrayList<>());
 		invoice.setPayments(new ArrayList<>());
+		invoice.setSource(source);
+		invoice.setShippingMethod(shippingMethod);
 
 		return this.save(invoice);
 	}
@@ -327,7 +339,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 	@Override
 	public Invoice generateNewOrder(int customerId) {
 		return generateNewInvoice(invoiceStatusRepository.findOne(Types.ORDER.name()),
-				customerService.findOne(customerId), null, null, null);
+				customerService.findOne(customerId), null, null, null, Source.CUSTOMER_ORDER, ShippingMethod.TAKEOUT);
 
 	}
 

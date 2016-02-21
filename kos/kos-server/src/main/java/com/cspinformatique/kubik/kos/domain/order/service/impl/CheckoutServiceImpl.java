@@ -14,6 +14,7 @@ import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
 import com.cspinformatique.kubik.kos.domain.order.exception.TransactionException;
 import com.cspinformatique.kubik.kos.domain.order.service.CheckoutService;
+import com.cspinformatique.kubik.kos.domain.order.service.CustomerOrderService;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
 
 @Service
@@ -21,6 +22,9 @@ import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
 public class CheckoutServiceImpl implements CheckoutService {
 	@Resource
 	private BraintreeGateway braintreeGateway;
+	
+	@Resource
+	private CustomerOrderService customerOrderService;
 
 	@Override
 	public void checkout(CustomerOrder customerOrder, String nonce) {
@@ -50,6 +54,8 @@ public class CheckoutServiceImpl implements CheckoutService {
 
 		customerOrder.setStatus(CustomerOrder.Status.CONFIRMED);
 		customerOrder.setTransactionId(transactionId);
+		
+		customerOrderService.save(customerOrder);
 	}
 
 	@Override

@@ -1,0 +1,61 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	<body>
+		<div th:fragment="edit-address-modal">
+			<div class="modify-address modal fade" role="dialog" ng-controller="EditAddressCtrl as editAddressCtrl">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">
+								Modifier l'adresse de 
+								<span ng-if="editAddressCtrl.address.type == 'BILLING'">livraison.</span>
+								<span ng-if="editAddressCtrl.address.type == 'SHIPPING'">facturation.</span>
+							</h4>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<label>Prénom</label>
+   								<input type="text" class="form-control" placeholder="Prénom" ng-model="editAddressCtrl.address.firstName" />
+ 							</div>
+							<div class="form-group">
+								<label>Nom</label>
+   								<input type="text" class="form-control" placeholder="Nom" ng-model="editAddressCtrl.address.lastName" />
+ 							</div>
+							<div class="form-group">
+								<label>Adresse 1</label>
+   								<input type="text" class="form-control" placeholder="Adresse 1" ng-model="editAddressCtrl.address.address1" />
+ 							</div>
+							<div class="form-group">
+								<label>Adresse 2</label>
+   								<input type="text" class="form-control" placeholder="Adresse 2" ng-model="editAddressCtrl.address.address2" />
+ 							</div>
+							<div class="form-group">
+								<label>Ville</label>
+   								<input type="text" class="form-control" placeholder="Ville" ng-model="editAddressCtrl.address.city" />
+							</div>
+							<div class="form-group">
+								<label>Code postal</label>
+   								<input type="text" class="form-control" placeholder="Code postal" ng-model="editAddressCtrl.address.postalCode" />
+							</div>
+							<div class="form-group">
+								<label>Pays</label>
+   								<input type="text" class="form-control" placeholder="Pays" ng-model="editAddressCtrl.address.country" />
+							</div>
+							<div class="form-group" ng-if="editAddressCtrl.address.type == 'SHIPPING'">
+								<label>Téléphone</label>
+   								<input type="text" class="form-control" placeholder="Téléphone" ng-model="editAddressCtrl.address.phone" />
+ 							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+       						<button type="button" class="btn btn-primary" ng-click="editAddressCtrl.save()">Enregistrer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,21 +1,42 @@
 (function(){
 	var CONTAINER_ID = "payment-form";
-	var $modifyAddressModal = $(".modify-address");
 	
 	angular
 		.module("kos")
 		.controller("CheckoutCtrl", CheckoutCtrl);
 	
-	function CheckoutCtrl(accountService, braintreeService, customerOrderService){
+	function CheckoutCtrl(accountService, braintreeService, customerOrderService, $scope){
 		var vm = this;
 
 		vm.workflowStep = "shipping";
+		vm.confirmCheckoutActivated = false;
 		
 		loadCart();
 		
+		$scope.$on("addressSaved", addressSavedEvent);
+		
 		vm.confirmShippingMethod = confirmShippingMethod;
-		vm.modifyAddress = modifyAddress;
+		vm.editAddress = editAddress;
 		vm.saveCustomerOrder = saveCustomerOrder;
+		vm.updateShippingAddressPreferedForBilling = updateShippingAddressPreferedForBilling;
+		
+		function addressSavedEvent($event, address){
+			if(address.type == 'BILLING')
+				vm.customerOrder.billingAddress = address;
+			else
+				vm.customerOrder.shippingAddress = address;
+			
+			saveCustomerOrder()
+				.then(loadCart);
+		}
+		
+		function checkCheckoutActivationState(){
+			if(	vm.customerOrder.account.shippingAddress != null && (
+					vm.customerOrder.account.shippingAddressPreferedForBilling || 
+					vm.customerOrder.account.shippingAddress != null)){
+				vm.confirmCheckoutActivated = true;
+			}
+		}
 		
 		function confirmShippingMethod(){
 			braintreeService
@@ -34,24 +55,23 @@
 			
 			function loadCartSuccess(customerOrder){
 				vm.customerOrder = customerOrder;
+				
+				if(vm.customerOrder.shippingAddress == null && vm.customerOrder.account.shippingAddress != null)
+					vm.customerOrder.shippingAddress = vm.customerOrder.account.shippingAddress;
+					
+				
+				checkCheckoutActivationState();
 			}
 		}
 		
-		function modifyAddress(address, shippingAddress){
-			vm.address = address;
-			vm.shippingAddress = shippingAddress;
-			
-			$modifyAddressModal.modal();
-		}	
-		
-		function saveAddress(){
-//			accountService.saveAddress(vm.address, vm.account.);
+		function editAddress(address){
+			$scope.$broadcast("editAddress", address);
 		}
 		
 		function saveCustomerOrder(){
 			vm.loading = true;
 			
-			customerOrderService
+			return customerOrderService
 				.saveCustomerOrder(vm.customerOrder)
 				.then(saveCustomerOrderSuccess)
 				.finally(saveCustomerOrderCompleted);
@@ -62,6 +82,24 @@
 			
 			function saveCustomerOrderSuccess(customerOrder){
 				vm.customerOrder = customerOrder;
+				
+				return customerOrder;
+			}
+		}
+		
+		function updateShippingAddressPreferedForBilling(){
+			accountService
+				.updateShippingAddressPreferedForBilling(vm.customerOrder.account.shippingAddressPreferedForBilling)
+				.then(accountUpdated);
+				
+			function accountUpdated(account){
+				if(account.shippingAddressPreferedForBilling)
+					vm.customerOrder.billingAddress = null;
+				else{
+					vm.customerOrder.billingAddress = vm.customerOrder.account.billingAddress;
+				}
+				
+				return saveCustomerOrder();
 			}
 		}
 	}

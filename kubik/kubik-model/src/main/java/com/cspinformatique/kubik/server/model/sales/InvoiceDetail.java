@@ -13,8 +13,6 @@ import org.hibernate.envers.NotAudited;
 
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Audited
@@ -25,19 +23,22 @@ public class InvoiceDetail {
 	private Double quantity;
 	private InvoiceTaxAmount taxAmount;
 	private Double unitPrice;
+	private Double unitPriceTaxLess;
 	private Double totalAmount;
 	private Double totalTaxableAmount;
 	private Double totalTaxAmount;
 	private Double totalTaxLessAmount;
 	private Double totalRebateAmount;
+	private Double taxRate;
+	private Double rebate;
 
 	public InvoiceDetail() {
 
 	}
 
 	public InvoiceDetail(Integer id, Invoice invoice, Product product, Double quantity, Double totalTaxableAmount,
-			InvoiceTaxAmount taxAmount, Double unitPrice, Double totalAmount, Double totalTaxAmount,
-			Double totalTaxLessAmount, Double totalRebateAmount) {
+			InvoiceTaxAmount taxAmount, Double unitPrice, Double unitPriceTaxLess, Double totalAmount, Double totalTaxAmount,
+			Double totalTaxLessAmount, Double totalRebateAmount, Double taxRate, Double rebate) {
 		this.id = id;
 		this.invoice = invoice;
 		this.product = product;
@@ -45,10 +46,13 @@ public class InvoiceDetail {
 		this.totalTaxableAmount = totalTaxableAmount;
 		this.taxAmount = taxAmount;
 		this.unitPrice = unitPrice;
+		this.unitPriceTaxLess = unitPriceTaxLess;
 		this.totalAmount = totalAmount;
 		this.totalTaxAmount = totalTaxAmount;
 		this.totalTaxLessAmount = totalTaxLessAmount;
 		this.totalRebateAmount = totalRebateAmount;
+		this.taxRate = taxRate;
+		this.rebate = rebate;
 	}
 
 	@Id
@@ -114,6 +118,14 @@ public class InvoiceDetail {
 		this.unitPrice = unitPrice;
 	}
 
+	public Double getUnitPriceTaxLess() {
+		return unitPriceTaxLess;
+	}
+
+	public void setUnitPriceTaxLess(Double unitPriceTaxLess) {
+		this.unitPriceTaxLess = unitPriceTaxLess;
+	}
+
 	public Double getTotalAmount() {
 		return totalAmount;
 	}
@@ -144,5 +156,21 @@ public class InvoiceDetail {
 
 	public void setTotalRebateAmount(Double totalRebateAmount) {
 		this.totalRebateAmount = totalRebateAmount;
+	}
+
+	public Double getTaxRate() {
+		return taxRate;
+	}
+
+	public void setTaxRate(Double taxRate) {
+		this.taxRate = taxRate;
+	}
+
+	public Double getRebate() {
+		return rebate;
+	}
+
+	public void setRebate(Double rebate) {
+		this.rebate = rebate;
 	}
 }

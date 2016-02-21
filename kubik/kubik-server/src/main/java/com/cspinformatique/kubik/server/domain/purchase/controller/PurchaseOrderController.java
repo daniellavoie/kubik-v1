@@ -1,11 +1,6 @@
 package com.cspinformatique.kubik.server.domain.purchase.controller;
 
-import java.io.IOException;
-
-import javax.servlet.ServletResponse;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,12 +22,15 @@ import com.cspinformatique.kubik.server.domain.purchase.service.PurchaseOrderSer
 import com.cspinformatique.kubik.server.jasper.service.ReportService;
 import com.cspinformatique.kubik.server.model.purchase.PurchaseOrder;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+
 @Controller
 @RequestMapping("/purchaseOrder")
 public class PurchaseOrderController {
 	@Autowired
 	private PurchaseOrderService purchaseOrderService;
-	
+
 	@Autowired
 	private ReportService reportService;
 
@@ -42,32 +40,26 @@ public class PurchaseOrderController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<PurchaseOrder> findAll(
-			@RequestParam(required = false) String status,
-			@RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "50") Integer resultPerPage,
-			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "date") String sortBy) {
-		return this.purchaseOrderService.findAll(new PageRequest(page,
-				resultPerPage, direction != null ? direction : Direction.DESC,
-				sortBy));
+	public @ResponseBody Page<PurchaseOrder> findAll(@RequestParam(required = false) String status,
+			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "50") Integer resultPerPage,
+			@RequestParam(required = false) Direction direction, @RequestParam(defaultValue = "date") String sortBy) {
+		return this.purchaseOrderService
+				.findAll(new PageRequest(page, resultPerPage, direction != null ? direction : Direction.DESC, sortBy));
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody PurchaseOrder findOne(@PathVariable int id) {
 		return this.purchaseOrderService.findOne(id);
 	}
-	
+
+	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{id}/report", method = RequestMethod.GET, produces = "application/pdf")
-	public void generateRmaPdf(@PathVariable int id, ServletResponse response) {
+	public byte[] generateOrderPdf(@PathVariable int id, HttpServletResponse response) {
 		try {
-			JasperExportManager.exportReportToPdfStream(this.reportService
-					.generatePurchaseOrderReport(this.purchaseOrderService.findOne(id)),
-					response.getOutputStream());
-
-			response.setContentType("application/pdf");
-		} catch (JRException | IOException ex) {
+			return JasperExportManager.exportReportToPdf(
+					this.reportService.generatePurchaseOrderReport(this.purchaseOrderService.findOne(id)));
+		} catch (JRException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
@@ -87,13 +79,12 @@ public class PurchaseOrderController {
 	@RequestMapping("/fixSubmitedDate")
 	public String fixSubmitedDate() {
 		this.purchaseOrderService.fixSubmitedDate();
-		
+
 		return "purchase/order/orders";
 	}
 
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody PurchaseOrder save(
-			@RequestBody PurchaseOrder purchaseOrder) {
+	public @ResponseBody PurchaseOrder save(@RequestBody PurchaseOrder purchaseOrder) {
 		return this.purchaseOrderService.save(purchaseOrder);
 	}
 }

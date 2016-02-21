@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-02-08T23:26:23 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sale-receipt" pageWidth="226" pageHeight="842" columnWidth="22" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="0e5f4531-9672-428b-94c4-e9a87ed6b5d0">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="mm"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik"/>
+	<parameter name="INVOICE_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[7]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select
+	paid_date,
+	user.username as userName,
+	total_tax_less_amount,
+	total_amount,
+	amount_returned,
+	rebate_percent,
+	rebate_amount,
+	number
+FROM
+	invoice
+LEFT JOIN user on user.id = invoice.user_id
+WHERE
+	invoice.id = $P{INVOICE_ID}]]>
+	</queryString>
+	<field name="paid_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="userName" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_tax_less_amount" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_amount" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount_returned" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="rebate_amount" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="number" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="rebate_percent" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="192">
+			<textField>
+				<reportElement x="0" y="109" width="186" height="13" uuid="e1574ae1-8f66-4413-afd9-5427a8cd937f"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[DATEFORMAT($F{paid_date}, "dd-MM-YYYY HH:mm")]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center">
+				<reportElement x="0" y="-10" width="186" height="89" uuid="f549ebec-3ed3-4ffe-93ac-be6f1a05618c">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["reports/images/Logo-OK-noir.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="0" y="135" width="186" height="14" uuid="8c5d2352-4314-416b-93dd-354279da0cee"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[La Dimension Fantastique]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="163" width="186" height="14" uuid="6ef9e2ef-78fb-46f1-83c1-dd865d276923"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Tél. : 09 82 42 23 21]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="149" width="186" height="14" uuid="a1044044-bb56-4500-b573-8f8bb85db8e9"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[contact@dimensionfantastique.com]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="122" width="186" height="13" uuid="a2df5e08-cdf3-464c-aee5-0d51b433a71f"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["Facture " + $F{number}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="53" y="79" width="90" height="21" uuid="4c3ea6c0-806c-4535-9fdb-746d6c0db72b"/>
+				<jr:Codabar xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA[$F{number}]]></jr:codeExpression>
+				</jr:Codabar>
+			</componentElement>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="186" height="10" isPrintWhenDetailOverflows="true" uuid="9cc42a22-691f-41ff-9cfa-dfbef0b7e894"/>
+				<subreportParameter name="INVOICE_ID">
+					<subreportParameterExpression><![CDATA[$P{INVOICE_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/sale-receipt/sale-receipt-details.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="23">
+			<printWhenExpression><![CDATA[$F{rebate_amount} != 0d]]></printWhenExpression>
+			<textField>
+				<reportElement x="80" y="0" width="106" height="13" uuid="552915d7-7599-4d73-b1a4-84d903846093"/>
+				<textElement textAlignment="Right">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-" + TEXT($F{rebate_amount},"0.00") + " €"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="80" height="13" uuid="f804a2ea-5d45-4d64-b151-c3e707ae8741"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["Remise " + TEXT($F{rebate_percent},"0.00") + " : "]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="24">
+			<staticText>
+				<reportElement x="0" y="0" width="80" height="16" uuid="c0ca530d-b058-4179-b31e-fa12d07c96e4"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sous-total :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="0" width="106" height="16" uuid="f8cf83b1-4a1c-4dd5-b89f-efffc7cfffb0"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TEXT($F{total_tax_less_amount},"0.00") + " €"]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="16" width="186" height="7" isPrintWhenDetailOverflows="true" uuid="8990b917-c0cc-471a-81f5-6f70021155ee"/>
+				<subreportParameter name="INVOICE_ID">
+					<subreportParameterExpression><![CDATA[$P{INVOICE_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/sale-receipt/sale-receipt-taxes.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="36">
+			<staticText>
+				<reportElement x="0" y="0" width="80" height="21" uuid="926b706f-bd2f-4f18-87b8-d4d3ace53768"/>
+				<textElement>
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="0" width="106" height="21" uuid="a38da3e8-cad5-433c-956c-23194d280c1c"/>
+				<textElement textAlignment="Right">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TEXT($F{total_amount},"0.00") + " €"]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="25" width="186" height="9" isPrintWhenDetailOverflows="true" uuid="9a53aba7-a7f5-4669-b6ca-d88c78ffe954"/>
+				<subreportParameter name="INVOICE_ID">
+					<subreportParameterExpression><![CDATA[$P{INVOICE_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/sale-receipt/sale-receipt-payment.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="26">
+			<staticText>
+				<reportElement x="0" y="0" width="80" height="14" uuid="7db63280-e4a9-43e3-9ead-ef23f4eee436"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Rendu :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="0" width="106" height="14" uuid="58b96208-4498-413e-b7c7-39bed19c7e88"/>
+				<textElement textAlignment="Right">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TEXT($F{amount_returned},"0.00") + " €"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
