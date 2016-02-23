@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2016-02-10T23:16:03 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rma" pageWidth="180" pageHeight="20" columnWidth="180" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
+<!-- 2016-02-23T23:44:16 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rma" pageWidth="180" pageHeight="40" columnWidth="180" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
@@ -16,7 +16,8 @@
 	<queryString language="SQL">
 		<![CDATA[select
 	total_tax_less_amount,
-	total_amount
+	total_amount,
+	shipping_cost
 FROM
 	invoice
 WHERE
@@ -28,8 +29,13 @@ WHERE
 	<field name="total_amount" class="java.lang.Double">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="shipping_cost" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<pageHeader>
-		<band height="20">
+		<band height="40">
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
 				<reportElement x="0" y="0" width="100" height="20" uuid="5b17d179-c16a-400c-84e6-f9508ca5e0a6"/>
 				<text><![CDATA[Total HT:]]></text>
@@ -38,6 +44,15 @@ WHERE
 				<reportElement x="100" y="0" width="80" height="20" uuid="94b8826c-d92d-423c-8535-95dd62d2cb57"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[TEXT($F{total_tax_less_amount},"0.00") + " €"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="20" width="100" height="20" uuid="1c3e3c8a-5d35-407d-b51d-3d3196b10d72"/>
+				<text><![CDATA[Frais de port:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="100" y="20" width="80" height="20" uuid="b51bd3ef-2cc1-4273-b02d-93f2363ec5d5"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[TEXT($F{shipping_cost},"0.00") + " €"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

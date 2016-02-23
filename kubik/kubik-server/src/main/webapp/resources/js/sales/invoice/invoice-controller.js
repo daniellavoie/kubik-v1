@@ -15,12 +15,14 @@
 		vm.cancelInvoice = cancelInvoice;
 		vm.changeInvoice = changeInvoice;
 		vm.changePaymentMethod = changePaymentMethod;
+		vm.changeShippingMethod = changeShippingMethod;
 		vm.checkoutInvoice = checkoutInvoice;
 		vm.confirmInvoiceAddress = confirmInvoiceAddress;
 		vm.confirmOrder = confirmOrder;
 		vm.confirmRefund = confirmRefund;
 		vm.generateInvoicePdf = generateInvoicePdf;
 		vm.isAddressInfoValid = isAddressInfoValid;
+		vm.isShippingMethodEditable = isShippingMethodEditable;
 		vm.loadInvoice = loadInvoice;
 		vm.loadNextInvoice = loadNextInvoice;
 		vm.loadPreviousInvoice = loadPreviousInvoice;
@@ -94,12 +96,14 @@
 		function changePaymentMethod(payment, paymentMethodType){
 			payment.paymentMethod.type = paymentMethodType;
 			
-			invoiceService
-				.save(vm.invoice)
-				.then(saveSuccess);
-			
-			function saveSuccess(invoice){
-				vm.invoice = invoice;
+			save();
+		}
+		
+		function changeShippingMethod(shippingMethod){
+			if(isShippingMethodEditable()){
+				vm.invoice.shippingMethod = shippingMethod;
+				
+				save();
 			}
 		}
 		
@@ -175,6 +179,17 @@
 					isFieldValid(vm.invoice.shippingAddress.country) &&
 					isFieldValid(vm.invoice.shippingAddress.phone);
 			}
+		}
+		
+		function isShippingMethodEditable(){
+			var result = vm.invoice != null &&
+			vm.invoice.status.type != "PAID" && 
+			vm.invoice.status.type != "CANCELLED" && 
+			vm.invoice.status.type != "REFUND";
+			
+			console.log(result);
+			
+			return result;
 		}
 		
 		function loadInvoice(){

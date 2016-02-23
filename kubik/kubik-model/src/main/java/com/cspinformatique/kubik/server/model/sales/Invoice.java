@@ -67,6 +67,7 @@ public class Invoice {
 	private Source source;
 	private String tvaNumber;
 	private ShippingMethod shippingMethod;
+	private Integer totalWeight;
 
 	public Invoice() {
 
@@ -339,5 +340,13 @@ public class Invoice {
 
 	public void setShippingMethod(ShippingMethod shippingMethod) {
 		this.shippingMethod = shippingMethod;
+	}
+
+	public Integer getTotalWeight() {
+		return totalWeight;
+	}
+
+	public void setTotalWeight(Integer totalWeight) {
+		this.totalWeight = totalWeight;
 	}
 }

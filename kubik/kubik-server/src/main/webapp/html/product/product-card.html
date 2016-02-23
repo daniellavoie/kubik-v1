@@ -309,29 +309,29 @@
 							<form class="form-horizontal">	
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Hauteur</label>
-									<div class="col-sm-6" ng-if="productCardCtrl.product.height != null">
-										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.height}} mm</p>
+									<div class="col-sm-6">
+										<p ng-if="productCardCtrl.product.height != null && !productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.height}} mm</p>
 										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.height" placeholder="Hauteur en millimètre">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Largeur</label>
-									<div class="col-sm-6" ng-if="productCardCtrl.product.width != null">
-										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.width}} mm</p>
+									<div class="col-sm-6">
+										<p ng-if="productCardCtrl.product.width != null && !productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.width}} mm</p>
 										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.width" placeholder="Largeur en millimètre">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Epaisseur</label>
-									<div class="col-sm-6" ng-if="productCardCtrl.product.thickness != null">
-										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.thickness}} mm</p>
+									<div class="col-sm-6">
+										<p ng-if="productCardCtrl.product.thickness != null && !productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.thickness}} mm</p>
 										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.thickness" placeholder="Epaisseur en millimètre">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Poids</label>
-									<div class="col-sm-6" ng-if="productCardCtrl.product.weight != null">
-										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.weight}} g</p>
+									<div class="col-sm-6">
+										<p ng-if="productCardCtrl.product.weight != null && !productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.weight}} g</p>
 										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.weight" placeholder="Poids en gramme">
 									</div>
 								</div>

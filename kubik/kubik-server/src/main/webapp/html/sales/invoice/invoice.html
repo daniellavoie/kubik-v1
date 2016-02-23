@@ -40,9 +40,11 @@
 								<th>Client</th>
 								<th>Produits</th>
 								<th>Remise</th>
+								<th>Frais de port</th>
 								<th>Montant</th>
 								<th>Paiements</th>
-								<th>Statut</th>				
+								<th>Statut</th>
+								<th>Livraison</th>
 							</tr>
 						</thead>
 						
@@ -61,6 +63,7 @@
 								</td>
 								<td>{{invoiceDetailsCtrl.invoice.details.length}}</td>
 								<td>{{invoiceDetailsCtrl.invoice.rebateAmount | currency : '&euro;'}}</td>
+								<td>{{invoiceDetailsCtrl.invoice.shippingCost | currency : '&euro;'}}</td>
 								<td>{{invoiceDetailsCtrl.invoice.totalAmount | currency : '&euro;'}}</td>
 								<td>
 									<div ng-repeat="payment in invoiceDetailsCtrl.invoice.payments" class="{{invoiceDetailsCtrl.invoice.status.type == 'PAID' ? 'dropdown' : ''}}">
@@ -84,6 +87,20 @@
 									</div>
 								</td>
 								<td>{{invoiceDetailsCtrl.invoice.status.description}}</td>
+								<td>
+									<span ng-class="{true : 'hover'}[invoiceDetailsCtrl.isShippingMethodEditable()]">
+										<span 
+											class="label label-warning"
+											ng-click="invoiceDetailsCtrl.changeShippingMethod('TAKEOUT')"
+											ng-if="invoiceDetailsCtrl.invoice.shippingMethod == 'COLISSIMO'" 
+										>Colissimo</span>
+										<span 
+											class="label label-primary"
+											ng-click="invoiceDetailsCtrl.changeShippingMethod('COLISSIMO')"
+											ng-if="invoiceDetailsCtrl.invoice.shippingMethod == 'TAKEOUT'" 
+										>Magasin</span>
+									</span>
+								</td>
 							</tr>
 						</tbody>
 					</table>

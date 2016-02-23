@@ -28,6 +28,7 @@ import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceStatusRep
 import com.cspinformatique.kubik.server.domain.sales.service.CustomerService;
 import com.cspinformatique.kubik.server.domain.sales.service.DailyReportService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
+import com.cspinformatique.kubik.server.domain.sales.service.ShippingCostLevelService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.sales.CashRegisterSession;
@@ -65,7 +66,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 	@Resource
 	RestockService restockService;
 
+	@Resource
+	ShippingCostLevelService shippingCostLevelService;
+
 	private void calculateInvoiceAmounts(Invoice invoice) {
+		int totalWeight = 0;
 		double totalAmount = 0d;
 		double totalRebateAmount = 0d;
 
@@ -97,8 +102,18 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 				// Increment customer credit totals amount.
 				totalAmount += detail.getTotalAmount();
+
+				totalWeight += detail.getQuantity() + (product.getWeight() != null ? product.getWeight() : 0d);
 			}
 		}
+
+		if (!Types.PAID.name().equals(invoice.getStatus().getType())
+				&& ShippingMethod.COLISSIMO.equals(invoice.getShippingMethod()))
+			invoice.setShippingCost(shippingCostLevelService.calculateShippingCostLevel(totalWeight).getCost());
+
+		if (!Types.PAID.name().equals(invoice.getStatus().getType())
+				&& ShippingMethod.TAKEOUT.equals(invoice.getShippingMethod()))
+			invoice.setShippingCost(0d);
 
 		if (invoice.getShippingCost() != null) {
 			totalAmount += invoice.getShippingCost();
@@ -120,6 +135,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 		invoice.setAmountPaid(amountPaid);
 		invoice.setAmountReturned(invoice.getAmountPaid() - invoice.getTotalAmount());
+		invoice.setTotalWeight(totalWeight);
 	}
 
 	@Override
@@ -179,8 +195,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 		invoice.setTotalTaxAmount(Precision.round(totalTaxAmount, 2));
 
 		// Adds shipping fees to tax less amount.
-		invoice.setTotalTaxLessAmount(Precision
-				.round(totalTaxableAmount + (invoice.getShippingCost() != null ? invoice.getShippingCost() : 0), 2));
+		invoice.setTotalTaxLessAmount(Precision.round(totalTaxableAmount, 2));
 
 		if (invoice.getTaxesAmounts() != null) {
 			invoice.getTaxesAmounts().clear();
@@ -416,9 +431,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 		Set<Invoice> invoicesWithAlteredInventory = new HashSet<Invoice>();
 
 		for (Invoice invoice : invoices) {
-			if (invoice.getId() != null) {
-				String status = invoice.getStatus().getType();
+			String status = invoice.getStatus().getType();
 
+			if (invoice.getId() != null) {
 				if (Types.CANCELED.name().equals(status) && invoice.getCancelDate() == null) {
 					invoice.setCancelDate(new Date());
 
