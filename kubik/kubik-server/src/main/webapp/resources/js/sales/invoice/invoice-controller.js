@@ -5,7 +5,7 @@
 		.module("Kubik")
 		.controller("InvoiceDetailsCtrl", InvoiceDetailsCtrl);
 	
-	function InvoiceDetailsCtrl(invoiceService, productService, $scope, $timeout){
+	function InvoiceDetailsCtrl(invoiceService, productInventoryService, productService, $scope, $timeout){
 		var vm = this;
 		
 		vm.anonymousInvoice = false;
@@ -278,7 +278,14 @@
 			invoiceService
 				.removeInvoiceDetail(vm.invoice, detail);
 			
-			save();
+			save()
+				.then(saveSuccess);
+			
+			function saveSuccess(invoice){
+				productInventoryService.updateProductInventory(detail.product.ean13);
+				
+				return invoice;
+			}
 		}
 		
 		

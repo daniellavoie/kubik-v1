@@ -127,7 +127,7 @@
 								<div ng-repeat="taxAmount in invoiceDetailsCtrl.invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
 							</td>
 							<td>
-								<span ng-if="invoiceDetailsCtrl.invoice.status.type != 'ORDER'">{{detail.quantity}}</span>
+								<span ng-if="invoiceDetailsCtrl.invoice.status.type != 'ORDER' && invoiceDetailsCtrl.invoice.status.type != 'ORDER_CONFIRMED'">{{detail.quantity}}</span>
 								<input 
 									min="1" 
 									max="99999"
@@ -136,7 +136,7 @@
 									ng-model="detail.quantity"
 									ng-click="invoiceDetailsCtrl.save()"
 									ng-keyup="invoiceDetailsCtrl.save()"
-									ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER'"
+									ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER' || invoiceDetailsCtrl.invoice.status.type == 'ORDER_CONFIRMED'"
 									ng-disabled="invoiceDetailsCtrl.loading || undefined"
 								/>
 							</td>						
@@ -146,7 +146,7 @@
 									type="button" 
 									class="btn btn-warning btn-xs"
 									ng-click="invoiceDetailsCtrl.removeDetail(detail)" 
-									ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER'"
+									ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER' || invoiceDetailsCtrl.invoice.status.type == 'ORDER_CONFIRMED'"
 									ng-disabled="invoiceDetailsCtrl.loading || undefined"
 								>
 									<span class="glyphicon glyphicon-trash"></span>
@@ -164,7 +164,7 @@
 				
 				<div class="row">
 					<div class="col-md-3" >
-						<div ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER'">
+						<div ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER' || invoiceDetailsCtrl.invoice.status.type == 'ORDER_CONFIRMED'">
 							<div class="input-group">
 	 							<span class="input-group-addon">Remise</span>
 								<input 
@@ -187,7 +187,7 @@
 						</div>
 					</div>
 					<div class="col-md-4">
-						<div ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER'">
+						<div ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER' || invoiceDetailsCtrl.invoice.status.type == 'ORDER_CONFIRMED'">
 							<input 
 								type="text" 
 								placeholder="Ean13" 
@@ -199,7 +199,7 @@
 					</div>
 					<div class="col-md-5">
 						<button 
-							ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER'"
+							ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER' || invoiceDetailsCtrl.invoice.status.type == 'ORDER_CONFIRMED'"
 							class="btn btn-success glyphicon glyphicon-search" 
 							ng-click="invoiceDetailsCtrl.openProductSearch()">
 						</button>
@@ -425,5 +425,6 @@
 		<script type="text/javascript" th:src="@{/js/sales/invoice/invoice-controller.js}"></script>
 		<script type="text/javascript" th:src="@{/js/sales/invoice/invoice-service.js}"></script>
 		<script type="text/javascript" th:src="@{/js/sales/invoice/payment-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/product-inventory-service.js}"></script>
 	</body>
 </html>

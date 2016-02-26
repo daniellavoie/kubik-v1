@@ -88,6 +88,9 @@
 		}
 		
 		function save(invoice){
+			if(invoice.status.type == "ORDER_CONFIRMED")
+				invoice.confirmedDate = null;
+			
 			return $http
 				.post(INVOICE_URL, invoice)
 				.then(saveSuccess);
