@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2016-02-23T23:47:09 -->
+<!-- 2016-02-26T22:45:53 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rma" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Kubik"/>
 	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
@@ -168,7 +168,7 @@ WHERE
 				<textField pattern="0">
 					<reportElement x="429" y="3" width="60" height="25" uuid="cd538269-1fef-4367-ad21-d99f8ab7ec50"/>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[TEXT($F{tax_rate},"0.00") + " €"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{tax_rate} + " %"]]></textFieldExpression>
 				</textField>
 				<textField pattern="0">
 					<reportElement x="489" y="3" width="64" height="25" uuid="921045d2-c981-40fd-b1a5-33e8b332596f"/>
