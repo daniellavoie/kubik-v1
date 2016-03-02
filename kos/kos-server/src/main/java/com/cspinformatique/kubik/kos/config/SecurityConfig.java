@@ -37,7 +37,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.authorizeRequests()
 				.antMatchers(
 						// Resources
-						"/", "/la-librairie", "/contact-us", "/css/**", "/img/**", "/js/**", "/libs/**", "favico.ico",
+						"/", "/la-librairie", "/contact-us", "/css/**", "/fonts/**", "/img/**", "/js/**", "/libs/**",
+						"favico.ico",
 
 		// account
 				"/account", "/compte", "/account/create-account", "/compte/creer-un-compte",

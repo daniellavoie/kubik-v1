@@ -1,6 +1,6 @@
 body{
 	background-color: #f0f0f0;
-	font-family: calibri;
+	font-family: 'museo500';
 	padding-top: 80px;
 }
 
@@ -56,4 +56,16 @@ a{
 	body{
 		padding-top: 20px;
 	}
+}
+
+@font-face {
+    font-family: 'museo500';
+    src: url('/fonts/museo500-regular-webfont.eot');
+    src: url('/fonts/museo500-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/fonts/museo500-regular-webfont.woff2') format('woff2'),
+         url('/fonts/museo500-regular-webfont.woff') format('woff'),
+         url('/fonts/museo500-regular-webfont.ttf') format('truetype'),
+         url('/fonts/museo500-regular-webfont.svg#museo500') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
