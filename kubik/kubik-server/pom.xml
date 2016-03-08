@@ -54,6 +54,39 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.4.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+				
+				<configuration>
+		        	<imageName>cspinformatique/kubik</imageName>
+		        	<imageTags>
+						<imageTag>${project.version}</imageTag>
+						<imageTag>latest</imageTag>
+					</imageTags>
+		        	<baseImage>java:openjdk-8u72-jre</baseImage>
+		        	<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+		        	<!-- copy the service's jar file from target into the root directory of the image --> 
+		        	<resources>
+			        	<resource>
+			          		<targetPath>/</targetPath>
+			           		<directory>${project.build.directory}</directory>
+			           		<include>${project.build.finalName}.jar</include>
+			        	</resource>
+		        	</resources>
+		        	<serverId>docker-hub</serverId>
+		      	</configuration>
+		    </plugin>
         </plugins>
 	</build>
 	
@@ -92,6 +125,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+			<version>1.0.4.RELEASE</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-elasticsearch</artifactId>
