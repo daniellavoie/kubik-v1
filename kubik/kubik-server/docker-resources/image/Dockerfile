@@ -1,4 +1,4 @@
-FROM dockerfile/java:oracle-java8
+FROM java:openjdk-8u72-jre
 
 MAINTAINER Daniel Lavoie <dlavoie@cspinformatique.com>
 
