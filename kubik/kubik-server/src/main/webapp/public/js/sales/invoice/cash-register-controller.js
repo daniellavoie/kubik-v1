@@ -295,20 +295,9 @@
 				vm.ean13 = "";
 			}
 			
-			function searchProductSuccess(products){
-				// Check if a product was found
-				if(products.length == 0){
-					// Show a warning explaining that the product does not exists.
-					$(".product-not-found").modal();
-				}else {
-					$(".product-not-found").modal("hide");
-					
-					if (products.length > 1){
-						vm.kubikProductSearch.openSearchModal(vm.typedEan13);
-					}else{
-						vm.addOneProduct(products[0]);
-					}
-				}
+			function searchProductSuccess(product){
+				if(product != null && product != "")
+					vm.addOneProduct(product);
 			}
 			
 			function searchProductCompleted(){
