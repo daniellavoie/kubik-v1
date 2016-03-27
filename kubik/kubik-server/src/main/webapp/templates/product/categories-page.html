@@ -1,0 +1,25 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+	<head>
+		<title>La Dimension Fantastique - Catégories de produits</title>
+		
+		<link th:replace="util/import :: head" />
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="Kubik" ng-cloak="" class="container">
+			<h1>Catégories de produits</h1>
+			
+			<div th:include="product/categories-standalone :: categories-standalone"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/product/categories-page.js}"></script>
+	</body>
+</html>

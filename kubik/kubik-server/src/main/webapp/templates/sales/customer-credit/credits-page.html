@@ -1,0 +1,115 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Avoirs clients</title>
+		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/credits-page.css}" />
+	</head>
+	
+	<body ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-cloak="" ng-controller="CustomerCreditsCtrl as customerCreditsCtrl" class="container text-center">
+			<h1>Avoirs clients</h1>
+			
+			<div>
+				<button ng-click="customerCreditsCtrl.newCustomerCredit()" class="btn btn-primary">Nouvel avoir</button>
+			</div>
+	
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!customerCreditsCtrl.customerCreditsPage.first" ng-click="customerCreditsCtrl.changePage(customerCreditsCtrl.customerCreditsPage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{customerCreditsCtrl.customerCreditsPage.number+1}} sur {{customerCreditsCtrl.customerCreditsPage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!customerCreditsCtrl.customerCreditsPage.last" ng-click="customerCreditsCtrl.changePage(customerCreditsCtrl.customerCreditsPage.number+1)">Suivante</a>
+				</li>
+			</ul>
+					
+			<div class="table-responsive">	
+				<table class="customer-credits table table-condensed table-striped table-hover panel panel-default">
+					<thead>
+						<tr>
+							<th>Numéro</th>
+							<th>Facture</th>
+							<th>Date</th>
+							<th>Client</th>
+							<th>Produits</th>
+							<th>Montant</th>
+							<th>Paiements</th>
+							<th>Statut</th>	
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="customerCredit in customerCreditsCtrl.customerCreditsPage.content" ng-click="customerCreditsCtrl.openCustomerCredit(customerCredit)">
+							<td>{{customerCredit.number}}</td>
+							<td>{{customerCredit.invoice.number}}</td>
+							<td>{{customerCredit.date | date : "short"}}</td>
+							<td>
+								<a href="#" ng-click="customerCreditsCtrl.openCustomerCard($event, customerCredit.customer)">
+									<span ng-if="customerCredit.customer.company == null">{{customerCredit.customer.firstName}} {{customerCredit.customer.lastName}}</span>
+									<span ng-if="customerCredit.customer.company != null">{{customerCredit.customer.company}}</span>
+								</a>
+							</td>
+							<td>{{customerCredit.details.length}}</td>
+							<td>{{customerCredit.totalAmount | currency : '&euro;'}}</td>
+							<td>
+								<span ng-if="customerCredit.paymentMethod.type == 'CARD'" title="Carte" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+								<span ng-if="customerCredit.paymentMethod.type == 'CASH'" title="Espèces" class="glyphicon glyphicon-euro">&nbsp;</span>
+								<span ng-if="customerCredit.paymentMethod.type == 'CHECK'" title="Chèque"  class="glyphicon glyphicon-edit">&nbsp;</span>
+								<span ng-if="customerCredit.paymentMethod.type == 'CREDIT'" title="Avoir"  class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
+								<span ng-if="customerCredit.paymentMethod.type == 'WIRE'" title="Virement"  class="glyphicon glyphicon-transfer">&nbsp;</span>
+							</td>
+							<td>
+								<span ng-if="customerCredit.status == 'OPEN'">Brouillon</span>
+								<span ng-if="customerCredit.status == 'COMPLETED'">Complété</span>
+								<span ng-if="customerCredit.status == 'CANCELED'">Annulé</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="new-customer-credit-modal modal fade">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content">
+						<div ng-if="newCredit.invoice == null" >
+							<div class="modal-header">
+								<h2>Nouvel avoir</h2>
+							</div>
+							<div class="model-body form-group">
+								<label>Numéro de facture</label>
+								<input type="text" ng-model="customerCreditsCtrl.customerCredit.invoice.number" ng-keyup="customerCreditsCtrl.invoiceNumberKeyUp($event)" class="invoice-number form-control" />
+							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<button
+								type="button" 
+								class="closeModal btn btn-default" 
+								data-dismiss="modal"
+							>Annuler</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div th:replace="sales/customer/customers-modal :: customers-modal"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/sales/customer-credits-page.js}"></script>
+	</body>
+</html>

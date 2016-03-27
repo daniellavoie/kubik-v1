@@ -17,7 +17,9 @@ public interface ProductService {
 	
 	int countByImagesValidated(boolean imagesValidated);
 	
-	Iterable<Product> findByEan13(String ean13);
+	List<Integer> findAllIds();
+	
+	Product findByEan13(String ean13);
 	
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
 

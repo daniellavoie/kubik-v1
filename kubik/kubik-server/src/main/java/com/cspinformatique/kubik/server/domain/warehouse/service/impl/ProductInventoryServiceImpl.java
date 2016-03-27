@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -71,19 +72,23 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 	}
 
 	@Override
+	public List<ProductInventory> findAll() {
+		return productInventoyRepository.findAll();
+	}
+
+	@Override
 	public Page<ProductInventory> findAll(Pageable pageable) {
 		return productInventoyRepository.findAll(pageable);
 	}
 
 	@Override
 	public ProductInventory findByProduct(Product product) {
-		ProductInventory productInventory = productInventoyRepository.findByProduct(product);
+		Optional<ProductInventory> optional = productInventoyRepository.findByProduct(product);
 
-		if (productInventory == null) {
-			productInventory = new ProductInventory(null, product, 0d, 0d);
-		}
-
-		return productInventory;
+		if (optional.isPresent())
+			return optional.get();
+		else
+			return new ProductInventory(null, product, 0d, 0d);
 	}
 
 	@Override

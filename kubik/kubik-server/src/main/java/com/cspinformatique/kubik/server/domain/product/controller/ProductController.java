@@ -99,7 +99,7 @@ public class ProductController {
 
 	@ResponseBody
 	@RequestMapping(params = "ean13", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Iterable<Product> findByEan13(@RequestParam String ean13) {
+	public Product findByEan13(@RequestParam String ean13) {
 		return productService.findByEan13(ean13);
 	}
 

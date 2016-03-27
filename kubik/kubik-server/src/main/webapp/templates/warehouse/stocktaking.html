@@ -1,0 +1,117 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+	<head>
+		<title>La Dimension Fantastique - Export Inventaire</title>
+		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/warehouse/stocktaking.css}" />
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-app="Kubik" ng-cloak="" ng-controller="StocktakingCtrl as stocktakingCtrl">			
+			<div class="row">
+				<ol class="breadcrumb text-left"  ng-if="stocktakingCtrl.stocktaking != undefined">
+					<li><a href="/stocktaking">Prise d'inventaire</a></li>
+					<li class="active">{{stocktakingCtrl.stocktaking.id}}</li>
+				</ol>			
+			</div>
+			
+			<div class="row">
+				<h1 class="col-sm-12" ng-if="stocktakingCtrl.stocktaking != undefined">Prise d'inventaire # {{stocktakingCtrl.stocktaking.id}}</h1>
+			</div>
+			
+			<div class="row">
+				<h3 class="col-sm-12">Catégories</h3>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<div ng-if="!stocktakingCtrl.loading &amp;&amp; stocktakingCtrl.stocktaking != undefined">
+						<button 
+							class="btn btn-default" 
+							ng-click="stocktakingCtrl.openNewCategoryDialog()"
+							ng-if="stocktakingCtrl.stocktaking.status == 'IN_PROGRESS'"
+						>Nouvelle Catégorie</button>
+						
+						<button 
+							class="btn btn-default" 
+							ng-click="stocktakingCtrl.generateDiff()"
+							ng-if="stocktakingCtrl.stocktaking.status == 'IN_PROGRESS'"
+						>Calculer les écarts</button>
+						
+						<button 
+							class="btn btn-default" 
+							ng-click="stocktakingCtrl.openDiff()" 
+							ng-if="stocktakingCtrl.stocktaking.diffs.length > 0"
+						>Visualiser les écarts</button>
+					</div>
+					
+					<div ng-if="stocktakingCtrl.loading">
+						<div>... Calcul des écarts en cours ...</div>
+						<div><img src="/img/loading.gif"/></div>
+					</div> 
+				</div>
+			</div>
+			
+			<div class="row">
+				<table class="col-sm-12 categories table table-border" ng-class="{'true' : 'table-hover pointer'}[stocktakingCtrl.stocktaking.categories.length != 0]">
+					<thead>
+						<tr>
+							<th>Nom</th>
+							<th>Références</th>
+							<th>Création</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="category in stocktakingCtrl.stocktaking.categories" ng-click="stocktakingCtrl.openCategory(category)">
+							<td>{{category.name}}</td>
+							<td>{{category.products.length}}</td>
+							<td>{{category.creationDate | date : "short"}}</td>
+						</tr>
+						
+						<tr ng-if="stocktakingCtrl.stocktaking.categories.length == 0">
+							<td colspan="3">Aucune catégorie</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+				
+			<div class="modal new-category text-left">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Nouvelle Catégorie</h4>
+						</div>
+						<div class="modal-body">
+							<div ng-if="stocktakingCtrl.nameAlreadyExists" class="alert alert-warning">
+								<button type="button" class="close" ng-click="stocktakingCtrl.nameAlreadyExists = false"><span aria-hidden="true">&times;</span></button>
+								Ce nom a déjà saisi pour une autre catégorie.
+							</div>
+							
+							<div class="form-group">
+							    <label for="exampleInputEmail1">Nom</label>
+							    <input type="text" class="form-control" ng-model="stocktakingCtrl.newCategory.name" placeholder="Nom" />
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-default" data-dismiss="modal">Annuler</button>
+							<button class="btn btn-primary" ng-click="stocktakingCtrl.saveNewCategory()">Créer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/stocktaking-category-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/stocktaking-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/stocktaking-service.js}"></script>
+	</body>
+</html>

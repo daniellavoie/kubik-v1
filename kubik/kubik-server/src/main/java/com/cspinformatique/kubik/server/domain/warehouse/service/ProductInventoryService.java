@@ -13,6 +13,8 @@ import com.cspinformatique.kubik.server.model.warehouse.ProductInventory;
 public interface ProductInventoryService {
 	void deleteByProduct(Product product);
 
+	List<ProductInventory> findAll();
+
 	Page<ProductInventory> findAll(Pageable pageable);
 
 	ProductInventory findByProduct(Product product);

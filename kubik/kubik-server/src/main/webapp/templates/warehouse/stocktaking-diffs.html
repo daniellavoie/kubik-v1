@@ -1,0 +1,129 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+	<head>
+		<title>La Dimension Fantastique - Export Inventaire</title>
+		
+		<link th:replace="util/import :: head" />
+<!-- 		<link rel="stylesheet" type="text/css" th:href="@{/css/warehouse/stocktaking-category.css}" /> -->
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-app="Kubik" ng-cloak="" ng-controller="StocktakingDiffCtrl as stocktakingDiffCtrl">
+			<div class="row" ng-if="stocktakingDiffCtrl.stocktaking != undefined">
+				<ol class="breadcrumb text-left">
+					<li><a href="/stocktaking">Prise d'inventaire</a></li>
+					<li><a ng-href="/stocktaking/{{stocktakingDiffCtrl.stocktaking.id}}">{{stocktakingDiffCtrl.stocktaking.id}}</a></li>
+					<li class="active">Ecarts</li>
+				</ol>			
+			</div>
+			
+			<div class="row" ng-if="stocktakingDiffCtrl.stocktaking != undefined">
+				<h1 class="col-sm-12">Prise d'inventaire # {{stocktakingDiffCtrl.stocktaking.id}} - Ecarts</h1>
+			</div>
+			
+			<div class="row">
+				<button 
+					class="btn btn-default" 
+					ng-click="stocktakingDiffCtrl.updateInventory()"
+					ng-disabled="!stocktakingDiffCtrl.diffsValidated"
+					ng-if="!stocktakingDiffCtrl.updating &amp;&amp; stocktakingDiffCtrl.stocktaking.status == 'IN_PROGRESS'"
+				>Mettre à jour l'inventaire</button>
+				
+				<div ng-if="stocktakingDiffCtrl.updating">
+					<div>... Mise à de l'inventaire en cours ...</div>
+					<div><img src="/img/loading.gif" /></div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<h3 class="col-sm-12">Produits en écart</h3>
+			</div>
+			
+			<div class="row" ng-if="stocktakingDiffCtrl.error">
+				<div class="alert alert-danger" role="alert">
+					<button type="button" class="close" ng-click="stocktakingDiffCtrl.hideError()">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					Une erreur s'est produite.
+				</div>
+			</div>
+			
+			<div class="row">
+				<table class="col-sm-12 categories table">
+					<thead>
+						<tr>
+							<th>Ean13</th>
+							<th>Produit</th>
+							<th>Prix TTC</th>
+							<th>Taxe</th>
+							<th>Inventaire</th>
+							<th>Ajustement</th>
+							<th>Décompte</th>
+							<th>Validé</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="diff in stocktakingDiffCtrl.stocktaking.diffs">
+							<td>{{diff.product.ean13}}</td>
+							<td>
+								<a href="#" ng-click="stocktakingDiffCtrl.openProductCard($event, diff.product)">
+									{{diff.product.standardLabel}}
+								</a>
+							</td>
+							<td>{{diff.product.priceTaxIn | currency : '&euro;'}}</td>
+							<td>{{diff.product.tvaRate1}}</td>
+							<td>{{diff.product.productInventory.quantityOnHand + diff.product.productInventory.quantityOnHold}}</td>
+							<td>
+								<span ng-if="stocktakingDiffCtrl.stocktaking.status != 'IN_PROGRESS'">
+									{{diff.adjustmentQuantity}}
+								</span>
+								<input
+									step="1"
+									type="number"
+									class="form-control text-center"
+									ng-model="diff.adjustmentQuantity"
+									ng-change="stocktakingDiffCtrl.updateAdjustmentQuantity(diff)"
+									ng-if="stocktakingDiffCtrl.stocktaking.status == 'IN_PROGRESS'"
+									ng-disabled="stocktakingDiffCtrl.loading"
+								/>
+							</td>
+							<td>{{diff.countedQuantity}}</td>
+							<td>
+								<div>
+									<div class="checkbox checkbox-primary">
+										<input 
+											type="checkbox" 
+											id="checkbox-{{diff.id}}"
+											ng-model="diff.validated"
+											ng-change="stocktakingDiffCtrl.updateValidated(diff)"
+											ng-disabled="stocktakingDiffCtrl.loading || stocktakingDiffCtrl.stocktaking.status != 'IN_PROGRESS'"
+										/>
+										<label></label>
+									</div>
+								</div>
+							</td>
+						</tr>
+						
+						<tr ng-if="stocktakingDiffCtrl.stocktaking.diffs.length == 0">
+							<td colspan="7">Aucun écart</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div th:replace="product/products-modal :: products-modal"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/stocktaking-diff-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/stocktaking-diff-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/stocktaking-service.js}"></script>
+	</body>
+</html>

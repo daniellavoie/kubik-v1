@@ -1,0 +1,94 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Commandes Clients</title>
+		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/customer-orders.css}" />
+	</head>
+	
+	<body ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="KubikInvoicesPage" ng-cloak="" ng-controller="CustomerOrdersCtrl as customerOrdersCtrl"  class="container text-center">
+			<h1>Commandes web</h1>
+					
+<!-- 			<div class="search-error alert alert-warning alert-dismissible" role="alert" ng-if="error != null"> -->
+<!-- 				<button type="button" class="close" ng-click="customerOrdersCtrl.hideErrors()"><span aria-hidden="true">&times;</span></button> -->
+<!-- 				{{customerOrdersCtrl.error}} -->
+<!-- 			</div> -->
+	
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					<a	href="#" 
+						ng-if="!customerOrdersCtrl.customerOrdersPage.first" 
+						ng-click="customerOrdersCtrl.changePage(customerOrdersCtrl.customerOrdersPage.number-1)"
+					>Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{customerOrdersCtrl.customerOrdersPage.number+1}} sur {{customerOrdersCtrl.customerOrdersPage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					<a	href="#" 
+						ng-if="!customerOrdersCtrl.customerOrdersPage.last" 
+						ng-click="customerOrdersCtrl.changePage(customerOrdersCtrl.customerOrdersPage.number+1)"
+					>Suivante</a>
+				</li>
+			</ul>
+					
+			<div class="table-responsive">
+				<table class="customer-orders table table-condensed table-striped table-hover panel panel-default">
+					<thead>
+						<tr>
+							<th>Numéro</th>
+							<th>Client</th>
+							<th>Confirmation</th>
+							<th>Traitement</th>
+							<th>Produits</th>
+							<th>Montant</th>
+							<th>Frais de livraison</th>
+							<th>Mode de livraison</th>
+							<th>Statut</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="order in customerOrdersCtrl.customerOrdersPage.content" ng-click="customerOrdersCtrl.openOrder($event, order)">
+							<td>{{order.id}}</td>
+							<td>{{order.account.username}}</td>
+							<td>{{order.confirmedDate | date : "short"}}</td>
+							<td>{{order.processedDate | date : "short"}}</td>
+							<td>{{order.totalQuantity}}</td>
+							<td>{{order.totalAmount | currency : '&euro;'}}</td>
+							<td>{{order.shippingCost | currency : '&euro;'}}</td>
+							<td>
+								<span ng-if="order.shippingMethod == 'COLISSIMO'">Colissimo</span>
+								<span ng-if="order.shippingMethod == 'TAKEOUT'">Magasin</span>
+							</td>
+							<td>
+								<span ng-if="order.status == 'OPEN'" class="label label-info">Ouverte</span>
+								<span ng-if="order.status == 'ABANDONED'" class="label label-default">Abandonnée</span>
+								<span ng-if="order.status == 'TO_CONFIRM'" class="label label-info">A confirmer</span>
+								<span ng-if="order.status == 'CONFIRMED'" class="label label-success">Confirmée</span>
+								<span ng-if="order.status == 'PROCESSED'" class="label label-primary">Traitée</span>
+								<span ng-if="order.status == 'ERROR'" class="label label-danger">Erreur</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		
+		<script type="text/javascript" th:src="@{/js/kubik-config.js}"></script>
+		<script type="text/javascript" th:src="@{/js/sales/customer-order/customer-order-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/sales/customer-order/customer-orders-controller.js}"></script>
+	</body>
+</html>

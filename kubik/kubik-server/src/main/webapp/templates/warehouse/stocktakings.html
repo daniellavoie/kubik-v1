@@ -1,0 +1,55 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Export Inventaire</title>
+		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/warehouse/stocktakings.css}" />
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-app="Kubik" ng-cloak="" ng-controller="StocktakingsCtrl as stocktakingsCtrl">
+			<h1 class="col-sm-12">Prise d'inventaire</h1>
+			
+			<div class="col-sm-4 col-sm-offset-4">
+				<button class="from-control btn btn-primary" ng-click="stocktakingsCtrl.newStocktaking()">Démarrer une prise d'inventaire</button> 
+			</div>
+			
+			<table class="col-sm-12 stocktakings table table-border" ng-class="{'true' : 'table-hover pointer'}[stocktakingsCtrl.stocktakings.length != 0]">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Statut</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr ng-repeat="stocktaking in stocktakingsCtrl.stocktakings" ng-click="stocktakingsCtrl.openStocktaking(stocktaking)">
+						<td>{{stocktaking.creationDate | date : "short"}}</td>
+						<td ng-switch="stocktaking.status">
+							<span ng-switch-when="IN_PROGRESS" class="label label-success">En cours</span>
+							<span ng-switch-when="CANCELED" class="label label-danger">Annulée</span>
+							<span ng-switch-when="COMPLETED" class="label label-primary">Complété</span>
+						</td>
+					</tr>
+					
+					<tr ng-if="stocktakingsCtrl.stocktakings.length == 0" class="empty">
+						<td colspan="2">Aucune prise d'inventaire</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/stocktakings-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/stocktaking-service.js}"></script>
+	</body>
+</html>

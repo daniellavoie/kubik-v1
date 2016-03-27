@@ -1,0 +1,168 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Factures</title>
+		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/invoice/invoices.css}" />
+	</head>
+	
+	<body ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="KubikInvoicesPage" ng-cloak="" ng-controller="InvoicesCtrl as invoicesCtrl"  class="container text-center">
+			<h1>Factures</h1>
+			
+			<div class="search-options row">
+				<div class="col-sm-3 col-md-4">
+					<div class="input-group">
+						<input 
+							type="text"
+							class="search-invoice form-control" 
+							ng-model="invoicesCtrl.invoice.number" 
+							placeholder="Entrer un numéro de facture" 
+							ng-keyup="invoicesCtrl.findByNumberKeyPressed($event)"
+						/>
+	     				<span class="input-group-btn">
+							<button class="btn btn-default" ng-click="invoicesCtrl.findByNumber()">Ouvrir</button>
+						</span>
+					</div>
+				</div>
+				<div class="col-sm-6 col-md-5 btn-group">
+					<button 
+						type="button" 
+						class="btn" 
+						ng-click="invoicesCtrl.changeStatus('PAID')"
+						ng-class="{true : 'btn-primary', false : 'btn-default'}[invoicesCtrl.params.status == 'PAID']" 
+					>Payé</button>
+					<button 
+						type="button" 
+						class="btn" 
+						ng-click="invoicesCtrl.changeStatus('ORDER')"
+						ng-class="{true : 'btn-primary', false : 'btn-default'}[invoicesCtrl.params.status == 'ORDER']" 
+					>Commande</button>
+					<button 
+						type="button" 
+						class="btn" 
+						ng-click="invoicesCtrl.changeStatus('ORDER_CONFIRMED')"
+						ng-class="{true : 'btn-primary', false : 'btn-default'}[invoicesCtrl.params.status == 'ORDER_CONFIRMED']" 
+					>Confirmé</button>
+					<button 
+						type="button" 
+						class="btn" 
+						ng-click="invoicesCtrl.changeStatus('CANCELED')"
+						ng-class="{true : 'btn-primary', false : 'btn-default'}[invoicesCtrl.params.status == 'CANCELED']" 
+					>Annulé</button>
+				</div>
+				
+				<div class="col-sm-3 col-md-3">
+					<button 
+						class="btn btn-default"
+						ng-click="invoicesCtrl.openCustomerSearch($event)"
+					>Nouvelle commande</button>
+				</div>	
+			</div>
+		
+			<div class="search-error alert alert-warning alert-dismissible" role="alert" ng-if="error != null">
+				<button type="button" class="close" ng-click="invoicesCtrl.hideErrors()"><span aria-hidden="true">&times;</span></button>
+				{{invoicesCtrl.error}}
+			</div>
+	
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!invoicesCtrl.invoicePage.first" ng-click="invoicesCtrl.changePage(invoicesCtrl.invoicePage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{invoicesCtrl.invoicePage.number+1}} sur {{invoicesCtrl.invoicePage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!invoicesCtrl.invoicePage.last" ng-click="invoicesCtrl.changePage(invoicesCtrl.invoicePage.number+1)">Suivante</a>
+				</li>
+			</ul>
+					
+			<div class="table-responsive">	
+				<table class="invoices table table-condensed table-striped table-hover panel panel-default">
+					<thead>
+						<tr>
+							<th>Numéro</th>
+							<th>Date</th>
+							<th>Client</th>
+							<th>Produits</th>
+							<th>Montant</th>
+							<th>Paiements</th>
+							<th>Statut</th>	
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="invoice in invoicesCtrl.invoicePage.content" ng-click="invoicesCtrl.openInvoice(invoice)">
+							<td>{{invoice.number}}</td>
+							<td>{{invoice.paidDate | date : "short"}}</td>
+							<td ng-if="invoice.customer != null">
+								<a href="#" ng-click="invoicesCtrl.openCustomerCard($event, invoice.customer)">
+									<span ng-if="invoice.customer.company == null">{{invoice.customer.firstName}} {{invoice.customer.lastName}}</span>
+									<span ng-if="invoice.customer.company != null">{{invoice.customer.company}}</span>
+								</a>
+							</td>
+							<td ng-if="invoice.customer == null">
+								Anonyme
+							</td>
+							<td>{{invoice.details.length}}</td>
+							<td>{{invoice.totalAmount | currency : '&euro;'}}</td>
+							<td>
+								<span ng-repeat="payment in invoice.payments">
+									<span ng-switch="payment.paymentMethod.type">
+										<span ng-switch-when="BRAINTREE" title="Internet - {{payment.amount | currency : '&euro;'}}" class="glyphicon glyphicon-globe">&nbsp;</span>
+										<span ng-switch-when="CARD" title="Carte - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-credit-card">&nbsp;</span>
+										<span ng-switch-when="CASH" title="Espèces - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-euro">&nbsp;</span>
+										<span ng-switch-when="CHECK" title="Chèque - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-edit">&nbsp;</span>
+										<span ng-switch-when="CREDIT" title="Avoir - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-piggy-bank">&nbsp;</span>
+										<span ng-switch-when="KADEOS" title="Chèque Kadéos - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-gift">&nbsp;</span>
+										<span ng-switch-when="LIRE" title="Chèque Lire - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-gift">&nbsp;</span>
+										<span ng-switch-when="WIRE" title="Virement - {{payment.amount  | currency : '&euro;'}}" class="glyphicon glyphicon-transfer">&nbsp;</span>
+									</span>
+								</span>
+							</td>
+							<td>{{invoice.status.description}}</td>
+						</tr>
+						
+						<tr ng-if="invoicesCtrl.invoicePage.content.length == 0">
+							<td colspan="7">
+								Aucune facture ne correspond aux critères de recherche.
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+	
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!invoicesCtrl.invoicePage.first" ng-click="invoicesCtrl.changePage(invoicesCtrl.invoicePage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{invoicesCtrl.invoicePage.number+1}} sur {{invoicesCtrl.invoicePage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!invoicesCtrl.invoicePage.last" ng-click="invoicesCtrl.changePage(invoicesCtrl.invoicePage.number+1)">Suivante</a>
+				</li>
+			</ul>
+
+			<div th:replace="sales/customer/customers-modal :: customers-modal"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/kubik-config.js}"></script>
+		<script type="text/javascript" th:src="@{/js/sales/invoice/invoice-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/sales/invoice/invoices-controller.js}"></script>
+	</body>
+</html>

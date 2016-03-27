@@ -1,0 +1,129 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+
+	<head>
+		<title>La Dimension Fantastique - Statistiques produits</title>
+		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/product/product-stats.css}" />
+	</head>
+	
+	<body ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-cloak="" ng-controller="ProductsStatsCtrl as productsStatsCtrl">
+			<h1>Statistiques produits</h1>
+			
+			<div class="row">
+				<div class="col-sm-4 minDeliveryDate form-group">
+					<label>Depuis :</label>
+					<input 
+						type="text" 
+						class="date form-control"
+						placeholder="JJ/MM/AAAA"
+						ng-model="productsStatsCtrl.startDate"
+						ng-change="productsStatsCtrl.loadProductsStats()"
+					/>
+				</div>
+				
+				<div class="col-sm-4 maxDeliveryDate form-group">
+					<label>Jusqu'à :</label>
+					<input 
+						type="text" 
+						class="date form-control"
+						placeholder="JJ/MM/AAAA"
+						ng-model="productsStatsCtrl.endDate"
+						ng-change="productsStatsCtrl.loadProductsStats()"
+					/>
+				</div>
+				
+				<div class="col-sm-4" ng-cloak="">
+					<button 
+						type="button" 
+						class="btn btn-xs btn-default" 
+						ng-if="!productsStatsCtrl.withoutInventory" 
+						ng-click="productsStatsCtrl.toggleWithoutInventory()"
+					>Sans inventaire</button>
+					<button 
+						type="button" 
+						class="btn btn-xs btn-info" 
+						ng-if="productsStatsCtrl.withoutInventory" 
+						ng-click="productsStatsCtrl.toggleWithoutInventory()"
+					>Sans inventaire</button>
+				</div>
+			</div>
+			
+			<div class="stats-nav text-center">
+				<div class="loading" ng-if="productsStatsCtrl.loading">
+					<div><img th:src="@{/img/loading.gif}" /></div>
+					<div>... chargement ...</div>
+				</div>
+				<ul ng-cloak="" ng-if="!productsStatsCtrl.loading" class="pager row text-center">
+					<li class="col-md-2">
+						&nbsp;
+						<a 
+							href="#" 
+							ng-if="!productsStatsCtrl.productsStatsPage.first" 
+							ng-click="productsStatsCtrl.changePage(productsStatsCtrl.productsStatsPage.number-1)"
+						>Précédente</a>
+					</li>
+					
+					<li class="col-md-8">
+						<div>Page {{productsStatsCtrl.productsStatsPage.number+1}} sur {{productsStatsCtrl.productsStatsPage.totalPages}}</div>
+						<div>{{productsStatsCtrl.productsStatsPage.totalElements}} produits</div>
+					</li>
+					
+					<li class="col-md-2">
+						&nbsp;
+						<a 
+							href="#" 
+							ng-if="!productsStatsCtrl.productsStatsPage.last" 
+							ng-click="productsStatsCtrl.changePage(productsStatsCtrl.productsStatsPage.number+1)"
+						>Suivante</a>
+					</li>
+				</ul>
+			</div>			
+
+			<div class="table-responsive">		
+				<table class="products-stats panel panel-default productsStats table table-striped table-hover table-condensed">
+					<thead>
+						<tr ng-cloak="" class="text-center">
+							<th>Ean13</th>
+							<th>Produit</th>
+							<th ng-repeat="orderAttribute in productsStatsCtrl.orderAttributes">
+								<a href="#" ng-click="productsStatsCtrl.changeOrderBy(orderAttribute.key)">
+									{{orderAttribute.label}}
+									<span ng-if="productsStatsCtrl.orderBy == orderAttribute.key &amp;&amp; productsStatsCtrl.direction == 'DESC'" class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+									<span ng-if="productsStatsCtrl.orderBy == orderAttribute.key &amp;&amp; productsStatsCtrl.direction == 'ASC'" class="glyphicon glyphicon-sort-by-attributes"></span>
+								</a>
+							</th>
+						</tr>
+						</thead>
+					<tbody>
+						<tr ng-repeat="productStats in productsStatsCtrl.productsStatsPage.content">
+							<td>{{productStats.product.ean13}}</td>
+							<td><a href="#" ng-click="productsStatsCtrl.openProductCard($event, productStats.product)">{{productStats.product.standardLabel}}</a></td>
+							<td>{{productStats.product.productInventory.quantityOnHand}}</td>
+							<td>{{productStats.product.productInventory.quantityOnHold}}</td>
+							<td>{{productStats.quantityOrdered}}</td>
+							<td>{{productStats.quantityReceived}}</td>
+							<td>{{productStats.quantitySold}}</td>
+							<td>{{productStats.quantityReturned}}</td>
+							<td>{{productStats.quantityRefunded}}</td>
+							<td>{{productStats.quantityCounted}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		
+			<div th:replace="product/product-card :: product-card"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/product/product-stats/product-stats.js}"></script>
+	</body>
+</html>

@@ -1,0 +1,30 @@
+[ng\:cloak], [ng-cloak], .ng-cloak {
+  display: none !important;
+}
+body { 
+    padding-top: 60px; 
+}
+
+.navbar-default.development{
+	background-color: lime;
+}
+
+.navbar-default.test{
+	background-color: yellow;
+}
+
+.environment.test{
+	color: black;
+}
+
+.table th{
+	text-align: center;
+}
+
+table.sessions tbody tr:HOVER, table.receptions tbody tr:HOVER, table.orders tbody tr:HOVER{
+	cursor: pointer;
+}
+
+.pointer:hover{
+	cursor: pointer;
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Réception fournisseur</title>
+		
+		<link th:replace="util/import :: head" />
+	</head>
+	
+	<body ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-cloak="" ng-controller="ReceptionsCtrl as receptionsCtrl">
+			<h1>Réception fournisseur</h1>
+			
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!receptionsCtrl.receptionsPage.first" ng-click="receptionsCtrl.changePage(receptionsCtrl.receptionsPage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{receptionsCtrl.receptionsPage.number+1}} sur {{receptionsCtrl.receptionsPage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!receptionsCtrl.receptionsPage.last" ng-click="receptionsCtrl.changePage(receptionsCtrl.receptionsPage.number+1)">Suivante</a>
+				</li>
+			</ul>
+					
+			<div class="table-responsive">	
+				<table class="panel panel-default receptions table table-striped table-hover table-condensed">
+					<thead>
+						<tr class="text-center">
+							<th>Fournisseur</th>
+							<th>Commande</th>
+							<th>Status</th>
+							<th>Mode livraison</th>
+							<th>Type de date de livraison</th>
+							<th>Date de livraison</th>
+							<th>Date réception</th>
+							<th>Produits</th>
+							<th>Quantité</th>
+							<th>Prix HT</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="reception in receptionsCtrl.receptionsPage.content" ng-click="receptionsCtrl.openReception(reception.id)">
+							<td><a href="#" ng-click="receptionsCtrl.openSupplierCard($event, reception.supplier)">{{reception.supplier.name}}</a></td>
+							<td><a th:href="@{/purchaseOrder/{{reception.purchaseOrder.id}}}">{{reception.purchaseOrder.id}}</a></td>
+							<td>
+								<span ng-if="reception.status == 'STANDBY'" class="label label-default">En attente</span>
+								<span ng-if="reception.status == 'SHIPPED'" class="label label-primary">Expédiée</span>
+								<span ng-if="reception.status == 'CLOSED'" class="label label-success">Fermée</span>
+								<span ng-if="reception.status == 'CANCELED'" class="label label-danger">Annulée</span>
+							</td>
+							<td>{{reception.shippingMode}}</td>
+							<td>{{reception.deliveryDateType}}</td>
+							<td>{{reception.deliveryDate | date : "short"}}</td>
+							<td>{{reception.dateReceived | date : "short"}}</td>
+							<td>{{reception.details.length}}</td>
+							<td>{{receptionsCtrl.calculateReceptionQuantity(reception)}}</td>
+							<td>{{reception.totalAmountTaxOut | currency : '&euro;'}}</td>
+							<td>
+								<span ng-if="order.sentToDilicom" class="glyphicon glyphicon-transfer" title="Envoyé à Dilicom"></span>
+								&nbsp;
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		
+			<div th:replace="product/supplier-card :: supplier-card"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/purchase/receptions.js}"></script>
+	</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+
+	<head>
+		<title>La Dimension Fantastique - Retours fournisseur</title>
+		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/rma/rmas.css}" />
+	</head>
+	
+	<body ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-cloak="" ng-controller="RmasCtrl as rmasCtrl">
+			<h1>Retours fournisseur</h1>
+			
+			<div>
+				<button ng-click="rmasCtrl.newRma()" class="btn btn-primary">Nouveau retour</button>
+			</div>
+			
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!rmasCtrl.rmasPage.first" ng-click="rmasCtrl.changePage(rmasCtrl.rmasPage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{rmasCtrl.rmasPage.number+1}} sur {{rmasCtrl.rmasPage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!rmasCtrl.rmasPage.last" ng-click="rmasCtrl.changePage(rmasCtrl.rmasPage.number+1)">Suivante</a>
+				</li>
+			</ul>
+			
+
+			<div class="table-responsive">		
+				<table class="panel panel-default rmas table table-striped table-hover table-condensed">
+					<thead>
+						<tr class="text-center">
+							<th>#</th>
+							<th>Fournisseur</th>
+							<th>Création</th>
+							<th>Expédition</th>
+							<th>Status</th>
+							<th>Produits</th>
+							<th>Quantité</th>
+						</tr>
+						</thead>
+					<tbody>
+						<tr ng-repeat="rma in rmasCtrl.rmasPage.content" ng-click="rmasCtrl.openOrder(rma.id)">
+							<td>{{rma.id}}</td>
+							<td><a href="#" ng-click="rmasCtrl.openSupplierCard($event, rma.supplier)">{{rma.supplier.name}}</a></td>
+							<td>{{rma.openDate | date : "short"}}</td>
+							<td>{{rma.shippedDate | date : "short"}}</td>
+							<td>
+								<span ng-if="rma.status == 'OPEN'" class="label label-info">Ouvert</span>
+								<span ng-if="rma.status == 'CANCELED'" class="label label-danger">Annulé</span>
+								<span ng-if="rma.status == 'SHIPPED'" class="label label-danger">Expédié</span>
+							</td>
+							<td>{{rma.details.length}}</td>
+							<td>{{rmasCtrl.calculateRmaQuantity(rma)}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="new-rma-modal modal fade">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h2>Nouveau retour</h2>
+						</div>
+						<div class="model-body form-group">
+							<label>Code fournisseur</label>
+							<input type="text" ng-model="rmasCtrl.rma.supplier.ean13" ng-keyup="rmasCtrl.supplierEan13KeyUp($event)" class="supplier-ean13 form-control" />
+							
+							<div ng-if="rmasCtrl.error.supplierNotFound" class="alert alert-danger" role="alert">
+								<button type="button" class="close" aria-label="Close" ng-click="rmasCtrl.error.supplierNotFound = false"><span aria-hidden="true">&times;</span></button>
+								<span>Aucun fournisseur retrouvé.</span>
+							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<button
+								type="button" 
+								class="closeModal btn btn-default" 
+								data-dismiss="modal"
+							>Annuler</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<div th:replace="product/supplier-card :: supplier-card"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/purchase/rmas.js}"></script>
+	</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+	<head>
+		<title>La Dimension Fantastique - Export Inventaire</title>
+		
+		<link th:replace="util/import :: head" />
+<!-- 		<link rel="stylesheet" type="text/css" th:href="@{/css/warehouse/stocktaking-category.css}" /> -->
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-app="Kubik" ng-cloak="" ng-controller="StocktakingCategoryCtrl as stocktakingCategoryCtrl">
+			<div class="row">
+				<ol class="breadcrumb text-left">
+					<li><a href="/stocktaking">Prise d'inventaire</a></li>
+					<li><a ng-href="/stocktaking/{{stocktakingCategoryCtrl.stocktaking.id}}">{{stocktakingCategoryCtrl.stocktaking.id}}</a></li>
+					<li class="active">{{stocktakingCategoryCtrl.category.name}}</li>
+				</ol>			
+			</div>
+			
+			<div class="row">
+				<h1 class="col-sm-12">Prise d'inventaire # {{stocktakingCategoryCtrl.stocktaking.id}}</h1>
+			</div>
+			
+			<div class="row">
+				<h3 class="col-sm-12">Produits décomptés</h3>
+			</div>
+			
+			<div class="row" ng-if="stocktakingCategoryCtrl.error">
+				<div class="alert alert-danger" role="alert">
+					<button type="button" class="close" ng-click="stocktakingCategoryCtrl.hideError()">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					Une erreur s'est produite. Impossible d'ajouter le produit.
+				</div>
+			</div>
+			
+			<div class="row" ng-if="stocktakingCategoryCtrl.notFound">
+				<div class="alert alert-warning" role="alert">
+					<button type="button" class="close" ng-click="stocktakingCategoryCtrl.hideError()">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					Le produit recherché n'existe pas.
+				</div>
+			</div>
+			
+			<div class="row" ng-if="stocktakingCategoryCtrl.stocktaking.status == 'IN_PROGRESS'">
+				<div class="col-sm-4">
+					<input 
+						type="text" 
+						class="query form-control" 
+						placeholder="Saisissez un ean13"
+						ng-model="stocktakingCategoryCtrl.search.query"
+						ng-click="stocktakingCategoryCtrl.selectInput()"
+						ng-keyup="stocktakingCategoryCtrl.inputKeyup($event)"
+						ng-disabled="stocktakingCategoryCtrl.loading"
+					/>			
+				</div>
+				<div class="col-sm-8 text-left">
+					<img ng-if="stocktakingCategoryCtrl.loading" src="/img/loading.gif"/>
+				</div>
+			</div>
+			
+			<div class="row">
+				<table class="col-sm-12 categories table">
+					<thead>
+						<tr>
+							<th>Ean13</th>
+							<th>Produit</th>
+							<th>Prix TTC</th>
+							<th>Taxe</th>
+							<th>Quantité</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="stocktakingProduct in stocktakingCategoryCtrl.category.products">
+							<td>{{stocktakingProduct.product.ean13}}</td>
+							<td>
+								<a href="#" ng-click="stocktakingCategoryCtrl.openProductCard($event, stocktakingProduct.product)">
+									{{stocktakingProduct.product.standardLabel}}
+								</a>
+							</td>
+							<td>{{stocktakingProduct.product.priceTaxIn | currency : '&euro;'}}</td>
+							<td>{{stocktakingProduct.product.tvaRate1}}</td>
+							<td>
+								<span ng-if="stocktakingCategoryCtrl.stocktaking.status != 'IN_PROGRESS'">
+									{{stocktakingProduct.quantity}}
+								</span>
+								<input
+									step="1"
+									type="number"
+									class="form-control text-center"
+									ng-model="stocktakingProduct.quantity"
+									ng-disabled="stocktakingCategoryCtrl.loading"
+									ng-change="stocktakingCategoryCtrl.updateQuantity(stocktakingProduct)"
+									ng-if="stocktakingCategoryCtrl.stocktaking.status == 'IN_PROGRESS'"
+								/>
+							</td>						
+							<td>
+								<button
+									class="btn btn-warning btn-xs"
+									ng-disabled="stocktakingCategoryCtrl.loading"
+									ng-if="stocktakingCategoryCtrl.stocktaking.status == 'IN_PROGRESS'"
+									ng-click="stocktakingCategoryCtrl.deleteStocktakingProduct(stocktakingProduct)" 
+								>
+									<span class="glyphicon glyphicon-trash"></span>
+								</button>
+							</td>
+						</tr>
+						
+						<tr ng-if="stocktakingCategoryCtrl.category.products.length == 0">
+							<td colspan="6">Aucun produit décompté</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<div th:replace="product/products-modal :: products-modal"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/stocktaking-category-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/stocktaking-product-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/warehouse/stocktaking-service.js}"></script>
+	</body>
+</html>

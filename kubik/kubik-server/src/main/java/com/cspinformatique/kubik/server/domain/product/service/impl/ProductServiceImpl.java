@@ -31,6 +31,7 @@ import com.cspinformatique.kubik.server.domain.purchase.service.RestockService;
 import com.cspinformatique.kubik.server.domain.purchase.service.RmaDetailService;
 import com.cspinformatique.kubik.server.domain.sales.service.CustomerCreditDetailService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceDetailService;
+import com.cspinformatique.kubik.server.domain.warehouse.service.InventoryCountService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.server.model.kos.KosNotification.Action;
 import com.cspinformatique.kubik.server.model.kos.KosNotification.Type;
@@ -50,6 +51,7 @@ import com.cspinformatique.kubik.server.model.purchase.Restock;
 import com.cspinformatique.kubik.server.model.purchase.RmaDetail;
 import com.cspinformatique.kubik.server.model.sales.CustomerCreditDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
+import com.cspinformatique.kubik.server.model.warehouse.InventoryCount;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -63,6 +65,9 @@ public class ProductServiceImpl implements ProductService {
 
 	@Resource
 	private DilicomImageService dilicomImageService;
+
+	@Resource
+	private InventoryCountService inventoryCountService;
 
 	@Resource
 	private InvoiceDetailService invoiceDetailService;
@@ -173,6 +178,11 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
+	public List<Integer> findAllIds() {
+		return productRepository.findAllIds();
+	}
+
+	@Override
 	public Page<Product> findAll(Pageable pageable) {
 		Page<Product> productPage = productRepository.findAll(pageable);
 
@@ -184,7 +194,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Iterable<Product> findByEan13(String ean13) {
+	public Product findByEan13(String ean13) {
 		return productRepository.findByEan13(ean13);
 	}
 
@@ -298,9 +308,17 @@ public class ProductServiceImpl implements ProductService {
 			invoiceDetailService.save(invoiceDetail);
 		}
 
+		for (InventoryCount inventoryCount : inventoryCountService.findByProduct(sourceProduct)) {
+			inventoryCount.setProduct(targetProduct);
+
+			inventoryCountService.save(inventoryCount);
+		}
+
 		productInventoryService.deleteByProduct(sourceProduct);
 
 		productInventoryService.updateInventory(targetProduct);
+
+		productImageService.deleteByProduct(sourceProduct);
 
 		productRepository.delete(sourceProduct);
 	}
@@ -325,7 +343,7 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		if (product.getId() != null) {
-			oldVersion = findOne(product.getId());
+			oldVersion = findByEan13(product.getEan13());
 		}
 
 		// Checks if the supplier has changed.

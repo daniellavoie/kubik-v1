@@ -1,0 +1,76 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Rapports Journaliers</title>
+		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/daily-report.css}" />
+	</head>
+	
+	<body ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-cloak="" ng-controller="DailyReportPageCtrl as dailyReportPageCtrl"  class="container text-center">
+			<h1>Rapports Journaliers</h1>
+	
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!dailyReportPageCtrl.dailyReportPage.first" ng-click="dailyReportPageCtrl.changePage(dailyReportPageCtrl.dailyReportPage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{dailyReportPageCtrl.dailyReportPage.number+1}} sur {{dailyReportPageCtrl.dailyReportPage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!dailyReportPageCtrl.dailyReportPage.last" ng-click="dailyReportPageCtrl.changePage(dailyReportPageCtrl.dailyReportPage.number+1)">Suivante</a>
+				</li>
+			</ul>
+
+			<table class="daily-reports table table-condensed table-striped table-hover panel panel-default">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Ventes</th>
+						<th>Retours</th>
+						<th>Ventes TTC</th>
+						<th>Ventes HT</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr ng-repeat="dailyReport in dailyReportPageCtrl.dailyReportPage.content" ng-click="dailyReportPageCtrl.openDailyReport(dailyReport)">
+						<td>{{dailyReport.date | date : "dd/MM/yyyy"}}</td>
+						<td>{{dailyReport.salesCount}}</td>
+						<td>{{dailyReport.returnCount}}</td>
+						<td>{{dailyReport.salesAmountTaxIn | currency : '&euro;'}}</td>
+						<td>{{dailyReport.salesAmountTaxOut | currency : '&euro;'}}</td>
+						<td>
+							<button 
+								id="reload-daily-report-{{dailyReport.id}}-btn" 
+								class="btn btn-xs btn-info" 
+								ng-click="dailyReportPageCtrl.reload(dailyReport, $event)">
+								<span class="glyphicon glyphicon-refresh"></span>
+							</button>
+							<img 
+								id="reload-daily-report-{{dailyReport.id}}-loading"
+								class="hidden" 
+								th:src="@{/img/loading.gif}"
+							/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/sales/daily-report-page.js}"></script>
+	</body>
+</html>

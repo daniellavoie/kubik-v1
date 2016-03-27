@@ -49,7 +49,7 @@ public class ProductInventoryController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@RequestMapping(value = "/product/{ean13}", method = RequestMethod.GET, params = "updateInventory")
 	public void updateProductInventory(@PathVariable String ean13) {
-		productInventoryService.updateInventory(productService.findByEan13(ean13).iterator().next());
+		productInventoryService.updateInventory(productService.findByEan13(ean13));
 	}
 
 	@RequestMapping(value = "/product", method = RequestMethod.GET, params = "updateInventory", produces = MediaType.TEXT_HTML_VALUE)

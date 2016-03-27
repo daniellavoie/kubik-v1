@@ -17,12 +17,15 @@ public interface ProductRepository extends
 	
 	int countByImagesValidated(boolean imagesValidated);
 	
+	@Query("SELECT id FROM Product")
+	List<Integer> findAllIds();
+	
 	List<Product> findByCategory(Category category);
 	
 	@Query("SELECT id FROM Product WHERE dilicomReference = ?1")
 	List<Integer> findIdByDilicomReference(boolean dilicomReference);
 
-	Iterable<Product> findByEan13(String ean13);
+	Product findByEan13(String ean13);
 
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
 

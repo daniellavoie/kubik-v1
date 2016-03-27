@@ -1,0 +1,274 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+
+	<head>
+		<title>La Dimension Fantastique - Commande client</title>
+		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/customer-order-details.css}" />
+	</head>
+	
+	<body ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container" ng-cloak="" ng-controller="CustomerOrderDetailsCtrl as customerOrderDetailsCtrl">
+			<div class="text-center">
+				<div class="row">
+					<h1 class="col-sm-2">
+						<button 
+							ng-if="customerOrderDetailsCtrl.previousCustomerOrder != null" 
+							ng-click="customerOrderDetailsCtrl.changeCustomerOrder(customerOrderDetailsCtrl.previousCustomerOrder)" 
+							class="btn btn-default"
+						><span class="glyphicon glyphicon-arrow-left"></span></button>
+					</h1>
+					<h1 class="col-sm-8">Commande Client {{customerOrderDetailsCtrl.customerOrder.id}}</h1>
+					<h1 class="col-sm-2">
+						<button 
+							ng-if="customerOrderDetailsCtrl.nextCustomerOrder != null" 
+							ng-click="customerOrderDetailsCtrl.changeCustomerOrder(customerOrderDetailsCtrl.nextCustomerOrder)" 
+							class="btn btn-default"
+						><span class="glyphicon glyphicon-arrow-right"></span></button>
+					</h1>
+				</div>
+				
+				<div class="row">
+					<!-- Transaction Infos -->
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">Règlement</div>
+							<div class="panel-body">
+								<div ng-if="customerOrderDetailsCtrl.transaction != undefined">
+									<div class="form-horizontal panel-body">
+										<div class="form-group">
+											<label class="col-xs-4 control-label">Numéro</label>
+											<div class="col-xs-8 form-control-static">
+												<a	th:href="${@paymentServiceImpl.getGatewayAdminUrl() + '/merchants/' + @paymentServiceImpl.getGatewayMerchantId() + '/transactions/{{customerOrderDetailsCtrl.transaction.id}}'}" 
+													target="_self"
+												>{{customerOrderDetailsCtrl.transaction.id}}</a>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-xs-4 control-label">Montant</label>
+											<div class="col-xs-8 form-control-static">
+												{{customerOrderDetailsCtrl.transaction.amount | currency : '&euro;'}}
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-xs-4 control-label">Status</label>
+											<div class="col-xs-8 form-control-static" ng-switch="customerOrderDetailsCtrl.transaction.status">
+												<div ng-switch-when="AUTHORIZATION_EXPIRED"><span class="label label-info">Authorisation expirée</span></div>
+												<div ng-switch-when="AUTHORIZED"><span class="label label-info">Authorisée</span></div>
+												<div ng-switch-when="AUTHORIZING"><span class="label label-info">Authorisation en cours</span></div>
+												<div ng-switch-when="FAILED"><span class="label label-info">Echec</span></div>
+												<div ng-switch-when="GATEWAY_REJECTED"><span class="label label-info">Rejetéé par la plateforme</span></div>
+												<div ng-switch-when="PROCESSOR_DECLINED"><span class="label label-info">Refusée</span></div>
+												<div ng-switch-when="SETTLED"><span class="label label-info">Réglée</span></div>
+												<div ng-switch-when="SETTLEMENT_CONFIRMED"><span class="label label-info">Règlement confirmé</span></div>
+												<div ng-switch-when="SETTLEMENT_DECLINED"><span class="label label-info">Règlement refusé</span></div>
+												<div ng-switch-when="SETTLEMENT_PENDING"><span class="label label-info">Règlement en attente</span></div>
+												<div ng-switch-when="SETTLING"><span class="label label-info">Règlement en cours</span></div>
+												<div ng-switch-when="SUBMITTED_FOR_SETTLEMENT"><span class="label label-info">Règlement soumis</span></div>
+												<div ng-switch-when="UNRECOGNIZED"><span class="label label-info">Non reconnue</span></div>
+												<div ng-switch-when="VOIDED"><span class="label label-info">Annulée</span></div>
+												<div ng-switch-default=""><span class="label label-default">{{customerOrderDetailsCtrl.transaction.status}}</span></div>
+											</div>
+										</div>
+										
+										<div>
+											<button class="btn btn-sm btn-default" ng-click="customerOrderDetailsCtrl.loadTransaction()">
+												<span class="glyphicon glyphicon-refresh"></span>
+												Rafraichir
+											</button>
+										</div>
+									</div>
+								</div>
+								
+								<div ng-if="customerOrderDetailsCtrl.transaction == undefined">
+									<img th:src="@{/img/loading.gif}" />
+								</div>
+							</div>
+							
+						</div>
+					</div>
+					
+					<!-- Shipping Address Info -->
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">Adresse de livraison</div>
+							<div class="panel-body" ng-if="customerOrderDetailsCtrl.customerOrder != undefined">
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.lastName}}
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.firstName}}
+								</div>
+								<div>{{customerOrderDetailsCtrl.customerOrder.shippingAddress.address1}}</div>
+								<div>{{customerOrderDetailsCtrl.customerOrdershippingAddress.address2}}</div>
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.city}},
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.postalCode}}</div>
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.country}}
+								</div>
+								<div>
+									Téléphone
+									{{customerOrderDetailsCtrl.customerOrder.shippingAddress.phone}}
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Billing Address Info -->
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">Adresse de facturation</div>
+							<div class="panel-body" ng-if="customerOrderDetailsCtrl.customerOrder != undefined">
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.billingAddress.lastName}}
+									{{customerOrderDetailsCtrl.customerOrder.billingAddress.firstName}}
+								</div>
+								<div>{{customerOrderDetailsCtrl.customerOrder.billingAddress.address1}}</div>
+								<div>{{customerOrderDetailsCtrl.customerOrder.billingAddress.address2}}</div>
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.billingAddress.city}},
+									{{customerOrderDetailsCtrl.customerOrder.billingAddress.postalCode}}</div>
+								<div>
+									{{customerOrderDetailsCtrl.customerOrder.billingAddress.country}}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div ng-if="customerOrderDetailsCtrl.error != undefined" class="row">
+					<div class="alert alert-warning" role="alert">
+						<button 
+							type="button" 
+							class="close" 
+							ng-click="customerOrderDetailsCtrl.hideError()"
+						><span aria-hidden="true">&times;</span>
+						</button>
+						{{customerOrderDetailsCtrl.error}}
+					</div>
+				</div>
+				
+				<div class="credit-header table-responsive">
+					<table class="table table-condensed panel panel-default">
+						<thead>
+							<tr>
+								<th>Numéro</th>
+								<th>Client</th>
+								<th>Confirmation</th>
+								<th>Traitement</th>
+								<th>Produits</th>
+								<th>Montant</th>
+								<th>Frais de livraison</th>
+								<th>Mode de livraison</th>
+								<th>Statut</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							<tr>
+								<td>{{customerOrderDetailsCtrl.customerOrder.id}}</td>
+								<td>{{customerOrderDetailsCtrl.customerOrder.account.username}}</td>
+								<td>{{customerOrderDetailsCtrl.customerOrder.confirmedDate | date : "short"}}</td>
+								<td>{{customerOrderDetailsCtrl.customerOrder.processedDate | date : "short"}}</td>
+								<td>{{customerOrderDetailsCtrl.customerOrder.totalQuantity}}</td>
+								<td>{{customerOrderDetailsCtrl.customerOrder.totalAmount | currency : '&euro;'}}</td>
+								<td>{{customerOrderDetailsCtrl.customerOrder.shippingCost | currency : '&euro;'}}</td>
+								<td>
+									<span ng-if="customerOrderDetailsCtrl.customerOrder.shippingMethod == 'COLISSIMO'">Colissimo</span>
+									<span ng-if="customerOrderDetailsCtrl.customerOrder.shippingMethod == 'TAKEOUT'">Magasin</span>
+								</td>
+								<td>
+									<span ng-if="customerOrderDetailsCtrl.customerOrder.status == 'OPEN'" class="label label-info">Ouverte</span>
+									<span ng-if="customerOrderDetailsCtrl.customerOrder.status == 'ABANDONED'" class="label label-default">Abandonnée</span>
+									<span ng-if="customerOrderDetailsCtrl.customerOrder.status == 'TO_CONFIRM'" class="label label-info">A confirmer</span>
+									<span ng-if="customerOrderDetailsCtrl.customerOrder.status == 'CONFIRMED'" class="label label-success">Confirmée</span>
+									<span ng-if="customerOrderDetailsCtrl.customerOrder.status == 'PROCESSED'" class="label label-primary">Traitée</span>
+									<span ng-if="customerOrderDetailsCtrl.customerOrder.status == 'ERROR'" class="label label-danger">Erreur</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<div class="table-responsive">
+					<table class="panel panel-default table table-striped table-condensed">
+						<thead class="panel-heading">
+							<tr>
+								<th>Ean13</th>
+								<th>Produit</th>
+								<th>Prix unitaire TTC</th>
+								<th>Qté commandée</th>
+								<th>Qté expédiée</th>
+								<th>Total TTC</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="detail in customerOrderDetailsCtrl.customerOrder.customerOrderDetails">
+								<td>{{detail.product.ean13}}</td>
+								<td><a href="#" ng-click="customerOrderDetailsCtrl.openProductCard($event, detail.product)">{{detail.product.title}}</a></td>
+								<td>{{detail.unitPrice | currency : '&euro;'}}
+								<td>{{detail.quantityOrdered}}</td>									
+								<td>
+									<input 
+										min="0" 
+										type="number"
+										id="detail-{{detail.id}}"
+										max="{{detail.maxQuantity}}" 
+										class="quantity form-control"
+										ng-model="detail.quantityShipped"
+										ng-change="customerOrderDetailsCtrl.saveCustomerOrder($event)"
+										ng-if="customerOrderDetailsCtrl.customerOrder.status == 'CONFIRMED'"
+									/>
+									<span ng-if="customerOrderDetailsCtrl.customerOrder.status != 'CONFIRMED'">
+										{{detail.quantityShipped}}
+									</span>
+								</td>
+								<td>{{(detail.quantityShipped * detail.unitPrice) | currency : '&euro;'}}</td>
+							</tr>
+							<tr ng-if="customerOrderDetailsCtrl.customerOrder.customerOrderDetails.length == 0">
+								<td colspan="7">Aucun produit sur la commande</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<div ng-if="customerOrderDetailsCtrl.customerOrder.status == 'CONFIRMED'">
+					<button ng-click="customerOrderDetailsCtrl.cancel()" type="button" class="btn btn-danger">Annuler</button>
+					
+					<button ng-click="customerOrderDetailsCtrl.processCustomerOrder()" type="button" class="btn btn-primary">Traiter la commande</button>
+				</div>
+			</div>
+			
+			<div class="transaction-not-matching modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div class="alert alert-warning">
+								Le montant de la transaction ne correspond pas à celle de la commande. 
+								Veuillez vérifier la commande ou éditer le montant de règlement
+								depuis la plateforme de paiement.
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<div th:replace="product/product-card :: product-card"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		
+		<script type="text/javascript" th:src="@{/js/sales/customer-order/customer-order-details-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/sales/customer-order/customer-order-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/sales/customer-order/transaction-service.js}"></script>
+	</body>
+</html>

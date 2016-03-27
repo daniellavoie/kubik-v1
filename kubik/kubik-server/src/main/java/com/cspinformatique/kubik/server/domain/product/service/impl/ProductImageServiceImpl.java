@@ -67,6 +67,11 @@ public class ProductImageServiceImpl implements ProductImageService {
 	private String calculateImageKey(Product product, ProductImageSize size) {
 		return product.getId() + "-" + size.name() + ".jpg";
 	}
+	
+	@Override
+	public void deleteByProduct(Product product) {
+		productImageRepository.deleteByProduct(product);
+	}
 
 	@Override
 	public ProductImage findByProductAndSize(Product product, ProductImageSize size) {

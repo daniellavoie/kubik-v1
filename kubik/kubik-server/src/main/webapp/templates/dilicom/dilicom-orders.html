@@ -1,0 +1,78 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+	<head>
+		<title>La Dimension Fantastique - Commandes Dilicom</title>
+		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/dilicom/dilicom-orders.css}" />
+	</head>
+	
+	<body ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-controller="DilicomOrdersCtrl as dilicomOrdersCtrl" ng-cloak="" class="container text-center">
+			<h1>Commandes Dilicom</h1>
+
+			<ul class="pager row text-center">
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!dilicomOrdersCtrl.dilicomOrdersPage.first" ng-click="dilicomOrdersCtrl.changePage(dilicomOrdersCtrl.dilicomOrdersPage.number-1)">Précédente</a>
+				</li>
+				
+				<li class="col-md-8">Page {{dilicomOrdersCtrl.dilicomOrdersPage.number+1}} sur {{dilicomOrdersCtrl.dilicomOrdersPage.totalPages}}</li>
+				
+				<li class="col-md-2">
+					&nbsp;
+					<a href="#" ng-if="!dilicomOrdersCtrl.dilicomOrdersPage.last" ng-click="dilicomOrdersCtrl.changePage(dilicomOrdersCtrl.dilicomOrdersPage.number+1)">Suivante</a>
+				</li>
+			</ul>
+			
+			<div class="dilicomOrders table-responsive">
+				<table class="panel panel-default table table-hover table-condensed text-center">
+					<thead>
+						<tr>
+							<th>Commande</th>
+							<th>Réception</th>
+							<th>Statut</th>
+							<th>Création</th>
+							<th>Transfert</th>
+							<th>Traitement</th>
+							<th>Validation</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr ng-repeat="dilicomOrder in dilicomOrdersCtrl.dilicomOrdersPage.content" ng-click="dilicomOrdersCtrl.openDilicomOrder(dilicomOrder)">
+							<td><a th:href="@{/purchaseOrder/{{dilicomOrder.purchaseOrder.id}}}">{{dilicomOrder.purchaseOrder.id}}</a></td>
+							<td><a th:href="@{/reception/{{dilicomOrder.purchaseOrder.reception.id}}}">{{dilicomOrder.purchaseOrder.reception.id}}</a></td>
+							<td>
+								<span ng-if="dilicomOrder.status == 'PENDING'">En attente</span>
+								<span ng-if="dilicomOrder.status == 'TRANSFERED'">Transféré</span>
+								<span ng-if="dilicomOrder.status == 'PROCESSED'">Traité</span>
+								<span ng-if="dilicomOrder.status == 'SHIPPED'">Expédié</span>
+								<span ng-if="dilicomOrder.status == 'ERROR'">Erreur</span>
+							</td>
+							<td>{{dilicomOrder.creationDate | date : "short"}}</td>
+							<td>{{dilicomOrder.transferDate | date : "short"}}</td>
+							<td>{{dilicomOrder.processDate | date : "short"}}</td>
+							<td>{{dilicomOrder.validationDate | date : "short"}}</td>
+						</tr>
+						
+						<tr ng-if="dilicomOrdersCtrl.dilicomOrdersPage.content.length == 0">
+							<td colspan="7">
+								Aucune commande
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/dilicom/dilicom-orders.js}"></script>
+	</body>
+</html>

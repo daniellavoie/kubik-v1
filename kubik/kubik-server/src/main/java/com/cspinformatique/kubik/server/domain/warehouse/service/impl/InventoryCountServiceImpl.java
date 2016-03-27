@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.server.domain.warehouse.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.data.domain.Page;
@@ -20,6 +22,11 @@ public class InventoryCountServiceImpl implements InventoryCountService {
 	@Resource
 	private ProductInventoryService productInventoryService;
 
+	@Override
+	public List<InventoryCount> findByProduct(Product product) {
+		return inventoryCountRepository.findByProduct(product);
+	}
+	
 	@Override
 	public Page<InventoryCount> findByProduct(Product product, Pageable pageable) {
 		return inventoryCountRepository.findByProduct(product, pageable);

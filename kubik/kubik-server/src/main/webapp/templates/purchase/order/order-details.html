@@ -1,0 +1,265 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+
+	<head>
+		<title>La Dimension Fantastique - Commande fournisseur</title>
+		
+		<link th:replace="util/import :: head" />
+		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/order/orderDetails.css}" />
+	</head>
+	
+	<body ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container" ng-cloak="" ng-controller="PurchaseOrderDetailsCtrl as purchaseOrderDetailsCtrl">
+			<div class="text-center">
+				<h1>Commande fournisseur</h1>
+				
+				<div class="table-responsive">
+					<table class="panel panel-default table table-condensed table-responsive">
+						<thead class="panel-heading">
+							<tr>
+								<th>#</th>
+								<th>Fournisseur</th>
+								<th>Création</th>
+								<th>Réception</th>
+								<th>Status</th>
+								<th>Livraison</th>
+								<th>Date de livraison min.</th>
+								<th>Date de livraison max.</th>
+								<th>Remise</th>
+								<th>Produits</th>
+								<th>Quantité</th>
+								<th>Prix HT</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>{{purchaseOrderDetailsCtrl.order.id}}</td>
+								<td><a href="#" ng-click="purchaseOrderDetailsCtrl.openSupplierCard($event, purchaseOrderDetailsCtrl.order.supplier)">{{purchaseOrderDetailsCtrl.order.supplier.name}}</a></td>
+								<td>{{purchaseOrderDetailsCtrl.order.date | date : "short"}}</td>
+								<td><a th:href="@{/reception/{{purchaseOrderDetailsCtrl.order.reception.id}}}">{{purchaseOrderDetailsCtrl.order.reception.id}}</a></td>
+								<td>
+									<span ng-if="purchaseOrderDetailsCtrl.order.status == 'DRAFT'" class="label label-info">Brouillon</span>
+									<span ng-if="purchaseOrderDetailsCtrl.order.status == 'SUBMITED'" class="label label-success">Soumis</span>
+									<span ng-if="purchaseOrderDetailsCtrl.order.status == 'CANCELED'" class="label label-danger">Annulé</span>
+									<span ng-if="purchaseOrderDetailsCtrl.order.status == 'RECEIVED'" class="label label-danger">Reçu</span>
+								</td>
+								<td>{{purchaseOrderDetailsCtrl.order.shippingMode}}</td>
+								<td>{{purchaseOrderDetailsCtrl.order.minDeliveryDate | date : "shortDate"}}</td>
+								<td>{{purchaseOrderDetailsCtrl.order.maxDeliveryDate | date : "shortDate"}}</td>
+								<td>
+									<input 
+										id="order-detail-{{detail.id}}"	
+										ng-if="purchaseOrderDetailsCtrl.order.status == 'DRAFT'"
+										ng-model="purchaseOrderDetailsCtrl.order.discount"
+										ng-click="purchaseOrderDetailsCtrl.orderChanged($event)"
+										ng-keyup="purchaseOrderDetailsCtrl.orderChanged($event)"
+										class="quantity form-control"
+										type="number"
+										min="0" 
+										max="100" 
+										step="0.1"
+									/>
+									<span ng-if="purchaseOrderDetailsCtrl.order.status != 'DRAFT'">{{purchaseOrderDetailsCtrl.order.discount}}</span>
+								</td>
+								<td>{{purchaseOrderDetailsCtrl.order.details.length}}</td>
+								<td>{{purchaseOrderDetailsCtrl.calculateOrderQuantity(purchaseOrderDetailsCtrl.order)}}</td>
+								<td>{{purchaseOrderDetailsCtrl.order.totalAmountTaxOut | currency : '&euro;'}}</td>
+								<td><span ng-if="purchaseOrderDetailsCtrl.order.sentToDilicom" class="glyphicon glyphicon-transfer" title="Envoyé à Dilicom"></span>&nbsp;</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				
+				<div class="table-responsive">
+					<table class="panel panel-default table table-striped table-condensed">
+						<thead class="panel-heading">
+							<tr>
+								<th>Ean13</th>
+								<th>Produit</th>
+								<th>Remise</th>
+								<th>Quantité</th>
+								<th>Remise retenue</th>
+								<th>Prix unitaire HT (&euro;)</th>
+								<th>Prix HT</th>
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="detail in purchaseOrderDetailsCtrl.order.details">
+								<td>{{detail.product.ean13}}</td>
+								<td><a href="#" ng-click="purchaseOrderDetailsCtrl.openProductCard($event, detail.product)">{{detail.product.standardLabel}}</a></td>
+								<td>
+									<input 
+										id="order-detail-discount-{{detail.id}}"
+										ng-if="purchaseOrderDetailsCtrl.order.status == 'DRAFT' &amp;&amp; (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)"	
+										ng-model="detail.discount"
+										ng-click="purchaseOrderDetailsCtrl.orderChanged($event)"
+										ng-keyup="purchaseOrderDetailsCtrl.orderChanged($event)"
+										class="quantity form-control"
+										type="number"
+										min="0" 
+										max="100" 
+										step="0.1"
+									/>
+									<span ng-if="purchaseOrderDetailsCtrl.order.status != 'DRAFT'" >{{detail.discount}}</span>
+								</td>
+								<td>
+									<input 
+										id="order-detail-quantity-{{detail.id}}"
+										ng-if="purchaseOrderDetailsCtrl.order.status == 'DRAFT'"
+										ng-model="detail.quantity"
+										ng-click="purchaseOrderDetailsCtrl.orderChanged($event)"
+										ng-keyup="purchaseOrderDetailsCtrl.orderChanged($event)"
+										class="quantity form-control"
+										type="number"
+										min="1" 
+										max="99999" 
+									/>
+									<span ng-if="purchaseOrderDetailsCtrl.order.status != 'DRAFT'" >{{detail.quantity}}</span>
+								</td>
+								<td><span title="{{detail.discountType.description}}">{{detail.discountApplied}} %</span></td>
+								<td class="unitPriceTaxOut">
+									<span>{{detail.unitPriceTaxOut | currency : '&euro;'}}</span>
+								</td>
+								<td>{{detail.totalAmountTaxOut | currency : '&euro;'}}</td>
+								<td>
+									<button
+										ng-if="purchaseOrderDetailsCtrl.order.status == 'DRAFT'"
+										ng-click="purchaseOrderDetailsCtrl.deleteDetail(detail)" 
+										type="button" 
+										class="btn btn-warning btn-xs"
+									>
+										<span class="glyphicon glyphicon-trash"></span>
+									</button>
+								</td>
+								<td>
+									<span ng-if="detail.product.availabilityCode == 'Disponible'" class="label label-success" title="{{detail.product.availabilityCode}}">&nbsp;</span>
+									<span ng-if="detail.product.availabilityCode != 'Disponible'" class="label label-danger" title="{{detail.product.availabilityCode}}">&nbsp;</span>
+								</td>
+							</tr>
+							
+							<tr ng-if="purchaseOrderDetailsCtrl.order.details.length == 0">
+								<td colspan="5">
+									Aucun produit dans la commande.
+								</td>
+							</tr>
+						</tbody>
+						
+						<tfoot ng-if="purchaseOrderDetailsCtrl.order.status == 'DRAFT'" class="new-product">
+							<tr>
+								<td colspan="9 container">
+									<div class="col-sm-4">
+										<input ng-keyup="purchaseOrderDetailsCtrl.searchProductKeyUp($event)" ng-model="purchaseOrderDetailsCtrl.search.ean13" type="text" placeholder="Ean13" class="ean13 form-control" />
+									</div>
+									<div class="col-sm-3">
+										<button class="btn btn-success form-control" ng-click="purchaseOrderDetailsCtrl.openProductSearch()">Recherche produit</button>
+									</div>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+				
+				<div ng-if="purchaseOrderDetailsCtrl.order.status == 'DRAFT'">
+					<button ng-click="purchaseOrderDetailsCtrl.confirmCancelOrder()" type="button" class="btn btn-danger">Annuler la commande</button>
+					<button ng-click="purchaseOrderDetailsCtrl.confirmSubmitOrder()" type="button" class="btn btn-default">Confirmer la commande</button>
+				</div>
+				
+				<div ng-if="purchaseOrderDetailsCtrl.order.status == 'SUBMITED'">
+					<button ng-if="!purchaseOrderDetailsCtrl.order.dilicomOrder == null" ng-click="purchaseOrderDetailsCtrl.submitOrderAndSendToDilicom()" type="button" class="btn btn-default">Envoyer à Dilicom</button>
+					<a ng-if="!purchaseOrderDetailsCtrl.order.dilicomOrder != null" th:href="@{/dilicomOrder}"><button type="button" class="btn btn-default">Commandes Dilicom</button></a>
+					<button ng-click="purchaseOrderDetailsCtrl.showOrderForm()" type="button" class="btn btn-default">Bon de commande</button>
+					
+				</div>
+				
+				<div class="confirm-submit modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<p>Etes-vous sûr de confirmer la commande fournisseur ?</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+								<button ng-click="purchaseOrderDetailsCtrl.submitOrder()" type="button" class="btn btn-success">Confirmer</button>
+								<button ng-click="purchaseOrderDetailsCtrl.submitOrderAndSendToDilicom()" type="button" class="btn btn-primary">Confirmer et envoyer à Dilicom</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="confirm-cancel modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<p>Etes-vous sûr de vouloir annuler la commande fournisseur ?</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
+								<button ng-click="purchaseOrderDetailsCtrl.cancelOrder()" type="button" class="btn btn-danger">Annuler la commande</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="redirection-modal modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<p>Commande mise-à-jour.</p>
+								<p>
+									<button ng-click="purchaseOrderDetailsCtrl.redirectToPurchaseOrders()" type="button" class="btn btn-default" data-dismiss="modal">Voir les commandes</button>
+									<button ng-click="purchaseOrderDetailsCtrl.redirectToReceptions()" type="button" class="btn btn-default" data-dismiss="modal">Voir les réceptions</button>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			
+				<div class="supplier-not-matching alert modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="alert alert-danger">
+									Le fournisseur {{purchaseOrderDetailsCtrl.supplierNotMatching.name}} du produit ne correspond pas au fournisseur {{purchaseOrderDetailsCtrl.purchaseOrder.suppler.name}} de la commande.
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			
+				<div class="product-not-found alert modal fade">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="alert alert-danger">
+									Aucune produit retrouvé pour l'ean13 {{purchaseOrderDetailsCtrl.search.typedEan13}}.
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div th:replace="product/products-modal :: products-modal"></div>
+		
+			<div th:replace="product/supplier-card :: supplier-card"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>		
+		<script type="text/javascript" th:src="@{/js/purchase/order-details.js}"></script>
+	</body>
+</html>

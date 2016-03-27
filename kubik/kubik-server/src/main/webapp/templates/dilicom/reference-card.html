@@ -1,0 +1,271 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="reference-card" th:remove="tag">
+		<div class="kubikReferenceCard autoModal modal fade">
+			<div class="modal-dialog" ng-controller="ReferenceCardCtrl as referenceCardCtrl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Fiche référence Dilicom</h4>
+					</div>
+					
+					<div class="modal-body">
+						<div class="text-center">
+							<img src="http://images1.centprod.com/{{referenceCardCtrl.company.ean13}}/{{referenceCardCtrl.reference.imageEncryptedKey}}-cover-medium.jpg" />
+						</div>
+					
+						<ul class="nav nav-tabs">
+							<li role="presentation" ng-click="referenceCardCtrl.showTab('reference')" class="active"><a href="#">Produit</a></li>
+							<li role="presentation" ng-click="referenceCardCtrl.showTab('publisher')" ><a href="#">Editeur</a></li>
+							<li role="presentation" ng-click="referenceCardCtrl.showTab('price')" ><a href="#">Prix</a></li>
+							<li role="presentation" ng-click="referenceCardCtrl.showTab('supplier')" ><a href="#">Fournisseur</a></li>
+							<li role="presentation" ng-click="referenceCardCtrl.showTab('dimensions')" ><a href="#">Dimensions</a></li>
+						</ul>
+						
+						<div class="tab reference">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Ean13</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.ean13}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Titre</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.extendedLabel}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Titre court</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.standardLabel}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Titre caisse</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.cashRegisterLabel}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Auteur</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.author}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Date de publication</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.datePublished | date}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Date de fin de disponibilité</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.publishEndDate | date}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Isbn</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.isbn}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Thème</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.theme}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Collection</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.collection}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Référence collection</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.collectionReference}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Disponibilité</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.availabilityCode}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Disponible à la commande</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">
+											<span ng-if="referenceCardCtrl.reference.availableForOrder">Oui</span>
+											<span ng-if="!referenceCardCtrl.reference.availableForOrder">Non</span>
+										</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Type de produit</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.referenceType}}</p>
+									</div>
+								</div>
+							</form>
+						</div>
+						
+						<div class="tab publisher hidden">	
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Nom</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.publisher}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Présentation</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.publisherPresentation}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Isbn</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.publisherIsnb}}</p>
+									</div>
+								</div>
+							</form>
+						</div>
+						
+						<div class="tab price hidden">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Type de prix</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.priceType}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Prix TTC</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.priceTaxIn | currency : "&euro;"}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Taxes</label>
+									<div class="col-sm-8">
+										<p ng-if="referenceCardCtrl.reference.tvaRate1 != null &amp;&amp; referenceCardCtrl.reference.tvaRate1 != 0" class="form-control-static">{{referenceCardCtrl.reference.tvaRate1}} %</p>
+										<p ng-if="referenceCardCtrl.reference.tvaRate2 != null &amp;&amp; referenceCardCtrl.reference.tvaRate2 != 0" class="form-control-static">{{referenceCardCtrl.reference.tvaRate2}} %</p>
+										<p ng-if="referenceCardCtrl.reference.tvaRate3 != null &amp;&amp; referenceCardCtrl.reference.tvaRate3 != 0" class="form-control-static">{{referenceCardCtrl.reference.tvaRate3}} %</p>
+									</div>
+								</div>
+							</form>
+						</div>
+						
+						<div class="tab supplier hidden">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Nom</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{reference.supplier.name}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Ean13</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{reference.supplier.ean13}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Référence</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.supplierReference}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Type de retour</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">{{referenceCardCtrl.reference.returnType}}</p>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Commande à l'unité</label>
+									<div class="col-sm-8">
+										<p class="form-control-static">
+											<span ng-if="referenceCardCtrl.reference.orderableByUnit">Oui</span>
+											<span ng-if="!referenceCardCtrl.reference.orderableByUnit">Non</span>
+										</p>
+									</div>
+								</div>
+ 							</form>
+						</div>
+						
+						<div class="tab dimensions hidden">							 
+							<form class="form-horizontal">	
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Hauteur</label>
+									<div class="col-sm-8" ng-if="referenceCardCtrl.reference.height != null">
+										<p class="form-control-static">{{referenceCardCtrl.reference.height}} mm</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Largeur</label>
+									<div class="col-sm-8" ng-if="referenceCardCtrl.reference.width != null">
+										<p class="form-control-static">{{referenceCardCtrl.reference.width}} mm</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Epaisseur</label>
+									<div class="col-sm-8" ng-if="referenceCardCtrl.reference.thickness != null">
+										<p class="form-control-static">{{referenceCardCtrl.reference.thickness}} mm</p>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Poids</label>
+									<div class="col-sm-8" ng-if="referenceCardCtrl.reference.weight != null">
+										<p class="form-control-static">{{referenceCardCtrl.reference.weight}} g</p>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+						
+					<div class="modal-footer">			
+						<button
+							type="button" 
+							class="closeModal btn btn-default" 
+							data-dismiss="modal"
+						>Fermer</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

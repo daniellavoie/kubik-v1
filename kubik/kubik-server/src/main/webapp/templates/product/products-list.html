@@ -1,0 +1,119 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+	<body>
+		<div th:fragment="products-list" th:remove="tag">
+			<div class="products-search" ng-cloak="">
+				<div class="form-inline text-center">
+					<div class="form-group">
+						<label class="sr-only" for="query">Recherche</label>
+						
+						<input 
+							id="search-product-query" 
+							ng-model="productSearchCtrl.query"
+							ng-change="productSearchCtrl.search()"
+							class="form-control" 
+							type="text" 
+							placeholder="Recherche"
+						/>
+						
+						<button 
+							class="btn btn-primary"
+							ng-click="productSearchCtrl.newProduct()" 
+							ng-if="productSearchCtrl.productCreationAllowed" 
+						>Nouveau produit</button>
+					</div>
+	
+					<ul class="pager row text-center">
+						<li class="col-md-2">
+							&nbsp;
+							<a 
+								href="#" 
+								ng-if="!productSearchCtrl.searchResult.first" 
+								ng-click="productSearchCtrl.changePage(productSearchCtrl.searchResult.number-1)"
+							>Précédente</a>
+						</li>
+						
+						<li class="col-md-8">Page {{productSearchCtrl.searchResult.number+1}} sur {{productSearchCtrl.searchResult.totalPages}}</li>
+						
+						<li class="col-md-2">
+							&nbsp;
+							<a 
+								href="#" 
+								ng-if="!productSearchCtrl.searchResult.last" 
+								ng-click="productSearchCtrl.changePage(productSearchCtrl.searchResult.number+1)"
+							>Suivante</a>
+						</li>
+					</ul>
+				</div>
+			
+				<div class="table-responsive">
+					<table class="panel panel-default table table-hover table-condensed text-center">
+						<thead>
+							<tr>
+								<th>
+									<span>EAN 13</span>
+								</th>
+								<th>
+									<a data-sortBy="title">Titre</a>
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>
+									<a data-sortBy="author">Auteur</a>
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>
+									<a data-sortBy="publisherName">Éditeur</a>
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>
+									<a data-sortBy="publicationDate">Date de pub.</a>
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>Couverture</th>
+								<th>Inventaire</th>
+								<th>
+									&nbsp;
+								</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							<tr ng-repeat="product in productSearchCtrl.searchResult.content" ng-click="productSearchCtrl.productSelected($event, product)">
+								<td>{{product.ean13}}</td>
+								<td>{{product.standardLabel}}</td>
+								<td>{{product.author}}</td>
+								<td>{{product.publisher}}</td>
+								<td>{{product.datePublished | date}}</td>
+								<td><img class="thumb" ng-src="/product/{{product.id}}/image/THUMB.jpg" /></td>
+								<td>
+									<span ng-if="product.productInventory != null">{{product.productInventory.quantityOnHand}}</span>
+									<span ng-if="product.productInventory == null">0</span>
+								</td>
+								<td><span class="glyphicon glyphicon-list-alt" ng-click="productSearchCtrl.openProductCard($event, product)"></span></td>
+							</tr>
+							
+							<tr ng-if="productSearchCtrl.searchResult.content.length == 0">
+								<td colspan="7">
+									Aucun produit retrouvé
+								</td>
+							</tr>
+							
+							<tr ng-if="productSearchCtrl.query == null">
+								<td colspan="7">
+									Rechercher un produit
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
