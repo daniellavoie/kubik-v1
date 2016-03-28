@@ -5,7 +5,7 @@
 		.module("Kubik")
 		.controller("SessionDetailsCtrl", SessionDetailsCtrl);
 
-	function SessionDetailsCtrl($scope, $http, $timeout, $controller){
+	function SessionDetailsCtrl(productService, $scope, $http, $timeout, $controller){
 		var vm = this;
 		
 		vm.search = {};

@@ -10,8 +10,8 @@
 		};
 		
 		function findOne(purchaseOrderId){
-			return 
-				$http.get(PURCHASE_ORDER_URL + "/" + purchaseOrderId)
+			return $http
+				.get(PURCHASE_ORDER_URL + "/" + purchaseOrderId)
 				.then(findOneSuccess);
 			
 			function findOneSuccess(response){
