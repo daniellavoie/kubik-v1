@@ -18,7 +18,7 @@ mvn -f $WORKSPACE/pom.xml clean install
 
 echo "Building Dockerfile for Kubik."
 
-sh $WORKSPACE/server/docker-resources/scripts/kubik/docker-build.sh
+sh $WORKSPACE/kubik/kubik-server/docker-resources/scripts/kubik/docker-build.sh
 
 CMD="docker run -d -p 8080:8080 -v $KUBIK_DATA_DIR:/data -v /etc/localtime:/etc/localtime:ro -v /etc/timezone:/etc/timezone:ro --name $CONTAINER_NAME cspinformatique/kubik"
 
