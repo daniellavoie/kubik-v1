@@ -15,45 +15,47 @@ import com.mysema.query.types.Predicate;
 
 public interface InvoiceService {
 	void calculateInvoiceTaxes(Invoice invoice);
-	
+
+	List<Invoice> findByStatusAndPaidDateAfter(InvoiceStatus status, Date paidDate);
+
 	InvoiceDetail findDetailByInvoiceIdAndProductEan13(int invoiceId, String ean13);
-	
+
 	Iterable<Invoice> findInvoiceByCashRegisterSessionAndInDraft(CashRegisterSession session);
-	
+
 	Invoice generateNewInvoice(Long customerOrderId, Double shippingCost, ShippingMethod shippingMethod);
-	
+
 	Invoice generateNewInvoice(CashRegisterSession session);
-	
+
 	Invoice generateNewOrder(int customerId);
-		
+
 	Page<Invoice> findAll(Pageable pageable);
-	
+
 	Page<Invoice> findAll(Predicate predicate, Pageable pageable);
-	
+
 	Invoice findByNumber(String number);
-	
+
 	List<Invoice> findByPaidDate(Date paidDate);
-	
-	Page<Invoice> findByPaidDateBetweenAndStatus(Date startPaidDate,
-			Date startEndDate, InvoiceStatus status, Pageable pageable);
-	
+
+	Page<Invoice> findByPaidDateBetweenAndStatus(Date startPaidDate, Date startEndDate, InvoiceStatus status,
+			Pageable pageable);
+
 	Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable);
-	
+
 	Invoice findFirstPaidInvoice();
-	
+
 	Integer findNext(int id);
-	
+
 	Invoice findOne(int id);
-	
+
 	Integer findPrevious(int id);
-	
+
 	double findProductQuantityOnHold(int productId);
-	
+
 	double findProductQuantitySold(int productId);
-	
+
 	void initializeInvoiceNumbers();
-	
+
 	void recalculateInvoiceTaxes();
-	
+
 	Invoice save(Invoice invoice);
 }

@@ -39,6 +39,18 @@
 					<div>... Mise à de l'inventaire en cours ...</div>
 					<div><img src="/img/loading.gif" /></div>
 				</div>
+				
+				<button 
+					class="btn pull-right btn-info" 
+					ng-if="stocktakingDiffCtrl.showValidated &amp;&amp; stocktakingDiffCtrl.stocktaking != undefined" 
+					ng-click="stocktakingDiffCtrl.showValidated = false"
+				>Avec validé</button>
+				
+				<button 
+					class="btn pull-right btn-default" 
+					ng-if="!stocktakingDiffCtrl.showValidated &amp;&amp; stocktakingDiffCtrl.stocktaking != undefined" 
+					ng-click="stocktakingDiffCtrl.showValidated = true"
+				>Sans validé</button>
 			</div>
 			
 			<div class="row">
@@ -70,7 +82,7 @@
 					</thead>
 					
 					<tbody>
-						<tr ng-repeat="diff in stocktakingDiffCtrl.stocktaking.diffs">
+						<tr ng-repeat="diff in stocktakingDiffCtrl.stocktaking.diffs" ng-if="stocktakingDiffCtrl.showValidated || !diff.validated">
 							<td>{{diff.product.ean13}}</td>
 							<td>
 								<a href="#" ng-click="stocktakingDiffCtrl.openProductCard($event, diff.product)">
@@ -81,20 +93,22 @@
 							<td>{{diff.product.tvaRate1}}</td>
 							<td>{{diff.product.productInventory.quantityOnHand + diff.product.productInventory.quantityOnHold}}</td>
 							<td>
+								{{diff.adjustmentQuantity}}
+							</td>
+							<td>
 								<span ng-if="stocktakingDiffCtrl.stocktaking.status != 'IN_PROGRESS'">
-									{{diff.adjustmentQuantity}}
+									{{diff.countedQuantity}}
 								</span>
 								<input
 									step="1"
 									type="number"
 									class="form-control text-center"
-									ng-model="diff.adjustmentQuantity"
-									ng-change="stocktakingDiffCtrl.updateAdjustmentQuantity(diff)"
+									ng-model="diff.countedQuantity"
+									ng-change="stocktakingDiffCtrl.updateCountedQuantity(diff)"
 									ng-if="stocktakingDiffCtrl.stocktaking.status == 'IN_PROGRESS'"
 									ng-disabled="stocktakingDiffCtrl.loading"
 								/>
 							</td>
-							<td>{{diff.countedQuantity}}</td>
 							<td>
 								<div>
 									<div class="checkbox checkbox-primary">

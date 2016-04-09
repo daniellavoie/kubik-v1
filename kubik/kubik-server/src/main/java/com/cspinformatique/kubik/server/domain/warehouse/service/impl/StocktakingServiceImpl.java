@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -14,14 +15,24 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.server.domain.product.service.CategoryService;
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
+import com.cspinformatique.kubik.server.domain.purchase.service.ReceptionService;
+import com.cspinformatique.kubik.server.domain.purchase.service.RmaService;
+import com.cspinformatique.kubik.server.domain.sales.service.CustomerCreditService;
+import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.server.domain.warehouse.repository.StocktakingRepository;
 import com.cspinformatique.kubik.server.domain.warehouse.service.InventoryCountService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingCategoryService;
+import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingDiffService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingProductService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingService;
 import com.cspinformatique.kubik.server.model.product.Category;
 import com.cspinformatique.kubik.server.model.product.Product;
+import com.cspinformatique.kubik.server.model.purchase.Reception;
+import com.cspinformatique.kubik.server.model.purchase.Rma;
+import com.cspinformatique.kubik.server.model.sales.CustomerCredit;
+import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
+import com.cspinformatique.kubik.server.model.sales.InvoiceStatus.Types;
 import com.cspinformatique.kubik.server.model.warehouse.InventoryCount;
 import com.cspinformatique.kubik.server.model.warehouse.Stocktaking;
 import com.cspinformatique.kubik.server.model.warehouse.Stocktaking.Status;
@@ -34,25 +45,95 @@ public class StocktakingServiceImpl implements StocktakingService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(StocktakingServiceImpl.class);
 
 	@Resource
-	private CategoryService categoryService;
+	CategoryService categoryService;
 
 	@Resource
-	private InventoryCountService inventoryCountService;
+	CustomerCreditService customerCreditService;
 
 	@Resource
-	private ProductInventoryService productInventoryService;
+	InventoryCountService inventoryCountService;
 
 	@Resource
-	private ProductService productService;
+	InvoiceService invoiceService;
 
 	@Resource
-	private StocktakingProductService stocktakingProductService;
+	ProductInventoryService productInventoryService;
 
 	@Resource
-	private StocktakingCategoryService stocktakingCategoryService;
+	ProductService productService;
 
 	@Resource
-	private StocktakingRepository stocktakingRepository;
+	ReceptionService receptionService;
+
+	@Resource
+	RmaService rmaService;
+
+	@Resource
+	StocktakingProductService stocktakingProductService;
+
+	@Resource
+	StocktakingCategoryService stocktakingCategoryService;
+
+	@Resource
+	StocktakingDiffService stocktakingDiffService;
+
+	@Resource
+	StocktakingRepository stocktakingRepository;
+
+	public void applyInventoryAdjustments(long id) {
+		Date since = findOne(id).getCreationDate();
+
+		receptionService.findByStatusAndDateReceivedAfter(Reception.Status.CLOSED, since).stream()
+				.flatMap(reception -> reception.getDetails().stream()).forEach(detail -> {
+					applyInventoryAdjustments(detail.getProduct(), detail.getQuantityReceived());
+				});
+
+		invoiceService.findByStatusAndPaidDateAfter(new InvoiceStatus(Types.PAID.name(), null), since).stream()
+				.flatMap(invoice -> invoice.getDetails().stream()).forEach(detail -> {
+					applyInventoryAdjustments(detail.getProduct(), detail.getQuantity() * -1);
+				});
+
+		rmaService.findByStatusAndShippedDateAfter(Rma.Status.SHIPPED, since).stream()
+				.flatMap(rma -> rma.getDetails().stream()).forEach(detail -> {
+					applyInventoryAdjustments(detail.getProduct(), detail.getQuantity() * -1);
+				});
+
+		customerCreditService.findByStatusAndCompleteDateAfter(CustomerCredit.Status.COMPLETED, since).stream()
+				.flatMap(customerCredit -> customerCredit.getDetails().stream()).forEach(detail -> {
+					applyInventoryAdjustments(detail.getProduct(), detail.getQuantity());
+				});
+
+		inventoryCountService.findByDateCountedAfter(since).stream().forEach(inventoryCount -> {
+			applyInventoryAdjustments(inventoryCount.getProduct(), inventoryCount.getQuantity());
+		});
+	}
+
+	@Override
+	public void applyInventoryAdjustments(Product product, double addedQuantity) {
+		// Check for active stocktaking concerning the product.
+		Map<Stocktaking, List<StocktakingProduct>> stocktakingProductsByStocktaking = stocktakingProductService
+				.findByProductAndStocktakingStatus(product, Status.IN_PROGRESS).stream().collect(
+						Collectors.groupingBy(stocktakingProduct -> stocktakingProduct.getCategory().getStocktaking()));
+
+		for (List<StocktakingProduct> stocktakingProducts : stocktakingProductsByStocktaking.values()) {
+			stocktakingProducts.stream().findFirst().ifPresent(stocktakingProduct -> {
+				Optional<StocktakingDiff> optional = stocktakingProduct.getCategory().getStocktaking().getDiffs()
+						.stream().filter(stocktakingDiff -> stocktakingDiff.getProduct().getId() == product.getId())
+						.findAny();
+
+				if (optional.isPresent()) {
+					StocktakingDiff stocktakingDiff = optional.get();
+
+					stocktakingDiffService.updateCountedQuantity(stocktakingDiff.getId(),
+							stocktakingDiff.getCountedQuantity() + addedQuantity);
+					stocktakingDiffService.updateValidated(stocktakingDiff.getId(), false);
+				} else {
+					stocktakingProductService.updateQuantity(stocktakingProduct.getId(),
+							stocktakingProduct.getQuantity() + addedQuantity);
+				}
+			});
+		}
+	}
 
 	private void computeInventory(Stocktaking stocktaking) {
 		LOGGER.info("Computing inventory !");
@@ -69,14 +150,17 @@ public class StocktakingServiceImpl implements StocktakingService {
 	}
 
 	@Override
-	public void generateDummyStocktaking() {
+	public Stocktaking generateDummyStocktaking() {
 		Stocktaking stocktaking = new Stocktaking();
 		stocktaking.setStatus(Status.IN_PROGRESS);
 		stocktaking.setCategories(new ArrayList<>());
-		
+
 		stocktaking = save(stocktaking);
 
-		for (Category category : categoryService.findAll()) {
+		List<Category> categories = categoryService.findAll();
+		categories.add(null);
+		
+		for (Category category : categories) {
 			StocktakingCategory stocktakingCategory = null;
 			for (Product product : productService.findByCategory(category)) {
 				if (product.getProductInventory() != null && product.getProductInventory().getQuantityOnHand()
@@ -85,7 +169,7 @@ public class StocktakingServiceImpl implements StocktakingService {
 						stocktakingCategory = new StocktakingCategory();
 						stocktakingCategory.setStocktaking(stocktaking);
 						stocktakingCategory.setProducts(new ArrayList<>());
-						stocktakingCategory.setName(category.getName());
+						stocktakingCategory.setName(category != null ? category.getName() : "Sans catégorie");
 						stocktakingCategory = stocktakingCategoryService.save(stocktakingCategory);
 						stocktaking.getCategories().add(stocktakingCategory);
 					}
@@ -105,7 +189,7 @@ public class StocktakingServiceImpl implements StocktakingService {
 			}
 		}
 
-		save(stocktaking);
+		return save(stocktaking);
 	}
 
 	@Override
@@ -114,19 +198,19 @@ public class StocktakingServiceImpl implements StocktakingService {
 
 		stocktaking.getDiffs().clear();
 
-		Map<Integer, StocktakingProduct> stocktakingProducts = stocktaking.getCategories().stream()
+		Map<Integer, List<StocktakingProduct>> stocktakingProductsMap = stocktaking.getCategories().stream()
 				.flatMap(category -> category.getProducts().stream())
-				.collect(Collectors.toMap(stocktakingProduct -> stocktakingProduct.getProduct().getId(),
-						stocktakingProduct -> stocktakingProduct));
+				.collect(Collectors.groupingBy(stocktakingProduct -> stocktakingProduct.getProduct().getId()));
 
 		for (int productId : productService.findAllIds()) {
-			StocktakingProduct stocktakingProduct = stocktakingProducts.get(productId);
+			List<StocktakingProduct> stocktakingProducts = stocktakingProductsMap.get(productId);
 
 			Product product = null;
 			double countedQuantity = 0;
-			if (stocktakingProduct != null) {
-				product = stocktakingProduct.getProduct();
-				countedQuantity = stocktakingProduct.getQuantity();
+			if (stocktakingProducts != null) {
+				product = stocktakingProducts.stream().findFirst().get().getProduct();
+
+				countedQuantity = stocktakingProducts.stream().mapToDouble(StocktakingProduct::getQuantity).sum();
 			} else
 				product = productService.findOne(productId);
 

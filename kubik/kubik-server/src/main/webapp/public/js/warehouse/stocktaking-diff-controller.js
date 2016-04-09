@@ -12,7 +12,7 @@
 		
 		vm.hideError = hideError;
 		vm.openProductCard = openProductCard;
-		vm.updateAdjustmentQuantity = updateAdjustmentQuantity;
+		vm.updateCountedQuantity = updateCountedQuantity;
 		vm.updateInventory = updateInventory;
 		vm.updateValidated = updateValidated;
 		
@@ -42,12 +42,12 @@
 			$scope.$broadcast("openProductCard", product);
 		}
 		
-		function updateAdjustmentQuantity(diff){
+		function updateCountedQuantity(diff){
 			vm.loading = true;
 			
 			return stocktakingDiffService
-				.updateAdjustmentQuantity(diff.id, diff.adjustmentQuantity)
-				.then(null, error)
+				.updateCountedQuantity(diff.id, diff.countedQuantity)
+				.then(success, error)
 				.finally(completed);
 			
 			function completed(){
@@ -56,6 +56,10 @@
 			
 			function error(diff){
 				vm.error = true;
+			}
+			
+			function success(newDiff){
+				diff.adjustmentQuantity = newDiff.adjustmentQuantity;
 			}
 		}
 		

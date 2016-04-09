@@ -1,6 +1,9 @@
 package com.cspinformatique.kubik.server.domain.warehouse.service.impl;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -10,14 +13,21 @@ import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.warehouse.repository.StocktakingProductRepository;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingCategoryService;
+import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingDiffService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingProductService;
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.warehouse.ProductInventory;
+import com.cspinformatique.kubik.server.model.warehouse.Stocktaking;
 import com.cspinformatique.kubik.server.model.warehouse.StocktakingCategory;
+import com.cspinformatique.kubik.server.model.warehouse.StocktakingDiff;
 import com.cspinformatique.kubik.server.model.warehouse.StocktakingProduct;
+import com.cspinformatique.kubik.server.model.warehouse.Stocktaking.Status;
 
 @Service
 public class StocktakingProductServiceImpl implements StocktakingProductService {
+	@Resource
+	private StocktakingDiffService stocktakingDiffService;
+
 	@Resource
 	private StocktakingProductRepository stocktakingProductRepository;
 
@@ -64,9 +74,38 @@ public class StocktakingProductServiceImpl implements StocktakingProductService 
 	}
 
 	@Override
+	public List<StocktakingProduct> findByProductAndStocktakingStatus(Product product, Status status) {
+		return stocktakingProductRepository.findByProductAndStocktakingStatus(product, status);
+	}
+
+	private void updateStocktakingDiffQuantity(Product product, double quantity) {
+		// Check for active stocktaking concerning the product.
+		Map<Stocktaking, List<StocktakingProduct>> stocktakingProductsByStocktaking = findByProductAndStocktakingStatus(
+				product, Status.IN_PROGRESS).stream().collect(
+						Collectors.groupingBy(stocktakingProduct -> stocktakingProduct.getCategory().getStocktaking()));
+
+		for (List<StocktakingProduct> stocktakingProducts : stocktakingProductsByStocktaking.values()) {
+			stocktakingProducts.stream().findFirst().ifPresent(stocktakingProduct -> {
+				Optional<StocktakingDiff> optional = stocktakingProduct.getCategory().getStocktaking().getDiffs()
+						.stream().filter(stocktakingDiff -> stocktakingDiff.getProduct().getId() == product.getId())
+						.findAny();
+
+				if (optional.isPresent()) {
+					StocktakingDiff stocktakingDiff = optional.get();
+
+					stocktakingDiffService.updateCountedQuantity(stocktakingDiff.getId(), quantity);
+					stocktakingDiffService.updateValidated(stocktakingDiff.getId(), false);
+				}
+			});
+		}
+	}
+
+	@Override
 	public StocktakingProduct updateQuantity(long id, double quantity) {
 		StocktakingProduct stocktakingProduct = stocktakingProductRepository.findOne(id);
 		stocktakingProduct.setQuantity(quantity);
+
+		updateStocktakingDiffQuantity(stocktakingProduct.getProduct(), quantity);
 
 		return save(stocktakingProduct);
 	}

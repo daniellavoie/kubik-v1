@@ -7,13 +7,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.apache.commons.math3.util.Precision;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +26,7 @@ import com.cspinformatique.kubik.server.domain.purchase.service.PurchaseOrderSer
 import com.cspinformatique.kubik.server.domain.purchase.service.PurchaseSessionService;
 import com.cspinformatique.kubik.server.domain.purchase.service.ReceptionService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
+import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingService;
 import com.cspinformatique.kubik.server.model.dilicom.DilicomOrder;
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.purchase.DiscountType;
@@ -34,31 +35,34 @@ import com.cspinformatique.kubik.server.model.purchase.PurchaseOrderDetail;
 import com.cspinformatique.kubik.server.model.purchase.PurchaseSession;
 import com.cspinformatique.kubik.server.model.purchase.PurchaseSessionDetail;
 import com.cspinformatique.kubik.server.model.purchase.Reception;
-import com.cspinformatique.kubik.server.model.purchase.ReceptionDetail;
 import com.cspinformatique.kubik.server.model.purchase.Reception.Status;
+import com.cspinformatique.kubik.server.model.purchase.ReceptionDetail;
 
 @Service
 @Transactional
 public class ReceptionServiceImpl implements ReceptionService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReceptionServiceImpl.class);
 
-	@Autowired
+	@Resource
 	private DilicomOrderService dilicomOrderService;
 
-	@Autowired
+	@Resource
 	private ProductInventoryService productInventoryService;
 
-	@Autowired
+	@Resource
 	private ProductService productService;
 
-	@Autowired
+	@Resource
 	private PurchaseOrderService purchaseOrderService;
 
-	@Autowired
+	@Resource
 	private PurchaseSessionService purchaseSessionService;
 
-	@Autowired
+	@Resource
 	private ReceptionRepository receptionRepository;
+
+	@Resource
+	private StocktakingService stocktakingService;
 
 	private void calculateAmounts(Reception reception) {
 		double totalAmountTaxOut = 0d;
@@ -115,6 +119,11 @@ public class ReceptionServiceImpl implements ReceptionService {
 	@Override
 	public Reception findByPurchaseOrder(PurchaseOrder purchaseOrder) {
 		return this.receptionRepository.findByPurchaseOrder(purchaseOrder);
+	}
+
+	@Override
+	public List<Reception> findByStatusAndDateReceivedAfter(Status status, Date dateReceived) {
+		return receptionRepository.findByStatusAndDateReceivedAfter(status, dateReceived);
 	}
 
 	@Override
@@ -271,7 +280,7 @@ public class ReceptionServiceImpl implements ReceptionService {
 		receptions = this.receptionRepository.save(receptions);
 
 		for (Reception reception : receptionsToUpdateInventory) {
-			this.updateInventory(reception);
+			updateInventory(reception);
 		}
 
 		return receptions;
@@ -281,6 +290,8 @@ public class ReceptionServiceImpl implements ReceptionService {
 	private void updateInventory(Reception reception) {
 		for (ReceptionDetail detail : reception.getDetails()) {
 			productInventoryService.updateInventory(detail.getProduct());
+
+			stocktakingService.applyInventoryAdjustments(detail.getProduct(), detail.getQuantityReceived());
 		}
 	}
 

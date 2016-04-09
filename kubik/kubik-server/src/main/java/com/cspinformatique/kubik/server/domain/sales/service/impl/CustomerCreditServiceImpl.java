@@ -5,11 +5,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.apache.commons.math3.util.Precision;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,38 +23,44 @@ import com.cspinformatique.kubik.server.domain.sales.service.DailyReportService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.server.domain.sales.service.PaymentMethodService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
+import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingService;
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.sales.Customer;
 import com.cspinformatique.kubik.server.model.sales.CustomerCredit;
+import com.cspinformatique.kubik.server.model.sales.CustomerCredit.Status;
 import com.cspinformatique.kubik.server.model.sales.CustomerCreditDetail;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceTaxAmount;
-import com.cspinformatique.kubik.server.model.sales.CustomerCredit.Status;
 
 @Service
 public class CustomerCreditServiceImpl implements CustomerCreditService {
-	@Autowired
-	private CustomerCreditRepository customerCreditRepository;
+	@Resource
+	CustomerCreditRepository customerCreditRepository;
 
-	@Autowired
-	private DailyReportService dailyReportService;
+	@Resource
+	DailyReportService dailyReportService;
 
-	@Autowired
-	private InvoiceService invoiceService;
+	@Resource
+	InvoiceService invoiceService;
 
-	@Autowired
-	private ProductInventoryService productInventoryService;
+	@Resource
+	ProductInventoryService productInventoryService;
 
-	@Autowired
-	private PaymentMethodService paymentMethodService;
+	@Resource
+	PaymentMethodService paymentMethodService;
 
-	@Autowired
-	private ProductService productService;
+	@Resource
+	ProductService productService;
+
+	@Resource
+	StocktakingService stocktakingService;
 
 	private void updateInventory(CustomerCredit customerCredit) {
 		for (CustomerCreditDetail detail : customerCredit.getDetails()) {
-			this.productInventoryService.updateInventory(detail.getProduct());
+			productInventoryService.updateInventory(detail.getProduct());
+
+			stocktakingService.applyInventoryAdjustments(detail.getProduct(), detail.getQuantity());
 		}
 	}
 
@@ -199,6 +205,11 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 	@Override
 	public List<CustomerCredit> findByInvoice(Invoice invoice) {
 		return this.customerCreditRepository.findByInvoice(invoice);
+	}
+
+	@Override
+	public List<CustomerCredit> findByStatusAndCompleteDateAfter(Status status, Date completeDate) {
+		return customerCreditRepository.findByStatusAndCompleteDateAfter(status, completeDate);
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import com.cspinformatique.kubik.server.domain.sales.service.DailyReportService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.server.domain.sales.service.ShippingCostLevelService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
+import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingService;
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.sales.CashRegisterSession;
 import com.cspinformatique.kubik.server.model.sales.Customer;
@@ -68,6 +69,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	@Resource
 	ShippingCostLevelService shippingCostLevelService;
+
+	@Resource
+	StocktakingService stocktakingService;
 
 	private void calculateInvoiceAmounts(Invoice invoice) {
 		int totalWeight = 0;
@@ -248,6 +252,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 	}
 
 	@Override
+	public List<Invoice> findByStatusAndPaidDateAfter(InvoiceStatus status, Date paidDate) {
+		return invoiceRepository.findByStatusAndPaidDateAfter(status, paidDate);
+	}
+
+	@Override
 	public List<Invoice> findByPaidDate(Date paidDate) {
 		return this.invoiceRepository.findByPaidDateBetweenAndStatus(paidDate,
 				LocalDate.fromDateFields(paidDate).plusDays(1).toDate(),
@@ -415,9 +424,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	private void updateInventory(Invoice invoice) {
 		for (InvoiceDetail detail : invoice.getDetails()) {
-			this.productInventoryService.updateInventory(detail.getProduct());
+			productInventoryService.updateInventory(detail.getProduct());
 
-			this.restockService.restockProduct(detail.getProduct(), detail.getQuantity());
+			stocktakingService.applyInventoryAdjustments(detail.getProduct(), detail.getQuantity() * -1);
+			restockService.restockProduct(detail.getProduct(), detail.getQuantity());
 		}
 	}
 

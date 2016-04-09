@@ -23,6 +23,12 @@ public class StocktakingController {
 	@Resource
 	private StocktakingService stocktakingService;
 
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, params = "adjust")
+	public void applyInventoryAdjustments(@PathVariable long id) {
+		stocktakingService.applyInventoryAdjustments(id);
+	}
+
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Stocktaking> findAll() {
@@ -41,10 +47,10 @@ public class StocktakingController {
 		stocktakingService.generateStocktakingDiffs(id);
 	}
 
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/dummy")
-	public void generateDummyStocktaking() {
-		stocktakingService.generateDummyStocktaking();
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.GET, params = "dummy")
+	public Stocktaking generateDummyStocktaking() {
+		return stocktakingService.generateDummyStocktaking();
 	}
 
 	@RequestMapping(value = "/{id}/stocktaking-category/{stocktakingId}", produces = MediaType.TEXT_HTML_VALUE)
@@ -72,7 +78,7 @@ public class StocktakingController {
 	public Stocktaking save(@RequestBody Stocktaking stocktaking) {
 		return stocktakingService.save(stocktaking);
 	}
- 
+
 	@ResponseBody
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST, params = "updateInventory")
 	public Stocktaking updateInventory(@PathVariable long id) {

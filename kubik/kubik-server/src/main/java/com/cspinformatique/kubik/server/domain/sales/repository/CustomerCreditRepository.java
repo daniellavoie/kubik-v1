@@ -27,6 +27,8 @@ public interface CustomerCreditRepository extends
 
 	List<CustomerCredit> findByInvoice(Invoice invoice);
 
+	List<CustomerCredit> findByStatusAndCompleteDateAfter(Status status, Date completeDate);
+	
 	Page<CustomerCredit> findByStatusAndNumberIsNotNull(Status status,
 			Pageable pageable);
 

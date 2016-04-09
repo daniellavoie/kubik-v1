@@ -9,6 +9,7 @@
 			findAll : findAll,
 			findOne : findOne,
 			generateDiff : generateDiff, 
+			newDummyStocktaking : newDummyStocktaking,
 			save : save,
 			updateInventory : updateInventory
 		};
@@ -36,6 +37,16 @@
 		function generateDiff(id){
 			return $http
 				.post(STOCKTAKING_URL + "/" + id + "?generateDiffs");
+		}
+		
+		function newDummyStocktaking(){
+			return $http
+				.get(STOCKTAKING_URL + "?dummy")
+				.then(postSuccess);
+			
+			function postSuccess(response){
+				return response.data;
+			}
 		}
 		
 		function save(stocktaking){

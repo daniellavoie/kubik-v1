@@ -8,6 +8,7 @@
 		
 		loadStocktakings();
 		
+		vm.newDummyStocktaking = newDummyStocktaking;
 		vm.newStocktaking = newStocktaking;
 		vm.openStocktaking = openStocktaking;
 		
@@ -19,6 +20,16 @@
 			function findAllSuccess(stocktakings){
 				vm.stocktakings = stocktakings;
 			}
+		}
+		
+		function newDummyStocktaking(){
+			stocktakingService
+				.newDummyStocktaking()
+				.then(newDummyStocktakingSuccess);
+		
+		function newDummyStocktakingSuccess(stocktaking){
+			location.href = "/stocktaking/" + stocktaking.id;
+		}
 		}
 		
 		function newStocktaking(){

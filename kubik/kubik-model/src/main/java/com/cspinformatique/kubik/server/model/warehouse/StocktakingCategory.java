@@ -3,7 +3,6 @@ package com.cspinformatique.kubik.server.model.warehouse;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -47,7 +46,6 @@ public class StocktakingCategory {
 		this.stocktaking = stocktaking;
 	}
 
-	@Column(unique = true)
 	public String getName() {
 		return name;
 	}

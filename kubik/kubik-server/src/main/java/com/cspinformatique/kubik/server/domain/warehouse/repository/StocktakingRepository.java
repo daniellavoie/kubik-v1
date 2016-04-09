@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.cspinformatique.kubik.server.model.warehouse.Stocktaking;
 
 public interface StocktakingRepository extends JpaRepository<Stocktaking, Long> {
-	
+
 }

@@ -31,6 +31,8 @@ public interface InvoiceRepository extends
 	
 	Page<Invoice> findByStatusAndNumberIsNotNull(InvoiceStatus status, Pageable pageable);
 
+	List<Invoice> findByStatusAndPaidDateAfter(InvoiceStatus status, Date paidDate);
+	
 	@Query("SELECT invoiceDetail FROM Invoice invoice, InvoiceDetail invoiceDetail where invoice = invoiceDetail.invoice AND invoice.id = ?1 AND invoiceDetail.product.ean13 = ?2")
 	InvoiceDetail findDetailByInvoiceIdAndProductEan13(
 			int invoiceId, String ean13);

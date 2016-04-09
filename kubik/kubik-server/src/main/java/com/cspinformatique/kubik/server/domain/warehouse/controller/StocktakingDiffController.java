@@ -16,9 +16,9 @@ public class StocktakingDiffController {
 	@Resource
 	private StocktakingDiffService stocktakingDiffService;
 
-	@RequestMapping(value = "/{id}", params = "adjustmentQuantity")
-	public StocktakingDiff updateAdjustmentQuantity(@PathVariable long id, @RequestParam double adjustmentQuantity) {
-		return stocktakingDiffService.updateAdjustmentQuantity(id, adjustmentQuantity);
+	@RequestMapping(value = "/{id}", params = "countedQuantity")
+	public StocktakingDiff updateCountedQuantity(@PathVariable long id, @RequestParam double countedQuantity) {
+		return stocktakingDiffService.updateCountedQuantity(id, countedQuantity);
 	}
 
 	@RequestMapping(value = "/{id}", params = "validated")

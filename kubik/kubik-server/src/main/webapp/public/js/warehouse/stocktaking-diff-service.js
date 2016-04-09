@@ -7,13 +7,13 @@
 	
 	function StocktakingDiffService($http){
 		return {
-			updateAdjustmentQuantity : updateAdjustmentQuantity,
+			updateCountedQuantity : updateCountedQuantity,
 			updateValidated : updateValidated
 		};
 		
-		function updateAdjustmentQuantity(id, adjustmentQuantity){
+		function updateCountedQuantity(id, countedQuantity){
 			return $http
-				.post(STOCKTAKING_DIFF_URL + "/" + id + "?adjustmentQuantity=" + adjustmentQuantity)
+				.post(STOCKTAKING_DIFF_URL + "/" + id + "?countedQuantity=" + countedQuantity)
 				.then(postSuccess);
 			
 			function postSuccess(response){

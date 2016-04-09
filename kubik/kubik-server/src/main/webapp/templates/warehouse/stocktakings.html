@@ -21,6 +21,11 @@
 			
 			<div class="col-sm-4 col-sm-offset-4">
 				<button class="from-control btn btn-primary" ng-click="stocktakingsCtrl.newStocktaking()">Démarrer une prise d'inventaire</button> 
+				<button 
+					class="from-control btn btn-primary" 
+					ng-click="stocktakingsCtrl.newDummyStocktaking()"
+					th-if="@environment.getProperty('kubik.environment') == 'development'"
+				>Démarrer une prise d'inventaire de test</button> 
 			</div>
 			
 			<table class="col-sm-12 stocktakings table table-border" ng-class="{'true' : 'table-hover pointer'}[stocktakingsCtrl.stocktakings.length != 0]">
