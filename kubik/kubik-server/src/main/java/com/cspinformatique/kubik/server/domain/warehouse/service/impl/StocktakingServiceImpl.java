@@ -214,11 +214,7 @@ public class StocktakingServiceImpl implements StocktakingService {
 			} else
 				product = productService.findOne(productId);
 
-			double inventoryQuantity = 0d;
-			if (product.getProductInventory() != null) {
-				inventoryQuantity = product.getProductInventory().getQuantityOnHand()
-						+ product.getProductInventory().getQuantityOnHold();
-			}
+			double inventoryQuantity = productInventoryService.calculateProductOnHandUntil(productId, stocktaking.getCreationDate());
 
 			if (countedQuantity != inventoryQuantity) {
 				StocktakingDiff diff = new StocktakingDiff();

@@ -22,5 +22,7 @@ public interface RmaService {
 	
 	double findProductQuantityReturnedToSupplier(int productId);
 	
+	double findProductQuantityReturnedToSupplierUntil(int productId, Date until);
+	
 	Rma save(Rma rma);
 }

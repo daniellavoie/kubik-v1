@@ -243,6 +243,17 @@ public class CustomerCreditServiceImpl implements CustomerCreditService {
 		return result;
 	}
 
+	@Override
+	public double findProductQuantityReturnedByCustomerUntil(int productId, Date until) {
+		Double result = this.customerCreditRepository.findProductQuantityReturnedByCustomerUntil(productId, until);
+
+		if (result == null) {
+			return 0d;
+		}
+
+		return result;
+	}
+
 	private InvoiceDetail findInvoiceDetail(Invoice invoice, CustomerCreditDetail customerCreditDetail) {
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			if (detail.getProduct().getId().equals(customerCreditDetail.getProduct().getId())) {

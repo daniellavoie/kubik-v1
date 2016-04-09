@@ -18,5 +18,7 @@ public interface InventoryCountService {
 	
 	double findProductQuantityCounted(int productId);
 	
+	double findProductQuantityCountedUntil(int productId, Date until);
+	
 	InventoryCount save(InventoryCount inventoryCount);
 }

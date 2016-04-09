@@ -8,8 +8,8 @@ import org.springframework.data.domain.Pageable;
 
 import com.cspinformatique.kubik.server.model.sales.Customer;
 import com.cspinformatique.kubik.server.model.sales.CustomerCredit;
-import com.cspinformatique.kubik.server.model.sales.Invoice;
 import com.cspinformatique.kubik.server.model.sales.CustomerCredit.Status;
+import com.cspinformatique.kubik.server.model.sales.Invoice;
 
 public interface CustomerCreditService {
 	Iterable<CustomerCredit> findAll();
@@ -31,6 +31,8 @@ public interface CustomerCreditService {
 	CustomerCredit findOne(int id);
 	
 	double findProductQuantityReturnedByCustomer(int productId);
+	
+	double findProductQuantityReturnedByCustomerUntil(int productId, Date until);
 	
 	Integer findNext(int customerCreditId);
 	

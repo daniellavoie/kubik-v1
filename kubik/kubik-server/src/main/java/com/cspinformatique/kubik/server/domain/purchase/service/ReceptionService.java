@@ -20,6 +20,8 @@ public interface ReceptionService {
 	
 	double findProductQuantityReceived(int productId);
 	
+	double findProductQuantityReceivedUntil(int productId, Date until);
+	
 	void initialize();
 
 	Reception save(Reception reception);

@@ -21,4 +21,7 @@ public interface InventoryCountRepository extends JpaRepository<InventoryCount, 
 
 	@Query("SELECT sum(quantity) FROM InventoryCount WHERE product.id = ?1")
 	Double findProductQuantityCounted(int productId);
+
+	@Query("SELECT sum(quantity) FROM InventoryCount WHERE product.id = ?1 AND dateCounted < ?2")
+	Double findProductQuantityCountedUntil(int productId, Date until);
 }

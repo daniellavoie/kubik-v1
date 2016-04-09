@@ -13,24 +13,21 @@ import com.cspinformatique.kubik.server.model.sales.CustomerCredit;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
 import com.cspinformatique.kubik.server.model.sales.CustomerCredit.Status;
 
-public interface CustomerCreditRepository extends
-		JpaRepository<CustomerCredit, Integer> {
+public interface CustomerCreditRepository extends JpaRepository<CustomerCredit, Integer> {
 
 	@Query("SELECT customerCredit FROM CustomerCredit customerCredit ORDER BY completeDate ASC")
 	Iterable<CustomerCredit> findAllOrderByCompleteDateDesc();
 
-	List<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate,
-			Date endDate, Status status);
+	List<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate, Date endDate, Status status);
 
-	Page<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate,
-			Date endDate, Status status, Pageable pageable);
+	Page<CustomerCredit> findByCompleteDateBetweenAndStatus(Date startDate, Date endDate, Status status,
+			Pageable pageable);
 
 	List<CustomerCredit> findByInvoice(Invoice invoice);
 
 	List<CustomerCredit> findByStatusAndCompleteDateAfter(Status status, Date completeDate);
-	
-	Page<CustomerCredit> findByStatusAndNumberIsNotNull(Status status,
-			Pageable pageable);
+
+	Page<CustomerCredit> findByStatusAndNumberIsNotNull(Status status, Pageable pageable);
 
 	@Query("SELECT id FROM CustomerCredit customerCredit WHERE id > ?1")
 	Page<Integer> findIdByIdGreaterThan(int id, Pageable pageable);
@@ -46,4 +43,7 @@ public interface CustomerCreditRepository extends
 
 	@Query("SELECT sum(detail.quantity) FROM CustomerCreditDetail detail WHERE detail.product.id = ?1 AND detail.customerCredit.status = 'COMPLETED'")
 	Double findProductQuantityReturnedByCustomer(int productId);
+
+	@Query("SELECT sum(detail.quantity) FROM CustomerCreditDetail detail WHERE detail.product.id = ?1 AND detail.customerCredit.status = 'COMPLETED' and detail.customerCredit.completeDate < ?2")
+	Double findProductQuantityReturnedByCustomerUntil(int productId, Date until);
 }

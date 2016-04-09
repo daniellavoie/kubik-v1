@@ -54,6 +54,17 @@ public class InventoryCountServiceImpl implements InventoryCountService {
 	}
 
 	@Override
+	public double findProductQuantityCountedUntil(int productId, Date until) {
+		Double result = inventoryCountRepository.findProductQuantityCountedUntil(productId, until);
+
+		if (result == null) {
+			return 0d;
+		}
+
+		return result;
+	}
+
+	@Override
 	public InventoryCount save(InventoryCount inventoryCount) {
 		inventoryCount = inventoryCountRepository.save(inventoryCount);
 

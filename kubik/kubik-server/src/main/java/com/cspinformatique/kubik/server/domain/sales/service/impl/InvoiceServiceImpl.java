@@ -312,7 +312,18 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	@Override
 	public double findProductQuantityOnHold(int productId) {
-		Double result = this.invoiceRepository.findProductQuantityOnHold(productId);
+		Double result = invoiceRepository.findProductQuantityOnHold(productId);
+
+		if (result == null) {
+			return 0d;
+		}
+
+		return result;
+	}
+
+	@Override
+	public double findProductQuantityOnHoldUntil(int productId, Date until) {
+		Double result = invoiceRepository.findProductQuantityOnHoldUntil(productId, until);
 
 		if (result == null) {
 			return 0d;
@@ -324,6 +335,17 @@ public class InvoiceServiceImpl implements InvoiceService {
 	@Override
 	public double findProductQuantitySold(int productId) {
 		Double result = this.invoiceRepository.findProductQuantitySold(productId);
+
+		if (result == null) {
+			return 0d;
+		}
+
+		return result;
+	}
+
+	@Override
+	public double findProductQuantitySoldUntil(int productId, Date until) {
+		Double result = this.invoiceRepository.findProductQuantitySoldUntil(productId, until);
 
 		if (result == null) {
 			return 0d;

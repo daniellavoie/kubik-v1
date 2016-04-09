@@ -50,17 +50,6 @@ public class RmaServiceImpl implements RmaService {
 	}
 
 	@Override
-	public double findProductQuantityReturnedToSupplier(int productId) {
-		Double result = rmaRepository.findProductQuantityReturnedToSupplier(productId);
-
-		if (result == null) {
-			return 0d;
-		}
-
-		return result;
-	}
-
-	@Override
 	public Integer findNext(int rmaId) {
 		Page<Integer> result = rmaRepository.findIdByIdGreaterThan(rmaId, new PageRequest(0, 1, Direction.ASC, "id"));
 
@@ -108,6 +97,28 @@ public class RmaServiceImpl implements RmaService {
 		}
 
 		return rma;
+	}
+
+	@Override
+	public double findProductQuantityReturnedToSupplier(int productId) {
+		Double result = rmaRepository.findProductQuantityReturnedToSupplier(productId);
+
+		if (result == null) {
+			return 0d;
+		}
+
+		return result;
+	}
+
+	@Override
+	public double findProductQuantityReturnedToSupplierUntil(int productId, Date until) {
+		Double result = rmaRepository.findProductQuantityReturnedToSupplierUntil(productId, until);
+
+		if (result == null) {
+			return 0d;
+		}
+
+		return result;
 	}
 
 }

@@ -143,6 +143,17 @@ public class ReceptionServiceImpl implements ReceptionService {
 	}
 
 	@Override
+	public double findProductQuantityReceivedUntil(int productId, Date until) {
+		Double result = this.receptionRepository.findProductQuantityReceivedUntil(productId, until);
+
+		if (result == null) {
+			return 0d;
+		}
+
+		return result;
+	}
+
+	@Override
 	public void initialize() {
 		List<Long> idsToFilter = Arrays.asList(new Long[] { 15000030l, 15000031l, 15000062l, 15000065l });
 

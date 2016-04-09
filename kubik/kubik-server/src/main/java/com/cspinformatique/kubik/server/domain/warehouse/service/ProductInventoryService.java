@@ -1,6 +1,7 @@
 package com.cspinformatique.kubik.server.domain.warehouse.service;
 
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -11,6 +12,8 @@ import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.warehouse.ProductInventory;
 
 public interface ProductInventoryService {
+	double calculateProductOnHandUntil(int productId, Date until);
+	
 	void deleteByProduct(Product product);
 
 	List<ProductInventory> findAll();

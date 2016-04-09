@@ -67,6 +67,20 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 	private RmaService rmaService;
 
 	@Override
+	public double calculateProductOnHandUntil(int productId, Date until) {
+		double quantityReceived = receptionService.findProductQuantityReceivedUntil(productId, until);
+		double quantityCustomerReturned = customerCreditService.findProductQuantityReturnedByCustomerUntil(productId,
+				until);
+		double quantityReturnedToSupplier = rmaService.findProductQuantityReturnedToSupplierUntil(productId, until);
+		double quantitySold = invoiceService.findProductQuantitySoldUntil(productId, until);
+		double quantityCounted = inventoryCountService.findProductQuantityCountedUntil(productId, until);
+		double quantityOnHold = invoiceService.findProductQuantityOnHoldUntil(productId, until);
+
+		return quantityReceived + quantityCustomerReturned - quantitySold - quantityReturnedToSupplier - quantityOnHold
+				+ quantityCounted;
+	}
+
+	@Override
 	public void deleteByProduct(Product product) {
 		productInventoyRepository.delete(findByProduct(product));
 	}

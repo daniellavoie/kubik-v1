@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 
 import com.cspinformatique.kubik.server.model.sales.CashRegisterSession;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
+import com.cspinformatique.kubik.server.model.sales.Invoice.ShippingMethod;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
-import com.cspinformatique.kubik.server.model.sales.Invoice.ShippingMethod;
 import com.mysema.query.types.Predicate;
 
 public interface InvoiceService {
@@ -51,7 +51,11 @@ public interface InvoiceService {
 
 	double findProductQuantityOnHold(int productId);
 
+	double findProductQuantityOnHoldUntil(int productId, Date until);
+
 	double findProductQuantitySold(int productId);
+
+	double findProductQuantitySoldUntil(int productId, Date until);
 
 	void initializeInvoiceNumbers();
 
