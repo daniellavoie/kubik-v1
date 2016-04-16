@@ -1,0 +1,47 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title>La Dimension Fantastique - Produits Doublons</title>
+		
+		<link th:replace="util/import :: head" />
+<!-- 		<link rel="stylesheet" type="text/css" th:href="@{/css/warehouse/stocktakings.css}" /> -->
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-app="Kubik" ng-cloak="" ng-controller="ProductDoublesListCtrl as productDoublesListCtrl">
+			<h1 class="col-sm-12">Produits Doublons</h1>
+			
+			<table class="col-sm-12 table table-border" ng-class="{'true' : 'table-hover pointer'}[productDoublesListCtrl.productDoublesList.length != 0]">
+				<thead>
+					<tr>
+						<th>Ean13</th>
+						<th>Doublons</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr ng-repeat="productDoubles in productDoublesListCtrl.productDoublesList" ng-click="productDoublesListCtrl.openProductDoubles(productDoubles)">
+						<td>{{productDoubles.ean13}}</td>
+						<td>{{productDoubles.products.length}}</td>
+					</tr>
+					
+					<tr ng-if="productDoublesListCtrl.productDoublesList.length == 0" class="empty">
+						<td colspan="2">Aucun doublon</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/product/product-doubles/product-doubles-list-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/product/product-doubles/product-doubles-service.js}"></script>
+	</body>
+</html>

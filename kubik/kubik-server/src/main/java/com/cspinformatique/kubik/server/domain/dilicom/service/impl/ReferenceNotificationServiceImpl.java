@@ -2,6 +2,7 @@ package com.cspinformatique.kubik.server.domain.dilicom.service.impl;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -18,8 +19,7 @@ import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.model.product.Product;
 
 @Service
-public class ReferenceNotificationServiceImpl implements
-		ReferenceNotificationService {
+public class ReferenceNotificationServiceImpl implements ReferenceNotificationService {
 	@Autowired
 	private ReferenceNotificationRepository referenceNotificationRepository;
 
@@ -27,37 +27,34 @@ public class ReferenceNotificationServiceImpl implements
 	private ProductService productService;
 
 	@Override
-	public Long countByStatus(Status status){
-		return this.referenceNotificationRepository.countByStatus(status);
-	}
-	
-	@Override
-	public Page<ReferenceNotification> findByStatus(Status status,
-			Pageable pageable) {
-		return this.referenceNotificationRepository.findByStatus(status,
-				pageable);
+	public Long countByStatus(Status status) {
+		return referenceNotificationRepository.countByStatus(status);
 	}
 
 	@Override
-	public ReferenceNotification save(
-			ReferenceNotification referenceNotification) {
-		return this
-				.save(Arrays
-						.asList(new ReferenceNotification[] { referenceNotification }))
-				.iterator().next();
+	public void delete(ReferenceNotification referenceNotification) {
+		referenceNotificationRepository.delete(referenceNotification);
+	}
+
+	public Optional<ReferenceNotification> findByProduct(Product product) {
+		return referenceNotificationRepository.findByProduct(product);
 	}
 
 	@Override
-	public Iterable<ReferenceNotification> save(
-			Iterable<ReferenceNotification> referenceNotifications) {
+	public Page<ReferenceNotification> findByStatus(Status status, Pageable pageable) {
+		return referenceNotificationRepository.findByStatus(status, pageable);
+	}
 
+	@Override
+	public ReferenceNotification save(ReferenceNotification referenceNotification) {
+		return save(Arrays.asList(new ReferenceNotification[] { referenceNotification })).iterator().next();
+	}
+
+	@Override
+	public Iterable<ReferenceNotification> save(Iterable<ReferenceNotification> referenceNotifications) {
 		for (ReferenceNotification referenceNotification : referenceNotifications) {
-			ReferenceNotification existingReference = this.referenceNotificationRepository
-					.findByProduct(referenceNotification.getProduct());
-
-			if (existingReference != null) {
-				referenceNotification.setId(existingReference.getId());
-			}
+			findByProduct(referenceNotification.getProduct())
+					.ifPresent(existingReference -> referenceNotification.setId(existingReference.getId()));
 
 			if (referenceNotification.getStatus().equals(Status.NEW)
 					&& referenceNotification.getCreationDate() == null) {
@@ -71,22 +68,21 @@ public class ReferenceNotificationServiceImpl implements
 			}
 		}
 
-		return this.referenceNotificationRepository
-				.save(referenceNotifications);
+		return referenceNotificationRepository.save(referenceNotifications);
 	}
-	
+
 	@Transactional
-	public void validate(Integer referenceNotificationId, Product product){
-		ReferenceNotification notification = this.referenceNotificationRepository.findOne(referenceNotificationId);
-		
-		if(notification == null){
+	public void validate(Integer referenceNotificationId, Product product) {
+		ReferenceNotification notification = referenceNotificationRepository.findOne(referenceNotificationId);
+
+		if (notification == null) {
 			throw new RuntimeException("Reference notification " + referenceNotificationId + " does not exists.");
 		}
-		
+
 		notification.setStatus(Status.PROCESSED);
-		
-		this.save(notification);
-		
-		this.productService.save(product);
+
+		save(notification);
+
+		productService.save(product);
 	}
 }

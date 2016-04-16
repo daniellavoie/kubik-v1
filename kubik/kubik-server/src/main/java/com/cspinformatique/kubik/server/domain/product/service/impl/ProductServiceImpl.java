@@ -1,6 +1,7 @@
 package com.cspinformatique.kubik.server.domain.product.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -18,6 +19,7 @@ import org.springframework.util.Assert;
 
 import com.cspinformatique.kubik.server.domain.dilicom.model.Reference;
 import com.cspinformatique.kubik.server.domain.dilicom.service.DilicomImageService;
+import com.cspinformatique.kubik.server.domain.dilicom.service.ReferenceNotificationService;
 import com.cspinformatique.kubik.server.domain.kos.service.KosNotificationService;
 import com.cspinformatique.kubik.server.domain.product.repository.ProductRepository;
 import com.cspinformatique.kubik.server.domain.product.service.ProductImageService;
@@ -33,6 +35,7 @@ import com.cspinformatique.kubik.server.domain.sales.service.CustomerCreditDetai
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceDetailService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.InventoryCountService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
+import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingDiffService;
 import com.cspinformatique.kubik.server.model.kos.KosNotification.Action;
 import com.cspinformatique.kubik.server.model.kos.KosNotification.Type;
 import com.cspinformatique.kubik.server.model.product.AvailabilityCode;
@@ -40,6 +43,7 @@ import com.cspinformatique.kubik.server.model.product.BarcodeType;
 import com.cspinformatique.kubik.server.model.product.Category;
 import com.cspinformatique.kubik.server.model.product.PriceType;
 import com.cspinformatique.kubik.server.model.product.Product;
+import com.cspinformatique.kubik.server.model.product.ProductDoubles;
 import com.cspinformatique.kubik.server.model.product.ProductType;
 import com.cspinformatique.kubik.server.model.product.ReturnType;
 import com.cspinformatique.kubik.server.model.product.Supplier;
@@ -58,52 +62,58 @@ public class ProductServiceImpl implements ProductService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceImpl.class);
 
 	@Resource
-	private KosNotificationService kosNotificationService;
+	KosNotificationService kosNotificationService;
 
 	@Resource
-	private CustomerCreditDetailService customerCreditDetailService;
+	CustomerCreditDetailService customerCreditDetailService;
 
 	@Resource
-	private DilicomImageService dilicomImageService;
+	DilicomImageService dilicomImageService;
 
 	@Resource
-	private InventoryCountService inventoryCountService;
+	InventoryCountService inventoryCountService;
 
 	@Resource
-	private InvoiceDetailService invoiceDetailService;
+	InvoiceDetailService invoiceDetailService;
 
 	@Resource
-	private ProductImageService productImageService;
+	ProductImageService productImageService;
 
 	@Resource
-	private ProductInventoryService productInventoryService;
+	ProductInventoryService productInventoryService;
 
 	@Resource
-	private ProductRepository productRepository;
+	ProductRepository productRepository;
 
 	@Resource
-	private PurchaseOrderDetailService purchaseOrderDetailService;
+	PurchaseOrderDetailService purchaseOrderDetailService;
 
 	@Resource
-	private PurchaseOrderService purchaseOrderService;
+	PurchaseOrderService purchaseOrderService;
 
 	@Resource
-	private PurchaseSessionDetailService purchaseSessionDetailService;
+	PurchaseSessionDetailService purchaseSessionDetailService;
 
 	@Resource
-	private ReceptionDetailService receptionDetailService;
+	ReceptionDetailService receptionDetailService;
 
 	@Resource
-	private RestockService restockService;
+	ReferenceNotificationService referenceNotificationService;
 
 	@Resource
-	private RmaDetailService rmaDetailService;
+	RestockService restockService;
 
 	@Resource
-	private SupplierService supplierService;
+	RmaDetailService rmaDetailService;
 
 	@Resource
-	private Environment env;
+	StocktakingDiffService stocktakingDiffService;
+
+	@Resource
+	SupplierService supplierService;
+
+	@Resource
+	Environment env;
 
 	@Override
 	public Product buildProductFromReference(Reference reference) {
@@ -173,11 +183,6 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public List<Product> findByCategory(Category category) {
-		return productRepository.findByCategory(category);
-	}
-
-	@Override
 	public List<Integer> findAllIds() {
 		return productRepository.findAllIds();
 	}
@@ -191,6 +196,18 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		return productPage;
+	}
+
+	@Override
+	public List<ProductDoubles> findAllProductDoubles() {
+		return productRepository.findAllProductDoubles().stream()
+				.map(ean13 -> new ProductDoubles(ean13, productRepository.findByEan13Doubles(ean13)))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Product> findByCategory(Category category) {
+		return productRepository.findByCategory(category);
 	}
 
 	@Override
@@ -210,6 +227,10 @@ public class ProductServiceImpl implements ProductService {
 
 			throw runtimeEx;
 		}
+	}
+
+	public List<Product> findByEan13Doubles(String ean13) {
+		return productRepository.findByEan13Doubles(ean13);
 	}
 
 	@Override
@@ -313,6 +334,10 @@ public class ProductServiceImpl implements ProductService {
 
 			inventoryCountService.save(inventoryCount);
 		}
+
+		stocktakingDiffService.findByProduct(sourceProduct).forEach(stocktakingDiffService::delete);
+
+		referenceNotificationService.findByProduct(sourceProduct).ifPresent(referenceNotificationService::delete);
 
 		productInventoryService.deleteByProduct(sourceProduct);
 

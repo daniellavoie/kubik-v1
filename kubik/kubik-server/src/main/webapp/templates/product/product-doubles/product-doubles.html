@@ -1,0 +1,64 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+
+	<head>
+		<title>La Dimension Fantastique - Produits Doublons</title>
+		
+		<link th:replace="util/import :: head" />
+<!-- 		<link rel="stylesheet" type="text/css" th:href="@{/css/warehouse/stocktakings.css}" /> -->
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div class="container text-center" ng-app="Kubik" ng-cloak="" ng-controller="ProductDoublesCtrl as productDoublesCtrl">
+			<div class="row">
+				<h1 class="col-sm-12">Produits Doublons</h1>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-12">
+					<button 
+						class="btn btn-default"
+						ng-click="productDoublesCtrl.mergeProducts()" 
+						ng-disabled="productDoublesCtrl.selectedProductId == undefined"
+					>Fusionner</button>
+				</div>
+			</div>
+			
+			<div class="row">
+				<table class="col-sm-12 table table-border">
+					<thead>
+						<tr>
+							<th>Ean13</th>
+							<th>Produit</th>
+							<th>Prix TTC</th>
+							<th>Taxe</th>
+							<th>Cible</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr ng-repeat="product in productDoublesCtrl.productDoubles.products">
+							<td>{{product.ean13}}</td>
+							<td><a href="#" ng-click="productDoublesCtrl.openProductCard($event, product)">{{product.standardLabel}}</a></td>
+							<td>{{product.priceTaxIn | currency : '&euro;'}}</td>
+							<td>{{product.tvaRate1}}</td>
+							<td><input type="radio" name="target" ng-model="productDoublesCtrl.selectedProductId" ng-value="product.id" /></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		
+			<div th:replace="product/products-modal :: products-modal"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/product/product-doubles/product-doubles-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/product/product-doubles/product-doubles-service.js}"></script>
+	</body>
+</html>

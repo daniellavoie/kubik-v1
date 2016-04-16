@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import com.cspinformatique.kubik.server.domain.dilicom.model.Reference;
 import com.cspinformatique.kubik.server.model.product.Category;
 import com.cspinformatique.kubik.server.model.product.Product;
+import com.cspinformatique.kubik.server.model.product.ProductDoubles;
 import com.cspinformatique.kubik.server.model.product.Supplier;
 
 public interface ProductService {
@@ -19,11 +20,15 @@ public interface ProductService {
 	
 	List<Integer> findAllIds();
 	
+	List<ProductDoubles> findAllProductDoubles();
+	
 	Product findByEan13(String ean13);
+	
+	List<Product> findByCategory(Category category);
 	
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
 
-	List<Product> findByCategory(Category category);
+	List<Product> findByEan13Doubles(String ean13);
 	
 	Iterable<Product> findBySupplier(Supplier supplier);
 	

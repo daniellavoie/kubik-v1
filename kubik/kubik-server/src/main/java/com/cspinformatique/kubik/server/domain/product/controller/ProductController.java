@@ -254,9 +254,10 @@ public class ProductController {
 		}
 	}
 
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@RequestMapping(value = "/{productId}", params = { "targetProductId", "mergeProduct" })
 	public void mergeProducts(@PathVariable int productId, @RequestParam int targetProductId) {
-		productService.mergeProduct(this.findOne(productId), this.findOne(targetProductId));
+		productService.mergeProduct(findOne(productId), this.findOne(targetProductId));
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)

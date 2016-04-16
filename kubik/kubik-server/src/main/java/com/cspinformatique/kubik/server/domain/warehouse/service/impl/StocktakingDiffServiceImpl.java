@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.server.domain.warehouse.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +10,7 @@ import com.cspinformatique.kubik.server.domain.warehouse.repository.StocktakingD
 import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingDiffService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingProductService;
 import com.cspinformatique.kubik.server.model.warehouse.Stocktaking.Status;
+import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.warehouse.StocktakingDiff;
 import com.cspinformatique.kubik.server.model.warehouse.StocktakingProduct;
 
@@ -19,8 +22,18 @@ public class StocktakingDiffServiceImpl implements StocktakingDiffService {
 	@Resource
 	StocktakingProductService stocktakingProductService;
 
+	@Override
+	public void delete(StocktakingDiff stocktakingDiff) {
+		stocktakingDiffRepository.delete(stocktakingDiff);
+	}
+
 	private StocktakingDiff findOne(long id) {
 		return stocktakingDiffRepository.findOne(id);
+	}
+
+	@Override
+	public List<StocktakingDiff> findByProduct(Product product) {
+		return stocktakingDiffRepository.findByProduct(product);
 	}
 
 	@Override

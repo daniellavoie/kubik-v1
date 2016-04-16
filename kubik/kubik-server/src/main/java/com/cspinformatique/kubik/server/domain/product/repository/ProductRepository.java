@@ -11,17 +11,19 @@ import com.cspinformatique.kubik.server.model.product.Category;
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.product.Supplier;
 
-public interface ProductRepository extends
-		PagingAndSortingRepository<Product, Integer> {
+public interface ProductRepository extends PagingAndSortingRepository<Product, Integer> {
 	int countByCategory(Category category);
-	
+
 	int countByImagesValidated(boolean imagesValidated);
-	
+
 	@Query("SELECT id FROM Product")
 	List<Integer> findAllIds();
-	
+
+	@Query("SELECT ean13 FROM Product GROUP BY ean13 HAVING count(1) > 1")
+	List<String> findAllProductDoubles();
+
 	List<Product> findByCategory(Category category);
-	
+
 	@Query("SELECT id FROM Product WHERE dilicomReference = ?1")
 	List<Integer> findIdByDilicomReference(boolean dilicomReference);
 
@@ -29,8 +31,11 @@ public interface ProductRepository extends
 
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
 
+	@Query("SELECT product FROM Product product WHERE ean13 = ?1")
+	List<Product> findByEan13Doubles(String ean13);
+
 	Iterable<Product> findBySupplier(Supplier supplier);
-	
+
 	@Query("SELECT product FROM Product product WHERE LENGTH(ean13) < 12")
 	List<Product> findInvalidEan13();
 
@@ -42,7 +47,7 @@ public interface ProductRepository extends
 
 	@Query("SELECT product FROM Product product WHERE category is null ORDER BY RAND()")
 	Page<Product> findRandomWithoutCategory(Pageable pageable);
-	
+
 	@Query("SELECT product FROM Product product WHERE ean13 LIKE ?1 OR extendedLabel LIKE ?1 OR publisher LIKE ?1 OR collection LIKE ?1 OR author LIKE ?1 OR isbn LIKE ?1")
 	Page<Product> search(String query, Pageable pageable);
 }

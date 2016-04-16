@@ -1,5 +1,7 @@
 package com.cspinformatique.kubik.server.domain.dilicom.repository.jpa;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +14,7 @@ public interface ReferenceNotificationRepository extends
 		JpaRepository<ReferenceNotification, Integer> {
 	Long countByStatus(Status status);
 	
-	ReferenceNotification findByProduct(Product product);
+	Optional<ReferenceNotification> findByProduct(Product product);
 	
 	Page<ReferenceNotification> findByStatus(Status status, Pageable pageable);
 }
