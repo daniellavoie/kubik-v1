@@ -18,6 +18,8 @@ public interface StocktakingProductRepository extends JpaRepository<StocktakingP
 
 	Optional<StocktakingProduct> findByProductAndCategory(Product product, StocktakingCategory category);
 
+	List<StocktakingProduct> findByProduct(Product product);
+	
 	@Query("SELECT stocktakingProduct FROM StocktakingProduct stocktakingProduct WHERE stocktakingProduct.product = ?1 AND stocktakingProduct.category.stocktaking = ?2")
 	List<StocktakingProduct> findByProductAndStocktaking(Product product, Stocktaking stocktaking);
 

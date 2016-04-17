@@ -12,7 +12,11 @@ public interface StocktakingProductService {
 	int countCategoriesWithProduct(int productId, long categoryId);
 
 	void delete(long id);
+	
+	void delete(StocktakingProduct stocktakingProduct);
 
+	List<StocktakingProduct> findByProduct(Product product);
+	
 	List<StocktakingProduct> findByProductAndStocktakingStatus(Product product, Status status);
 
 	StocktakingProduct updateQuantity(long id, double quantity);

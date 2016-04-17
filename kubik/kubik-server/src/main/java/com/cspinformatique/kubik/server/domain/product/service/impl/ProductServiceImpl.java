@@ -36,6 +36,7 @@ import com.cspinformatique.kubik.server.domain.sales.service.InvoiceDetailServic
 import com.cspinformatique.kubik.server.domain.warehouse.service.InventoryCountService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingDiffService;
+import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingProductService;
 import com.cspinformatique.kubik.server.model.kos.KosNotification.Action;
 import com.cspinformatique.kubik.server.model.kos.KosNotification.Type;
 import com.cspinformatique.kubik.server.model.product.AvailabilityCode;
@@ -108,6 +109,9 @@ public class ProductServiceImpl implements ProductService {
 
 	@Resource
 	StocktakingDiffService stocktakingDiffService;
+
+	@Resource
+	StocktakingProductService stocktakingProductService;
 
 	@Resource
 	SupplierService supplierService;
@@ -336,6 +340,8 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		stocktakingDiffService.findByProduct(sourceProduct).forEach(stocktakingDiffService::delete);
+
+		stocktakingProductService.findByProduct(sourceProduct).forEach(stocktakingProductService::delete);
 
 		referenceNotificationService.findByProduct(sourceProduct).ifPresent(referenceNotificationService::delete);
 

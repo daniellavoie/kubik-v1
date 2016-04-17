@@ -72,6 +72,16 @@ public class StocktakingProductServiceImpl implements StocktakingProductService 
 	public void delete(long id) {
 		stocktakingProductRepository.delete(id);
 	}
+	
+	@Override
+	public void delete(StocktakingProduct stocktakingProduct) {
+		stocktakingProductRepository.delete(stocktakingProduct);
+	}
+	
+	@Override
+	public List<StocktakingProduct> findByProduct(Product product) {
+		return stocktakingProductRepository.findByProduct(product);
+	}
 
 	@Override
 	public List<StocktakingProduct> findByProductAndStocktakingStatus(Product product, Status status) {
