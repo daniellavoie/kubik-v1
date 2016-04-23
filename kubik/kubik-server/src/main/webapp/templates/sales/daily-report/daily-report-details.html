@@ -26,6 +26,7 @@
 							<th>Ventes</th>
 							<th>Ventes HT</th>	
 							<th>Ventes TTC</th>
+							<th>Panier moyen</th>
 						</tr>
 					</thead>
 					
@@ -34,7 +35,7 @@
 							<td>{{dailyReportDetailsCtrl.dailyReport.date | date : "dd/MM/yyyy"}}</td>
 							<td>{{dailyReportDetailsCtrl.dailyReport.salesCount}}</td>
 							<td>{{dailyReportDetailsCtrl.dailyReport.salesAmountTaxOut | currency : '&euro;'}}</td>
-							<td>{{dailyReportDetailsCtrl.dailyReport.salesAmountTaxIn | currency : '&euro;'}}</td>
+							<td>{{dailyReportDetailsCtrl.dailyReport.averageSale | currency : '&euro;'}}</td>
 						</tr>
 					</tbody>
 				</table>

@@ -22,6 +22,7 @@ public class DailyReport {
 	private int returnCount;
 	private double salesAmountTaxIn;
 	private double salesAmountTaxOut;
+	private double averageSale;
 	private List<SalesByPaymentMethod> salesByPaymentMethods;
 	
 	public DailyReport(){
@@ -29,7 +30,7 @@ public class DailyReport {
 	}
 
 	public DailyReport(int id, Date date, List<Invoice> invoices, int salesCount, int returnCount,
-			double salesAmountTaxIn, double salesAmountTaxOut,
+			double salesAmountTaxIn, double salesAmountTaxOut, double averageSale,
 			List<SalesByPaymentMethod> salesByPaymentMethods) {
 		this.id = id;
 		this.date = date;
@@ -38,6 +39,7 @@ public class DailyReport {
 		this.returnCount = returnCount;
 		this.salesAmountTaxIn = salesAmountTaxIn;
 		this.salesAmountTaxOut = salesAmountTaxOut;
+		this.averageSale = averageSale;
 		this.salesByPaymentMethods = salesByPaymentMethods;
 	}
 
@@ -94,6 +96,14 @@ public class DailyReport {
 
 	public double getSalesAmountTaxOut() {
 		return salesAmountTaxOut;
+	}
+
+	public double getAverageSale() {
+		return averageSale;
+	}
+
+	public void setAverageSale(double averageSale) {
+		this.averageSale = averageSale;
 	}
 
 	public void setSalesAmountTaxOut(double salesAmountTaxOut) {

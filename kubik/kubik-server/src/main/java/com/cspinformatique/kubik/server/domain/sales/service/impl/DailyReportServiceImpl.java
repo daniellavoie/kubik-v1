@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.math3.util.Precision;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
 import org.joda.time.LocalDate;
@@ -45,8 +46,7 @@ public class DailyReportServiceImpl implements DailyReportService {
 	}
 
 	private DailyReport findLastDailyReport() {
-		Page<DailyReport> page = this.findAll(new PageRequest(0, 1,
-				Direction.DESC, "date"));
+		Page<DailyReport> page = this.findAll(new PageRequest(0, 1, Direction.DESC, "date"));
 
 		if (page.getContent().size() == 0) {
 			return null;
@@ -87,66 +87,53 @@ public class DailyReportServiceImpl implements DailyReportService {
 
 			for (Payment payment : invoice.getPayments()) {
 				SalesByPaymentMethod salesByPaymentMethod = paymentsMap
-						.get(PaymentMethod.Types.valueOf(payment
-								.getPaymentMethod().getType()));
+						.get(PaymentMethod.Types.valueOf(payment.getPaymentMethod().getType()));
 
 				if (salesByPaymentMethod == null) {
-					salesByPaymentMethod = new SalesByPaymentMethod(null,
-							payment.getPaymentMethod(), 0, 0d);
+					salesByPaymentMethod = new SalesByPaymentMethod(null, payment.getPaymentMethod(), 0, 0d);
 
-					paymentsMap.put(
-							PaymentMethod.Types.valueOf(payment
-									.getPaymentMethod().getType().toString()),
+					paymentsMap.put(PaymentMethod.Types.valueOf(payment.getPaymentMethod().getType().toString()),
 							salesByPaymentMethod);
 				}
 
-				salesByPaymentMethod.setSalesCount(salesByPaymentMethod
-						.getSalesCount() + 1);
-				salesByPaymentMethod.setPaymentsAmount(salesByPaymentMethod
-						.getPaymentsAmount() + payment.getAmount());
+				salesByPaymentMethod.setSalesCount(salesByPaymentMethod.getSalesCount() + 1);
+				salesByPaymentMethod.setPaymentsAmount(salesByPaymentMethod.getPaymentsAmount() + payment.getAmount());
 
-				if (payment.getPaymentMethod().getType()
-						.equals(PaymentMethod.Types.CASH.toString())) {
-					salesByPaymentMethod.setPaymentsAmount(salesByPaymentMethod
-							.getPaymentsAmount() - invoice.getAmountReturned());
+				if (payment.getPaymentMethod().getType().equals(PaymentMethod.Types.CASH.toString())) {
+					salesByPaymentMethod
+							.setPaymentsAmount(salesByPaymentMethod.getPaymentsAmount() - invoice.getAmountReturned());
 				}
 			}
 		}
 
-		for (CustomerCredit customerCredit : this.customerCreditService
-				.findByCompleteDate(date)) {
+		for (CustomerCredit customerCredit : this.customerCreditService.findByCompleteDate(date)) {
 			++returnCount;
 
 			salesAmountTaxIn -= customerCredit.getTotalAmount();
 			salesAmountTaxOut -= customerCredit.getTotalTaxLessAmount();
 
 			SalesByPaymentMethod salesByPaymentMethod = paymentsMap
-					.get(PaymentMethod.Types.valueOf(customerCredit
-							.getPaymentMethod().getType()));
+					.get(PaymentMethod.Types.valueOf(customerCredit.getPaymentMethod().getType()));
 
 			if (salesByPaymentMethod == null) {
-				salesByPaymentMethod = new SalesByPaymentMethod(null,
-						customerCredit.getPaymentMethod(), 0, 0d);
+				salesByPaymentMethod = new SalesByPaymentMethod(null, customerCredit.getPaymentMethod(), 0, 0d);
 
-				paymentsMap.put(
-						PaymentMethod.Types.valueOf(customerCredit
-								.getPaymentMethod().getType().toString()),
+				paymentsMap.put(PaymentMethod.Types.valueOf(customerCredit.getPaymentMethod().getType().toString()),
 						salesByPaymentMethod);
 			}
 
-			salesByPaymentMethod.setSalesCount(salesByPaymentMethod
-					.getSalesCount() - 1);
-			salesByPaymentMethod.setPaymentsAmount(salesByPaymentMethod
-					.getPaymentsAmount() - customerCredit.getTotalAmount());
+			salesByPaymentMethod.setSalesCount(salesByPaymentMethod.getSalesCount() - 1);
+			salesByPaymentMethod
+					.setPaymentsAmount(salesByPaymentMethod.getPaymentsAmount() - customerCredit.getTotalAmount());
 		}
 
 		dailyReport.setSalesCount(salesCount);
 		dailyReport.setReturnCount(returnCount);
 		dailyReport.setSalesAmountTaxIn(salesAmountTaxIn);
 		dailyReport.setSalesAmountTaxOut(salesAmountTaxOut);
-		dailyReport
-				.setSalesByPaymentMethods(new ArrayList<SalesByPaymentMethod>(
-						paymentsMap.values()));
+		dailyReport.setSalesByPaymentMethods(new ArrayList<SalesByPaymentMethod>(paymentsMap.values()));
+		if (salesCount != 0)
+			dailyReport.setAverageSale(Precision.round(salesAmountTaxIn / salesCount, 2));
 
 		this.dailyReportRepository.save(dailyReport);
 	}
@@ -165,14 +152,10 @@ public class DailyReportServiceImpl implements DailyReportService {
 			 * Stops the generation if the last computed date equals the last
 			 * generated daily report or the first invoice ever paid.
 			 */
-			if ((lastDailyReport != null && DateTimeComparator
-					.getDateOnlyInstance().compare(
-							LocalDate.fromDateFields(lastDailyReport.getDate())
-									.toDateTimeAtStartOfDay(), date) == 0)
+			if ((lastDailyReport != null && DateTimeComparator.getDateOnlyInstance()
+					.compare(LocalDate.fromDateFields(lastDailyReport.getDate()).toDateTimeAtStartOfDay(), date) == 0)
 					|| DateTimeComparator.getDateOnlyInstance().compare(
-							LocalDate
-									.fromDateFields(firstInvoice.getPaidDate())
-									.toDateTimeAtStartOfDay(), date) == 0) {
+							LocalDate.fromDateFields(firstInvoice.getPaidDate()).toDateTimeAtStartOfDay(), date) == 0) {
 				completed = true;
 			}
 
