@@ -1,0 +1,32 @@
+version : '2'
+services:
+  kubik-web:
+    image: fteychene/kubik
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://kubik-db:3306/kubik?useUnicode=yes&characterEncoding=UTF-8
+      - SPRING_DATASOURCE_PASSWORD=1QAZXsw2
+      - SPRING_DATASOURCE_USERNAME=kubik
+      - KOS_NOTIFICATION_ENABLED=false
+      - KUBIK_DILICOM_ENABLED=false
+    depends_on:
+      - kubik-db
+      - kubik-es
+    ports:
+      - "8080:8080"
+    volumes: 
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+  kubik-db:
+    image: tutum/mysql
+    environment:
+      - MYSQL_PASS=1QAZXsw2
+      - MYSQL_USER=kubik
+      - ON_CREATE_DB=kubik
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+  kubik-es:
+    image: elasticsearch:2.2.0
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
