@@ -10,7 +10,6 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.apache.commons.math3.util.Precision;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,20 +22,19 @@ import com.cspinformatique.kubik.server.domain.purchase.repository.PurchaseOrder
 import com.cspinformatique.kubik.server.domain.purchase.service.PurchaseOrderDetailService;
 import com.cspinformatique.kubik.server.domain.purchase.service.PurchaseOrderService;
 import com.cspinformatique.kubik.server.domain.purchase.service.ReceptionService;
-import com.cspinformatique.kubik.server.model.dilicom.DilicomOrder;
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.product.Supplier;
 import com.cspinformatique.kubik.server.model.purchase.DeliveryDateType;
 import com.cspinformatique.kubik.server.model.purchase.DiscountType;
 import com.cspinformatique.kubik.server.model.purchase.PurchaseOrder;
+import com.cspinformatique.kubik.server.model.purchase.PurchaseOrder.Status;
 import com.cspinformatique.kubik.server.model.purchase.PurchaseOrderDetail;
 import com.cspinformatique.kubik.server.model.purchase.Reception;
 import com.cspinformatique.kubik.server.model.purchase.ReceptionDetail;
 import com.cspinformatique.kubik.server.model.purchase.ShippingPackage;
-import com.cspinformatique.kubik.server.model.purchase.PurchaseOrder.Status;
 
 @Service
-public class PurchaseOrderServiceImpl implements PurchaseOrderService, InitializingBean {
+public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	@Autowired
 	private ProductService productService;
@@ -54,20 +52,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService, Initializ
 
 	public PurchaseOrderServiceImpl() {
 		this.dateFormat = new SimpleDateFormat("yy");
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		for (long purchaseOrderId : this.purchaseOrderRepository.findIdsWithDilicomOrders()) {
-			PurchaseOrder purchaseOrder = this.findOne(purchaseOrderId);
-
-			DilicomOrder dilicomOrder = new DilicomOrder(0, purchaseOrder, new Date(), new Date(), new Date(),
-					new Date(), DilicomOrder.Status.SHIPPED, null, null, null);
-
-			purchaseOrder.setDilicomOrder(dilicomOrder);
-
-			this.purchaseOrderRepository.save(purchaseOrder);
-		}
 	}
 
 	private void calculateAmounts(PurchaseOrder purchaseOrder) {
