@@ -163,8 +163,6 @@
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-functions</artifactId>
 			<version>6.0.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/jasperreports-functions-6.0.0.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
