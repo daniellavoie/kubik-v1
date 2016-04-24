@@ -68,6 +68,7 @@ public class InventoryCountServiceImpl implements InventoryCountService {
 	public InventoryCount save(InventoryCount inventoryCount) {
 		inventoryCount = inventoryCountRepository.save(inventoryCount);
 
+		inventoryCount.setDateCounted(new Date());
 		productInventoryService.updateInventory(inventoryCount.getProduct());
 		stocktakingService.applyInventoryAdjustments(inventoryCount.getProduct(), inventoryCount.getQuantity());
 

@@ -41,9 +41,13 @@ public class StocktakingDiffServiceImpl implements StocktakingDiffService {
 		StocktakingDiff stocktakingDiff = findOne(id);
 
 		stocktakingDiff.setCountedQuantity(countedQuantity);
-		stocktakingDiff.setAdjustmentQuantity(
-				countedQuantity - stocktakingDiff.getProduct().getProductInventory().getQuantityOnHand()
-						- stocktakingDiff.getProduct().getProductInventory().getQuantityOnHold());
+		stocktakingDiff
+				.setAdjustmentQuantity(
+						countedQuantity
+								- (stocktakingDiff.getProduct().getProductInventory() != null
+										? stocktakingDiff.getProduct().getProductInventory().getQuantityOnHand()
+												- stocktakingDiff.getProduct().getProductInventory().getQuantityOnHold()
+										: 0));
 
 		// Update the counted quantity for the existing stocktaking product.
 		for (StocktakingProduct stocktakingProduct : stocktakingProductService
