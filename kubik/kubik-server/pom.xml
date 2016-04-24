@@ -247,4 +247,12 @@
 			<version>1.3.04</version>
 		</dependency>
 	</dependencies>
+	
+	<repositories>
+	    <repository>
+	    	<id>da-ci</id>
+	    	<name>da-ci-3rd-party</name>
+	    	<url>http://nexus.da-ci.cspinformatique.com/content/repositories/thirdparty</url>
+	    </repository>
+	</repositories>
 </project>
