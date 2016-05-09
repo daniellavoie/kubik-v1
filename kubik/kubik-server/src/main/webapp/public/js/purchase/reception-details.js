@@ -95,7 +95,15 @@
 		}
 		
 		function saveReception(success){
-			$http.post(".", vm.reception).success(receptionSaved);
+			vm.loading = true;
+			
+			return $http
+				.post(".", vm.reception)
+				.then(receptionSaved, null, postCompleted);
+			
+			function postCompleted(){
+				vm.loading = false;
+			}
 			
 			function receptionSaved(reception){				
 				vm.loadReception();

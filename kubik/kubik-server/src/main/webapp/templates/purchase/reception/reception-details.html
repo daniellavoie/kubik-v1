@@ -55,6 +55,7 @@
 								<td>
 									<input 
 										id="reception-detail-{{detail.id}}"	
+										ng-disabled="receptionDetailsCtrl.loading"
 										ng-if="receptionDetailsCtrl.reception.editable"
 										ng-model="receptionDetailsCtrl.reception.discount"
 										ng-click="receptionDetailsCtrl.receptionChanged($event)"
@@ -97,41 +98,46 @@
 								</td>
 								<td>
 									<input 
-										id="reception-detail-discount-{{detail.id}}"	
-										ng-if="receptionDetailsCtrl.reception.editable &amp;&amp; (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)"
-										ng-model="detail.discount"
-										ng-keyup="receptionDetailsCtrl.receptionChanged($event)"
-										ng-click="receptionDetailsCtrl.receptionChanged($event)"
-										class="quantity form-control"
-										type="number"
 										min="0" 
 										max="100" 
 										step="0.1"
+										type="number"
+										ng-model="detail.discount"
+										class="quantity form-control"
+										ng-disabled="receptionDetailsCtrl.loading"
+										id="reception-detail-discount-{{detail.id}}"	
+										ng-keyup="receptionDetailsCtrl.receptionChanged($event)"
+										ng-click="receptionDetailsCtrl.receptionChanged($event)"
+										ng-if="receptionDetailsCtrl.reception.editable &amp;&amp; (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)"
 									/>
-									<span ng-if="!receptionDetailsCtrl.reception.editable &amp;&amp; detail.product.purchasePriceTaxOut != 0 &amp;&amp; detail.product.purchasePriceTaxOut != null" >{{detail.discount}}</span>
+									<span ng-if="!receptionDetailsCtrl.reception.editable &amp;&amp; detail.product.purchasePriceTaxOut != 0 &amp;&amp; detail.product.purchasePriceTaxOut != null" >
+										{{detail.discount}}
+									</span>
 								</td>
 								<td>{{detail.quantityToReceive}}</td>
 								<td>
 									<input 
-										id="detail-{{detail.id}}"
-										ng-if="receptionDetailsCtrl.reception.editable"
-										ng-model="detail.quantityReceived"
-										ng-click="receptionDetailsCtrl.receptionChanged($event)"
-										ng-keyup="receptionDetailsCtrl.receptionChanged($event)"
-										class="quantity form-control" 
-										type="number"
 										min="1" 
 										max="99999" 
+										type="number"
+										id="detail-{{detail.id}}"
+										class="quantity form-control" 
+										ng-model="detail.quantityReceived"
+										ng-disabled="receptionDetailsCtrl.loading"
+										ng-if="receptionDetailsCtrl.reception.editable"
+										ng-click="receptionDetailsCtrl.receptionChanged($event)"
+										ng-keyup="receptionDetailsCtrl.receptionChanged($event)"
 									/>
 									<span ng-if="!receptionDetailsCtrl.reception.editable">{{detail.quantityReceived}}</span>
 								</td>
 								<td><span title="{{detail.discountType.description}}">{{detail.discountApplied}} %</span></td>
 								<td class="unitPriceTaxOut">
 									<input
-										ng-if="receptionDetailsCtrl.reception.editable &amp;&amp;(detail.product.purchasePriceTaxOut != 0 &amp;&amp; detail.product.purchasePriceTaxOut != null)"
-										class="form-control " 
-										ng-keyup="receptionDetailsCtrl.receptionChanged($event)"
+										class="form-control"
 										ng-model="detail.unitPriceTaxOut"
+										ng-disabled="receptionDetailsCtrl.loading" 
+										ng-keyup="receptionDetailsCtrl.receptionChanged($event)"
+										ng-if="receptionDetailsCtrl.reception.editable &amp;&amp;(detail.product.purchasePriceTaxOut != 0 &amp;&amp; detail.product.purchasePriceTaxOut != null)"
 									/>
 									<span ng-if="!receptionDetailsCtrl.reception.editable || (detail.product.purchasePriceTaxOut == 0 || detail.product.purchasePriceTaxOut == null)">
 										{{detail.unitPriceTaxOut | currency : '&euro;'}}
@@ -160,8 +166,20 @@
 								<p>Etes-vous sûr de vouloir valider cette reception ?</p>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-								<button ng-click="receptionDetailsCtrl.validateReception()" type="button" class="btn btn-primary">Valider la réception</button>
+								<img ng-if="receptionDetailsCtrl.loading" src="/img/loading-small.gif" />
+									
+								<button 
+									type="button" 
+									data-dismiss="modal"
+									class="btn btn-default"
+									ng-disabled="receptionDetailsCtrl.loading" 
+								>Annuler</button>
+								<button
+									type="button" 
+									class="btn btn-primary"
+									ng-disabled="receptionDetailsCtrl.loading" 
+									ng-click="receptionDetailsCtrl.validateReception()" 
+								>Valider la réception</button>
 							</div>
 						</div>
 					</div>
