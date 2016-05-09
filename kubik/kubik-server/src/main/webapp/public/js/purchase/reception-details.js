@@ -99,7 +99,7 @@
 			
 			return $http
 				.post(".", vm.reception)
-				.then(receptionSaved, null, postCompleted);
+				.then(receptionSaved).finally(postCompleted);
 			
 			function postCompleted(){
 				vm.loading = false;
