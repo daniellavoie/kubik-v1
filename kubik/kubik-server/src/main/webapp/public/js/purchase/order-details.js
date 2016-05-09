@@ -178,7 +178,7 @@
 		}
 		
 		function saveOrder(success){
-			vm.loading=true;
+			vm.loading = true;
 			
 			angular.forEach(vm.order.details, cleanDetailCategory);
 			

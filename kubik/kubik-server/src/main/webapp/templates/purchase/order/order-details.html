@@ -187,9 +187,26 @@
 								<p>Etes-vous sûr de confirmer la commande fournisseur ?</p>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-								<button ng-click="purchaseOrderDetailsCtrl.submitOrder()" type="button" class="btn btn-success">Confirmer</button>
-								<button ng-click="purchaseOrderDetailsCtrl.submitOrderAndSendToDilicom()" type="button" class="btn btn-primary">Confirmer et envoyer à Dilicom</button>
+								<img ng-if="purchaseOrderDetailsCtrl.loading" src="/img/loading-small.gif" />				
+								<button
+									data-dismiss="modal"
+									type="button" class="btn btn-default" 
+									ng-disabled="purchaseOrderDetailsCtrl.loading" 
+								>Annuler</button>
+								<button 
+									type="button" 
+									class="btn btn-success"
+									ng-disabled="purchaseOrderDetailsCtrl.loading"
+									ng-click="purchaseOrderDetailsCtrl.submitOrder()" 
+								>Confirmer</button>
+								<button 
+									type="button" 
+									class="btn btn-primary"
+									ng-disabled="purchaseOrderDetailsCtrl.loading"
+									ng-click="purchaseOrderDetailsCtrl.submitOrderAndSendToDilicom()" 
+								>
+									<span>Confirmer et envoyer à Dilicom</span>					
+								</button>
 							</div>
 						</div>
 					</div>

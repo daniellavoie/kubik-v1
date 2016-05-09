@@ -142,7 +142,7 @@ public class Reception {
 	}
 
 	@OrderBy("id ASC")
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, mappedBy = "reception")
 	public List<ReceptionDetail> getDetails() {
 		return details;
 	}
