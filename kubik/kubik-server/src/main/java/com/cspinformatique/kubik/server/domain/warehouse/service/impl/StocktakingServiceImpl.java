@@ -260,7 +260,8 @@ public class StocktakingServiceImpl implements StocktakingService {
 				inventoryCount.setProduct(diff.getProduct());
 				inventoryCount.setReason("Prise d'inventaire #" + stocktakingId);
 				inventoryCount.setQuantity(diff.getAdjustmentQuantity());
-
+				inventoryCount.setDateCounted(stocktaking.getCreationDate());				
+				
 				inventoryCountService.save(inventoryCount);
 			}
 		}

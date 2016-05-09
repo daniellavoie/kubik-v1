@@ -158,11 +158,19 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 
 	@Override
 	public InventoryExtract generateInventoryExtraction(String separator, DecimalFormat decimalFormat) {
+		return generateInventoryExtraction(separator, decimalFormat, null);
+	}
+
+	@Override
+	public InventoryExtract generateInventoryExtraction(String separator, DecimalFormat decimalFormat, Date until) {
 		List<InventoryExtractLine> extract = new ArrayList<>();
 
 		for (Integer productId : findProductIdWithInventory()) {
 			Product product = productService.findOne(productId);
-			ProductInventory productInventory = findByProduct(product);
+
+			double quantityOnHand = until == null ? findByProduct(product).getQuantityOnHand()
+					: calculateProductOnHandUntil(product.getId(), until);
+
 			Page<ReceptionDetail> receptionDetailPage = receptionDetailService.findByProductAndReceptionStatus(product,
 					Reception.Status.CLOSED, new PageRequest(0, 1, Direction.DESC, "reception.dateReceived"));
 			BigDecimal purchasePrice = new BigDecimal(0d);
@@ -182,10 +190,9 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 				priceTaxLess = new BigDecimal(product.getPriceTaxIn()).subtract(taxAmount);
 			}
 
-			extract.add(new InventoryExtractLine(product.getEan13(), product.getExtendedLabel(),
-					productInventory.getQuantityOnHand(), purchasePrice,
-					purchasePrice.multiply(new BigDecimal(productInventory.getQuantityOnHand())), priceTaxLess,
-					priceTaxLess.multiply(new BigDecimal(productInventory.getQuantityOnHand()))));
+			extract.add(new InventoryExtractLine(product.getEan13(), product.getExtendedLabel(), quantityOnHand,
+					purchasePrice, purchasePrice.multiply(new BigDecimal(quantityOnHand)), priceTaxLess,
+					priceTaxLess.multiply(new BigDecimal(quantityOnHand))));
 		}
 
 		return new InventoryExtract(new Date(), separator, decimalFormat, extract);

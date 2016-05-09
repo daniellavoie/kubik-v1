@@ -25,6 +25,8 @@ public interface ProductInventoryService {
 	List<Integer> findProductIdWithInventory();
 
 	InventoryExtract generateInventoryExtraction(String separator, DecimalFormat decimalFormat);
+	
+	InventoryExtract generateInventoryExtraction(String separator, DecimalFormat decimalFormat, Date until);
 
 	void updateInventory(Product product);
 

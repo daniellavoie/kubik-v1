@@ -3,9 +3,11 @@ package com.cspinformatique.kubik.server.domain.warehouse.controller;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -31,14 +33,15 @@ public class ProductInventoryController {
 
 	@RequestMapping(params = { "separator", "decimalSeparator" }, produces = "text/csv; charset=utf-8")
 	public @ResponseBody InventoryExtract generateInventoryExtract(@RequestParam String separator,
-			@RequestParam String decimalSeparator) {
+			@RequestParam String decimalSeparator,
+			@RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date until) {
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 		symbols.setDecimalSeparator(decimalSeparator.toCharArray()[0]);
 
 		DecimalFormat decimalFormat = new DecimalFormat("0.00", symbols);
 		decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
 
-		return productInventoryService.generateInventoryExtraction(separator, decimalFormat);
+		return productInventoryService.generateInventoryExtraction(separator, decimalFormat, until);
 	}
 
 	@RequestMapping(produces = MediaType.TEXT_HTML_VALUE)

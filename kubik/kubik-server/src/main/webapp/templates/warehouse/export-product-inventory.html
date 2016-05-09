@@ -39,6 +39,16 @@
 						<input class="separator form-control" type="text" size="1" ng-model="exportProductInventoryCtrl.export.decimalSeparator"/>
 					</div>
 				</div>
+				
+				<div class="row">
+					<h4 class="col-sm-2 col-sm-offset-5">Jusqu'au :</h4>
+				</div>
+				
+				<div class="row text-center">
+					<div class="col-sm-2 col-sm-offset-5">
+						<input class="date form-control" ng-model="exportProductInventoryCtrl.export.until" placeholder="dd/MM/yyyy" type="text" />
+					</div>
+				</div>
 	
 				<div class="row">
 					<button ng-click="exportProductInventoryCtrl.executeExport()" class="btn btn-primary col-sm-2 col-sm-offset-5">Exporter</button>

@@ -13,8 +13,11 @@
 
 		vm.export = {
 			separator : ";",
-			decimalSeparator : ","
+			decimalSeparator : ",",
+			until : ""
 		};
+
+		$(".date").datepicker({format : 'dd/mm/yyyy'});
 		
 		function closeSeparatorAlert() {
 			vm.invalidSeparator = false;
