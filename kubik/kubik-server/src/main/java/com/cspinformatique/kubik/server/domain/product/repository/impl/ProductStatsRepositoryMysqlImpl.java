@@ -72,8 +72,6 @@ public class ProductStatsRepositoryMysqlImpl implements ProductStatsRepository {
 				+ "		JOIN\n"
 				+ "			reception_detail on reception_detail.product_id = product.id\n"
 				+ "		JOIN\n"
-				+ "			reception_details on reception_details.details_id = reception_detail.id AND reception_detail.reception_id = reception_details.reception_id\n"
-				+ "		JOIN\n"
 				+ "			reception on \n"
 				+ "				reception.id = reception_detail.reception_id AND \n"
 				+ "				reception.status = 'CLOSED' AND\n"
