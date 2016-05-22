@@ -23,7 +23,7 @@
 
 		function save(company){
 			return $http
-				.post(COMPANY_URL, company)
+				.post(COMPANY_URL + (company.id == undefined ? "/new" : ""), company)
 				.then(postSuccess);
 			
 			function postSuccess(response){

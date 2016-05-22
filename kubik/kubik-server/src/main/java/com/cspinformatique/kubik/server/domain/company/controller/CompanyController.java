@@ -1,6 +1,5 @@
 package com.cspinformatique.kubik.server.domain.company.controller;
 
-import com.sun.media.jfxmedia.Media;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -18,19 +17,18 @@ public class CompanyController {
 	@Autowired
 	private CompanyService companyService;
 
-
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Company findCompany() {
-        return this.companyService.findComapny().get();
+		return this.companyService.findComapny().get();
 	}
 
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    public String getCompanyPage(){
-        return "system/company-page";
-    }
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	public String getCompanyPage() {
+		return "system/company-page";
+	}
 
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Company save(@RequestBody Company company){
+	@RequestMapping(value = { "", "/new" }, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Company save(@RequestBody Company company) {
 		return companyService.save(company);
 	}
 }

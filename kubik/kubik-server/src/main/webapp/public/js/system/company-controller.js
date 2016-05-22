@@ -11,9 +11,6 @@
 		vm.uploadLogo = uploadLogo;
 		
 		$scope.$on("setUserExists", setUserExists);
-		
-		loadCompany()
-			.then(loadCompanySuccess);
 
 		function loadCompanySuccess(company){
 			vm.company = company;
@@ -51,6 +48,10 @@
 		
 		function setUserExists($event, userExists){
 			vm.userExists = userExists;
+			
+			if(userExists)
+				loadCompany()
+					.then(loadCompanySuccess);
 		}
 		
 		function updatePassword(){
