@@ -4,12 +4,14 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.ftp.session.DefaultFtpSessionFactory;
 
 @Configuration
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 public class DilicomFtpConfig {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DilicomFtpConfig.class);
 	

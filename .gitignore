@@ -2,7 +2,11 @@
 **.classpath
 **.project
 **.settings
+**.iml
 **/target
+**/.idea
+
+data
 
 kubik/kubik-server/test.lck
 kubik/kubik-server/test.log

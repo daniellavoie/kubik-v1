@@ -22,6 +22,5 @@
 		<module>kubik-model</module>
 		<module>kubik-server</module>
 		<module>kubik-proxy</module>
-		<module>kubik-reports</module>
 	</modules>
 </project>

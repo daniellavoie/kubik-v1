@@ -33,7 +33,7 @@
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Ean13</label>
 									<div class="col-sm-6">
-										<p class="form-control-static">{{productCardCtrl.product.ean13}}</p>
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.ean13}}</p>
 										<input ng-if="productCardCtrl.editMode &amp;&amp; productCardCtrl.product.id == null" class="form-control" ng-model="productCardCtrl.product.ean13" placeholder="Ean13" />
 									</div>
 								</div>

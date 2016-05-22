@@ -15,7 +15,7 @@
 	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
 		
-		<div class="container text-center" ng-controller="DailyReportDetailsCtrl as dailyReportDetailsCtrl">
+		<div class="container text-center" ng-cloak="" ng-controller="DailyReportDetailsCtrl as dailyReportDetailsCtrl">
 			<h1>Rapport journalier du {{dailyReportDetailsCtrl.dailyReport.date | date : "dd/MM/yyyy"}}</h1>
 
 			<div class="table-responsive">
@@ -63,7 +63,8 @@
 		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
-		
-		<script type="text/javascript" th:src="@{/js/sales/daily-report-details.js}"></script>
+
+		<script type="text/javascript" src="/js/sales/daily-report/daily-report-controller.js"></script>
+		<script type="text/javascript" src="/js/sales/daily-report/daily-report-service.js"></script>
 	</body>
 </html>

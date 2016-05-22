@@ -27,7 +27,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User save(User user) {
-		user.setPassword(this.findOne(user.getId()).getPassword());
+		if (user.getId() != null)
+			user.setPassword(this.findOne(user.getId()).getPassword());
 
 		return this.userRepository.save(user);
 	}
@@ -37,8 +38,8 @@ public class UserServiceImpl implements UserService {
 		try {
 			return userRepository.findByUsername(username);
 		} catch (EmptyResultDataAccessException emptyResultDataAccessEx) {
-			throw new UsernameNotFoundException("Username " + username
-					+ " could not be found.", emptyResultDataAccessEx);
+			throw new UsernameNotFoundException("Username " + username + " could not be found.",
+					emptyResultDataAccessEx);
 		}
 	}
 }

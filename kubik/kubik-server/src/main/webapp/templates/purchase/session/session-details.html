@@ -115,7 +115,7 @@
 									<div class="col-sm-3">
 										<button class="btn btn-success form-control" ng-click="sessionDetailsCtrl.openProductSearch()">Recherche produit</button>
 									</div>
-									<div class="col-sm-3">
+									<div class="col-sm-3" th:if="${@environment.getProperty('kubik.dilicom.enabled') == 'true'}">
 										<button class="btn btn-warning form-control" ng-click="sessionDetailsCtrl.openReferenceSearch()">Recherche Dilicom</button>
 									</div>
 								</td>
@@ -189,7 +189,12 @@
 		
 			<div th:replace="product/products-modal :: products-modal"></div>
 		
-			<div th:replace="dilicom/references-modal :: references-modal"></div>
+			<div th:if="${@environment.getProperty('kos.notification.enabled') == 'true'}">
+				<div  
+					th:replace="dilicom/references-modal :: references-modal"
+				></div>
+			</div>
+		
 		</div>
 		
 		<script th:replace="util/import :: scripts"></script>

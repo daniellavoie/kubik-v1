@@ -14,6 +14,7 @@ import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.item.file.transform.Range;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.PathResource;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,7 @@ import com.cspinformatique.kubik.server.domain.dilicom.model.ReferenceDTO;
 
 @Component
 @StepScope
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 public class DilicomReferenceReader extends
 		FlatFileItemReader<ReferenceDTO> implements InitializingBean {
 	@Value("#{jobParameters['filemame']}")

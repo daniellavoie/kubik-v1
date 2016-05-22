@@ -6,5 +6,5 @@ import com.cspinformatique.kubik.server.model.product.Supplier;
 
 public interface SupplierRepository extends
 		PagingAndSortingRepository<Supplier, Integer> {
-	public Supplier findByEan13(String ean13);
+	Supplier findByEan13(String ean13);
 }

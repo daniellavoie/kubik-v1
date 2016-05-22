@@ -4,16 +4,18 @@
 	xmlns:th="http://www.thymeleaf.org">
 
 	<head>
-		<title>La Dimension Fantastique - Accueil</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Accueil'}">Kubik - Accueil</title>
 		
 		<link th:replace="util/import :: head" />
 	</head>
 	
 	<body ng-app="Kubik">
 		<div th:include="util/menu :: menu"></div>
-		
-		<div class="container">
-			<h1>La Dimension Fantastique</h1>
+		<div 
+			ng-cloak=""
+			class="container col-xs-12 col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4" 
+		>		
+			<h1 th:text="${@environment.getProperty('kubik.company.name')}">Kubik</h1>
 		</div>
 		<script th:replace="util/import :: scripts"></script>
 	</body>

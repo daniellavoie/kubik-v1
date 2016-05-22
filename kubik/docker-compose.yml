@@ -10,7 +10,6 @@ services:
       - KUBIK_DILICOM_ENABLED=false
     depends_on:
       - kubik-db
-      - kubik-es
     ports:
       - "8080:8080"
     volumes: 
@@ -22,11 +21,6 @@ services:
       - MYSQL_PASS=1QAZXsw2
       - MYSQL_USER=kubik
       - ON_CREATE_DB=kubik
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
-  kubik-es:
-    image: elasticsearch:2.2.0
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro

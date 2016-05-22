@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRe
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = { ElasticsearchRepositoriesAutoConfiguration.class })
 public class Kubik {
-	public static void main(String args[]) {
-		SpringApplication.run(Kubik.class);
+	public static void main(String[] args) {
+		SpringApplication.run(Kubik.class, args);
 	}
 }

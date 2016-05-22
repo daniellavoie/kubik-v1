@@ -19,17 +19,25 @@
 				<h1>Images produit non validées</h1>
 			</div>
 
-			<script th:replace="product/product-images :: product-images"></script>
-			
-			<div class="pass row text-center">
-				<button class="btn btn-default" ng-click="nonValidatedProductImagesCtrl.pass()">Passer</button>
-				<button class="btn btn-primary" ng-click="nonValidatedProductImagesCtrl.validate()">Valider</button>
+			<div class="row text-center">
+				<div class="col-sm-offset-3 col-sm-6 alert alert-success" ng-if="nonValidatedProductImagesCtrl.productNotFound">
+					Aucun produit à valider.
+				</div>
+			</div>
+
+			<div ng-if="!nonValidatedProductImagesCtrl.productNotFound">
+				<div th:replace="product/product-images :: product-images"></div>
+
+				<div class="pass row text-center">
+					<button class="btn btn-default" ng-click="nonValidatedProductImagesCtrl.pass()">Passer</button>
+					<button class="btn btn-primary" ng-click="nonValidatedProductImagesCtrl.validate()">Valider</button>
+				</div>
 			</div>
 		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
 		<script type="text/javascript" th:src="@{/js/file-directive.js}"></script>
-		<script type="text/javascript" th:src="@{/js/product/upload-product-image-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/upload-file-service.js}"></script>
 		<script type="text/javascript" th:src="@{/js/product/non-validated-product-images-controller.js}"></script>
 	</body>
 </html>

@@ -18,7 +18,7 @@ import com.cspinformatique.kubik.server.domain.sales.service.DailyReportService;
 import com.cspinformatique.kubik.server.model.sales.DailyReport;
 
 @Controller
-@RequestMapping("/dailyReport")
+@RequestMapping("/daily-report")
 public class DailyReportController {
 	@Autowired
 	private DailyReportService dailyReportService;

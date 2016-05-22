@@ -5,7 +5,7 @@
 		.module("Kubik")
 		.controller("ProductImagesCtrl", ProductImagesCtrl);
 	
-	function ProductImagesCtrl(uploadProductImageService, $scope, $http, $timeout){
+	function ProductImagesCtrl(uploadFileService, $scope, $http, $timeout){
 		var vm = this;
 
 		vm.downloadingImages = false;
@@ -60,14 +60,13 @@
 		function uploadCustomImage(){
 			vm.downloadingImages = true;
 			
-			uploadProductImageService
-				.uploadProductImage(vm.image, vm.product.id, uploadCustomImageSuccess, null, uploadCustomImageCompleted);
+			var url = PRODUCT_URL + "/" + vm.product.id + "/image/custom", uploadCustomImageSuccess;
+			
+			uploadFileService.uploadFile(vm.image, url, null, null, uploadCustomImageCompleted);
 			
 			function uploadCustomImageCompleted(){
 				vm.downloadingImages = false;
-			}
-			
-			function uploadCustomImageSuccess(){
+				
 				vm.cacheKey = Math.random();
 			}
 		}

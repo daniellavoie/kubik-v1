@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.ftp.filters.FtpSimplePatternFileListFilter;
 import org.springframework.integration.ftp.inbound.FtpInboundFileSynchronizer;
@@ -44,6 +45,7 @@ import com.cspinformatique.kubik.server.model.purchase.ShippingPackage;
 import com.cspinformatique.kubik.server.model.purchase.Reception.Status;
 
 @Component
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 public class FetchReceptionsTask implements InitializingBean {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FetchReceptionsTask.class);
 

@@ -26,4 +26,8 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 		return paymentMethodRepository.findByType(type);
 	}
 
+	@Override
+	public PaymentMethod save(PaymentMethod paymentMethod) {
+		return paymentMethodRepository.save(paymentMethod);
+	}
 }

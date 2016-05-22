@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import org.apache.commons.math3.util.Precision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -119,6 +120,9 @@ public class ProductServiceImpl implements ProductService {
 	@Resource
 	Environment env;
 
+	@Value("${kubik.dilicom.enabled}")
+	private boolean dilicomEnabled;
+
 	@Override
 	public Product buildProductFromReference(Reference reference) {
 		Supplier supplier = supplierService.findByEan13(reference.getSupplierEan13());
@@ -195,8 +199,10 @@ public class ProductServiceImpl implements ProductService {
 	public Page<Product> findAll(Pageable pageable) {
 		Page<Product> productPage = productRepository.findAll(pageable);
 
-		for (Product product : productPage.getContent()) {
-			calculateImageEncryptedKey(product);
+		if (dilicomEnabled) {
+			for (Product product : productPage.getContent()) {
+				calculateImageEncryptedKey(product);
+			}
 		}
 
 		return productPage;
@@ -246,7 +252,8 @@ public class ProductServiceImpl implements ProductService {
 	public Product findOne(int id) {
 		Product product = productRepository.findOne(id);
 
-		calculateImageEncryptedKey(product);
+		if (dilicomEnabled)
+			calculateImageEncryptedKey(product);
 
 		return product;
 	}
@@ -411,8 +418,10 @@ public class ProductServiceImpl implements ProductService {
 	public Page<Product> search(String query, Pageable pageable) {
 		Page<Product> page = productRepository.search("%" + query + "%", pageable);
 
-		for (Product product : page.getContent()) {
-			calculateImageEncryptedKey(product);
+		if (dilicomEnabled) {
+			for (Product product : page.getContent()) {
+				calculateImageEncryptedKey(product);
+			}
 		}
 
 		return page;

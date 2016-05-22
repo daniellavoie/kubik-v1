@@ -7,8 +7,6 @@ ADD run.sh /run.sh
 
 RUN chmod +x /*.sh
 
-VOLUME [/"data"]
-
 EXPOSE 8080
 
 CMD ["/run.sh"]

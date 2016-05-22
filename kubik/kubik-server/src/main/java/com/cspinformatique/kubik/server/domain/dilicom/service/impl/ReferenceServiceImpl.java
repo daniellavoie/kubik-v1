@@ -9,6 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,6 +23,7 @@ import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.model.product.Product;
 
 @Service
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 public class ReferenceServiceImpl implements ReferenceService {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ReferenceServiceImpl.class);

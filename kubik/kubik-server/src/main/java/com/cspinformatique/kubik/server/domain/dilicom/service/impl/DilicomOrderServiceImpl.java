@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import com.cspinformatique.kubik.server.model.dilicom.DilicomOrder;
 import com.cspinformatique.kubik.server.model.dilicom.DilicomOrder.Status;
 
 @Service
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 public class DilicomOrderServiceImpl implements DilicomOrderService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DilicomOrderServiceImpl.class);
 	@Autowired

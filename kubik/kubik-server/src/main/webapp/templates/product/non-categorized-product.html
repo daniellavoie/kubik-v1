@@ -16,66 +16,75 @@
 		
 		<div ng-controller="NonCategorizedProductCtrl as nonCategorizedProductCtrl" ng-cloak="" class="container">
 			<div class="row text-center">
-				<h1>Produit non catégorisé</h1>
+				<h1 class="col-sm-12">Produit non catégorisé</h1>
 			</div>
-			
-			<div class="row">
-				<div class="col-lg-6 text-center">
-		
-					<div class="form-horizontal">
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Ean13</label>
-							<div class="col-sm-8">
-								<p class="form-control-static">{{nonCategorizedProductCtrl.product.ean13}}</p>
-							</div>
-						</div>
-						
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Titre</label>
-							<div class="col-sm-8">
-								<p class="form-control-static">{{nonCategorizedProductCtrl.product.extendedLabel}}</p>
-							</div>
-						</div>
-						
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Titre court</label>
-							<div class="col-sm-8">
-								<p class="form-control-static">{{nonCategorizedProductCtrl.product.standardLabel}}</p>
-							</div>
-						</div>
-						
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Titre caisse</label>
-							<div class="col-sm-8">
-								<p class="form-control-static">{{nonCategorizedProductCtrl.product.cashRegisterLabel}}</p>
-							</div>
-						</div>
-						
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Auteur</label>
-							<div class="col-sm-8">
-								<p class="form-control-static">{{nonCategorizedProductCtrl.product.author}}</p>
-							</div>
-						</div>
-						
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Date de publication</label>
-							<div class="col-sm-8">
-								<p class="form-control-static">{{nonCategorizedProductCtrl.product.datePublished | date}}</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			
-				<div class="col-lg-6" th:include="product/categories-standalone :: categories-standalone"></div>
-			</div>
-			
-			<div class="pass row text-center">
-				<button class="btn btn-default" ng-click="nonCategorizedProductCtrl.pass()">Passer</button>
-			</div>
+
+            <div>
+                <div class="row" ng-if="nonCategorizedProductCtrl.productNotFound">
+                    <div class="col-sm-offset-3 col-sm-6">
+                        <div class="alert alert-success text-center">
+                            Aucun produit à catégoriser.
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-if="!nonCategorizedProductCtrl.productNotFound">
+                    <div class="col-lg-6 text-center">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Ean13</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.ean13}}</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Titre</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.extendedLabel}}</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Titre court</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.standardLabel}}</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Titre caisse</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.cashRegisterLabel}}</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Auteur</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.author}}</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Date de publication</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.datePublished | date}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6" th:include="product/categories-standalone :: categories-standalone"></div>
+
+                    <div class="pass col-lg-12 text-center">
+                        <button class="btn btn-default" ng-click="nonCategorizedProductCtrl.pass()">Passer</button>
+                    </div>
+                </div>
+            </div>
 		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
-		<script type="text/javascript" th:src="@{/js/product/non-categorized-product.js}"></script>
+		<script type="text/javascript" th:src="@{/js/product/non-categorized-product-ctrl.js}"></script>
 	</body>
 </html>

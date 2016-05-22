@@ -71,6 +71,10 @@
 							<td>{{session.maxDeliveryDate | date : format : "short"}}</td>
 							<td>{{session.details.length}}</td>
 						</tr>
+						
+						<tr ng-if="sessionsCtrl.sessionsPage.content.length == 0">
+							<td colspan="6">Aucune préparation de commande.</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>

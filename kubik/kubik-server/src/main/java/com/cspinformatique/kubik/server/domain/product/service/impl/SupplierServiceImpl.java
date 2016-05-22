@@ -25,6 +25,11 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 	
 	@Override
+	public Supplier findOne(Integer id) {
+		return supplierRepository.findOne(id);
+	}
+	
+	@Override
 	public Supplier generateSupplierIfNotFound(String ean13){
 		Supplier supplier = this.findByEan13(ean13);
 		

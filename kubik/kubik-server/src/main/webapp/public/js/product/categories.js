@@ -62,7 +62,11 @@
 			$http.get(CATEGORIES_URL + "?newName").success(newCategoryNameLoaded);
 			
 			function newCategoryNameLoaded(name){
-				$http.post(CATEGORIES_URL, {name : name, rootCategory : true}).success(vm.loadCategories());
+				$http.post(CATEGORIES_URL, {name : name, rootCategory : true}).success(postSuccess);
+				
+				function postSuccess(category){
+					vm.loadCategories();
+				}
 			}
 		}
 		

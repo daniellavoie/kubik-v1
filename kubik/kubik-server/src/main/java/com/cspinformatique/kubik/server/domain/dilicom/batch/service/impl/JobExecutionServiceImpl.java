@@ -8,11 +8,13 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.server.domain.dilicom.batch.service.JobExecutionService;
 
 @Service
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 public class JobExecutionServiceImpl implements JobExecutionService {
 	
 	@Autowired JobLauncher jobLauncher;

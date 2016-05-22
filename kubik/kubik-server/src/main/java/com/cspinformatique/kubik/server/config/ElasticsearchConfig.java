@@ -2,6 +2,7 @@ package com.cspinformatique.kubik.server.config;
 
 import javax.annotation.Resource;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -13,8 +14,9 @@ import com.cspinformatique.kubik.server.elasticsearch.NodeClientUtil;
 import com.cspinformatique.kubik.server.elasticsearch.TransportClientUtil;
 
 @Configuration
-@EnableElasticsearchRepositories(basePackages="com.cspinformatique.kubik.server.domain.dilicom.repository.es")
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 @PropertySource("classpath:config/elasticsearch.properties")
+@EnableElasticsearchRepositories(basePackages="com.cspinformatique.kubik.server.domain.dilicom.repository.es")
 public class ElasticsearchConfig {
 	@Resource
 	private Environment env;

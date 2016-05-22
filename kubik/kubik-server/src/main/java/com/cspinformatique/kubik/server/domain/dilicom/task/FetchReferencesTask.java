@@ -13,6 +13,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.ftp.filters.FtpSimplePatternFileListFilter;
 import org.springframework.integration.ftp.inbound.FtpInboundFileSynchronizer;
@@ -23,6 +24,7 @@ import com.cspinformatique.kubik.server.config.BatchConfiguration;
 import com.cspinformatique.kubik.server.domain.dilicom.batch.service.JobExecutionService;
 
 @Component
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 public class FetchReferencesTask implements InitializingBean {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(FetchReferencesTask.class);

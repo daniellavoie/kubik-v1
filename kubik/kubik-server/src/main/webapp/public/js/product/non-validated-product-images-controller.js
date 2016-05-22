@@ -15,7 +15,12 @@
 			$http.get("/product?nonValidatedProductImages&random").success(loadRandomProductSuccess);
 			
 			function loadRandomProductSuccess(product){
-				vm.product = product;
+                vm.productNotFound = false;
+                
+				if(product != "")
+				    vm.product = product;
+                else
+                    vm.productNotFound = true;
 				
 				$scope.$broadcast("productImages-setProduct", product);
 			}

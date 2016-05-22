@@ -19,7 +19,7 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" th:href="@{/}">Dimension Fantastique</a>
+						<a class="navbar-brand" th:href="@{/}" th:text="${@environment.getProperty('kubik.company.name')}">Kubik</a>
 					</div>
 					<div id="navbar" class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
@@ -41,13 +41,21 @@
 							</li>
 							
 							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Ventes<span class="caret"></span></a>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Ventes
+									<span class="caret"></span>
+								</a>
 								<ul class="dropdown-menu" role="menu">
 									<li><a th:href="@{/cashRegister}" target="_self">Caisse</a></li>
-									<li><a th:href="@{/customer-order}" target="_self">Commandes web</a></li>
+									<li>
+										<a 
+											target="_self"
+											th:href="@{/customer-order}" 
+											th:if="${@environment.getProperty('kos.notification.enabled') == 'true'}" 
+										>Commandes web</a></li>
 	    							<li class="divider"></li>
 									<li><a th:href="@{/invoice}" target="_self">Factures</a></li>
-									<li><a th:href="@{/dailyReport}" target="_self">Rapports journaliers</a></li>
+									<li><a th:href="@{/daily-report}" target="_self">Rapports journaliers</a></li>
 	    							<li class="divider"></li>
 									<li><a th:href="@{/customer}" target="_self">Clients</a></li>
 									<li><a th:href="@{/customerCredit}" target="_self">Avoirs clients</a></li>
@@ -88,7 +96,7 @@
 								</ul>
 							</li>
 	
-							<li class="dropdown">
+							<li class="dropdown" th:if="${@environment.getProperty('kubik.dilicom.enabled') == 'true'}">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 									Dilicom<span class="caret"></span>
 									<span ng-cloak="" ng-if="menuCtrl.notificationCount > 0" class="glyphicon glyphicon glyphicon-exclamation-sign"></span>
@@ -104,7 +112,7 @@
 									</li>
 								</ul>
 							</li>
-	
+
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 									Magasin<span class="caret"></span>
@@ -112,6 +120,15 @@
 								<ul class="dropdown-menu" role="menu">
 									<li><a th:href="@{/productInventory}" target="_self">Inventaire</a></li>
 									<li><a th:href="@{/stocktaking}" target="_self">Prise d'inventaire</a></li>
+								</ul>
+							</li>
+
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+									Configuration<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="/company" target="_self">Entreprise</a></li>
 								</ul>
 							</li>
 						</ul>

@@ -34,7 +34,7 @@
 						>Télécharger depuis Amazon</button>
 					</div>
 					
-					<div class="col-md-4">					
+					<div class="col-md-4" th:if="${@environment.getProperty('kubik.dilicom.enabled') == 'true'}">					
 						<button
 							disabled="disabled"
 							class="form-control btn btn-default"

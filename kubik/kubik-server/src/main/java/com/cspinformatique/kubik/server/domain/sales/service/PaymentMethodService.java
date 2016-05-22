@@ -8,4 +8,6 @@ public interface PaymentMethodService {
 	PaymentMethod findOne(String id);
 	
 	PaymentMethod findByType(String type);
+	
+	PaymentMethod save(PaymentMethod paymentMethod);
 }

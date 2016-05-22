@@ -9,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 
@@ -29,7 +28,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.Region;
 import com.amazonaws.services.s3.model.S3Object;
 import com.cspinformatique.kubik.server.domain.product.exception.ImageNotFoundException;
 import com.cspinformatique.kubik.server.domain.product.exception.ImageTooSmallException;
@@ -76,14 +74,6 @@ public class ProductImageServiceImpl implements ProductImageService {
 	@Override
 	public ProductImage findByProductAndSize(Product product, ProductImageSize size) {
 		return productImageRepository.findByProductAndSize(product, size);
-	}
-
-	@PostConstruct
-	public void init() {
-		if (!amazonS3.listBuckets().stream().filter(bucket -> bucket.getName().equals(bucketName)).findAny()
-				.isPresent()) {
-			amazonS3.createBucket(bucketName, Region.EU_Ireland);
-		}
 	}
 
 	@Override

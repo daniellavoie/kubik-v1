@@ -4,11 +4,13 @@ import com.cspinformatique.kubik.server.model.product.Supplier;
 
 public interface SupplierService {
 	
-	public Iterable<Supplier> findAll();
+	Iterable<Supplier> findAll();
 	
-	public Supplier findByEan13(String ean13);
+	Supplier findByEan13(String ean13);
 	
-	public Supplier generateSupplierIfNotFound(String ean13);
+	Supplier findOne(Integer id);
 	
-	public Supplier save(Supplier supplier);
+	Supplier generateSupplierIfNotFound(String ean13);
+	
+	Supplier save(Supplier supplier);
 }

@@ -21,4 +21,9 @@ public class InvoiceStatusServiceImpl implements InvoiceStatusService {
 	public InvoiceStatus findByType(String type) {
 		return invoiceStatusRepository.findByType(type);
 	}
+	
+	@Override
+	public InvoiceStatus save(InvoiceStatus invoiceStatus) {
+		return invoiceStatusRepository.save(invoiceStatus);
+	}
 }

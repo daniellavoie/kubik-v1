@@ -7,6 +7,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,6 +19,7 @@ import com.cspinformatique.kubik.server.domain.dilicom.model.ReferenceDTO;
 
 @Configuration
 @EnableBatchProcessing
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 public class BatchConfiguration {
 	public static final String IMPORT_DILICOM_REFERENCES_JOB = "importDilicomReferencesJob";
 

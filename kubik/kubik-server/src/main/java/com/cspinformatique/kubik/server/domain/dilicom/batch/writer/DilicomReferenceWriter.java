@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import com.cspinformatique.kubik.server.domain.dilicom.model.Reference;
@@ -18,6 +19,7 @@ import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.product.Supplier;
 
 @Component
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 public class DilicomReferenceWriter implements ItemWriter<Reference> {
 	@Autowired
 	private ReferenceNotificationService referenceNotificationService;

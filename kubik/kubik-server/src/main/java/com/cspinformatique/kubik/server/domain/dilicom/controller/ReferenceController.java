@@ -1,6 +1,7 @@
 package com.cspinformatique.kubik.server.domain.dilicom.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -21,6 +22,7 @@ import com.cspinformatique.kubik.server.model.product.Product;
 
 @Controller
 @RequestMapping("/reference")
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 public class ReferenceController {
 
 	@Autowired

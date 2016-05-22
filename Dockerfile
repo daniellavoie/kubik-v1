@@ -4,8 +4,6 @@ MAINTAINER Daniel Lavoie <dlavoie@cspinformatique.com>
 
 ADD kubik/kubik-server/target/kubik.jar /kubik/kubik.jar
 
-VOLUME [/"data"]
-
 EXPOSE 8080
 
 CMD ["java", "-jar", "/kubik/kubik.jar"]

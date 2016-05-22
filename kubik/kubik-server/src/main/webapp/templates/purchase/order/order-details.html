@@ -157,10 +157,19 @@
 							<tr>
 								<td colspan="9 container">
 									<div class="col-sm-4">
-										<input ng-keyup="purchaseOrderDetailsCtrl.searchProductKeyUp($event)" ng-model="purchaseOrderDetailsCtrl.search.ean13" type="text" placeholder="Ean13" class="ean13 form-control" />
+										<input 
+											type="text" 
+											placeholder="Ean13" 
+											class="ean13 form-control"
+											ng-model="purchaseOrderDetailsCtrl.search.ean13" 
+											ng-keyup="purchaseOrderDetailsCtrl.searchProductKeyUp($event)" 
+										/>
 									</div>
 									<div class="col-sm-3">
-										<button class="btn btn-success form-control" ng-click="purchaseOrderDetailsCtrl.openProductSearch()">Recherche produit</button>
+										<button 
+											class="btn btn-success form-control" 
+											ng-click="purchaseOrderDetailsCtrl.openProductSearch()"
+										>Recherche produit</button>
 									</div>
 								</td>
 							</tr>
@@ -169,15 +178,31 @@
 				</div>
 				
 				<div ng-if="purchaseOrderDetailsCtrl.order.status == 'DRAFT'">
-					<button ng-click="purchaseOrderDetailsCtrl.confirmCancelOrder()" type="button" class="btn btn-danger">Annuler la commande</button>
-					<button ng-click="purchaseOrderDetailsCtrl.confirmSubmitOrder()" type="button" class="btn btn-default">Confirmer la commande</button>
+					<button ng-click="purchaseOrderDetailsCtrl.confirmCancelOrder()" type="button" class="btn btn-danger">
+						Annuler la commande
+					</button>
+					<button ng-click="purchaseOrderDetailsCtrl.confirmSubmitOrder()" type="button" class="btn btn-default">
+						Confirmer la commande
+					</button>
 				</div>
 				
 				<div ng-if="purchaseOrderDetailsCtrl.order.status == 'SUBMITED'">
-					<button ng-if="!purchaseOrderDetailsCtrl.order.dilicomOrder == null" ng-click="purchaseOrderDetailsCtrl.submitOrderAndSendToDilicom()" type="button" class="btn btn-default">Envoyer à Dilicom</button>
-					<a ng-if="!purchaseOrderDetailsCtrl.order.dilicomOrder != null" th:href="@{/dilicomOrder}"><button type="button" class="btn btn-default">Commandes Dilicom</button></a>
-					<button ng-click="purchaseOrderDetailsCtrl.showOrderForm()" type="button" class="btn btn-default">Bon de commande</button>
+					<button 
+						type="button" 
+						class="btn btn-default"
+						ng-disabled="purchaseOrderDetailsCtrl.loading"  
+						ng-if="!purchaseOrderDetailsCtrl.order.dilicomOrder == null" 
+						ng-click="purchaseOrderDetailsCtrl.submitOrderAndSendToDilicom()"
+						th:if="${@environment.getProperty('kubik.dilicom.enabled') == 'true'}"
+					>Envoyer à Dilicom</button>
 					
+					<a ng-if="!purchaseOrderDetailsCtrl.order.dilicomOrder != null" th:href="@{/dilicomOrder}">
+						<button type="button" class="btn btn-default">Commandes Dilicom</button>
+					</a>
+					
+					<button ng-click="purchaseOrderDetailsCtrl.showOrderForm()" type="button" class="btn btn-default">
+						Bon de commande
+					</button>					
 				</div>
 				
 				<div class="confirm-submit modal fade">
@@ -203,7 +228,8 @@
 									type="button" 
 									class="btn btn-primary"
 									ng-disabled="purchaseOrderDetailsCtrl.loading"
-									ng-click="purchaseOrderDetailsCtrl.submitOrderAndSendToDilicom()" 
+									ng-click="purchaseOrderDetailsCtrl.submitOrderAndSendToDilicom()"
+									th:if="${@environment.getProperty('kubik.dilicom.enabled') == 'true'}"
 								>
 									<span>Confirmer et envoyer à Dilicom</span>					
 								</button>

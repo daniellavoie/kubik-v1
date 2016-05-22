@@ -1,0 +1,30 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Configuration'}"></title>
+		
+		<link th:replace="util/import :: head" />
+	    <link th:href="@{/css/system/company-page.css}" rel="stylesheet" />
+	</head>
+	
+	<body class="text-center" ng-app="Kubik">
+		<div th:include="util/menu :: menu"></div>
+
+		<div ng-controller="CompanyPageCtrl as companyPageCtrl">
+			<h2 class="form-signin-heading">Configuration de l'entreprise</h2>
+
+			<div th:replace="system/company :: company"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/file-directive.js}"></script>
+		<script type="text/javascript" th:src="@{/js/upload-file-service.js}"></script>
+        <script type="text/javascript" th:src="@{/js/system/company-page-controller.js}"></script>
+        <script type="text/javascript" th:src="@{/js/system/company-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/system/company-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/system/user-service.js}"></script>
+	</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+>
+	<body>
+		<div th:fragment="company" ng-cloak="" ng-controller="CompanyCtrl as companyCtrl" class="container text-left">
+			<div class="row">
+                <div ng-if="companyCtrl.success" class="col-sm-offset-3 col-sm-6 alert alert-success" role="alert">
+                    <button type="button" class="close" ng-click="companyCtrl.success = false"><span aria-hidden="true">&times;</span></button>
+                    Configuration sauvegardé.
+                </div>
+
+                <div ng-if="companyCtrl.error" class="col-sm-offset-3 col-sm-6 alert alert-danger" role="alert">
+                    <button type="button" class="close" ng-click="companyCtrl.error = false"><span aria-hidden="true">&times;</span></button>
+                    Une erreur s'est produit lors de la sauvegarde.
+                </div>
+
+				<div class="col-sm-6">
+					<div class="panel panel-default">
+
+						<div class="panel-heading">
+							<h3 class="panel-title">Informations sur l'entreprise</h3>
+						</div>
+						
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-xs-12 form-group">
+									<label>Nom de l'entreprise</label>
+									
+									<input 
+										type="text" 
+										class="form-control" 
+										required="required" 
+										autofocus="autofocus"
+										placeholder="La Dimension Fantastique" 
+										
+										ng-model="companyCtrl.company.name"
+									/>
+								</div>
+								
+								<div class="col-xs-12 form-group">
+									<label>Siret</label>
+									
+									<input 
+										type="text" 
+										class="form-control" 
+										required="required" 
+										autofocus="autofocus"
+										placeholder="808 451 611 00012" 
+										
+										ng-model="companyCtrl.company.siret"
+									/>
+								</div>
+								
+								<div class="col-xs-12 form-group">
+									<label>Mention légale 1</label>
+									
+									<input 
+										type="text" 
+										class="form-control" 
+										required="required" 
+										autofocus="autofocus"
+										placeholder="S.A.S. au capital de 8000€"
+										
+										ng-model="companyCtrl.company.legalMention1"
+									/>
+								</div>
+								
+								<div class="col-xs-12 form-group">
+									<label>Mention légale 2</label>
+									
+									<input 
+										type="text" 
+										class="form-control" 
+										required="required" 
+										autofocus="autofocus"
+										placeholder="808 451 611 R.C.S. Paris" 
+										
+										ng-model="companyCtrl.company.legalMention2"
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-sm-6">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">Contact</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-xs-3">
+									<div class="form-group">
+										<label>Numéro</label>
+										<input type="text" class="form-control" placeholder="106" ng-model="companyCtrl.company.addressNumber" />
+									</div>
+								</div>
+								<div class="col-xs-9">
+									<div class="form-group">
+										<label>Rue</label>
+										<input type="text" class="form-control" placeholder="rue La Fayette" ng-model="companyCtrl.company.addressStreet" />
+									</div>
+								</div>
+								<div class="col-xs-3">
+									<div class="form-group">
+										<label>Code Postal</label>
+										<input type="text" class="form-control" placeholder="75010" ng-model="companyCtrl.company.addressZipCode" />
+									</div>
+								</div>
+								<div class="col-xs-9">
+									<div class="form-group">
+										<label>Ville</label>
+										<input type="text" class="form-control" placeholder="Paris" ng-model="companyCtrl.company.addressCity" />
+									</div>
+								</div>
+
+								<div class="col-xs-6 form-group">
+									<label>Téléphone</label>
+									
+									<input 
+										type="text" 
+										class="form-control" 
+										autofocus="autofocus"
+										placeholder="09 82 42 23 21" 
+										
+										ng-model="companyCtrl.company.phone"
+									/>
+								</div>
+								
+								<div class="col-xs-12 form-group">
+									<label>Site web</label>
+									
+									<input 
+										type="text" 
+										class="form-control" 
+										autofocus="autofocus"
+										placeholder="https://www.dimensionfantastique.com" 
+										
+										ng-model="companyCtrl.company.website"
+									/>
+								</div>
+
+								<div class="col-xs-12 form-group">
+									<label>Email</label>
+									
+									<input 
+										type="text" 
+										class="form-control" 
+										autofocus="autofocus"
+										placeholder="contact@dimensionfantastique.com" 
+										
+										ng-model="companyCtrl.company.email"
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-sm-6">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">Logo</h3>
+						</div>
+						<div class="panel-body">
+							<input 
+								type="file" 
+								class="form-control"
+								file-model="companyCtrl.logoFile" 
+								ng-disabled="companyCtrl.loading"
+								file-change="companyCtrl.uploadLogo()"
+							/>
+							
+							<img src="/logo" ng-if="companyCtrl.loading" />
+							<img src="/logo" ng-if="!companyCtrl.loading" />
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-sm-6" ng-if="companyCtrl.userExists != undefined &amp;&amp; !companyCtrl.userExists">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">Compte administrateur</h3>
+						</div>
+						
+						<div class="panel-body">
+							<div class="col-xs-12 form-group">
+								<label>Nom du compte</label>
+								<input 
+									type="text"
+									class="form-control" 
+									required="required"
+									placeholder="Nom du compte"
+									ng-model="companyCtrl.user.username"
+								/>
+							</div>
+							
+							<div class="col-xs-12 form-group">
+								<label>Mot de passe</label>
+								<input 
+									type="password"
+									class="form-control" 
+									required="required"
+									ng-model="companyCtrl.user.password"
+								/>
+							</div>
+							<div class="col-xs-12 form-group">
+								<label>Confirmation mot de passe</label>
+								<input 
+									type="password"
+									class="form-control" 
+									required="required"
+									ng-model="companyCtrl.user.passwordConfirmation"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-sm-6" ng-if="companyCtrl.userExists != undefined &amp;&amp; companyCtrl.userExists">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">Modification du mot de passe</h3>
+						</div>
+						
+						<div class="panel-body">
+							<div class="col-xs-12 form-group">
+								<label>Mot de passe</label>
+								<input 
+									type="password"
+									class="form-control" 
+									required="required"
+									ng-model="companyCtrl.user.password"
+								/>
+							</div>
+							<div class="col-xs-12 form-group">
+								<label>Confirmation mot de passe</label>
+								<input 
+									type="password"
+									class="form-control" 
+									required="required"
+									ng-model="companyCtrl.user.passwordConfirmation"
+								/>
+							</div>
+							
+							<div class="col-xs-4">
+								<button class="form-control btn btn-primary" ng-click="companyCtrl.updatePassword()">Mettre à jour</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-sm-offset-4 col-sm-4">
+					<button class="form-control btn btn-primary" ng-click="companyCtrl.save()">Enregistrer</button>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

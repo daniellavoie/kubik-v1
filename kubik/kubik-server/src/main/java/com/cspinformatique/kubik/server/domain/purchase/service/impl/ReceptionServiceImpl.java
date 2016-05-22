@@ -14,6 +14,7 @@ import org.apache.commons.math3.util.Precision;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +44,7 @@ import com.cspinformatique.kubik.server.model.purchase.ReceptionDetail;
 public class ReceptionServiceImpl implements ReceptionService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReceptionServiceImpl.class);
 
-	@Resource
+	@Autowired(required = false)
 	private DilicomOrderService dilicomOrderService;
 
 	@Resource
@@ -276,7 +277,8 @@ public class ReceptionServiceImpl implements ReceptionService {
 				receptionsToUpdateInventory.add(reception);
 			}
 
-			if (reception.getStatus().equals(Status.SHIPPED) && reception.getShippedDate() == null) {
+			if (dilicomOrderService != null && reception.getStatus().equals(Status.SHIPPED)
+					&& reception.getShippedDate() == null) {
 				reception.setShippedDate(new Date());
 
 				DilicomOrder dilicomOrder = reception.getPurchaseOrder().getDilicomOrder();

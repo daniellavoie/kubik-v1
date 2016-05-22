@@ -14,7 +14,7 @@
 					</div>
 					
 					<div class="modal-body">
-						<div class="text-center">
+						<div class="text-center" th:if="${@environment.getProperty('kubik.dilicom.enabled') == 'true'}">
 							<img src="http://images1.centprod.com/{{referenceCardCtrl.company.ean13}}/{{referenceCardCtrl.reference.imageEncryptedKey}}-cover-medium.jpg" />
 						</div>
 					

@@ -27,11 +27,13 @@
 		}
 		
 		function loadSessions(){
-			var params = {	status : vm.user.preferences.purchaseSession.status, 
-							page : vm.page,
-							resultPerPage : vm.resultPerPage,
-							sortBy : vm.sortBy,
-							direction : vm.direction};
+			var params = {	page : vm.page,
+					resultPerPage : vm.resultPerPage,
+					sortBy : vm.sortBy,
+					direction : vm.direction};
+	
+			if(vm.user.preferences != undefined && vm.user.preferences.purchaseSession != undefined)
+				params.status = vm.user.preferences.purchaseSession.status;
 
 			$http.get("purchaseSession?" + $.param(params)).success(function(sessionsPage){
 				vm.sessionsPage = sessionsPage;

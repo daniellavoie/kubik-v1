@@ -1,6 +1,7 @@
 package com.cspinformatique.kubik.server.domain.dilicom.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -16,22 +17,22 @@ import com.cspinformatique.kubik.server.model.dilicom.DilicomOrder;
 
 @Controller
 @RequestMapping("/dilicomOrder")
+@ConditionalOnProperty(name = "kubik.dilicom.enabled")
 public class DilicomOrderController {
-	@Autowired private DilicomOrderService dilicomOrderService;
+	@Autowired
+	private DilicomOrderService dilicomOrderService;
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Page<DilicomOrder> findAll(
-			@RequestParam(required = false) String status,
-			@RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "50") Integer resultPerPage,
+	public @ResponseBody Page<DilicomOrder> findAll(@RequestParam(required = false) String status,
+			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "creationDate") String sortBy){
-		return this.dilicomOrderService.findAll(new PageRequest(page, resultPerPage,
-				direction != null ? direction : Direction.DESC, sortBy));
+			@RequestParam(defaultValue = "creationDate") String sortBy) {
+		return this.dilicomOrderService
+				.findAll(new PageRequest(page, resultPerPage, direction != null ? direction : Direction.DESC, sortBy));
 	}
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-	public String getDilicomOrdersPage(){
+	public String getDilicomOrdersPage() {
 		return "dilicom/dilicom-orders";
 	}
 }

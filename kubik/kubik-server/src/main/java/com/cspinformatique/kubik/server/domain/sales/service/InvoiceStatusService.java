@@ -6,4 +6,6 @@ public interface InvoiceStatusService {
 	InvoiceStatus findOne(String id);
 	
 	InvoiceStatus findByType(String type);
+	
+	InvoiceStatus save(InvoiceStatus invoiceStatus);
 }

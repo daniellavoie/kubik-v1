@@ -1,0 +1,32 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Accueil'}">Initialisation de Kubik</title>
+		
+		<link th:replace="util/import :: head" />
+	    <link th:href="@{/css/initialization.css}" rel="stylesheet" />
+	</head>
+	
+	<body class="text-center" ng-app="Kubik">
+		<div
+			ng-controller="InitializationCtrl as initializationCtrl" 
+			class="container"
+		>
+			<h2 class="form-signin-heading">Initialisation de Kubik</h2>
+			
+			<div th:replace="system/company :: company"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/file-directive.js}"></script>
+		<script type="text/javascript" th:src="@{/js/upload-file-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/system/company-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/system/company-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/system/user-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/initialization-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/initialization-service.js}"></script>
+	</body>
+</html>
