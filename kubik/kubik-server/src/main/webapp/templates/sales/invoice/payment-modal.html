@@ -69,10 +69,32 @@
 							</div>
 							
 							<div>
-								<button ng-click="paymentCtrl.openReceipt()" type="button" class="btn btn-default form-control" data-dismiss="modal">Voir le reçu</button>
-								<button ng-click="paymentCtrl.printReceipt()" type="button" class="btn btn-default form-control" data-dismiss="modal">Imprimer le recu</button>
-								<button ng-click="paymentCtrl.openInvoice()" type="button" class="btn btn-default form-control" data-dismiss="modal">Ouvrir la facture</button>
-								<button ng-click="paymentCtrl.closeSale()" type="button" class="btn btn-default form-control" data-dismiss="modal">Poursuivre</button>
+								<button 
+									data-dismiss="modal"
+									ng-click="paymentCtrl.openReceipt()" 
+									type="button" class="btn btn-default form-control" 
+								>Voir le reçu</button>
+								
+								<button 
+									data-dismiss="modal"
+									ng-click="paymentCtrl.printReceipt()" 
+									type="button" class="btn btn-default form-control" 
+									th:if="${@environment.getProperty('kubik.proxy.enabled') == 'true'}" 	
+								>Imprimer le recu</button>
+								
+								<button 
+									type="button" 
+									data-dismiss="modal"
+									ng-click="paymentCtrl.openInvoice()" 
+									class="btn btn-default form-control" 
+								>Ouvrir la facture</button>
+								
+								<button 
+									type="button" 
+									data-dismiss="modal"
+									ng-click="paymentCtrl.closeSale()" 
+									class="btn btn-default form-control"
+								>Poursuivre</button>
 							</div>
 						</div>
 					</div>
@@ -80,5 +102,4 @@
 			</div>
 		</div>
 	</body>
-
 </html>

@@ -226,6 +226,7 @@
 								type="button" 
 								class="btn btn-primary"
 								ng-click="invoiceDetailsCtrl.printReceipt()" 
+								th:if="${@environment.getProperty('kubik.proxy.enabled') == 'true'}" 
 							>Imprimer le reçu</button>
 							
 							<button 
