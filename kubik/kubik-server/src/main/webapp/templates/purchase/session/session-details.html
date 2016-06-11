@@ -189,7 +189,7 @@
 		
 			<div th:replace="product/products-modal :: products-modal"></div>
 		
-			<div th:if="${@environment.getProperty('kos.notification.enabled') == 'true'}">
+			<div th:if="${@environment.getProperty('kubik.dilicom.enabled') == 'true'}">
 				<div  
 					th:replace="dilicom/references-modal :: references-modal"
 				></div>

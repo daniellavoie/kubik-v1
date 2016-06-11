@@ -1,8 +1,10 @@
-FROM java:openjdk-8u77-jre-alpine
+FROM java:openjdk-8-alpine
 
 MAINTAINER Daniel Lavoie <dlavoie@cspinformatique.com>
 
 EXPOSE 8080
+
+RUN ["apk", "add", "--update", "ttf-dejavu"]
 
 CMD ["java", "-jar", "/kubik/kubik.jar"]
 

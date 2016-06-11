@@ -370,6 +370,11 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	@Transactional
 	public Product save(Product product, boolean skipKosNotification) {
+		Assert.notNull(product, "Product is undefined");
+		Assert.notNull(product.getEan13(), "Ean13 is undefined");
+		Assert.notNull(product.getSupplier(), "Supplier is undefined");
+		Assert.notNull(product.getSupplier().getEan13(), "Supplier Ean13 is undefined");
+		
 		boolean updatePurchaseOrders = false;
 		Product oldVersion = null;
 
@@ -407,7 +412,7 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		if (!skipKosNotification && product.getWeight() != null) {
-			// Create a broadleaf notification for the product.
+			// Create a kos notification for the product.
 			kosNotificationService.createNewNotification(product.getId(), Type.PRODUCT, Action.UPDATE);
 		}
 

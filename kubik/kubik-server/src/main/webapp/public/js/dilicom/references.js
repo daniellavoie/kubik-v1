@@ -8,7 +8,7 @@
 		.module("Kubik")
 		.controller("ReferenceSearchCtrl", ReferenceSearchCtrl);
 	
-	function ReferenceSearchCtrl($scope, $http, $timeout){
+	function ReferenceSearchCtrl(supplierService, $scope, $http, $timeout){
 		var vm = this;
 		
 		vm.query = "";
@@ -103,20 +103,40 @@
 				direction : vm.direction 
 			};
 			
-			$http.get(REFERENCE_URL + "?" + $.param(params)).success(function(searchResult){
-				vm.searchResult = searchResult;
+			$http
+				.get(REFERENCE_URL + "?" + $.param(params))
+				.then(searchSuccess);
+			
+			function searchSuccess(response){
+				vm.searchResult = response.data;
 
-				$timeout(function(){
-					for(var referenceIndex in searchResult.content){
-						var reference = searchResult.content[referenceIndex];
+				angular.forEach(vm.searchResult.content, onElement);
+				
+				function onElement(reference, index){
+					supplierService
+						.findByEan13(reference.supplierEan13)
+						.then(findSupplierSuccess)
+						.catch(loadDilicomImage);
+					
+					function findSupplierSuccess(supplier){
+						reference.supplierName = supplier.name;
 						
+						loadDilicomImage(reference);
+					}
+					
+	
+					$timeout(function(){
+						loadDilicomImage(reference);
+					});
+					
+					function loadDilicomImage(reference){							
 						$("#reference-image-" + reference.id).attr(
 							"src", 
 							"http://images1.centprod.com/" + vm.company.ean13 + "/" + reference.imageEncryptedKey + "-cover-thumb.jpg"
 						);
-					}					
-				});
-			});
+					}
+				}
+			}
 		};
 		
 		function sort(sortBy, direction){

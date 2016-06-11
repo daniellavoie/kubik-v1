@@ -150,6 +150,7 @@ public class Product {
 		this.id = id;
 	}
 
+	@Column(unique=true)
 	public String getEan13() {
 		return ean13;
 	}

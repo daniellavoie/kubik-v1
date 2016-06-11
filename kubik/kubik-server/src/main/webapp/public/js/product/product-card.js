@@ -214,7 +214,8 @@
 					supplier = vm.suppliers[0];
 				}
 				
-				$("#product-supplier-" + supplier.id).attr("SELECTED", "SELECTED");
+				if(supplier != null)
+					$("#product-supplier-" + supplier.id).attr("SELECTED", "SELECTED");
 				
 				$scope.$apply();
 			});
@@ -256,19 +257,31 @@
 			}
 		}
 		
-		function save(){
-			vm.product.datePublished = $(".date-published").datepicker("getDate");
-			vm.product.publishEndDate = $(".publish-end-date").datepicker("getDate");
-		
+		function save(){			
 			if(!vm.product.dilicomReference){
 				vm.product.supplier = vm.getSupplier($("select.product-supplier").val());
 			}
 			
-			$http.post(PRODUCT_URL, vm.product).success(function(product){
-				vm.product = product;
-				vm.endEditMode();
-				$scope.$emit("productSaved", product)
-			})
+			vm.productErrors = [];
+			
+			if(vm.product.ean13 == undefined || vm.product.ean13 == "")
+				vm.productErrors.push("Ean13 non renseigné.");
+			
+			if(vm.product.priceTaxIn == undefined || vm.product.priceTaxIn == "")
+				vm.productErrors.push("Prix TTC non rensigné.");
+			if(vm.product.supplier == null)
+				vm.productErrors.push("Fournisseur non renseigné.");
+				
+			if(vm.productErrors.length == 0){
+				vm.product.datePublished = $(".date-published").datepicker("getDate");
+				vm.product.publishEndDate = $(".publish-end-date").datepicker("getDate");
+				
+				$http.post(PRODUCT_URL, vm.product).success(function(product){
+					vm.product = product;
+					vm.endEditMode();
+					$scope.$emit("productSaved", product)
+				});
+			}
 		}
 	}
 })();

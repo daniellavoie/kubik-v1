@@ -34,7 +34,7 @@
 									<label class="col-sm-6 control-label">Ean13</label>
 									<div class="col-sm-6">
 										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.ean13}}</p>
-										<input ng-if="productCardCtrl.editMode &amp;&amp; productCardCtrl.product.id == null" class="form-control" ng-model="productCardCtrl.product.ean13" placeholder="Ean13" />
+										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.ean13" placeholder="Ean13" />
 									</div>
 								</div>
 								
@@ -554,29 +554,40 @@
 					</div>
 						
 					<div class="modal-footer">
-						<button
-							ng-click="productCardCtrl.cancelModify()"
-							type="button" 
-							class="cancel btn btn-danger hidden" 
-						>Annuler</button>
-						
-						<button 
-							ng-click="productCardCtrl.save()"
-							type="button" 
-							class="save btn btn-success hidden" 
-						>Enregistrer</button>
-						
-						<button 
-							ng-click="productCardCtrl.modify()"
-							type="button" 
-							class="modify btn btn-primary" 
-						>Modifier</button>
-						
-						<button
-							type="button" 
-							class="closeModal btn btn-default" 
-							data-dismiss="modal"
-						>Fermer</button>
+						<div class="row">
+							<div class="col-sm-9">
+								<div class="alert alert-danger text-center" ng-if="(productCardCtrl.productErrors != null &amp;&amp; productCardCtrl.productErrors.length != 0) || productCardCtrl.error != null">
+  									<button type="button" class="close" ng-click="productCqrdCtrl.hideErrors()"><span aria-hidden="true">&times;</span></button>
+  									<div ng-repeat="productError in productCardCtrl.productErrors">{{productError}}</div>
+  									<div ng-if="productCardCtrl.error != null">{{productCardCtrl.error}}</div>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<button
+									ng-click="productCardCtrl.cancelModify()"
+									type="button" 
+									class="cancel btn btn-danger hidden" 
+								>Annuler</button>
+								
+								<button 
+									ng-click="productCardCtrl.save()"
+									type="button" 
+									class="save btn btn-success hidden" 
+								>Enregistrer</button>
+								
+								<button 
+									ng-click="productCardCtrl.modify()"
+									type="button" 
+									class="modify btn btn-primary" 
+								>Modifier</button>
+								
+								<button
+									type="button" 
+									class="closeModal btn btn-default" 
+									data-dismiss="modal"
+								>Fermer</button>
+							</div>
+						</div>
 					</div>
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->

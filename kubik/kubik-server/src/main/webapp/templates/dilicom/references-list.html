@@ -67,6 +67,7 @@
 									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
 								</th>
 								<th>Couverture</th>
+								<th>Fournisseur</th>
 								<th>
 									&nbsp;
 								</th>
@@ -84,6 +85,7 @@
 								<td>{{reference.publisher}}</td>
 								<td>{{reference.datePublished | date}}</td>
 								<td><img id="reference-image-{{reference.id}}" class="reference-image" /></td>
+								<td>{{reference.supplierName}}</td>
 								<td>
 									<span class="glyphicon glyphicon-list-alt" ng-click="referenceSearchCtrl.openCard($event, reference)"></span>
 									<img ng-if="reference.loading" th:src="@{/img/loading-small.gif}" />
