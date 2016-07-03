@@ -9,16 +9,25 @@
 	<fileSets>
 		<fileSet>
 			<directory>target</directory>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>/distrib</outputDirectory>
 			<includes>
 				<include>kubik-proxy.jar</include>
 			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>src/assembly</directory>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>/distrib</outputDirectory>
 			<includes>
 				<include>application.properties</include>
+				<include>com.cspinformatique.kubik.proxy.plist</include>
+				<include>kubik-proxy.sh</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>src/assembly</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>osx-install.sh</include>
 			</includes>
 		</fileSet>
 	</fileSets>
