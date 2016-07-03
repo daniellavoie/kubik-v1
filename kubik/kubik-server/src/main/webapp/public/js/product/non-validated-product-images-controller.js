@@ -22,7 +22,9 @@
                 else
                     vm.productNotFound = true;
 				
-				$scope.$broadcast("productImages-setProduct", product);
+				$timeout(function(){
+					$scope.$broadcast("productImages-setProduct", product);					
+				});
 			}
 		}
 		

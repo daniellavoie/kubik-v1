@@ -14,8 +14,18 @@
 					</div>
 					
 					<div class="modal-body">
-						<div class="text-center">
+						<div class="text-center" ng-if="!productCardCtrl.editingImage">
 							<img ng-src="/product/{{productCardCtrl.product.id}}/image/MEDIUM.jpg" />
+							
+							<button class="btn btn-default pull-right" ng-click="productCardCtrl.modifyImage()">Modifier</button>
+						</div>
+						
+						<div ng-if="productCardCtrl.editingImage">
+							<div th:replace="product/product-images :: product-images"></div>
+							
+							<br/>
+							<button class="btn btn-default" ng-click="productCardCtrl.editingImage = false">Terminer</button>
+							<br/><br/>
 						</div>
 					
 						<ul class="nav nav-tabs">

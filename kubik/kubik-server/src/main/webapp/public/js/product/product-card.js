@@ -71,6 +71,7 @@
 		vm.loadProduct = loadProduct;
 		vm.loadSupplier = loadSupplier;
 		vm.modify = modify;
+		vm.modifyImage = modifyImage;
 		vm.openCard = openCard;
 		vm.openProductCategories = openProductCategories;
 		vm.save = save;
@@ -218,6 +219,14 @@
 					$("#product-supplier-" + supplier.id).attr("SELECTED", "SELECTED");
 				
 				$scope.$apply();
+			});
+		}
+		
+		function modifyImage(){
+			vm.editingImage = true;
+
+			$timeout(function(){
+				$scope.$broadcast("productImages-setProduct", vm.product);					
 			});
 		}
 		

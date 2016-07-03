@@ -20,13 +20,62 @@
 			</div>
 
 			<div class="row text-center">
-				<div class="col-sm-offset-3 col-sm-6 alert alert-success" ng-if="nonValidatedProductImagesCtrl.productNotFound">
+				<div class="col-sm-offset-3 col-sm-6 alert alert-success" ng-if="nonValidatednonValidatedProductImagesCtrl.productNotFound">
 					Aucun produit à valider.
 				</div>
 			</div>
 
-			<div ng-if="!nonValidatedProductImagesCtrl.productNotFound">
-				<div th:replace="product/product-images :: product-images"></div>
+			<div ng-if="!nonValidatednonValidatedProductImagesCtrl.productNotFound">
+				<div class="row">
+					<div class="col-sm-9">
+						<div th:replace="product/product-images :: product-images"></div>					
+					</div>
+					
+					<!--  Product details -->
+					<div class="col-sm-3">
+						<div class="form-group row">
+							<label class="col-sm-4 control-label">Ean13</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.ean13}}</p>
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label class="col-sm-4 control-label">Titre</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.extendedLabel}}</p>
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label class="col-sm-4 control-label">Titre court</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.standardLabel}}</p>
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label class="col-sm-4 control-label">Titre caisse</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.cashRegisterLabel}}</p>
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label class="col-sm-4 control-label">Auteur</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.author}}</p>
+							</div>
+						</div>
+						
+						<div class="form-group row">
+							<label class="col-sm-4 control-label">Date de publication</label>
+							<div class="col-sm-8">
+								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.datePublished | date}}</p>
+							</div>
+						</div>
+					</div>
+				</div>
 
 				<div class="pass row text-center">
 					<button class="btn btn-default" ng-click="nonValidatedProductImagesCtrl.pass()">Passer</button>

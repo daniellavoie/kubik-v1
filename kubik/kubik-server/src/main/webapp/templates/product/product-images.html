@@ -6,147 +6,97 @@
 <body>
 	<div th:fragment="product-images" class="product-images" ng-controller="ProductImagesCtrl as productImagesCtrl">
 		<div class="row">
-			<!-- Product images -->
-			<div class="col-sm-9">
-				<div class="row">
-					<div class="col-sm-3">
-						<h3>Vignette</h3>
-						<img ng-src="/product/{{productImagesCtrl.product.id}}/image/THUMB.jpg?cache={{productImagesCtrl.cacheKey}}" />
-					</div>
-					<div class="col-sm-6">
-						<h3>Fiche</h3>
-						<img ng-src="/product/{{productImagesCtrl.product.id}}/image/MEDIUM.jpg?cache={{productImagesCtrl.cacheKey}}" />
-					</div>
-				</div>
+			<div class="col-sm-3">
+				<h3>Vignette</h3>
+				<img ng-src="/product/{{productImagesCtrl.product.id}}/image/THUMB.jpg?cache={{productImagesCtrl.cacheKey}}" />
+			</div>
+			<div class="col-sm-6">
+				<h3>Fiche</h3>
+				<img ng-src="/product/{{productImagesCtrl.product.id}}/image/MEDIUM.jpg?cache={{productImagesCtrl.cacheKey}}" />
+			</div>
+		</div>
 				
-				<div class="upload-options row">
-					<div class="col-md-4">					
-						<button
-							disabled="disabled"
-							class="form-control btn btn-default"
-							ng-if="productImagesCtrl.downloadingImages"
-						>Télécharger depuis Amazon</button>
-						
-						<button
-							class="form-control btn btn-default"
-							ng-if="!productImagesCtrl.downloadingImages"
-							ng-click="productImagesCtrl.downloadImageFromAmazon()" 
-						>Télécharger depuis Amazon</button>
-					</div>
-					
-					<div class="col-md-4" th:if="${@environment.getProperty('kubik.dilicom.enabled') == 'true'}">					
-						<button
-							disabled="disabled"
-							class="form-control btn btn-default"
-							ng-if="productImagesCtrl.downloadingImages"
-						>Télécharger depuis Dilicom</button>
-						
-						<button
-							class="form-control btn btn-default"
-							ng-if="!productImagesCtrl.downloadingImages"
-							ng-click="productImagesCtrl.downloadImageFromDilicom()" 
-						>Télécharger depuis Dilicom</button>
-					</div>
-					
-					<div class="col-md-4">
-						<div 
-							class="form-control btn btn-default file" 
-							ng-if="!productImagesCtrl.downloadingImages">	
-							<span>Télécharger une image personnalisé</span>
-							<input 
-								type="file" 
-								class="btn btn-default"
-								file-model="productImagesCtrl.image" 
-								ng-if="!productImagesCtrl.downloadingImages"
-								file-change="productImagesCtrl.uploadCustomImage()"
-							/>
-						</div>
-						<div 
-							class="form-control btn btn-default file" 
-							disabled="disabled" 
-							ng-if="productImagesCtrl.downloadingImages"
-						>
-							Télécharger une image personnalisé
-						</div>
-					</div>
-				</div>
+		<div class="upload-options row">
+			<div class="col-md-4">					
+				<button
+					disabled="disabled"
+					class="form-control btn btn-default"
+					ng-if="productImagesCtrl.downloadingImages"
+				>Télécharger depuis Amazon</button>
 				
-				<div class="row">
-					<div class="col-sm-12">
-						<div class="input-group input-group-lg">
-							<span class="input-group-addon" id="sizing-addon1">Image depuis URL</span>
-							<input type="text" class="form-control" placeholder="URL" ng-model="productImagesCtrl.url" />
-							<span class="input-group-btn">
-        						<button 
-        							type="button"
-        							disabled="disabled" 
-        							class="btn btn-default" 
-        							ng-if="productImagesCtrl.url == ''" 
-        						>Télécharger</button>
-        						<button 
-        							type="button"
-        							class="btn btn-default" 
-        							ng-if="productImagesCtrl.url != ''" 
-        							ng-click="productImagesCtrl.downloadImageFromUrl()"
-        						>Télécharger</button>
-      						</span>
-						</div>
-					</div>
-				</div>
-				
-				<div class="row">
-					<div class="col-sm-12">					
-						<img 
-							ng-if="productImagesCtrl.downloadingImages"
-							th:src="@{/img/loading.gif}" 
-						/>
-					</div>
-				</div>
+				<button
+					class="form-control btn btn-default"
+					ng-if="!productImagesCtrl.downloadingImages"
+					ng-click="productImagesCtrl.downloadImageFromAmazon()" 
+				>Télécharger depuis Amazon</button>
 			</div>
 			
-			<!--  Product details -->
-			<div class="class col-sm-3">
-				<div class="form-group row">
-					<label class="col-sm-4 control-label">Ean13</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{productImagesCtrl.product.ean13}}</p>
-					</div>
-				</div>
+			<div class="col-md-4" th:if="${@environment.getProperty('kubik.dilicom.enabled') == 'true'}">					
+				<button
+					disabled="disabled"
+					class="form-control btn btn-default"
+					ng-if="productImagesCtrl.downloadingImages"
+				>Télécharger depuis Dilicom</button>
 				
-				<div class="form-group row">
-					<label class="col-sm-4 control-label">Titre</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{productImagesCtrl.product.extendedLabel}}</p>
-					</div>
+				<button
+					class="form-control btn btn-default"
+					ng-if="!productImagesCtrl.downloadingImages"
+					ng-click="productImagesCtrl.downloadImageFromDilicom()" 
+				>Télécharger depuis Dilicom</button>
+			</div>
+			
+			<div class="col-md-4">
+				<div 
+					class="form-control btn btn-default file" 
+					ng-if="!productImagesCtrl.downloadingImages">	
+					<span>Télécharger une image personnalisé</span>
+					<input 
+						type="file" 
+						class="btn btn-default"
+						file-model="productImagesCtrl.image" 
+						ng-if="!productImagesCtrl.downloadingImages"
+						file-change="productImagesCtrl.uploadCustomImage()"
+					/>
 				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-4 control-label">Titre court</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{productImagesCtrl.product.standardLabel}}</p>
-					</div>
+				<div 
+					class="form-control btn btn-default file" 
+					disabled="disabled" 
+					ng-if="productImagesCtrl.downloadingImages"
+				>
+					Télécharger une image personnalisé
 				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-4 control-label">Titre caisse</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{productImagesCtrl.product.cashRegisterLabel}}</p>
-					</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="input-group input-group-lg">
+					<span class="input-group-addon" id="sizing-addon1">Image depuis URL</span>
+					<input type="text" class="form-control" placeholder="URL" ng-model="productImagesCtrl.url" />
+					<span class="input-group-btn">
+      						<button 
+      							type="button"
+      							disabled="disabled" 
+      							class="btn btn-default" 
+      							ng-if="productImagesCtrl.url == ''" 
+      						>Télécharger</button>
+      						<button 
+      							type="button"
+      							class="btn btn-default" 
+      							ng-if="productImagesCtrl.url != ''" 
+      							ng-click="productImagesCtrl.downloadImageFromUrl()"
+      						>Télécharger</button>
+    						</span>
 				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-4 control-label">Auteur</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{productImagesCtrl.product.author}}</p>
-					</div>
-				</div>
-				
-				<div class="form-group row">
-					<label class="col-sm-4 control-label">Date de publication</label>
-					<div class="col-sm-8">
-						<p class="form-control-static">{{productImagesCtrl.product.datePublished | date}}</p>
-					</div>
-				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-12">					
+				<img 
+					ng-if="productImagesCtrl.downloadingImages"
+					th:src="@{/img/loading.gif}" 
+				/>
 			</div>
 		</div>
 	</div>
