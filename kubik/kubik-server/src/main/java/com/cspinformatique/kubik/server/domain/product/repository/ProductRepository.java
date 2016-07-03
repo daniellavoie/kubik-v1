@@ -28,6 +28,8 @@ public interface ProductRepository extends PagingAndSortingRepository<Product, I
 	List<Integer> findIdByDilicomReference(boolean dilicomReference);
 
 	Product findByEan13(String ean13);
+	
+	Product findByEan13EndsWith(String ean13);
 
 	Product findByEan13AndSupplier(String ean13, Supplier supplier);
 

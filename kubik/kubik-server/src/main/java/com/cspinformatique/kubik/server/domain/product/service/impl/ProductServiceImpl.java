@@ -222,7 +222,10 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Product findByEan13(String ean13) {
-		return productRepository.findByEan13(ean13);
+		if (ean13.length() == 10)
+			return productRepository.findByEan13EndsWith(ean13);
+		else
+			return productRepository.findByEan13(ean13);
 	}
 
 	@Override
@@ -374,7 +377,7 @@ public class ProductServiceImpl implements ProductService {
 		Assert.notNull(product.getEan13(), "Ean13 is undefined");
 		Assert.notNull(product.getSupplier(), "Supplier is undefined");
 		Assert.notNull(product.getSupplier().getEan13(), "Supplier Ean13 is undefined");
-		
+
 		boolean updatePurchaseOrders = false;
 		Product oldVersion = null;
 
