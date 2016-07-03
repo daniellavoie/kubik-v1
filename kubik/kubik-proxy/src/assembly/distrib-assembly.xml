@@ -20,7 +20,7 @@
 			<includes>
 				<include>application.properties</include>
 				<include>com.cspinformatique.kubik.proxy.plist</include>
-				<include>kubik-proxy.sh</include>
+				<include>kubik-proxy-osx.sh</include>
 			</includes>
 		</fileSet>
 		<fileSet>

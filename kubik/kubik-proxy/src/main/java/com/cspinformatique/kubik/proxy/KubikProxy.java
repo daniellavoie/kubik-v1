@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableAutoConfiguration(exclude={ThymeleafAutoConfiguration.class})
 public class KubikProxy implements EmbeddedServletContainerCustomizer {
 	public static void main(String args[]) {
-		SpringApplication.run(KubikProxy.class);
+		SpringApplication.run(KubikProxy.class, args);
 	}
 
 	@Override
