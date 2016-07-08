@@ -1,4 +1,4 @@
-package com.cspinformatique.kubik.domain.accounting.service.impl;
+package com.cspinformatique.kubik.server.domain.accounting.service.impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,12 +19,12 @@ import org.springframework.boot.test.SpringApplicationContextLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.cspinformatique.kubik.KubikTest;
+import com.cspinformatique.kubik.server.KubikServerTest;
 import com.cspinformatique.kubik.server.domain.accounting.model.Entry;
 import com.cspinformatique.kubik.server.domain.accounting.service.impl.EntryServiceImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { KubikTest.class }, loader = SpringApplicationContextLoader.class)
+@ContextConfiguration(classes = { KubikServerTest.class }, loader = SpringApplicationContextLoader.class)
 public class EntryServiceImplIT {
 	@Autowired
 	EntryServiceImpl entryServiceImpl;

@@ -29,7 +29,7 @@ import com.cspinformatique.kubik.server.model.dilicom.DilicomOrder;
 import com.cspinformatique.kubik.server.model.dilicom.DilicomOrder.Status;
 
 @Service
-@ConditionalOnProperty(name = "kubik.dilicom.enabled")
+@ConditionalOnProperty(name = "kubik.dilicom.ftp.enabled")
 public class DilicomOrderServiceImpl implements DilicomOrderService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DilicomOrderServiceImpl.class);
 	@Autowired

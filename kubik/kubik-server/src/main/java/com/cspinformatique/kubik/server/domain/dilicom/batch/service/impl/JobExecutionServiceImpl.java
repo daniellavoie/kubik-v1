@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.cspinformatique.kubik.server.domain.dilicom.batch.service.JobExecutionService;
 
 @Service
-@ConditionalOnProperty(name = "kubik.dilicom.enabled")
+@ConditionalOnProperty(name = "kubik.dilicom.ftp.enabled")
 public class JobExecutionServiceImpl implements JobExecutionService {
 	
 	@Autowired JobLauncher jobLauncher;

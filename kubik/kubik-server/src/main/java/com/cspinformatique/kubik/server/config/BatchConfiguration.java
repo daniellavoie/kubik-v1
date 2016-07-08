@@ -19,7 +19,7 @@ import com.cspinformatique.kubik.server.domain.dilicom.model.ReferenceDTO;
 
 @Configuration
 @EnableBatchProcessing
-@ConditionalOnProperty(name = "kubik.dilicom.enabled")
+@ConditionalOnProperty(name = "kubik.dilicom.ftp.enabled")
 public class BatchConfiguration {
 	public static final String IMPORT_DILICOM_REFERENCES_JOB = "importDilicomReferencesJob";
 

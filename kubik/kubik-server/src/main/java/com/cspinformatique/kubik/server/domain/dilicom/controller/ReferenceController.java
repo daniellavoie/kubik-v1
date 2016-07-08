@@ -33,19 +33,16 @@ public class ReferenceController {
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/product", params = { "ean13", "supplierEan13" })
-	public @ResponseBody Product buildProductFromReference(
-			@RequestParam String ean13, String supplierEan13) {
+	public @ResponseBody Product buildProductFromReference(@RequestParam String ean13, String supplierEan13) {
 		return this.productService
-				.buildProductFromReference(this.referenceService
-						.findByEan13AndSupplierEan13(ean13, supplierEan13));
+				.buildProductFromReference(this.referenceService.findByEan13AndSupplierEan13(ean13, supplierEan13));
 	}
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/{referenceId}", params = "createProduct")
 	public @ResponseBody Product createProduct(@PathVariable String referenceId) {
-		return this.referenceService
-				.createProductFromReference(this.referenceService
-						.findOne(referenceId));
+		return this.referenceService.createProductFromReference(this.referenceService.findOne(referenceId)
+				.orElseThrow(() -> new RuntimeException("Reference not found.")));
 	}
 
 	@RequestMapping(params = "card", produces = MediaType.TEXT_HTML_VALUE)
@@ -60,12 +57,10 @@ public class ReferenceController {
 
 	@RequestMapping(method = RequestMethod.GET, params = "search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Page<Reference> search(@RequestParam String query,
-			@RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "50") Integer resultPerPage,
+			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
 			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
-		return this.referenceService.search(query, new PageRequest(page,
-				resultPerPage, direction != null ? direction : Direction.ASC,
-				sortBy));
+		return this.referenceService.search(query,
+				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
 }

@@ -25,7 +25,7 @@ import com.cspinformatique.kubik.server.domain.dilicom.model.ReferenceDTO;
 
 @Component
 @StepScope
-@ConditionalOnProperty(name = "kubik.dilicom.enabled")
+@ConditionalOnProperty(name = "kubik.dilicom.ftp.enabled")
 public class DilicomReferenceReader extends
 		FlatFileItemReader<ReferenceDTO> implements InitializingBean {
 	@Value("#{jobParameters['filemame']}")

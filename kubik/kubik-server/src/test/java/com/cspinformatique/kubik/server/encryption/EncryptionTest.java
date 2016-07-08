@@ -1,4 +1,4 @@
-package com.cspinformatique.kukik.server.encryption;
+package com.cspinformatique.kubik.server.encryption;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;

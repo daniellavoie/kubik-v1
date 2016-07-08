@@ -1,4 +1,4 @@
-package com.cspinformatique.kubik;
+package com.cspinformatique.kubik.server;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration;
@@ -12,6 +12,6 @@ import com.cspinformatique.kubik.server.config.ReportConfig;
 @ComponentScan(basePackages = "com.cspinformatique.kubik.server", excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = ReportConfig.class) )
 @EnableAutoConfiguration(exclude = { ThymeleafAutoConfiguration.class,
 		ElasticsearchRepositoriesAutoConfiguration.class })
-public class KubikTest {
+public class KubikServerTest {
 
 }

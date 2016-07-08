@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.purchase.service.RestockService;
+import com.cspinformatique.kubik.server.domain.reporting.service.ProductSaleService;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceRepository;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceStatusRepository;
 import com.cspinformatique.kubik.server.domain.sales.service.CustomerService;
@@ -62,6 +63,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 	ProductInventoryService productInventoryService;
 
 	@Resource
+	ProductSaleService productSaleService;
+
+	@Resource
 	ProductService productService;
 
 	@Resource
@@ -71,7 +75,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 	ShippingCostLevelService shippingCostLevelService;
 
 	@Resource
-	StocktakingService stocktakingService;
+	private StocktakingService stocktakingService;
 
 	private void calculateInvoiceAmounts(Invoice invoice) {
 		int totalWeight = 0;
@@ -450,6 +454,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 			stocktakingService.applyInventoryAdjustments(detail.getProduct(), detail.getQuantity() * -1);
 			restockService.restockProduct(detail.getProduct(), detail.getQuantity());
+			productSaleService.update(invoice);
 		}
 	}
 
@@ -494,6 +499,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 						invoicesWithAlteredInventory.add(invoice);
 					}
+
 				}
 			}
 

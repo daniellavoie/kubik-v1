@@ -8,13 +8,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Category {
 	private int id;
 	private String name;
 	private boolean rootCategory;
+	private Category parentCategory;
 	private List<Category> childCategories;
 
 	public Category() {
@@ -37,8 +41,8 @@ public class Category {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
-	@Column(unique=true)
+
+	@Column(unique = true)
 	public String getName() {
 		return name;
 	}
@@ -55,7 +59,17 @@ public class Category {
 		this.rootCategory = rootCategory;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@ManyToOne
+	@JsonIgnore
+	public Category getParentCategory() {
+		return parentCategory;
+	}
+
+	public void setParentCategory(Category parentCategory) {
+		this.parentCategory = parentCategory;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "parentCategory")
 	public List<Category> getChildCategories() {
 		return childCategories;
 	}

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.cspinformatique.kubik.server.domain.dilicom.service.DilicomOrderService;
 
 @Component
-@ConditionalOnProperty(name = "kubik.dilicom.enabled")
+@ConditionalOnProperty(name = "kubik.dilicom.ftp.enabled")
 public class DilicomOrdersTask {
 	@Autowired
 	private DilicomOrderService dilicomOrderService;

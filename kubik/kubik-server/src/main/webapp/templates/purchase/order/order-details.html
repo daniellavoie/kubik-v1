@@ -193,7 +193,7 @@
 						ng-disabled="purchaseOrderDetailsCtrl.loading"  
 						ng-if="!purchaseOrderDetailsCtrl.order.dilicomOrder == null" 
 						ng-click="purchaseOrderDetailsCtrl.submitOrderAndSendToDilicom()"
-						th:if="${@environment.getProperty('kubik.dilicom.enabled') == 'true'}"
+						th:if="${@environment.getProperty('kubik.dilicom.ftp.enabled') == 'true'}"
 					>Envoyer à Dilicom</button>
 					
 					<a ng-if="!purchaseOrderDetailsCtrl.order.dilicomOrder != null" th:href="@{/dilicomOrder}">
@@ -229,7 +229,7 @@
 									class="btn btn-primary"
 									ng-disabled="purchaseOrderDetailsCtrl.loading"
 									ng-click="purchaseOrderDetailsCtrl.submitOrderAndSendToDilicom()"
-									th:if="${@environment.getProperty('kubik.dilicom.enabled') == 'true'}"
+									th:if="${@environment.getProperty('kubik.dilicom.ftp.enabled') == 'true'}"
 								>
 									<span>Confirmer et envoyer à Dilicom</span>					
 								</button>

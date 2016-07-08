@@ -17,7 +17,7 @@ import com.cspinformatique.kubik.server.model.dilicom.DilicomOrder;
 
 @Controller
 @RequestMapping("/dilicomOrder")
-@ConditionalOnProperty(name = "kubik.dilicom.enabled")
+@ConditionalOnProperty(name = "kubik.dilicom.ftp.enabled")
 public class DilicomOrderController {
 	@Autowired
 	private DilicomOrderService dilicomOrderService;

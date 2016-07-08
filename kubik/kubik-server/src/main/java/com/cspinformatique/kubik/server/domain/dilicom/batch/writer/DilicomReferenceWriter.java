@@ -19,7 +19,7 @@ import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.product.Supplier;
 
 @Component
-@ConditionalOnProperty(name = "kubik.dilicom.enabled")
+@ConditionalOnProperty(name = "kubik.dilicom.ftp.enabled")
 public class DilicomReferenceWriter implements ItemWriter<Reference> {
 	@Autowired
 	private ReferenceNotificationService referenceNotificationService;

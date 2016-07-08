@@ -1,0 +1,10 @@
+alter table company add column address_city varchar(255);
+alter table company add column address_number varchar(255);
+alter table company add column address_street varchar(255);
+alter table company add column address_zip_code varchar(255);
+alter table company add column email varchar(255);
+alter table company add column legal_mention1 varchar(255);
+alter table company add column legal_mention2 varchar(255);
+alter table company add column phone varchar(255);
+alter table company add column siret varchar(255);
+alter table company add column website varchar(255);

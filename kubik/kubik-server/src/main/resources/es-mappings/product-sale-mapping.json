@@ -1,0 +1,23 @@
+{
+    "properties": {
+      "invoiceDetailId": {
+        "type": "long"
+      },
+      "date": {
+        "type": "date"
+      },
+      "amount": {
+        "type": "double"
+      },
+      categories : {
+        "type": "string",
+        "index" : "not_analyzed"
+      },
+      "quantity": {
+        "type": "double"
+      },
+      "taxRatel": {
+        "type": "double"
+      }
+    }
+}

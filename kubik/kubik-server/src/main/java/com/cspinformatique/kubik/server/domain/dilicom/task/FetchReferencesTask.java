@@ -24,7 +24,7 @@ import com.cspinformatique.kubik.server.config.BatchConfiguration;
 import com.cspinformatique.kubik.server.domain.dilicom.batch.service.JobExecutionService;
 
 @Component
-@ConditionalOnProperty(name = "kubik.dilicom.enabled")
+@ConditionalOnProperty(name = "kubik.dilicom.ftp.enabled")
 public class FetchReferencesTask implements InitializingBean {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(FetchReferencesTask.class);

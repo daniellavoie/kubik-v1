@@ -102,7 +102,7 @@
 									<span ng-cloak="" ng-if="menuCtrl.notificationCount > 0" class="glyphicon glyphicon glyphicon-exclamation-sign"></span>
 								</a>
 								<ul class="dropdown-menu" role="menu">
-									<li><a th:href="@{/dilicomOrder}" target="_self">Commandes</a></li>
+									<li><a th:if="${@environment.getProperty('kubik.dilicom.ftp.enabled') == 'true'}" th:href="@{/dilicomOrder}" target="_self">Commandes</a></li>
 									<li><a th:href="@{/reference}" target="_self">Références</a></li>
 									<li>
 										<a th:href="@{/notification}" target="_self">

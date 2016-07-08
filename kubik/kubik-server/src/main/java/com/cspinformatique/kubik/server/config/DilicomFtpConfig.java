@@ -11,7 +11,7 @@ import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.ftp.session.DefaultFtpSessionFactory;
 
 @Configuration
-@ConditionalOnProperty(name = "kubik.dilicom.enabled")
+@ConditionalOnProperty(name = "kubik.dilicom.ftp.enabled")
 public class DilicomFtpConfig {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DilicomFtpConfig.class);
 	

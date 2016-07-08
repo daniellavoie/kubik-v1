@@ -45,7 +45,7 @@ import com.cspinformatique.kubik.server.model.purchase.ShippingPackage;
 import com.cspinformatique.kubik.server.model.purchase.Reception.Status;
 
 @Component
-@ConditionalOnProperty(name = "kubik.dilicom.enabled")
+@ConditionalOnProperty(name = "kubik.dilicom.ftp.enabled")
 public class FetchReceptionsTask implements InitializingBean {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FetchReceptionsTask.class);
 

@@ -2,178 +2,70 @@ package com.cspinformatique.kubik.server.domain.dilicom.model;
 
 import java.util.Date;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
-
-@Document(indexName = "reference")
 public class Reference {
-	@Id
 	private String id;
-	
-	@Field(type=FieldType.String)
 	private String ean13;
-	
-	@Field(type=FieldType.String)
 	private String supplierEan13;
-	
-	@Field(type=FieldType.Date)
 	private Date priceApplicationOrAvailabilityDate;
-
-	@Field(type=FieldType.String)
 	private String availability;
-
-	@Field(type=FieldType.Integer)
 	private Integer priceType;
-	
-	@Field(type=FieldType.Double)
 	private Double priceTaxIn;
-	
-	@Field(type=FieldType.Boolean)
 	private Boolean schoolbook;
-	
-	@Field(type=FieldType.Double)
 	private Double tvaRate1;
-	
-	@Field(type=FieldType.Double)
 	private Double priceTaxOut1;
-	
-	@Field(type=FieldType.Double)
 	private Double tvaRate2;
-	
-	@Field(type=FieldType.Double)
 	private Double priceTaxOut2;
-	
-	@Field(type=FieldType.Double)
 	private Double tvaRate3;
-	
-	@Field(type=FieldType.Double)
 	private Double priceTaxOut3;
-	
-	@Field(type=FieldType.Double)
 	private Integer returnType;
-	
-	@Field(type=FieldType.Boolean)
 	private Boolean availableForOrder;
-
-	@Field(type=FieldType.Date)
 	private Date datePublished;
-
-	@Field(type=FieldType.String)
 	private String productType;
-	
-	@Field(type=FieldType.Date)
 	private Date publishEndDate;
-	
-	@Field(type=FieldType.String)
 	private String standardLabel;
-
-	@Field(type=FieldType.String)
 	private String cashRegisterLabel;
-	
-	@Field(type=FieldType.Integer)
 	private Integer thickness;
-	
-	@Field(type=FieldType.Integer)
 	private Integer width;
-	
-	@Field(type=FieldType.Integer)
 	private Integer height;
-	
-	@Field(type=FieldType.Integer)
 	private Integer weight;
-
-	@Field(type=FieldType.String)
 	private String extendedLabel;
-
-	@Field(type=FieldType.String)
 	private String publisher;
-
-	@Field(type=FieldType.String)
 	private String collection;
-
-	@Field(type=FieldType.String)
 	private String author;
-
-	@Field(type=FieldType.String)
 	private String publisherPresentation;
-	
-	@Field(type=FieldType.String)
 	private String isbn;
-
-	@Field(type=FieldType.String)
 	private String supplierReference;
-
-	@Field(type=FieldType.String)
 	private String collectionReference;
-
-	@Field(type=FieldType.String)
 	private String theme;
-
-	@Field(type=FieldType.String)
 	private String publisherIsnb;
-	
-	@Field(type=FieldType.Boolean)
 	private Boolean replacingAReference;
-	
-	@Field(type=FieldType.Boolean)
 	private Boolean replacedByAReference;
-
-	@Field(type=FieldType.String)
 	private String replacesEan13;
-
-	@Field(type=FieldType.String)
 	private String replacedByEan13;
-	
-	@Field(type=FieldType.Boolean)
 	private Boolean orderableByUnit;
-
-	@Field(type=FieldType.Integer)
 	private Integer barcodeType;
-	
-	@Field(type=FieldType.Boolean)
 	private Boolean mainReference;
-	
-	@Field(type=FieldType.Boolean)
 	private Boolean secondaryReference;
-	
-	@Field(type=FieldType.Integer)
 	private Integer referencesCount;
-	
-	@Field(type=FieldType.Boolean)
 	private boolean importedInKubik;
-
 	private String imageEncryptedKey;
-	
-	@Field(type=FieldType.Date)
 	private Date creationDate;
-	
-	@Field(type=FieldType.Date)
 	private Date updateDate;
-	
-	public Reference(){
-		
+
+	public Reference() {
+
 	}
 
-	public Reference(String id, String ean13, String distributorEan13,
-			Date priceApplicationOrAvailabilityDate,
-			String availability, Integer priceType,
-			Double priceTaxIn, Boolean schoolbook, Double tvaRate1,
-			Double priceTaxOut1, Double tvaRate2, Double priceTaxOut2,
-			Double tvaRate3, Double priceTaxOut3, Integer returnType,
-			Boolean availableForOrder, Date datePublished,
-			String productType, Date publishEndDate, String standardLabel,
-			String cashRegisterLabel, Integer thickness, Integer width,
-			Integer height, Integer weight, String extendedLabel,
-			String publisher, String collection, String author,
-			String publisherPresentation, String isbn,
-			String supplierReference, String collectionReference, String theme,
-			String publisherIsnb, Boolean replacingAReference,
-			Boolean replacedByAReference, String replacesEan13,
-			String replacedByEan13, Boolean orderableByUnit,
-			Integer barcodeType, Boolean mainReference,
-			Boolean secondaryReference, Integer referencesCount, boolean importedInKubik,
+	public Reference(String id, String ean13, String distributorEan13, Date priceApplicationOrAvailabilityDate,
+			String availability, Integer priceType, Double priceTaxIn, Boolean schoolbook, Double tvaRate1,
+			Double priceTaxOut1, Double tvaRate2, Double priceTaxOut2, Double tvaRate3, Double priceTaxOut3,
+			Integer returnType, Boolean availableForOrder, Date datePublished, String productType, Date publishEndDate,
+			String standardLabel, String cashRegisterLabel, Integer thickness, Integer width, Integer height,
+			Integer weight, String extendedLabel, String publisher, String collection, String author,
+			String publisherPresentation, String isbn, String supplierReference, String collectionReference,
+			String theme, String publisherIsnb, Boolean replacingAReference, Boolean replacedByAReference,
+			String replacesEan13, String replacedByEan13, Boolean orderableByUnit, Integer barcodeType,
+			Boolean mainReference, Boolean secondaryReference, Integer referencesCount, boolean importedInKubik,
 			String imageEncryptedKey, Date creationDate, Date updateDate) {
 		this.id = id;
 		this.ean13 = ean13;
@@ -224,7 +116,7 @@ public class Reference {
 		this.creationDate = creationDate;
 		this.updateDate = updateDate;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -253,8 +145,7 @@ public class Reference {
 		return priceApplicationOrAvailabilityDate;
 	}
 
-	public void setPriceApplicationOrAvailabilityDate(
-			Date priceApplicationOrAvailabilityDate) {
+	public void setPriceApplicationOrAvailabilityDate(Date priceApplicationOrAvailabilityDate) {
 		this.priceApplicationOrAvailabilityDate = priceApplicationOrAvailabilityDate;
 	}
 

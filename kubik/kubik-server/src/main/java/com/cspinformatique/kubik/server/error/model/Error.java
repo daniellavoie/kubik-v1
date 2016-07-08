@@ -75,6 +75,7 @@ public class Error {
 		this.agent = agent;
 	}
 
+	@Lob
 	public String getMessage() {
 		return message;
 	}
