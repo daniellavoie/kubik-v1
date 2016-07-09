@@ -55,6 +55,7 @@
 										>Commandes web</a></li>
 	    							<li class="divider"></li>
 									<li><a th:href="@{/invoice}" target="_self">Factures</a></li>
+									<li><a th:href="${@environment.getProperty('kibana.url')}" target="_blank">Rapports</a></li>
 									<li><a th:href="@{/daily-report}" target="_self">Rapports journaliers</a></li>
 	    							<li class="divider"></li>
 									<li><a th:href="@{/customer}" target="_self">Clients</a></li>
