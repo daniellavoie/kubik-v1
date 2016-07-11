@@ -265,7 +265,7 @@
 		
 		function printReceipt(){
 			invoiceService
-				.printReceipt();
+				.printReceipt(vm.invoice.id);
 		}
 		
 		function refund(){
