@@ -65,8 +65,7 @@
 									<input 
 										ng-if="!cashRegisterCtrl.loading"
 										id="detail-{{detail.id}}"
-										ng-keyup="cashRegisterCtrl.invoiceChanged($event)"
-										ng-click="cashRegisterCtrl.invoiceChanged($event)"
+										ng-blur="cashRegisterCtrl.saveInvoice()"
 										ng-model="detail.quantity"
 										class="quantity form-control" 
 										type="number"
@@ -139,8 +138,7 @@
 								ng-if="!cashRegisterCtrl.loading" 
 								class="form-control rebate-input"
 								ng-model="cashRegisterCtrl.invoice.rebatePercent" 
-								ng-keyup="cashRegisterCtrl.invoiceChanged($event)"
-								ng-click="cashRegisterCtrl.invoiceChanged($event)"
+								ng-blur="cashRegisterCtrl.saveInvoice()"
 							/>
 							<input 
 								type="number" 
