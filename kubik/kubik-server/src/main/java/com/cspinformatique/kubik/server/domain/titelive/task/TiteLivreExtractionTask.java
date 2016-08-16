@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 import com.cspinformatique.kubik.server.domain.titelive.service.TiteLiveService;
 
 @Component
-@ConditionalOnProperty(name = "titelivre.enabled")
+@ConditionalOnProperty(name = "titelive.enabled")
 public class TiteLivreExtractionTask {
 	@Autowired
 	private TiteLiveService titeLiveService;
 
 	@Scheduled(cron = "0 0 20 * * ?")
 	public void executeExtraction() {
-		titeLiveService.sendInventoryToTiteLiveServer();
+		titeLiveService.sendInventory();
 	}
 }

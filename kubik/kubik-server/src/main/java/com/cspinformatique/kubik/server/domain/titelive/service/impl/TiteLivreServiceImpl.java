@@ -52,7 +52,7 @@ public class TiteLivreServiceImpl implements TiteLiveService {
 	private String remoteFileName;
 
 	@Override
-	public void sendInventoryToTiteLiveServer() {
+	public void sendInventory() {
 		if (remoteFileName == null) {
 			remoteFileName = "." + titeliveId + "_ART.asc";
 		}
