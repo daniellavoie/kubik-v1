@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 
 import com.cspinformatique.kubik.kos.model.account.Account;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
-import com.cspinformatique.kubik.kos.model.order.CustomerOrderDetail;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder.Status;
-import com.mysema.query.types.Predicate;
+import com.cspinformatique.kubik.kos.model.order.CustomerOrderDetail;
+import com.querydsl.core.types.Predicate;
 
 public interface CustomerOrderService {
 	

@@ -11,7 +11,7 @@ import com.cspinformatique.kubik.server.model.sales.Invoice;
 import com.cspinformatique.kubik.server.model.sales.Invoice.ShippingMethod;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
-import com.mysema.query.types.Predicate;
+import com.querydsl.core.types.Predicate;
 
 public interface InvoiceService {
 	void calculateInvoiceTaxes(Invoice invoice);

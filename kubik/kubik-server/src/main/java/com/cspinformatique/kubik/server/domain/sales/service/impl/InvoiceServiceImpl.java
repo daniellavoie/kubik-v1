@@ -43,7 +43,7 @@ import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus.Types;
 import com.cspinformatique.kubik.server.model.sales.InvoiceTaxAmount;
 import com.cspinformatique.kubik.server.model.sales.Payment;
-import com.mysema.query.types.Predicate;
+import com.querydsl.core.types.Predicate;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {

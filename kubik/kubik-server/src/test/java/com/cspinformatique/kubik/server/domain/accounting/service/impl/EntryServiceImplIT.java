@@ -15,16 +15,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationContextLoader;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import com.cspinformatique.kubik.server.KubikServerTest;
+import com.cspinformatique.kubik.common.error.ErrorTestApplication;
 import com.cspinformatique.kubik.server.domain.accounting.model.Entry;
-import com.cspinformatique.kubik.server.domain.accounting.service.impl.EntryServiceImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { KubikServerTest.class }, loader = SpringApplicationContextLoader.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ErrorTestApplication.class)
 public class EntryServiceImplIT {
 	@Autowired
 	EntryServiceImpl entryServiceImpl;

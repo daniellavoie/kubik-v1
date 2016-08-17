@@ -5,14 +5,14 @@ import javax.annotation.Resource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cspinformatique.kubik.common.error.ErrorTestApplication;
 import com.cspinformatique.kubik.common.error.model.ErrorTrace;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ErrorTestApplication.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ErrorTestApplication.class)
 public class ErrorServiceImplIT {
 	@Resource
 	private ErrorTraceServiceImpl errorTraceServiceImpl;

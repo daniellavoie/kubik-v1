@@ -1,24 +1,24 @@
 package com.cspinformatique.kubik.server.domain.sales.service.impl;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.apache.commons.math3.util.Precision;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationContextLoader;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cspinformatique.kubik.server.KubikServerTest;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { KubikServerTest.class }, loader = SpringApplicationContextLoader.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, classes = KubikServerTest.class )
 public class InvoiceServiceImplIT {
-	@Autowired
+	@Resource
 	InvoiceService invoiceService;
 
 	@Test
@@ -32,7 +32,7 @@ public class InvoiceServiceImplIT {
 
 		invoiceService.calculateInvoiceTaxes(invoice);
 
-		Assert.assertTrue("Total amount for invoice 1983 was " + invoice.getTotalAmount() + " expected 44.45.",
+		Assert.assertTrue("Total amount for invoice 1983 was " + invoice.getTotalAmount() + " but expected 44.45.",
 				invoice.getTotalAmount() == 44.45d);
 		Assert.assertTrue("Total tax amount for invoice 286 should equals 2.32.",
 				Precision.round(invoice.getTotalTaxAmount(), 2) == 2.32d);

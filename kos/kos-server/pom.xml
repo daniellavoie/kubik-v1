@@ -104,9 +104,13 @@
 		<dependency>
 			<groupId>com.braintreepayments.gateway</groupId>
 			<artifactId>braintree-java</artifactId>
-		</dependency>	
+		</dependency>
 		<dependency>
-			<groupId>com.mysema.querydsl</groupId>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-jpa</artifactId>
 		</dependency>
 	    <dependency>

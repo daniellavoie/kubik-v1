@@ -29,7 +29,7 @@ import com.cspinformatique.kubik.kos.domain.order.validator.CustomerOrderValidat
 import com.cspinformatique.kubik.kos.exception.ResourceNotFoundException;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder.Status;
-import com.mysema.query.types.Predicate;
+import com.querydsl.core.types.Predicate;
 
 @Controller
 @Transactional

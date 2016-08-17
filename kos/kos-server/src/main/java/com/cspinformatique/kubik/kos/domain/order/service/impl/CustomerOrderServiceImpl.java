@@ -27,7 +27,7 @@ import com.cspinformatique.kubik.kos.model.order.CustomerOrder.ShippingMethod;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder.Status;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrderDetail;
 import com.cspinformatique.kubik.kos.model.product.Product;
-import com.mysema.query.types.Predicate;
+import com.querydsl.core.types.Predicate;
 
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {

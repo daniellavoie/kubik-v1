@@ -25,7 +25,7 @@ import com.cspinformatique.kubik.server.model.sales.Invoice;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.Payment;
 import com.cspinformatique.kubik.server.print.service.PrintService;
-import com.mysema.query.types.Predicate;
+import com.querydsl.core.types.Predicate;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
