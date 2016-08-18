@@ -59,9 +59,7 @@
 							<tr ng-repeat="detail in cashRegisterCtrl.invoice.details">
 								<td><a href="#" ng-click="cashRegisterCtrl.openProductCard($event, detail.product)">{{detail.product.ean13}} - {{detail.product.standardLabel}}</a></td>
 								<td>{{detail.unitPrice | currency : '&euro;'}}</td>
-								<td>
-									<div ng-repeat="taxAmount in cashRegisterCtrl.invoice.taxesAmounts">{{taxAmount.taxRate}}</div>
-								</td>
+								<td>{{detail.taxRate}}</td>
 								<td>
 									<input 
 										ng-if="!cashRegisterCtrl.loading"
