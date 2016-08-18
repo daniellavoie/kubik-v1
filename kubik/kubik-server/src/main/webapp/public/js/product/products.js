@@ -26,6 +26,7 @@
 		vm.productSelected = productSelected;
 		vm.sort = sort;
 		vm.search = search;
+		vm.searchQueryChanged = searchQueryChanged;
 		
 		loadCompany();
 		
@@ -117,9 +118,15 @@
 							"src", 
 							"http://images1.centprod.com/" + vm.company.ean13 + "/" + product.imageEncryptedKey + "-cover-thumb.jpg"
 						);
-					}					
+					}
 				});
 			}
 		};
+		
+		function searchQueryChanged(){
+			vm.page = 0;
+			
+			vm.search();
+		}
 	}
 })();
