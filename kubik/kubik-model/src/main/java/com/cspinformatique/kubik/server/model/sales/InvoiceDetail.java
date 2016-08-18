@@ -30,6 +30,7 @@ public class InvoiceDetail {
 	private Double totalTaxLessAmount;
 	private Double totalRebateAmount;
 	private Double taxRate;
+	private Double rebatePercent; 
 	private Double rebate;
 
 	public InvoiceDetail() {
@@ -38,7 +39,7 @@ public class InvoiceDetail {
 
 	public InvoiceDetail(Integer id, Invoice invoice, Product product, Double quantity, Double totalTaxableAmount,
 			InvoiceTaxAmount taxAmount, Double unitPrice, Double unitPriceTaxLess, Double totalAmount, Double totalTaxAmount,
-			Double totalTaxLessAmount, Double totalRebateAmount, Double taxRate, Double rebate) {
+			Double totalTaxLessAmount, Double totalRebateAmount, Double taxRate, Double rebatePercent, Double rebate) {
 		this.id = id;
 		this.invoice = invoice;
 		this.product = product;
@@ -52,6 +53,7 @@ public class InvoiceDetail {
 		this.totalTaxLessAmount = totalTaxLessAmount;
 		this.totalRebateAmount = totalRebateAmount;
 		this.taxRate = taxRate;
+		this.rebatePercent = rebatePercent;
 		this.rebate = rebate;
 	}
 
@@ -164,6 +166,14 @@ public class InvoiceDetail {
 
 	public void setTaxRate(Double taxRate) {
 		this.taxRate = taxRate;
+	}
+
+	public Double getRebatePercent() {
+		return rebatePercent;
+	}
+
+	public void setRebatePercent(Double rebatePercent) {
+		this.rebatePercent = rebatePercent;
 	}
 
 	public Double getRebate() {

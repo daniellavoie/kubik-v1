@@ -94,7 +94,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 			invoice.getDetails()
 					.add(new InvoiceDetail(null, invoice, product, (double) customerOrderDetail.getQuantityShipped(),
-							0d, null, product.getPriceTaxIn(), 0d, 0d, 0d, 0d, 0d, product.getTvaRate1(), 0d));
+							0d, null, product.getPriceTaxIn(), 0d, 0d, 0d, 0d, 0d, product.getTvaRate1(), 0d, 0d));
 		}
 
 		// Validate the transaction state.

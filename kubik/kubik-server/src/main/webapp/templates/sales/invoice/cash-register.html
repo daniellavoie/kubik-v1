@@ -50,6 +50,7 @@
 								<th>Prix TTC</th>
 								<th>Taxe</th>
 								<th>Quantité</th>
+								<th>Remise</th>
 								<th>Montant</th>
 								<th>&nbsp;</th>
 							</tr>
@@ -76,6 +77,25 @@
 										disabled="disabled"
 										ng-if="cashRegisterCtrl.loading"
 										ng-model="detail.quantity"
+										class="quantity form-control" 
+										type="number"
+									/>
+								</td>
+								<td>
+									<input 
+										ng-if="!cashRegisterCtrl.loading"
+										id="detail-rebate-{{detail.id}}"
+										ng-blur="cashRegisterCtrl.saveInvoice()"
+										ng-model="detail.rebatePercent"
+										class="quantity form-control" 
+										type="number"
+										min="1" 
+										max="99.99"
+									/>
+									<input 
+										disabled="disabled"
+										ng-if="cashRegisterCtrl.loading"
+										ng-model="detail.rebatePercent"
 										class="quantity form-control" 
 										type="number"
 									/>
