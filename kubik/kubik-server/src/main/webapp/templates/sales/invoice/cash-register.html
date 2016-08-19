@@ -87,7 +87,7 @@
 										ng-model="detail.rebatePercent"
 										class="quantity form-control" 
 										type="number"
-										min="1" 
+										min="0" 
 										max="99.99"
 									/>
 									<input 
@@ -151,6 +151,8 @@
 						<div class="input-group">
   							<span class="input-group-addon">Remise</span>
 							<input 
+							    min="0"
+							    max="99.99"
 								type="number" 
 							 	placeholder="Remise"
 								ng-if="!cashRegisterCtrl.loading" 

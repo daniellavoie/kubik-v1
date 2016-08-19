@@ -140,23 +140,29 @@
 							</td>
 							
 							<td>
-								<input 
-									ng-if="!invoiceDetailsCtrl.loading"
-									id="detail-rebate-{{detail.id}}"
-									ng-blur="invoiceDetailsCtrl.save()"
-									ng-model="detail.rebatePercent"
-									class="quantity form-control" 
-									type="number"
-									min="1" 
-									max="99.99"
-								/>
-								<input 
-									disabled="disabled"
-									ng-if="invoiceDetailsCtrl.loading"
-									ng-model="detail.rebatePercent"
-									class="quantity form-control" 
-									type="number"
-								/>
+								<span ng-if="invoiceDetailsCtrl.invoice.status.type != 'ORDER' &amp;&amp; invoiceDetailsCtrl.invoice.status.type != 'ORDER_CONFIRMED'">
+									{{detail.rebatePercent}}
+								</span>
+							    <span ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER' || invoiceDetailsCtrl.invoice.status.type == 'ORDER_CONFIRMED'">
+									<input 
+										min="0" 
+										max="99.99"
+										type="number"
+										class="quantity form-control" 
+										ng-model="detail.rebatePercent"
+										id="detail-rebate-{{detail.id}}"
+										ng-if="!invoiceDetailsCtrl.loading"
+										ng-blur="invoiceDetailsCtrl.save()"
+									/>
+									
+									<input 
+										disabled="disabled"
+										ng-if="invoiceDetailsCtrl.loading"
+										ng-model="detail.rebatePercent"
+										class="quantity form-control" 
+										type="number"
+									/>
+								</span>
 							</td>
 									
 							<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>
@@ -187,6 +193,8 @@
 							<div class="input-group">
 	 							<span class="input-group-addon">Remise</span>
 								<input 
+									min="0"
+									max="99.99"
 									type="number" 
 								 	placeholder="Remise"
 									class="form-control rebate-input"
