@@ -114,6 +114,7 @@
 							<th>Prix TTC</th>
 							<th>Taxe</th>
 							<th>Quantité</th>
+							<th>Remise</th>
 							<th>Montant</th>
 							<th>&nbsp;</th>
 						</tr>
@@ -132,12 +133,32 @@
 									type="number"
 									class="quantity form-control" 
 									ng-model="detail.quantity"
-									ng-click="invoiceDetailsCtrl.save()"
-									ng-keyup="invoiceDetailsCtrl.save()"
+									ng-blur="invoiceDetailsCtrl.save()"
 									ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER' || invoiceDetailsCtrl.invoice.status.type == 'ORDER_CONFIRMED'"
 									ng-disabled="invoiceDetailsCtrl.loading || undefined"
 								/>
-							</td>						
+							</td>
+							
+							<td>
+								<input 
+									ng-if="!invoiceDetailsCtrl.loading"
+									id="detail-rebate-{{detail.id}}"
+									ng-blur="invoiceDetailsCtrl.save()"
+									ng-model="detail.rebatePercent"
+									class="quantity form-control" 
+									type="number"
+									min="1" 
+									max="99.99"
+								/>
+								<input 
+									disabled="disabled"
+									ng-if="invoiceDetailsCtrl.loading"
+									ng-model="detail.rebatePercent"
+									class="quantity form-control" 
+									type="number"
+								/>
+							</td>
+									
 							<td>{{(detail.quantity * detail.unitPrice) | currency : '&euro;'}}</td>
 							<td>
 								<button
@@ -169,8 +190,7 @@
 									type="number" 
 								 	placeholder="Remise"
 									class="form-control rebate-input"
-									ng-keyup="invoiceDetailsCtrl.save()"
-									ng-click="invoiceDetailsCtrl.save()"
+									ng-blur="invoiceDetailsCtrl.save()"
 									ng-model="invoiceDetailsCtrl.invoice.rebatePercent"
 								/>
 								<input 
