@@ -6,7 +6,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Caisse enregistreuse</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Caisse enregistreuse'}">Kubik - Caisse enregistreuse</title>
 		
 		<link th:replace="util/import :: head" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/invoice/cash-register.css}" />

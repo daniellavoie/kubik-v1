@@ -6,7 +6,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Fournisseur</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Fournisseur'}">Kubik - Fournisseur</title>
 		
 		<link th:replace="util/import :: head" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/product/suppliers.css}" />

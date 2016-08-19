@@ -6,7 +6,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Produits Doublons</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Produits Doublons'}">Kubik - Produits Doublons</title>
 		
 		<link th:replace="util/import :: head" />
 <!-- 		<link rel="stylesheet" type="text/css" th:href="@{/css/warehouse/stocktakings.css}" /> -->

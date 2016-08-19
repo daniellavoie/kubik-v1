@@ -6,7 +6,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Détail facture</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Facture'}">Kubik - Facture</title>
 		
 		<link th:replace="util/import :: head" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/invoice/invoice.css}" />

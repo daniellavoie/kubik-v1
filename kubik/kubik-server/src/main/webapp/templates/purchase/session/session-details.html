@@ -6,7 +6,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Préparation de commande</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Préparation de commande'}">Kubik - Préparation de commande</title>
 		
 		<link th:replace="util/import :: head" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/session/session-details.css}" />
@@ -67,7 +67,7 @@
 								<td>{{detail.product.supplier.name}} - {{detail.product.supplier.ean13}}</td>
 								<td>
 									<input
-										ng-if="session.status != 'SUBMITED'" 
+										ng-if="sessionDetailsCtrl.session.status != 'SUBMITED'" 
 										ng-model="detail.quantity"
 										id="detail-{{detail.id}}"
 										ng-click="sessionDetailsCtrl.quantityChanged($event)"

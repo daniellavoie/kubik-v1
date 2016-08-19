@@ -7,7 +7,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Réception fournisseur</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Réceptions fournisseur'}">Kubik - Réceptions fournisseur</title>
 		
 		<link th:replace="util/import :: head" />
 	</head>

@@ -7,7 +7,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Export Inventaire</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Export inventaire'}">Kubik - Export inventaire</title>
 		
 		<link th:replace="util/import :: head" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/warehouse/export-product-inventory.css}" />

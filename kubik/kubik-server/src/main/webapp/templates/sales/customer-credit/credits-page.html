@@ -7,7 +7,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Avoirs clients</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Avoirs clients'}">Kubik - Avoirs clients</title>
 		
 		<link th:replace="util/import :: head" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/credits-page.css}" />

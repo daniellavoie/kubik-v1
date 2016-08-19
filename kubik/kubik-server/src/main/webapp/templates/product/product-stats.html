@@ -6,7 +6,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Statistiques produits</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Statistiques produits'}">Kubik - Statistiques produits</title>
 		
 		<link th:replace="util/import :: head" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/product/product-stats.css}" />

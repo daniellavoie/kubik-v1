@@ -6,7 +6,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Commandes fournisseur</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Commandes fournisseur'}">Kubik - Commandes fournisseur</title>
 		
 		<link th:replace="util/import :: head" />
 	</head>

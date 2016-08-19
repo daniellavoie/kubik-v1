@@ -5,7 +5,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 >
 	<head>
-		<title>La Dimension Fantastique - Références Dilicom</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Références Dilicom'}">Kubik - Références Dilicom</title>
 		
 		<link th:replace="util/import :: head" />
 	</head>

@@ -5,7 +5,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 >
 	<head>
-		<title>La Dimension Fantastique - Réapprovisionnements</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Réapprovisionnements'}">Kubik - Réapprovisionnements</title>
 		
 		<link th:replace="util/import :: head" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/restock/restocks.css}" />

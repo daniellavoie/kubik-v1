@@ -7,7 +7,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Préparation de commandes</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Préparation de commandes'}">Kubik - Préparation de commandes</title>
 		
 		<link th:replace="util/import :: head" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/purchase/session/sessions.css}" />

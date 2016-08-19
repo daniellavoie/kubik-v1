@@ -5,7 +5,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 >
 	<head>
-		<title>La Dimension Fantastique - Catégories de produits</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Catégories de produits'}">Kubik - Catégories de produits</title>
 		
 		<link th:replace="util/import :: head" />
 	</head>

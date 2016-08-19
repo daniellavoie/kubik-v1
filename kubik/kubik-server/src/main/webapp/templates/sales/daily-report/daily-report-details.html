@@ -6,7 +6,7 @@
 >
 
 	<head>
-		<title>La Dimension Fantastique - Rapport journalier</title>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Rapport journaliert'}">Kubik - Rapport journalier</title>
 		
 		<link th:replace="util/import :: head" />
 		<link rel="stylesheet" type="text/css" th:href="@{/css/sales/daily-report-details.css}" />
