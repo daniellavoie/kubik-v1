@@ -213,11 +213,19 @@
 							ng-click="invoiceDetailsCtrl.checkoutInvoice()"
 							ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER_CONFIRMED'"
 						>Encaisser</button>
+						
 						<button
 							class="btn btn-danger"
 							ng-click="invoiceDetailsCtrl.cancelInvoice()"
 							ng-if="invoiceDetailsCtrl.invoice.status.type != 'CANCELED' &amp;&amp; invoiceDetailsCtrl.invoice.status.type != 'PAID'"
 						>Annuler</button>
+							
+						<button 
+							type="button" 
+							class="btn btn-primary"
+							ng-click="invoiceDetailsCtrl.confirmInvoiceAddress()" 
+							ng-if="invoiceDetailsCtrl.invoice.status.type == 'ORDER' || invoiceDetailsCtrl.invoice.status.type == 'ORDER_CONFIRMED'"
+						>Générer le devis</button>
 						
 						<span ng-if="invoiceDetailsCtrl.invoice.status.type == 'PAID'">
 							<button 
