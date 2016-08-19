@@ -18,11 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.cspinformatique.kubik.common.error.ErrorTestApplication;
+import com.cspinformatique.kubik.server.KubikServerTest;
 import com.cspinformatique.kubik.server.domain.accounting.model.Entry;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ErrorTestApplication.class)
+@SpringBootTest(classes = KubikServerTest.class)
 public class EntryServiceImplIT {
 	@Autowired
 	EntryServiceImpl entryServiceImpl;
