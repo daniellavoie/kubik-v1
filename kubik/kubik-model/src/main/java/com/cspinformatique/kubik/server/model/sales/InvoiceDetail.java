@@ -8,14 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
-@Audited
 public class InvoiceDetail {
 	private Integer id;
 	private Invoice invoice;
@@ -78,7 +74,6 @@ public class InvoiceDetail {
 	}
 
 	@ManyToOne
-	@NotAudited
 	public Product getProduct() {
 		return product;
 	}

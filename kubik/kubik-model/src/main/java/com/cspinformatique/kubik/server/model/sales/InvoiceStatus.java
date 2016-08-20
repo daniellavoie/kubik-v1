@@ -3,10 +3,7 @@ package com.cspinformatique.kubik.server.model.sales;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import org.hibernate.envers.Audited;
-
 @Entity
-@Audited
 public class InvoiceStatus {
 	public enum Types{
 		DRAFT, ORDER, ORDER_CONFIRMED, CANCELED, PAID, REFUND

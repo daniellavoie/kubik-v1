@@ -17,15 +17,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-
 import com.cspinformatique.kubik.server.model.misc.Address;
 import com.cspinformatique.kubik.server.model.user.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Audited
 @Table(indexes = @Index(columnList = "paidDate") )
 public class Invoice {
 	public enum Source {
@@ -92,7 +88,6 @@ public class Invoice {
 	}
 
 	@ManyToOne
-	@NotAudited
 	public User getUser() {
 		return user;
 	}
@@ -111,7 +106,6 @@ public class Invoice {
 	}
 
 	@ManyToOne
-	@NotAudited
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -265,7 +259,6 @@ public class Invoice {
 	}
 
 	@ManyToOne
-	@NotAudited
 	public CashRegisterSession getCashRegisterSession() {
 		return cashRegisterSession;
 	}
