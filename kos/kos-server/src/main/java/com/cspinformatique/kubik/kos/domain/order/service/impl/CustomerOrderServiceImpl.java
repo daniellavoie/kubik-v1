@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import org.apache.commons.math3.util.Precision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 	@Resource
 	private ShippingCostLevelService shippingCostLevelService;
+	
+	@Value("${kubik.onlinesales.enabled")
+	private boolean onlineSalesEnabled;
 
 	@Override
 	public CustomerOrder addDetail(CustomerOrder customerOrder, CustomerOrderDetail customerOrderDetail) {
@@ -163,7 +167,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 	@Override
 	public boolean isActivated() {
-		return true;
+		return onlineSalesEnabled;
 	}
 
 	@Override

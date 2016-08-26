@@ -36,8 +36,8 @@ public class KubikNotificationServiceImpl implements KubikNotificationService {
 	@Resource
 	private KubikTemplate kubikTemplate;
 
-	@Value("${kubik.notification.enabled}")
-	private boolean notificationEnabled;
+	@Value("${kubik.onlinesales.enabled}")
+	private boolean onlineSalesEnabled;
 
 	@Override
 	public KubikNotification createNewNotification(long kosId, Type type, Action action) {
@@ -93,7 +93,7 @@ public class KubikNotificationServiceImpl implements KubikNotificationService {
 	@Transactional
 	public void process(KubikNotification kubikNotification) {
 		try {
-			if (notificationEnabled) {
+			if (onlineSalesEnabled) {
 				ResponseEntity<Void> response = kubikTemplate.exchange("/kubikNotification", HttpMethod.POST,
 						kubikNotification, Void.class);
 
@@ -120,7 +120,7 @@ public class KubikNotificationServiceImpl implements KubikNotificationService {
 
 	@Override
 	public KubikNotification save(KubikNotification kubikNotification) {
-		if (notificationEnabled) {
+		if (onlineSalesEnabled) {
 			if (kubikNotification.getCreationDate() == null) {
 				kubikNotification.setCreationDate(new Date());
 			}
