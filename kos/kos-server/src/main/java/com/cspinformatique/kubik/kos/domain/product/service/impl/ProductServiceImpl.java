@@ -145,7 +145,8 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Page<Product> search(String title, String author, List<String> categoriesIds, Date publishFrom,
-			Date publishUntil, String manufacturer, Double priceFrom, Double priceTo, String query, Pageable pageable) {
+			Date publishUntil, String manufacturer, Double priceFrom, Double priceTo, Boolean hideUnavailable,
+			String query, Pageable pageable) {
 		if (title != null)
 			if (title.equals(""))
 				title = null;
@@ -161,6 +162,8 @@ public class ProductServiceImpl implements ProductService {
 				manufacturer = null;
 			else
 				manufacturer = "%" + manufacturer + "%";
+		if (hideUnavailable == null)
+			hideUnavailable = true;
 		if (query != null)
 			if (query.equals(""))
 				query = null;
@@ -169,9 +172,9 @@ public class ProductServiceImpl implements ProductService {
 
 		if (categoriesIds == null)
 			return productRepository.search(title, author, publishFrom, publishUntil, manufacturer, priceFrom, priceTo,
-					query, pageable);
+					hideUnavailable, query, pageable);
 		else
 			return productRepository.search(title, author, calculateCategoriesScope(categoriesIds), publishFrom,
-					publishUntil, manufacturer, priceFrom, priceTo, query, pageable);
+					publishUntil, manufacturer, priceFrom, priceTo, hideUnavailable, query, pageable);
 	}
 }

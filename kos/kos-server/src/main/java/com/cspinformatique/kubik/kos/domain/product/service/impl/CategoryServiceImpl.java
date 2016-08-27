@@ -108,6 +108,7 @@ public class CategoryServiceImpl implements CategoryService {
 		kubikCategory.getChildCategories()
 				.forEach(childCategory -> childCategories.add(transcodeFromKubik(childCategory)));
 		category.setChildCategories(childCategories);
+		category.setAvailableOnline(kubikCategory.isAvailableOnline());
 
 		return save(category);
 	}

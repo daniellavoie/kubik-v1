@@ -5,6 +5,8 @@
 >
 	<head>		
 		<link th:replace="util/import :: head" />
+		
+		<link rel="stylesheet" type="text/css" th:href="@{/css/product-search.css}" />
 	</head>
 	
 	<body ng-controller="ProductSearchCtrl as productSearchCtrl">
@@ -63,6 +65,22 @@
 									ng-keyup="productSearchCtrl.triggerSearchEvent()" 
 									ng-model="productSearchCtrl.searchParams.manufacturer" 
 								/>
+							</div>
+							
+							<div>
+								<h4>
+									Indisponible :
+									<button 
+										class="btn btn-default btn-xs"
+										ng-if="productSearchCtrl.searchParams.hideUnavailable == undefined || productSearchCtrl.searchParams.hideUnavailable" 
+										ng-click="productSearchCtrl.updateHideUnavailable(false)"
+									>Afficher</button>
+									<button 
+										ng-if="productSearchCtrl.searchParams.hideUnavailable != undefined &amp;&amp; !productSearchCtrl.searchParams.hideUnavailable" 
+										ng-click="productSearchCtrl.updateHideUnavailable(true)"
+										class="btn btn-default btn-xs"
+									>Masquer</button>
+								</h4>
 							</div>
 						</div>
 					</div>
@@ -171,8 +189,6 @@
 		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
-		
-		<link rel="stylesheet" type="text/css" th:href="@{/css/product-search.css}" />
 		
 		<script type="text/javascript" th:src="@{/js/product/product-search-controller.js}"></script>
 	</body>

@@ -11,9 +11,9 @@
 		var vm = this;
 		
 		var params = $.getUrlVars();
-		if(params.query != undefined){
+		if(params.query != undefined)
 			vm.searchParams = {query : params.query};
-		}
+		
 		
 		vm.search = search;
 		vm.searchKeyUp = searchKeyUp;

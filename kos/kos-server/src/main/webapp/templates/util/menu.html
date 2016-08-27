@@ -18,11 +18,12 @@
 						<a 
 							target="_self"
 							class="tab root-category col-sm-2"
+							ng-if="rootCategory.availableOnline"
 							href="/produit?categories={{rootCategory.name}}"
-							ng-class="{true : 'active'}[menuCtrl.activeTab == rootCategory.name || menuCtrl.hoveredTab == rootCategory.name]"
+							ng-mouseleave="menuCtrl.mouseLeavesCategoryMenu($event)" 
 							ng-repeat="rootCategory in menuCtrl.categories | orderBy: 'id'"
 							ng-mouseover="menuCtrl.mouseEntersCategoryMenu($event, rootCategory)"
-							ng-mouseleave="menuCtrl.mouseLeavesCategoryMenu($event)" 
+							ng-class="{true : 'active'}[menuCtrl.activeTab == rootCategory.name || menuCtrl.hoveredTab == rootCategory.name]"
 						>{{rootCategory.name}}</a>
 						
 						<a 
@@ -43,6 +44,7 @@
 							<a 
 								target="_self"
 								class="category"
+								ng-if="subCategory.availableOnline"
 								href="/produit?categories={{subCategory.name}}" 
 								ng-repeat="subCategory in menuCtrl.category.childCategories" 
 							>

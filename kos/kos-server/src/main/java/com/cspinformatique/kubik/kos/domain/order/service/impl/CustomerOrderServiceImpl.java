@@ -43,7 +43,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	@Resource
 	private ShippingCostLevelService shippingCostLevelService;
 	
-	@Value("${kubik.onlinesales.enabled")
+	@Value("${kubik.onlinesales.enabled}")
 	private boolean onlineSalesEnabled;
 
 	@Override

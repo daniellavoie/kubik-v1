@@ -23,6 +23,8 @@
     					<button class="btn btn-xs btn-default" ng-click="productCategoriesCtrl.addCategory(category, $event)"><span class="glyphicon glyphicon-plus"></span></button>
     					<button ng-if="category.childCategories.length == 0" class="btn btn-xs btn-danger" ng-click="productCategoriesCtrl.confirmDeleteCategory(category, $event)"><span class="glyphicon glyphicon-remove"></span></button>
 					</span>
+					<span ng-if="category.availableOnline" class="label label-success pull-right">En ligne</span>
+					<span ng-if="!category.availableOnline" class="label label-danger pull-right">Hors ligne</span>
 				</a>
     			<ul class="nav nav-pills nav-stacked">
 	      			<li 

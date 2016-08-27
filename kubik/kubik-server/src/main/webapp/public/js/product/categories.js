@@ -165,6 +165,7 @@
 	
 					angular.forEach(category.childCategories, function(childCategory, key){
 						vm.childParentCategoriesMap[childCategory.id] = category;
+						childCategory.parentCategory = { id : category.id};
 						calculateLevel(childCategory, level + 1);
 					});
 				};
@@ -174,6 +175,7 @@
 	
 					angular.forEach(category.childCategories, function(childCategory, key){
 						vm.childParentCategoriesMap[childCategory.id] = category;
+						childCategory.parentCategory = { id : category.id};
 						calculateLevel(childCategory, 2);
 					});
 				});
@@ -195,7 +197,7 @@
 			});
 		}
 		
-		function saveCategory(category){
+		function saveCategory(){
 			vm.hideError();
 			
 			$http.post(CATEGORIES_URL, vm.category).error(handleError).finally(saveCompleted);

@@ -11,7 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Category {
@@ -20,16 +21,19 @@ public class Category {
 	private boolean rootCategory;
 	private Category parentCategory;
 	private List<Category> childCategories;
+	private boolean availableOnline;
 
 	public Category() {
 
 	}
 
-	public Category(int id, String name, boolean rootCategory, List<Category> childCategories) {
+	public Category(int id, String name, boolean rootCategory, List<Category> childCategories,
+			boolean availableOnline) {
 		this.id = id;
 		this.name = name;
 		this.rootCategory = rootCategory;
 		this.childCategories = childCategories;
+		this.availableOnline = availableOnline;
 	}
 
 	@Id
@@ -60,7 +64,7 @@ public class Category {
 	}
 
 	@ManyToOne
-	@JsonIgnore
+	@JsonBackReference
 	public Category getParentCategory() {
 		return parentCategory;
 	}
@@ -69,6 +73,7 @@ public class Category {
 		this.parentCategory = parentCategory;
 	}
 
+	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "parentCategory")
 	public List<Category> getChildCategories() {
 		return childCategories;
@@ -76,5 +81,13 @@ public class Category {
 
 	public void setChildCategories(List<Category> childCategories) {
 		this.childCategories = childCategories;
+	}
+
+	public boolean isAvailableOnline() {
+		return availableOnline;
+	}
+
+	public void setAvailableOnline(boolean availableOnline) {
+		this.availableOnline = availableOnline;
 	}
 }

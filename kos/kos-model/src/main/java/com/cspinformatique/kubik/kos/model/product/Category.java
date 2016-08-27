@@ -17,6 +17,7 @@ public class Category {
 	private boolean rootCategory;
 	private Category parentCategory;
 	private List<Category> childCategories;
+	private boolean availableOnline;
 	private int kubikId;
 
 	public Category() {
@@ -24,12 +25,13 @@ public class Category {
 	}
 
 	public Category(int id, String name, boolean rootCategory, Category parentCategory,
-			List<Category> childCategories, int kubikId) {
+			List<Category> childCategories, boolean availableOnline, int kubikId) {
 		this.id = id;
 		this.name = name;
 		this.rootCategory = rootCategory;
 		this.parentCategory = parentCategory;
 		this.childCategories = childCategories;
+		this.availableOnline = availableOnline;
 		this.kubikId = kubikId;
 	}
 
@@ -76,6 +78,14 @@ public class Category {
 
 	public void setChildCategories(List<Category> childCategories) {
 		this.childCategories = childCategories;
+	}
+
+	public boolean isAvailableOnline() {
+		return availableOnline;
+	}
+
+	public void setAvailableOnline(boolean availableOnline) {
+		this.availableOnline = availableOnline;
 	}
 
 	public int getKubikId() {

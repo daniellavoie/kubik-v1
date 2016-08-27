@@ -79,8 +79,9 @@ public class ProductController {
 			@RequestParam(value = "categories[]", required = false) String[] categories,
 			@RequestParam(required = false) Date publishFrom, @RequestParam(required = false) Date publishUntil,
 			@RequestParam(required = false) String manufacturer, @RequestParam(required = false) Double priceFrom,
-			@RequestParam(required = false) Double priceTo, @RequestParam(required = false) String query) {
+			@RequestParam(required = false) Double priceTo, @RequestParam(defaultValue = "true") boolean hideUnavailable,
+			@RequestParam(required = false) String query) {
 		return productService.search(title, author, categories != null ? Arrays.asList(categories) : null, publishFrom,
-				publishUntil, manufacturer, priceFrom, priceTo, query, new PageRequest(page, size, direction, orderBy));
+				publishUntil, manufacturer, priceFrom, priceTo, hideUnavailable, query, new PageRequest(page, size, direction, orderBy));
 	}
 }

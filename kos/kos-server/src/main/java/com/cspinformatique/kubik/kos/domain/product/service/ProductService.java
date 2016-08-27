@@ -22,5 +22,5 @@ public interface ProductService {
 	Product save(Product product);
 
 	Page<Product> search(String title, String author, List<String> categories, Date publishFrom, Date publishUntil,
-			String manufacturer, Double priceFrom, Double priceTo, String query, Pageable pageable);
+			String manufacturer, Double priceFrom, Double priceTo, Boolean hideUnavailable, String query, Pageable pageable);
 }

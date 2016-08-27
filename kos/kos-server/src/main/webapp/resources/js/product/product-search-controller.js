@@ -3,7 +3,7 @@
 
 	var SEARCH_PARAMS = [	"page", "size", "direction", "title", "author", 
 	                     	"manufacturer", "publishFrom", "publishUntil", 
-	                     	"priceFrom", "priceTo", "orderBy","query"];
+	                     	"priceFrom", "priceTo", "orderBy", "hideUnavailable", "query"];
 	
 	var $affix = $('[data-smart-affix]');
 	var $body = $("body");
@@ -31,6 +31,7 @@
 		vm.changePage = changePage;
 		vm.openProductPage = openProductPage;
 		vm.triggerSearchEvent = triggerSearchEvent;
+		vm.updateHideUnavailable = updateHideUnavailable;
 
 		loadCategories()
 			.then(loadCategoriesSuccess);
@@ -179,6 +180,13 @@
 		}
 		
 		function triggerSearchEvent($event){
+			search();
+		}
+
+		function updateHideUnavailable(hideUnavailable){
+			vm.searchParams.hideUnavailable = hideUnavailable;
+			vm.searchParams.page = 0;
+			
 			search();
 		}
 	}
