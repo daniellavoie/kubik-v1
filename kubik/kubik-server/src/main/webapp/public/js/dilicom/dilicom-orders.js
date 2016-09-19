@@ -3,7 +3,7 @@
 		.module("Kubik")
 		.controller("DilicomOrdersCtrl", DilicomOrdersCtrl);
 
-	function DilicomOrdersCtrl($scope, $http){
+	function DilicomOrdersCtrl(dilicomOrderService, $scope, $http){
 		var vm = this;
 		
 		vm.direction = "DESC";
@@ -12,7 +12,8 @@
 		vm.sortBy = "creationDate";
 		
 		vm.changePage = changePage;
-		vm.loadDilicomOrders = loadDilicomOrders
+		vm.loadDilicomOrders = loadDilicomOrders;
+		vm.resendOrder = resendOrder;
 		
 		loadDilicomOrders();
 		
@@ -36,6 +37,15 @@
 				if(successCallback != undefined){
 					successCallback();
 				}
+			}
+		}
+		
+		function resendOrder(dilicomOrder){
+			return dilicomOrderService.resendOrder(dilicomOrder)
+			    .then(success);
+			
+			function success(){
+				vm.loadDilicomOrders();
 			}
 		}
 	};

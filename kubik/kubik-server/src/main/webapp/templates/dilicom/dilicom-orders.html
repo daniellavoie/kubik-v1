@@ -42,6 +42,7 @@
 							<th>Transfert</th>
 							<th>Traitement</th>
 							<th>Validation</th>
+							<th>&nbsp;</th>
 						</tr>
 					</thead>
 
@@ -60,6 +61,15 @@
 							<td>{{dilicomOrder.transferDate | date : "short"}}</td>
 							<td>{{dilicomOrder.processDate | date : "short"}}</td>
 							<td>{{dilicomOrder.validationDate | date : "short"}}</td>
+							<td>
+								<div>
+									<span
+										class="resend glyphicon glyphicon-repeat"
+										ng-if="dilicomOrder.status == 'ERROR'"
+										ng-click="dilicomOrdersCtrl.resendOrder(dilicomOrder)" 
+									></span>
+								</div>
+							</td>
 						</tr>
 						
 						<tr ng-if="dilicomOrdersCtrl.dilicomOrdersPage.content.length == 0">
@@ -73,6 +83,7 @@
 		</div>
 		
 		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/dilicom/dilicom-order-service.js}"></script>
 		<script type="text/javascript" th:src="@{/js/dilicom/dilicom-orders.js}"></script>
 	</body>
 </html>

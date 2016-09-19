@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,12 +28,17 @@ public class DilicomOrderController {
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
 			@RequestParam(defaultValue = "creationDate") String sortBy) {
-		return this.dilicomOrderService
+		return dilicomOrderService
 				.findAll(new PageRequest(page, resultPerPage, direction != null ? direction : Direction.DESC, sortBy));
 	}
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public String getDilicomOrdersPage() {
 		return "dilicom/dilicom-orders";
+	}
+
+	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody DilicomOrder save(@RequestBody DilicomOrder dilicomOrder) {
+		return dilicomOrderService.save(dilicomOrder);
 	}
 }
