@@ -97,7 +97,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 				if ((invoice.getRebatePercent() == null && detail.getRebatePercent() != null && detail.getRebatePercent() != 0d)
 						|| (detail.getRebatePercent() != null && detail.getRebatePercent() != 0d
 								&& detail.getRebatePercent().doubleValue() > invoice.getRebatePercent().doubleValue())) {
-					rebateAmount = detail.getUnitPrice() * detail.getRebatePercent() / 100;
+					rebateAmount = detail.getUnitPrice() * detail.getRebatePercent() / 100 * detail.getQuantity();
 				}
 
 				detail.setRebate(rebateAmount);
@@ -176,12 +176,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 				// Calculate rebate amount for detail.
 				double rebateAmount = 0d;
 				if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d)
-					rebateAmount = detail.getUnitPrice() * invoice.getRebatePercent() / 100;
+					rebateAmount = detail.getUnitPrice() * invoice.getRebatePercent() / 100 * detail.getQuantity();
 
 				if ((invoice.getRebatePercent() == null && detail.getRebatePercent() != null && detail.getRebatePercent() != 0d)
 						|| (detail.getRebatePercent() != null && detail.getRebatePercent() != 0d
 								&& detail.getRebatePercent().doubleValue() > invoice.getRebatePercent().doubleValue())) {
-					rebateAmount = detail.getUnitPrice() * detail.getRebatePercent() / 100;
+					rebateAmount = detail.getUnitPrice() * detail.getRebatePercent() / 100 * detail.getQuantity();
 				}
 
 				double detailTotalAmount = detail.getUnitPrice().doubleValue() * quantity - rebateAmount;
