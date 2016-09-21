@@ -1,14 +1,17 @@
 package com.cspinformatique.kubik.kos.domain.product.service.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.cspinformatique.kubik.kos.domain.product.exception.ImageNotFoundException;
@@ -20,6 +23,8 @@ import com.cspinformatique.kubik.kos.model.product.ProductImageSize;
 
 @Service
 public class ProductImageServiceImpl implements ProductImageService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProductImageServiceImpl.class);
+
 	@Resource
 	AmazonS3 amazonS3;
 
@@ -46,15 +51,15 @@ public class ProductImageServiceImpl implements ProductImageService {
 
 	@Override
 	public InputStream loadImageInputStream(Product product, ProductImageSize size) {
-		try {
-			S3Object object = amazonS3.getObject(new GetObjectRequest(bucketName, calculateImageKey(product, size)));
-
+		try (S3Object object = amazonS3.getObject(new GetObjectRequest(bucketName, calculateImageKey(product, size)))) {
 			if (object == null) {
 				throw new ImageNotFoundException();
 			}
 
 			return object.getObjectContent();
-		} catch (AmazonS3Exception amazonS3Ex) {
+		} catch (AmazonClientException | IOException ex) {
+			LOGGER.error("Error while loading image from AWS.", ex);
+
 			throw new ImageNotFoundException();
 		}
 	}
