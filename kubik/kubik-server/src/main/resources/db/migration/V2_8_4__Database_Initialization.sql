@@ -1,160 +1,160 @@
-create table address (id integer not null auto_increment, city varchar(255), country varchar(255), first_name varchar(255), kos_id bigint not null, last_name varchar(255), phone varchar(255), state varchar(255), street_line1 varchar(255), street_line2 varchar(255), zip_code varchar(255), primary key (id))
-create table cash_register (hostname varchar(255) not null, ip varchar(255), primary key (hostname))
-create table cash_register_session (id integer not null auto_increment, end_date datetime, start_date datetime, cash_register_hostname varchar(255), primary key (id))
-create table category (id integer not null auto_increment, available_online bit not null, name varchar(255), root_category bit not null, parent_category_id integer, primary key (id))
-create table company (name varchar(255) not null, address_city varchar(255), address_number varchar(255), address_street varchar(255), address_zip_code varchar(255), dilicom_image_encryption_key varchar(255), ean13 varchar(255), email varchar(255), legal_mention1 varchar(255), legal_mention2 varchar(255), phone varchar(255), siret varchar(255), website varchar(255), primary key (name))
-create table customer (id integer not null auto_increment, company_name varchar(255), creation_date datetime, ean13 varchar(255), email varchar(255), first_name varchar(255), fixed_phone varchar(255), internal_note TEXT, last_name varchar(255), mobile_phone varchar(255), tva_number varchar(255), address_id integer, primary key (id))
-create table customer_credit (id integer not null auto_increment, cancel_date datetime, complete_date datetime, date datetime, number varchar(255), rebate_amount double precision, status varchar(255), total_amount double precision, total_amount_rebate_out double precision, total_tax_amount double precision, total_tax_less_amount double precision, customer_id integer, invoice_id integer, payment_method_type varchar(255), primary key (id))
-create table customer_credit_details (customer_credit_id integer not null, details_id integer not null)
-create table customer_credit_taxes_amounts (customer_credit_id integer not null, taxes_amounts_id integer not null, taxes_amounts_key double precision not null, primary key (customer_credit_id, taxes_amounts_key))
-create table customer_credit_detail (id integer not null auto_increment, max_quantity double precision not null, quantity double precision not null, total_amount double precision, unit_price double precision, customer_credit_id integer, product_id integer, primary key (id))
-create table daily_report (id integer not null auto_increment, average_sale double precision not null, date datetime, return_count integer not null, sales_amount_tax_in double precision not null, sales_amount_tax_out double precision not null, sales_count integer not null, primary key (id))
-create table daily_report_invoices (daily_report_id integer not null, invoices_id integer not null)
-create table daily_report_sales_by_payment_methods (daily_report_id integer not null, sales_by_payment_methods_id integer not null)
-create table dilicom_order (id integer not null auto_increment, creation_date datetime, error_message text, process_date datetime, remote_file_content text, remote_filename varchar(255), status varchar(255), transfer_date datetime, validation_date datetime, purchase_order_id bigint, primary key (id))
-create table discount_type (type varchar(255) not null, description varchar(255), primary key (type))
-create table error (id bigint not null auto_increment, agent varchar(255), exception longtext, hostname varchar(255), ip varchar(255), message longtext, timestamp datetime, primary key (id))
-create table inventory_count (id bigint not null auto_increment, date_counted datetime, quantity double precision not null, reason varchar(255), product_id integer, primary key (id))
-create table invoice (id integer not null auto_increment, amount_paid double precision, amount_returned double precision, cancel_date datetime, confirmed_date datetime, customer_order_id bigint, date datetime, invoice_date datetime, modification_date datetime, number varchar(255), paid_date datetime, rebate_amount double precision, rebate_percent double precision, refund_date datetime, shipping_cost double precision, shipping_method varchar(255), source varchar(255), total_amount double precision, total_amount_rebate_out double precision, total_tax_amount double precision, total_tax_less_amount double precision, total_weight integer, tva_number varchar(255), billing_address_id integer, cash_register_session_id integer, customer_id integer, shipping_address_id integer, status_type varchar(255), user_id integer, primary key (id))
-create table invoice_details (invoice_id integer not null, details_id integer not null)
-create table invoice_payments (invoice_id integer not null, payments_id integer not null)
-create table invoice_taxes_amounts (invoice_id integer not null, taxes_amounts_id integer not null, taxes_amounts_key double precision not null, primary key (invoice_id, taxes_amounts_key))
-create table invoice_detail (id integer not null auto_increment, quantity double precision, rebate double precision, rebate_percent double precision, tax_rate double precision, total_amount double precision, total_rebate_amount double precision, total_tax_amount double precision, total_tax_less_amount double precision, total_taxable_amount double precision, unit_price double precision, unit_price_tax_less double precision, invoice_id integer, product_id integer, tax_amount_id integer, primary key (id))
-create table invoice_status (type varchar(255) not null, description varchar(255), primary key (type))
-create table invoice_tax_amount (id integer not null auto_increment, tax_amount double precision, tax_rate double precision, taxable_amount double precision, taxed_amount double precision, primary key (id))
-create table kos_notification (id integer not null auto_increment, action varchar(255), creation_date datetime, error longtext, error_date datetime, kubik_id integer not null, processed_date datetime, status varchar(255), type varchar(255), primary key (id))
-create table payment (id integer not null auto_increment, amount double precision not null, invoice_id integer, payment_method_type varchar(255), primary key (id))
-create table payment_method (type varchar(255) not null, accounting_code varchar(255), available_to_cash_register bit not null, description varchar(255), primary key (type))
-create table preferences (id integer not null auto_increment, purchase_session_id integer, primary key (id))
-create table product (id integer not null auto_increment, author varchar(255), availability_code varchar(255), available_for_order bit, barcode_type varchar(255), cash_register_label varchar(255), collection varchar(255), collection_reference varchar(255), date_published datetime, dilicom_reference bit not null, discount float not null, ean13 varchar(255), extended_label varchar(255), height integer, images_validated bit not null, isbn varchar(255), main_reference bit, orderable_by_unit bit, price_tax_in double precision not null, price_tax_out1 double precision not null, price_tax_out2 double precision, price_tax_out3 double precision, price_type varchar(255), product_type varchar(255), publish_end_date datetime, publisher varchar(255), publisher_isnb varchar(255), publisher_presentation varchar(255), purchase_price_tax_out double precision, references_count integer, replaced_byareference bit, replaced_by_ean13 varchar(255), replacesareference bit, replaces_ean13 varchar(255), return_type varchar(255), schoolbook bit, secondary_reference bit, standard_label varchar(255), supplier_reference varchar(255), theme varchar(255), thickness integer, tva_rate1 double precision not null, tva_rate2 double precision, tva_rate3 double precision, weight integer, width integer, category_id integer, supplier_id integer, primary key (id))
-create table product_image (id bigint not null auto_increment, content_length bigint not null, size varchar(255), product_id integer, primary key (id))
-create table product_inventory (id integer not null auto_increment, quantity_on_hand double precision not null, quantity_on_hold double precision not null, product_id integer, primary key (id))
-create table proxy (id integer not null, hostname varchar(255), ip varchar(255), port integer not null, primary key (id))
-create table purchase_order (id bigint not null, date datetime, discount float not null, max_delivery_date datetime, min_delivery_date datetime, notation_code varchar(255), operation_code varchar(255), shipping_mode varchar(255), status varchar(255), submited_date datetime, total_amount_tax_out double precision not null, dilicom_order_id integer, purchase_session_id integer, reception_id integer, supplier_id integer, primary key (id))
-create table purchase_order_details (purchase_order_id bigint not null, details_id integer not null)
-create table purchase_order_detail (id integer not null auto_increment, discount float not null, discount_applied float not null, quantity double precision not null, total_amount_tax_out double precision not null, unit_price_tax_out double precision not null, discount_type_type varchar(255), product_id integer, purchase_order_id bigint, primary key (id))
-create table purchase_session (id integer not null auto_increment, close_date datetime, max_delivery_date datetime, min_delivery_date datetime, open_date datetime, status varchar(255), primary key (id))
-create table purchase_session_details (purchase_session_id integer not null, details_id integer not null)
-create table purchase_session_purchase_orders (purchase_session_id integer not null, purchase_orders_id bigint not null)
-create table purchase_session_detail (id integer not null auto_increment, quantity double precision not null, product_id integer, purchase_session_id integer, primary key (id))
-create table purchase_session_preferences (id integer not null auto_increment, primary key (id))
-create table purchase_session_preferences_status (purchase_session_preferences_id integer not null, status integer)
-create table receipt_print_job (id integer not null auto_increment, start_date datetime, invoice_id integer, primary key (id))
-create table reception (id integer not null auto_increment, date_created datetime, date_received datetime, delivery_date datetime, delivery_date_type integer, discount float not null, editable bit not null, shipped_date datetime, shipping_mode varchar(255), status varchar(255), total_amount_tax_out double precision not null, purchase_order_id bigint, supplier_id integer, primary key (id))
-create table reception_shipping_packages (reception_id integer not null, shipping_packages_id integer not null)
-create table reception_detail (id integer not null auto_increment, discount float not null, discount_applied float not null, quantity_received double precision not null, quantity_to_receive double precision not null, total_amount_tax_out double precision not null, unit_price_tax_out double precision not null, discount_type_type varchar(255), product_id integer, reception_id integer, primary key (id))
-create table reference_notification (id integer not null auto_increment, creation_date datetime, processed_date datetime, status varchar(255), product_id integer, primary key (id))
-create table restock (id integer not null auto_increment, open_date datetime, quantity double precision not null, skipped_date datetime, status varchar(255), validated_date datetime, product_id integer, purchase_session_id integer, primary key (id))
-create table rma (id integer not null auto_increment, canceled_date datetime, open_date datetime, shipped_date datetime, status varchar(255), supplier_id integer, primary key (id))
-create table rma_details (rma_id integer not null, details_id integer not null)
-create table rma_detail (id integer not null auto_increment, quantity double precision not null, product_id integer, rma_id integer, primary key (id))
-create table role (id integer not null auto_increment, name varchar(255), primary key (id))
-create table sales_by_payment_method (id integer not null auto_increment, payments_amount double precision not null, sales_count integer not null, payment_method_type varchar(255), primary key (id))
-create table shipping_cost_level (id integer not null auto_increment, cost double precision not null, weight integer, primary key (id))
-create table shipping_package (id integer not null auto_increment, number varchar(255), primary key (id))
-create table stocktaking (id bigint not null auto_increment, canceled_date datetime, completion_date datetime, creation_date datetime, status integer, primary key (id))
-create table stocktaking_category (id bigint not null auto_increment, creation_date datetime, name varchar(255), stocktaking_id bigint, primary key (id))
-create table stocktaking_diff (id bigint not null auto_increment, adjustment_quantity double precision not null, counted_quantity double precision not null, validated bit not null, product_id integer, stocktaking_id bigint, primary key (id))
-create table stocktaking_product (id bigint not null auto_increment, inventory_quantity double precision not null, quantity double precision not null, category_id bigint, product_id integer, primary key (id))
-create table supplier (id integer not null auto_increment, account_number varchar(255), address varchar(255), discount float not null, ean13 varchar(255), name varchar(255), purchase_order_ean13 varchar(255), primary key (id))
-create table user (id integer not null auto_increment, password varchar(255), username varchar(255), preferences_id integer, primary key (id))
-create table user_roles (user_id integer not null, roles_id integer not null)
-alter table category add constraint UK_46ccwnsi9409t36lurvtyljak unique (name)
-alter table customer add constraint UKdwk6cx0afu8bs9o4t536v1j5v unique (email)
-alter table customer_credit_details add constraint UK_6xrinkdf1wu209bpt26cj3w8d unique (details_id)
-alter table customer_credit_taxes_amounts add constraint UK_i3n5yxmjw3301qysl3w3vbhkd unique (taxes_amounts_id)
-alter table daily_report_invoices add constraint UK_k4idwqq9w1jv43bm79v8mrjcf unique (invoices_id)
-alter table daily_report_sales_by_payment_methods add constraint UK_7oobvksy8oh8mgu6sub7obgid unique (sales_by_payment_methods_id)
-create index IDXs80swslph7ojyt1mfck2dasmm on invoice (paid_date)
-alter table invoice_details add constraint UK_9prq28o31xgjt97uq5koma6jo unique (details_id)
-alter table invoice_payments add constraint UK_eyjdiyqxwq9h2fwde8a1e7jbw unique (payments_id)
-alter table invoice_taxes_amounts add constraint UK_71iydrjpo749p7k7j26o0glah unique (taxes_amounts_id)
-alter table product add constraint UK_iy2pc8yshvm2ptl3mdk41w5dk unique (ean13)
-alter table purchase_order_details add constraint UK_5n7r71u67kyn2ul5pyyt0jsk0 unique (details_id)
-alter table purchase_session_details add constraint UK_172f4b9qd5086j2wfa3un5wn7 unique (details_id)
-alter table purchase_session_purchase_orders add constraint UK_hjrfubqsu9svu8481kn2anatw unique (purchase_orders_id)
-alter table reception_shipping_packages add constraint UK_m6ruwymjtkwrbgu608ipv57yc unique (shipping_packages_id)
-alter table reference_notification add constraint UK_ahi78oc0ypsfoij3cyo2j64sk unique (product_id)
-alter table rma_details add constraint UK_1wdswbioxx4ka12545ttocns3 unique (details_id)
-alter table user_roles add constraint UK_amwlmdeik2qdnksxgd566knop unique (roles_id)
-alter table cash_register_session add constraint FK8rjm2vg6eu1qvfvf28pb6ys3i foreign key (cash_register_hostname) references cash_register (hostname)
-alter table category add constraint FKs2ride9gvilxy2tcuv7witnxc foreign key (parent_category_id) references category (id)
-alter table customer add constraint FKglkhkmh2vyn790ijs6hiqqpi foreign key (address_id) references address (id)
-alter table customer_credit add constraint FK9ur20qr1p2jke3b4crspnrnvh foreign key (customer_id) references customer (id)
-alter table customer_credit add constraint FKqv8cyiw02ymf6maw1dvgthjj0 foreign key (invoice_id) references invoice (id)
-alter table customer_credit add constraint FKk2hb29edonpsvhcquf68ndvmh foreign key (payment_method_type) references payment_method (type)
-alter table customer_credit_details add constraint FKqke75efitxhutfe9xfslu83ig foreign key (details_id) references customer_credit_detail (id)
-alter table customer_credit_details add constraint FKm69qqfmrhmgki5om8hqqq3sq foreign key (customer_credit_id) references customer_credit (id)
-alter table customer_credit_taxes_amounts add constraint FK5kuodm3ch63ypxqcpnpg52t6h foreign key (taxes_amounts_id) references invoice_tax_amount (id)
-alter table customer_credit_taxes_amounts add constraint FK73ou4yan7unvc97ev608ov1ec foreign key (customer_credit_id) references customer_credit (id)
-alter table customer_credit_detail add constraint FKaefkkycfi9e45m9n342kmpr2y foreign key (customer_credit_id) references customer_credit (id)
-alter table customer_credit_detail add constraint FKdfnrmelf2ohulau4rbtie9a1o foreign key (product_id) references product (id)
-alter table daily_report_invoices add constraint FKdq3jo0kaaug1cwutjayeu3oi4 foreign key (invoices_id) references invoice (id)
-alter table daily_report_invoices add constraint FKk54ackpydemwmk4ueu1sl4ajm foreign key (daily_report_id) references daily_report (id)
-alter table daily_report_sales_by_payment_methods add constraint FKruurcl5u9l3q4625bjol57nuf foreign key (sales_by_payment_methods_id) references sales_by_payment_method (id)
-alter table daily_report_sales_by_payment_methods add constraint FKlbt55pqpqwgyhreevc9jc17w9 foreign key (daily_report_id) references daily_report (id)
-alter table dilicom_order add constraint FKtly79hcrq71rptdml47ri7atu foreign key (purchase_order_id) references purchase_order (id)
-alter table inventory_count add constraint FKcuhi99fy16336ovgh5p2hd1s4 foreign key (product_id) references product (id)
-alter table invoice add constraint FK1wki0c4u9nlp6pscldvwy0ym8 foreign key (billing_address_id) references address (id)
-alter table invoice add constraint FKcnd5ytjd1qw3x5eg88gn8wv62 foreign key (cash_register_session_id) references cash_register_session (id)
-alter table invoice add constraint FK5e32ukwo9uknwhylogvta4po6 foreign key (customer_id) references customer (id)
-alter table invoice add constraint FKej4ui7kwpq214t2e8d5ebn12b foreign key (shipping_address_id) references address (id)
-alter table invoice add constraint FKmci72q169cqfcsd55eivwdcyo foreign key (status_type) references invoice_status (type)
-alter table invoice add constraint FKjunvl5maki3unqdvljk31kns3 foreign key (user_id) references user (id)
-alter table invoice_details add constraint FKgag0nvrfr1uw5k8x9xqyed6w3 foreign key (details_id) references invoice_detail (id)
-alter table invoice_details add constraint FKpc7xa72mljy7weoct7uubgjy7 foreign key (invoice_id) references invoice (id)
-alter table invoice_payments add constraint FKf96jgecmytd307hk037ndyx6c foreign key (payments_id) references payment (id)
-alter table invoice_payments add constraint FKsqc8w18aed21na7jy4itdhhjq foreign key (invoice_id) references invoice (id)
-alter table invoice_taxes_amounts add constraint FKghafo8w3w4r0hidbom2cwrqvx foreign key (taxes_amounts_id) references invoice_tax_amount (id)
-alter table invoice_taxes_amounts add constraint FKqll71kltch0nqrud9lbn1j2tl foreign key (invoice_id) references invoice (id)
-alter table invoice_detail add constraint FKit1rbx4thcr6gx6bm3gxub3y4 foreign key (invoice_id) references invoice (id)
-alter table invoice_detail add constraint FKbe6c21nke5fy4m3vw00f23qsf foreign key (product_id) references product (id)
-alter table invoice_detail add constraint FK6fv7mihuc66wbw4l3eusqkyw4 foreign key (tax_amount_id) references invoice_tax_amount (id)
-alter table payment add constraint FKsb24p8f52refbb80qwp4gem9n foreign key (invoice_id) references invoice (id)
-alter table payment add constraint FKaxmbbf2qbtuioay0r7k0vqw1o foreign key (payment_method_type) references payment_method (type)
-alter table preferences add constraint FKeh6stx2v9tcl1nuvrmoxogxth foreign key (purchase_session_id) references purchase_session_preferences (id)
-alter table product add constraint FK1mtsbur82frn64de7balymq9s foreign key (category_id) references category (id)
-alter table product add constraint FK2kxvbr72tmtscjvyp9yqb12by foreign key (supplier_id) references supplier (id)
-alter table product_image add constraint FK6oo0cvcdtb6qmwsga468uuukk foreign key (product_id) references product (id)
-alter table product_inventory add constraint FK8echmjvoete36r6q97dr6pl7j foreign key (product_id) references product (id)
-alter table purchase_order add constraint FKivysxds86ik3oeylhe7e2eaqw foreign key (dilicom_order_id) references dilicom_order (id)
-alter table purchase_order add constraint FK27ii5e9j0wyju3wgs5df1spod foreign key (purchase_session_id) references purchase_session (id)
-alter table purchase_order add constraint FK70rpi4c6cmohkpqg34oiadc09 foreign key (reception_id) references reception (id)
-alter table purchase_order add constraint FK4traogu3jriq9u7e8rvm86k7i foreign key (supplier_id) references supplier (id)
-alter table purchase_order_details add constraint FK2y076owb03rkyi0rpotaxofa6 foreign key (details_id) references purchase_order_detail (id)
-alter table purchase_order_details add constraint FKihu4nh2q6ybdkrxbgimb8o0x3 foreign key (purchase_order_id) references purchase_order (id)
-alter table purchase_order_detail add constraint FKffmj3x7xblnr5owrw7df3ldg9 foreign key (discount_type_type) references discount_type (type)
-alter table purchase_order_detail add constraint FKcpv7slf2i15y8e9utfwd7e1vk foreign key (product_id) references product (id)
-alter table purchase_order_detail add constraint FKi6xlnsg9o9ght6xcwl51ooa4k foreign key (purchase_order_id) references purchase_order (id)
-alter table purchase_session_details add constraint FKad32i9j6bh5mb7g97jdun8nv1 foreign key (details_id) references purchase_session_detail (id)
-alter table purchase_session_details add constraint FKs07j2q2taiqixvd9rqf6w1muw foreign key (purchase_session_id) references purchase_session (id)
-alter table purchase_session_purchase_orders add constraint FKt740btbv3pq7t32ybemhn15qi foreign key (purchase_orders_id) references purchase_order (id)
-alter table purchase_session_purchase_orders add constraint FKeyqg409r2m37wwydyin3x1x8t foreign key (purchase_session_id) references purchase_session (id)
-alter table purchase_session_detail add constraint FKhhsjwdmmkgp7r8cbxv1uwhi4o foreign key (product_id) references product (id)
-alter table purchase_session_detail add constraint FKl4wtaqwu1fbhug1v2dqwpl9po foreign key (purchase_session_id) references purchase_session (id)
-alter table purchase_session_preferences_status add constraint FK3y6k15kr5mm7g72rwhh0huk10 foreign key (purchase_session_preferences_id) references purchase_session_preferences (id)
-alter table receipt_print_job add constraint FKoqsp4692yo7oh1x0uyjksyp9w foreign key (invoice_id) references invoice (id)
-alter table reception add constraint FKsnisnyvalqr2e9ekgyx1pb9pa foreign key (purchase_order_id) references purchase_order (id)
-alter table reception add constraint FKlm3l4u81xndwlw0iqr6uo3wy1 foreign key (supplier_id) references supplier (id)
-alter table reception_shipping_packages add constraint FK7y81xon1lqj745co39a77v6k foreign key (shipping_packages_id) references shipping_package (id)
-alter table reception_shipping_packages add constraint FKfegd1rayi1xp39yix0mta1ych foreign key (reception_id) references reception (id)
-alter table reception_detail add constraint FKr2w7f3fip6pcu8qus2fl4pbiw foreign key (discount_type_type) references discount_type (type)
-alter table reception_detail add constraint FKd9pc63ijf41tccls78s5i4yrr foreign key (product_id) references product (id)
-alter table reception_detail add constraint FKjl2pbn1u2kgjoctkkkmrewx32 foreign key (reception_id) references reception (id)
-alter table reference_notification add constraint FK5b5atgv7s714v0m50lrii0m8j foreign key (product_id) references product (id)
-alter table restock add constraint FKs289fuhq0fepnf7nvddyh2gbw foreign key (product_id) references product (id)
-alter table restock add constraint FKjahhm0h9ibb8pqoq5v9foeysy foreign key (purchase_session_id) references purchase_session (id)
-alter table rma add constraint FKcqgjqtsp2m8tlvwv1ukphl6r foreign key (supplier_id) references supplier (id)
-alter table rma_details add constraint FKojs28fljkcg7m2oaq61ijyfkr foreign key (details_id) references rma_detail (id)
-alter table rma_details add constraint FKa18tr9vcrqabo2b3vnnpax9nu foreign key (rma_id) references rma (id)
-alter table rma_detail add constraint FKa8r5955xanewgb2vrb2dsy9vr foreign key (product_id) references product (id)
-alter table rma_detail add constraint FKotr0vlosfa0w7wpq1i49o9fx5 foreign key (rma_id) references rma (id)
-alter table sales_by_payment_method add constraint FKetfqqb5pxhmlp189ehi725kbf foreign key (payment_method_type) references payment_method (type)
-alter table stocktaking_category add constraint FKbakgwgxpvmgc2yx62irntsc2f foreign key (stocktaking_id) references stocktaking (id)
-alter table stocktaking_diff add constraint FK17ylndxetr4jentcc9vy8l9rt foreign key (product_id) references product (id)
-alter table stocktaking_diff add constraint FKskdfbiikw243frf0mbf6uhwlm foreign key (stocktaking_id) references stocktaking (id)
-alter table stocktaking_product add constraint FKcgfol0v1174lwqcbkdym961n4 foreign key (category_id) references stocktaking_category (id)
-alter table stocktaking_product add constraint FKkoamhgme3l61e8j3h6c6ij8ey foreign key (product_id) references product (id)
-alter table user add constraint FKk1rg8hk4nuxwysgf38ysy77fy foreign key (preferences_id) references preferences (id)
-alter table user_roles add constraint FKj9553ass9uctjrmh0gkqsmv0d foreign key (roles_id) references role (id)
-alter table user_roles add constraint FK55itppkw3i07do3h7qoclqd4k foreign key (user_id) references user (id)
+create table address (id integer not null auto_increment, city varchar(255), country varchar(255), first_name varchar(255), kos_id bigint not null, last_name varchar(255), phone varchar(255), state varchar(255), street_line1 varchar(255), street_line2 varchar(255), zip_code varchar(255), primary key (id));
+create table cash_register (hostname varchar(255) not null, ip varchar(255), primary key (hostname));
+create table cash_register_session (id integer not null auto_increment, end_date datetime, start_date datetime, cash_register_hostname varchar(255), primary key (id));
+create table category (id integer not null auto_increment, available_online bit not null, name varchar(255), root_category bit not null, parent_category_id integer, primary key (id));
+create table company (name varchar(255) not null, address_city varchar(255), address_number varchar(255), address_street varchar(255), address_zip_code varchar(255), dilicom_image_encryption_key varchar(255), ean13 varchar(255), email varchar(255), legal_mention1 varchar(255), legal_mention2 varchar(255), phone varchar(255), siret varchar(255), website varchar(255), primary key (name));
+create table customer (id integer not null auto_increment, company_name varchar(255), creation_date datetime, ean13 varchar(255), email varchar(255), first_name varchar(255), fixed_phone varchar(255), internal_note TEXT, last_name varchar(255), mobile_phone varchar(255), tva_number varchar(255), address_id integer, primary key (id));
+create table customer_credit (id integer not null auto_increment, cancel_date datetime, complete_date datetime, date datetime, number varchar(255), rebate_amount double precision, status varchar(255), total_amount double precision, total_amount_rebate_out double precision, total_tax_amount double precision, total_tax_less_amount double precision, customer_id integer, invoice_id integer, payment_method_type varchar(255), primary key (id));
+create table customer_credit_details (customer_credit_id integer not null, details_id integer not null);
+create table customer_credit_taxes_amounts (customer_credit_id integer not null, taxes_amounts_id integer not null, taxes_amounts_key double precision not null, primary key (customer_credit_id, taxes_amounts_key));
+create table customer_credit_detail (id integer not null auto_increment, max_quantity double precision not null, quantity double precision not null, total_amount double precision, unit_price double precision, customer_credit_id integer, product_id integer, primary key (id));
+create table daily_report (id integer not null auto_increment, average_sale double precision not null, date datetime, return_count integer not null, sales_amount_tax_in double precision not null, sales_amount_tax_out double precision not null, sales_count integer not null, primary key (id));
+create table daily_report_invoices (daily_report_id integer not null, invoices_id integer not null);
+create table daily_report_sales_by_payment_methods (daily_report_id integer not null, sales_by_payment_methods_id integer not null);
+create table dilicom_order (id integer not null auto_increment, creation_date datetime, error_message text, process_date datetime, remote_file_content text, remote_filename varchar(255), status varchar(255), transfer_date datetime, validation_date datetime, purchase_order_id bigint, primary key (id));
+create table discount_type (type varchar(255) not null, description varchar(255), primary key (type));
+create table error (id bigint not null auto_increment, agent varchar(255), exception longtext, hostname varchar(255), ip varchar(255), message longtext, timestamp datetime, primary key (id));
+create table inventory_count (id bigint not null auto_increment, date_counted datetime, quantity double precision not null, reason varchar(255), product_id integer, primary key (id));
+create table invoice (id integer not null auto_increment, amount_paid double precision, amount_returned double precision, cancel_date datetime, confirmed_date datetime, customer_order_id bigint, date datetime, invoice_date datetime, modification_date datetime, number varchar(255), paid_date datetime, rebate_amount double precision, rebate_percent double precision, refund_date datetime, shipping_cost double precision, shipping_method varchar(255), source varchar(255), total_amount double precision, total_amount_rebate_out double precision, total_tax_amount double precision, total_tax_less_amount double precision, total_weight integer, tva_number varchar(255), billing_address_id integer, cash_register_session_id integer, customer_id integer, shipping_address_id integer, status_type varchar(255), user_id integer, primary key (id));
+create table invoice_details (invoice_id integer not null, details_id integer not null);
+create table invoice_payments (invoice_id integer not null, payments_id integer not null);
+create table invoice_taxes_amounts (invoice_id integer not null, taxes_amounts_id integer not null, taxes_amounts_key double precision not null, primary key (invoice_id, taxes_amounts_key));
+create table invoice_detail (id integer not null auto_increment, quantity double precision, rebate double precision, rebate_percent double precision, tax_rate double precision, total_amount double precision, total_rebate_amount double precision, total_tax_amount double precision, total_tax_less_amount double precision, total_taxable_amount double precision, unit_price double precision, unit_price_tax_less double precision, invoice_id integer, product_id integer, tax_amount_id integer, primary key (id));
+create table invoice_status (type varchar(255) not null, description varchar(255), primary key (type));
+create table invoice_tax_amount (id integer not null auto_increment, tax_amount double precision, tax_rate double precision, taxable_amount double precision, taxed_amount double precision, primary key (id));
+create table kos_notification (id integer not null auto_increment, action varchar(255), creation_date datetime, error longtext, error_date datetime, kubik_id integer not null, processed_date datetime, status varchar(255), type varchar(255), primary key (id));
+create table payment (id integer not null auto_increment, amount double precision not null, invoice_id integer, payment_method_type varchar(255), primary key (id));
+create table payment_method (type varchar(255) not null, accounting_code varchar(255), available_to_cash_register bit not null, description varchar(255), primary key (type));
+create table preferences (id integer not null auto_increment, purchase_session_id integer, primary key (id));
+create table product (id integer not null auto_increment, author varchar(255), availability_code varchar(255), available_for_order bit, barcode_type varchar(255), cash_register_label varchar(255), collection varchar(255), collection_reference varchar(255), date_published datetime, dilicom_reference bit not null, discount float not null, ean13 varchar(255), extended_label varchar(255), height integer, images_validated bit not null, isbn varchar(255), main_reference bit, orderable_by_unit bit, price_tax_in double precision not null, price_tax_out1 double precision not null, price_tax_out2 double precision, price_tax_out3 double precision, price_type varchar(255), product_type varchar(255), publish_end_date datetime, publisher varchar(255), publisher_isnb varchar(255), publisher_presentation varchar(255), purchase_price_tax_out double precision, references_count integer, replaced_byareference bit, replaced_by_ean13 varchar(255), replacesareference bit, replaces_ean13 varchar(255), return_type varchar(255), schoolbook bit, secondary_reference bit, standard_label varchar(255), supplier_reference varchar(255), theme varchar(255), thickness integer, tva_rate1 double precision not null, tva_rate2 double precision, tva_rate3 double precision, weight integer, width integer, category_id integer, supplier_id integer, primary key (id));
+create table product_image (id bigint not null auto_increment, content_length bigint not null, size varchar(255), product_id integer, primary key (id));
+create table product_inventory (id integer not null auto_increment, quantity_on_hand double precision not null, quantity_on_hold double precision not null, product_id integer, primary key (id));
+create table proxy (id integer not null, hostname varchar(255), ip varchar(255), port integer not null, primary key (id));
+create table purchase_order (id bigint not null, date datetime, discount float not null, max_delivery_date datetime, min_delivery_date datetime, notation_code varchar(255), operation_code varchar(255), shipping_mode varchar(255), status varchar(255), submited_date datetime, total_amount_tax_out double precision not null, dilicom_order_id integer, purchase_session_id integer, reception_id integer, supplier_id integer, primary key (id));
+create table purchase_order_details (purchase_order_id bigint not null, details_id integer not null);
+create table purchase_order_detail (id integer not null auto_increment, discount float not null, discount_applied float not null, quantity double precision not null, total_amount_tax_out double precision not null, unit_price_tax_out double precision not null, discount_type_type varchar(255), product_id integer, purchase_order_id bigint, primary key (id));
+create table purchase_session (id integer not null auto_increment, close_date datetime, max_delivery_date datetime, min_delivery_date datetime, open_date datetime, status varchar(255), primary key (id));
+create table purchase_session_details (purchase_session_id integer not null, details_id integer not null);
+create table purchase_session_purchase_orders (purchase_session_id integer not null, purchase_orders_id bigint not null);
+create table purchase_session_detail (id integer not null auto_increment, quantity double precision not null, product_id integer, purchase_session_id integer, primary key (id));
+create table purchase_session_preferences (id integer not null auto_increment, primary key (id));
+create table purchase_session_preferences_status (purchase_session_preferences_id integer not null, status integer);
+create table receipt_print_job (id integer not null auto_increment, start_date datetime, invoice_id integer, primary key (id));
+create table reception (id integer not null auto_increment, date_created datetime, date_received datetime, delivery_date datetime, delivery_date_type integer, discount float not null, editable bit not null, shipped_date datetime, shipping_mode varchar(255), status varchar(255), total_amount_tax_out double precision not null, purchase_order_id bigint, supplier_id integer, primary key (id));
+create table reception_shipping_packages (reception_id integer not null, shipping_packages_id integer not null);
+create table reception_detail (id integer not null auto_increment, discount float not null, discount_applied float not null, quantity_received double precision not null, quantity_to_receive double precision not null, total_amount_tax_out double precision not null, unit_price_tax_out double precision not null, discount_type_type varchar(255), product_id integer, reception_id integer, primary key (id));
+create table reference_notification (id integer not null auto_increment, creation_date datetime, processed_date datetime, status varchar(255), product_id integer, primary key (id));
+create table restock (id integer not null auto_increment, open_date datetime, quantity double precision not null, skipped_date datetime, status varchar(255), validated_date datetime, product_id integer, purchase_session_id integer, primary key (id));
+create table rma (id integer not null auto_increment, canceled_date datetime, open_date datetime, shipped_date datetime, status varchar(255), supplier_id integer, primary key (id));
+create table rma_details (rma_id integer not null, details_id integer not null);
+create table rma_detail (id integer not null auto_increment, quantity double precision not null, product_id integer, rma_id integer, primary key (id));
+create table role (id integer not null auto_increment, name varchar(255), primary key (id));
+create table sales_by_payment_method (id integer not null auto_increment, payments_amount double precision not null, sales_count integer not null, payment_method_type varchar(255), primary key (id));
+create table shipping_cost_level (id integer not null auto_increment, cost double precision not null, weight integer, primary key (id));
+create table shipping_package (id integer not null auto_increment, number varchar(255), primary key (id));
+create table stocktaking (id bigint not null auto_increment, canceled_date datetime, completion_date datetime, creation_date datetime, status integer, primary key (id));
+create table stocktaking_category (id bigint not null auto_increment, creation_date datetime, name varchar(255), stocktaking_id bigint, primary key (id));
+create table stocktaking_diff (id bigint not null auto_increment, adjustment_quantity double precision not null, counted_quantity double precision not null, validated bit not null, product_id integer, stocktaking_id bigint, primary key (id));
+create table stocktaking_product (id bigint not null auto_increment, inventory_quantity double precision not null, quantity double precision not null, category_id bigint, product_id integer, primary key (id));
+create table supplier (id integer not null auto_increment, account_number varchar(255), address varchar(255), discount float not null, ean13 varchar(255), name varchar(255), purchase_order_ean13 varchar(255), primary key (id));
+create table user (id integer not null auto_increment, password varchar(255), username varchar(255), preferences_id integer, primary key (id));
+create table user_roles (user_id integer not null, roles_id integer not null);
+alter table category add constraint UK_46ccwnsi9409t36lurvtyljak unique (name);
+alter table customer add constraint UKdwk6cx0afu8bs9o4t536v1j5v unique (email);
+alter table customer_credit_details add constraint UK_6xrinkdf1wu209bpt26cj3w8d unique (details_id);
+alter table customer_credit_taxes_amounts add constraint UK_i3n5yxmjw3301qysl3w3vbhkd unique (taxes_amounts_id);
+alter table daily_report_invoices add constraint UK_k4idwqq9w1jv43bm79v8mrjcf unique (invoices_id);
+alter table daily_report_sales_by_payment_methods add constraint UK_7oobvksy8oh8mgu6sub7obgid unique (sales_by_payment_methods_id);
+create index IDXs80swslph7ojyt1mfck2dasmm on invoice (paid_date);
+alter table invoice_details add constraint UK_9prq28o31xgjt97uq5koma6jo unique (details_id);
+alter table invoice_payments add constraint UK_eyjdiyqxwq9h2fwde8a1e7jbw unique (payments_id);
+alter table invoice_taxes_amounts add constraint UK_71iydrjpo749p7k7j26o0glah unique (taxes_amounts_id);
+alter table product add constraint UK_iy2pc8yshvm2ptl3mdk41w5dk unique (ean13);
+alter table purchase_order_details add constraint UK_5n7r71u67kyn2ul5pyyt0jsk0 unique (details_id);
+alter table purchase_session_details add constraint UK_172f4b9qd5086j2wfa3un5wn7 unique (details_id);
+alter table purchase_session_purchase_orders add constraint UK_hjrfubqsu9svu8481kn2anatw unique (purchase_orders_id);
+alter table reception_shipping_packages add constraint UK_m6ruwymjtkwrbgu608ipv57yc unique (shipping_packages_id);
+alter table reference_notification add constraint UK_ahi78oc0ypsfoij3cyo2j64sk unique (product_id);
+alter table rma_details add constraint UK_1wdswbioxx4ka12545ttocns3 unique (details_id);
+alter table user_roles add constraint UK_amwlmdeik2qdnksxgd566knop unique (roles_id);
+alter table cash_register_session add constraint FK8rjm2vg6eu1qvfvf28pb6ys3i foreign key (cash_register_hostname) references cash_register (hostname);
+alter table category add constraint FKs2ride9gvilxy2tcuv7witnxc foreign key (parent_category_id) references category (id);
+alter table customer add constraint FKglkhkmh2vyn790ijs6hiqqpi foreign key (address_id) references address (id);
+alter table customer_credit add constraint FK9ur20qr1p2jke3b4crspnrnvh foreign key (customer_id) references customer (id);
+alter table customer_credit add constraint FKqv8cyiw02ymf6maw1dvgthjj0 foreign key (invoice_id) references invoice (id);
+alter table customer_credit add constraint FKk2hb29edonpsvhcquf68ndvmh foreign key (payment_method_type) references payment_method (type);
+alter table customer_credit_details add constraint FKqke75efitxhutfe9xfslu83ig foreign key (details_id) references customer_credit_detail (id);
+alter table customer_credit_details add constraint FKm69qqfmrhmgki5om8hqqq3sq foreign key (customer_credit_id) references customer_credit (id);
+alter table customer_credit_taxes_amounts add constraint FK5kuodm3ch63ypxqcpnpg52t6h foreign key (taxes_amounts_id) references invoice_tax_amount (id);
+alter table customer_credit_taxes_amounts add constraint FK73ou4yan7unvc97ev608ov1ec foreign key (customer_credit_id) references customer_credit (id);
+alter table customer_credit_detail add constraint FKaefkkycfi9e45m9n342kmpr2y foreign key (customer_credit_id) references customer_credit (id);
+alter table customer_credit_detail add constraint FKdfnrmelf2ohulau4rbtie9a1o foreign key (product_id) references product (id);
+alter table daily_report_invoices add constraint FKdq3jo0kaaug1cwutjayeu3oi4 foreign key (invoices_id) references invoice (id);
+alter table daily_report_invoices add constraint FKk54ackpydemwmk4ueu1sl4ajm foreign key (daily_report_id) references daily_report (id);
+alter table daily_report_sales_by_payment_methods add constraint FKruurcl5u9l3q4625bjol57nuf foreign key (sales_by_payment_methods_id) references sales_by_payment_method (id);
+alter table daily_report_sales_by_payment_methods add constraint FKlbt55pqpqwgyhreevc9jc17w9 foreign key (daily_report_id) references daily_report (id);
+alter table dilicom_order add constraint FKtly79hcrq71rptdml47ri7atu foreign key (purchase_order_id) references purchase_order (id);
+alter table inventory_count add constraint FKcuhi99fy16336ovgh5p2hd1s4 foreign key (product_id) references product (id);
+alter table invoice add constraint FK1wki0c4u9nlp6pscldvwy0ym8 foreign key (billing_address_id) references address (id);
+alter table invoice add constraint FKcnd5ytjd1qw3x5eg88gn8wv62 foreign key (cash_register_session_id) references cash_register_session (id);
+alter table invoice add constraint FK5e32ukwo9uknwhylogvta4po6 foreign key (customer_id) references customer (id);
+alter table invoice add constraint FKej4ui7kwpq214t2e8d5ebn12b foreign key (shipping_address_id) references address (id);
+alter table invoice add constraint FKmci72q169cqfcsd55eivwdcyo foreign key (status_type) references invoice_status (type);
+alter table invoice add constraint FKjunvl5maki3unqdvljk31kns3 foreign key (user_id) references user (id);
+alter table invoice_details add constraint FKgag0nvrfr1uw5k8x9xqyed6w3 foreign key (details_id) references invoice_detail (id);
+alter table invoice_details add constraint FKpc7xa72mljy7weoct7uubgjy7 foreign key (invoice_id) references invoice (id);
+alter table invoice_payments add constraint FKf96jgecmytd307hk037ndyx6c foreign key (payments_id) references payment (id);
+alter table invoice_payments add constraint FKsqc8w18aed21na7jy4itdhhjq foreign key (invoice_id) references invoice (id);
+alter table invoice_taxes_amounts add constraint FKghafo8w3w4r0hidbom2cwrqvx foreign key (taxes_amounts_id) references invoice_tax_amount (id);
+alter table invoice_taxes_amounts add constraint FKqll71kltch0nqrud9lbn1j2tl foreign key (invoice_id) references invoice (id);
+alter table invoice_detail add constraint FKit1rbx4thcr6gx6bm3gxub3y4 foreign key (invoice_id) references invoice (id);
+alter table invoice_detail add constraint FKbe6c21nke5fy4m3vw00f23qsf foreign key (product_id) references product (id);
+alter table invoice_detail add constraint FK6fv7mihuc66wbw4l3eusqkyw4 foreign key (tax_amount_id) references invoice_tax_amount (id);
+alter table payment add constraint FKsb24p8f52refbb80qwp4gem9n foreign key (invoice_id) references invoice (id);
+alter table payment add constraint FKaxmbbf2qbtuioay0r7k0vqw1o foreign key (payment_method_type) references payment_method (type);
+alter table preferences add constraint FKeh6stx2v9tcl1nuvrmoxogxth foreign key (purchase_session_id) references purchase_session_preferences (id);
+alter table product add constraint FK1mtsbur82frn64de7balymq9s foreign key (category_id) references category (id);
+alter table product add constraint FK2kxvbr72tmtscjvyp9yqb12by foreign key (supplier_id) references supplier (id);
+alter table product_image add constraint FK6oo0cvcdtb6qmwsga468uuukk foreign key (product_id) references product (id);
+alter table product_inventory add constraint FK8echmjvoete36r6q97dr6pl7j foreign key (product_id) references product (id);
+alter table purchase_order add constraint FKivysxds86ik3oeylhe7e2eaqw foreign key (dilicom_order_id) references dilicom_order (id);
+alter table purchase_order add constraint FK27ii5e9j0wyju3wgs5df1spod foreign key (purchase_session_id) references purchase_session (id);
+alter table purchase_order add constraint FK70rpi4c6cmohkpqg34oiadc09 foreign key (reception_id) references reception (id);
+alter table purchase_order add constraint FK4traogu3jriq9u7e8rvm86k7i foreign key (supplier_id) references supplier (id);
+alter table purchase_order_details add constraint FK2y076owb03rkyi0rpotaxofa6 foreign key (details_id) references purchase_order_detail (id);
+alter table purchase_order_details add constraint FKihu4nh2q6ybdkrxbgimb8o0x3 foreign key (purchase_order_id) references purchase_order (id);
+alter table purchase_order_detail add constraint FKffmj3x7xblnr5owrw7df3ldg9 foreign key (discount_type_type) references discount_type (type);
+alter table purchase_order_detail add constraint FKcpv7slf2i15y8e9utfwd7e1vk foreign key (product_id) references product (id);
+alter table purchase_order_detail add constraint FKi6xlnsg9o9ght6xcwl51ooa4k foreign key (purchase_order_id) references purchase_order (id);
+alter table purchase_session_details add constraint FKad32i9j6bh5mb7g97jdun8nv1 foreign key (details_id) references purchase_session_detail (id);
+alter table purchase_session_details add constraint FKs07j2q2taiqixvd9rqf6w1muw foreign key (purchase_session_id) references purchase_session (id);
+alter table purchase_session_purchase_orders add constraint FKt740btbv3pq7t32ybemhn15qi foreign key (purchase_orders_id) references purchase_order (id);
+alter table purchase_session_purchase_orders add constraint FKeyqg409r2m37wwydyin3x1x8t foreign key (purchase_session_id) references purchase_session (id);
+alter table purchase_session_detail add constraint FKhhsjwdmmkgp7r8cbxv1uwhi4o foreign key (product_id) references product (id);
+alter table purchase_session_detail add constraint FKl4wtaqwu1fbhug1v2dqwpl9po foreign key (purchase_session_id) references purchase_session (id);
+alter table purchase_session_preferences_status add constraint FK3y6k15kr5mm7g72rwhh0huk10 foreign key (purchase_session_preferences_id) references purchase_session_preferences (id);
+alter table receipt_print_job add constraint FKoqsp4692yo7oh1x0uyjksyp9w foreign key (invoice_id) references invoice (id);
+alter table reception add constraint FKsnisnyvalqr2e9ekgyx1pb9pa foreign key (purchase_order_id) references purchase_order (id);
+alter table reception add constraint FKlm3l4u81xndwlw0iqr6uo3wy1 foreign key (supplier_id) references supplier (id);
+alter table reception_shipping_packages add constraint FK7y81xon1lqj745co39a77v6k foreign key (shipping_packages_id) references shipping_package (id);
+alter table reception_shipping_packages add constraint FKfegd1rayi1xp39yix0mta1ych foreign key (reception_id) references reception (id);
+alter table reception_detail add constraint FKr2w7f3fip6pcu8qus2fl4pbiw foreign key (discount_type_type) references discount_type (type);
+alter table reception_detail add constraint FKd9pc63ijf41tccls78s5i4yrr foreign key (product_id) references product (id);
+alter table reception_detail add constraint FKjl2pbn1u2kgjoctkkkmrewx32 foreign key (reception_id) references reception (id);
+alter table reference_notification add constraint FK5b5atgv7s714v0m50lrii0m8j foreign key (product_id) references product (id);
+alter table restock add constraint FKs289fuhq0fepnf7nvddyh2gbw foreign key (product_id) references product (id);
+alter table restock add constraint FKjahhm0h9ibb8pqoq5v9foeysy foreign key (purchase_session_id) references purchase_session (id);
+alter table rma add constraint FKcqgjqtsp2m8tlvwv1ukphl6r foreign key (supplier_id) references supplier (id);
+alter table rma_details add constraint FKojs28fljkcg7m2oaq61ijyfkr foreign key (details_id) references rma_detail (id);
+alter table rma_details add constraint FKa18tr9vcrqabo2b3vnnpax9nu foreign key (rma_id) references rma (id);
+alter table rma_detail add constraint FKa8r5955xanewgb2vrb2dsy9vr foreign key (product_id) references product (id);
+alter table rma_detail add constraint FKotr0vlosfa0w7wpq1i49o9fx5 foreign key (rma_id) references rma (id);
+alter table sales_by_payment_method add constraint FKetfqqb5pxhmlp189ehi725kbf foreign key (payment_method_type) references payment_method (type);
+alter table stocktaking_category add constraint FKbakgwgxpvmgc2yx62irntsc2f foreign key (stocktaking_id) references stocktaking (id);
+alter table stocktaking_diff add constraint FK17ylndxetr4jentcc9vy8l9rt foreign key (product_id) references product (id);
+alter table stocktaking_diff add constraint FKskdfbiikw243frf0mbf6uhwlm foreign key (stocktaking_id) references stocktaking (id);
+alter table stocktaking_product add constraint FKcgfol0v1174lwqcbkdym961n4 foreign key (category_id) references stocktaking_category (id);
+alter table stocktaking_product add constraint FKkoamhgme3l61e8j3h6c6ij8ey foreign key (product_id) references product (id);
+alter table user add constraint FKk1rg8hk4nuxwysgf38ysy77fy foreign key (preferences_id) references preferences (id);
+alter table user_roles add constraint FKj9553ass9uctjrmh0gkqsmv0d foreign key (roles_id) references role (id);
+alter table user_roles add constraint FK55itppkw3i07do3h7qoclqd4k foreign key (user_id) references user (id);
