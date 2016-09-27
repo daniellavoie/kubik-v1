@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class LogoServiceImpl implements LogoService {
 				throw new ImageNotFoundException();
 			}
 
-			return object.getObjectContent();
+			return IOUtils.toBufferedInputStream(object.getObjectContent());
 		} catch (AmazonClientException | IOException ex) {
 			throw new ImageNotFoundException();
 		}

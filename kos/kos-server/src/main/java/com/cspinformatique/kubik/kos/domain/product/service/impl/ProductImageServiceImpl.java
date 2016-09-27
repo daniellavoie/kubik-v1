@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,7 +57,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 				throw new ImageNotFoundException();
 			}
 
-			return object.getObjectContent();
+			return IOUtils.toBufferedInputStream(object.getObjectContent());
 		} catch (AmazonClientException | IOException ex) {
 			LOGGER.error("Error while loading image from AWS.", ex);
 

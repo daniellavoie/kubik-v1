@@ -101,7 +101,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 				throw new ImageNotFoundException();
 			}
 
-			return object.getObjectContent();
+			return IOUtils.toBufferedInputStream(object.getObjectContent());
 		} catch (AmazonClientException | IOException amazonS3Ex) {
 			throw new ImageNotFoundException();
 		}
