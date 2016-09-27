@@ -22,7 +22,7 @@ import com.cspinformatique.kubik.server.model.user.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Table(indexes = @Index(columnList = "paidDate") )
+@Table(indexes = @Index(columnList = "paidDate"))
 public class Invoice {
 	public enum Source {
 		CASH_REGISTER, CUSTOMER_ORDER, WEB_ORDER
@@ -64,6 +64,7 @@ public class Invoice {
 	private String tvaNumber;
 	private ShippingMethod shippingMethod;
 	private Integer totalWeight;
+	private String note;
 
 	public Invoice() {
 
@@ -341,5 +342,13 @@ public class Invoice {
 
 	public void setTotalWeight(Integer totalWeight) {
 		this.totalWeight = totalWeight;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
 	}
 }

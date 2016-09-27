@@ -1,0 +1,1 @@
+ALTER TABLE invoice ADD COLUMN note VARCHAR(255) NULL AFTER `user_id`;

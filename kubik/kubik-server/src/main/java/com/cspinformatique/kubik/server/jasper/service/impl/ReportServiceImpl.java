@@ -51,7 +51,7 @@ public class ReportServiceImpl implements ReportService {
 			HashMap<String, Object> reportParameters = new HashMap<String, Object>();
 
 			Company company = companyService.findComapny().get();
-			
+
 			reportParameters.put("INVOICE_ID", invoice.getId());
 			reportParameters.put("LOGO", loadLogo());
 			reportParameters.put("COMPANY_NAME", company.getName());
@@ -63,7 +63,8 @@ public class ReportServiceImpl implements ReportService {
 			reportParameters.put("LEGAL_MENTION_1", company.getLegalMention1());
 			reportParameters.put("LEGAL_MENTION_2", company.getLegalMention2());
 			reportParameters.put("WEBSITE", company.getWebsite());
-			reportParameters.put("EMAIL", company.getEmail());			
+			reportParameters.put("EMAIL", company.getEmail());
+			reportParameters.put("NOTE", invoice.getNote());
 
 			return JasperFillManager.fillReport(
 					new ClassPathResource("reports/invoice/invoice.jasper").getInputStream(), reportParameters,
@@ -76,7 +77,7 @@ public class ReportServiceImpl implements ReportService {
 	public JasperPrint generatePurchaseOrderReport(PurchaseOrder purchaseOrder) {
 		try {
 			Company company = companyService.findComapny().get();
-			
+
 			HashMap<String, Object> reportParameters = new HashMap<String, Object>();
 
 			reportParameters.put("PURCHASE_ORDER_ID", purchaseOrder.getId());
@@ -94,7 +95,7 @@ public class ReportServiceImpl implements ReportService {
 			reportParameters.put("LEGAL_MENTION_1", company.getLegalMention1());
 			reportParameters.put("LEGAL_MENTION_2", company.getLegalMention2());
 			reportParameters.put("WEBSITE", company.getWebsite());
-			reportParameters.put("EMAIL", company.getEmail());	
+			reportParameters.put("EMAIL", company.getEmail());
 
 			return JasperFillManager.fillReport(
 					new ClassPathResource("reports/order/order-form.jasper").getInputStream(), reportParameters,
@@ -116,7 +117,7 @@ public class ReportServiceImpl implements ReportService {
 
 			reportParameters.put("COMPANY_NAME", company.getName());
 			reportParameters.put("EMAIL", company.getEmail());
-            reportParameters.put("PHONE", company.getPhone());
+			reportParameters.put("PHONE", company.getPhone());
 
 			return JasperFillManager.fillReport(
 					new ClassPathResource("reports/sale-receipt/sale-receipt.jasper").getInputStream(),
@@ -131,7 +132,7 @@ public class ReportServiceImpl implements ReportService {
 		try {
 			HashMap<String, Object> reportParameters = new HashMap<String, Object>();
 
-            Company company = companyService.findComapny().get();
+			Company company = companyService.findComapny().get();
 
 			reportParameters.put("RMA_ID", rma.getId());
 			reportParameters.put("SUPPLIER_NAME", rma.getSupplier().getName());
@@ -139,11 +140,11 @@ public class ReportServiceImpl implements ReportService {
 			reportParameters.put("SUPPLIER_ACCOUNT_NUMBER", rma.getSupplier().getAccountNumber());
 			reportParameters.put("LOGO", loadLogo());
 
-            reportParameters.put("COMPANY_NAME", company.getName());
-            reportParameters.put("ADDRESS_NUMBER", company.getAddressNumber());
-            reportParameters.put("ADDRESS_STREET", company.getAddressStreet());
-            reportParameters.put("ADDRESS_ZIP_CODE", company.getAddressZipCode());
-            reportParameters.put("ADDRESS_CITY", company.getAddressCity());
+			reportParameters.put("COMPANY_NAME", company.getName());
+			reportParameters.put("ADDRESS_NUMBER", company.getAddressNumber());
+			reportParameters.put("ADDRESS_STREET", company.getAddressStreet());
+			reportParameters.put("ADDRESS_ZIP_CODE", company.getAddressZipCode());
+			reportParameters.put("ADDRESS_CITY", company.getAddressCity());
 
 			return JasperFillManager.fillReport(new ClassPathResource("reports/rma/rma.jasper").getInputStream(),
 					reportParameters, dataSource.getConnection());
