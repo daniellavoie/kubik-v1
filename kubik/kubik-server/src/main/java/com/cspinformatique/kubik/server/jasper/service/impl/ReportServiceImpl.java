@@ -56,6 +56,7 @@ public class ReportServiceImpl implements ReportService {
 			reportParameters.put("LOGO", loadLogo());
 			reportParameters.put("COMPANY_NAME", company.getName());
 			reportParameters.put("SIRET", company.getSiret());
+			reportParameters.put("PHONE", company.getPhone());
 			reportParameters.put("ADDRESS_NUMBER", company.getAddressNumber());
 			reportParameters.put("ADDRESS_STREET", company.getAddressStreet());
 			reportParameters.put("ADDRESS_CITY", company.getAddressCity());
