@@ -25,7 +25,6 @@ import org.springframework.util.Assert;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
@@ -65,7 +64,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 	private String calculateImageKey(Product product, ProductImageSize size) {
 		return product.getId() + "-" + size.name() + ".jpg";
 	}
-	
+
 	@Override
 	public void deleteByProduct(Product product) {
 		productImageRepository.deleteByProduct(product);
@@ -97,15 +96,13 @@ public class ProductImageServiceImpl implements ProductImageService {
 
 	@Override
 	public InputStream loadInputStream(Product product, ProductImageSize size) {
-		try {
-			S3Object object = amazonS3.getObject(new GetObjectRequest(bucketName, calculateImageKey(product, size)));
-
+		try (S3Object object = amazonS3.getObject(new GetObjectRequest(bucketName, calculateImageKey(product, size)))) {
 			if (object == null) {
 				throw new ImageNotFoundException();
 			}
 
 			return object.getObjectContent();
-		} catch (AmazonS3Exception amazonS3Ex) {
+		} catch (AmazonClientException | IOException amazonS3Ex) {
 			throw new ImageNotFoundException();
 		}
 	}
@@ -150,7 +147,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 				"http://images1.centprod.com/" + ean13 + "/" + product.getImageEncryptedKey() + "-cover-full.jpg",
 				product);
 	}
-	
+
 	@Override
 	public void persistImageFromUrlToAws(String url, Product product) {
 		try {

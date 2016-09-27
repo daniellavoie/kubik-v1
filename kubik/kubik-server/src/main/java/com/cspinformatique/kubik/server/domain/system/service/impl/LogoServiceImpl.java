@@ -1,14 +1,15 @@
 package com.cspinformatique.kubik.server.domain.system.service.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
@@ -30,15 +31,13 @@ public class LogoServiceImpl implements LogoService {
 
 	@Override
 	public InputStream findLogo() {
-		try {
-			S3Object object = amazonS3.getObject(new GetObjectRequest(bucketName, "logo"));
-
+		try (S3Object object = amazonS3.getObject(new GetObjectRequest(bucketName, "logo"))) {
 			if (object == null) {
 				throw new ImageNotFoundException();
 			}
 
 			return object.getObjectContent();
-		} catch (AmazonS3Exception amazonS3Ex) {
+		} catch (AmazonClientException | IOException ex) {
 			throw new ImageNotFoundException();
 		}
 	}
