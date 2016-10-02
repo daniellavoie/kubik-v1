@@ -28,6 +28,7 @@ import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceRepositor
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceStatusRepository;
 import com.cspinformatique.kubik.server.domain.sales.service.CustomerService;
 import com.cspinformatique.kubik.server.domain.sales.service.DailyReportService;
+import com.cspinformatique.kubik.server.domain.sales.service.InvoiceAmountsService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.server.domain.sales.service.ShippingCostLevelService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
@@ -52,6 +53,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	@Resource
 	DailyReportService dailyReportService;
+
+	@Resource
+	InvoiceAmountsService invoiceAmountsService;
 
 	@Resource
 	InvoiceRepository invoiceRepository;
@@ -84,35 +88,17 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 		if (invoice.getDetails() != null) {
 			for (InvoiceDetail detail : invoice.getDetails()) {
-				double quantity = detail.getQuantity();
-
 				Product product = productService.findOne(detail.getProduct().getId());
-
-				// Calculate rebate amount for detail.
-				double rebateAmount = 0d;
-				if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d) {
-					rebateAmount = product.getPriceTaxIn() * (invoice.getRebatePercent() / 100) * detail.getQuantity();
-				}
-
-				if ((invoice.getRebatePercent() == null && detail.getRebatePercent() != null && detail.getRebatePercent() != 0d)
-						|| (detail.getRebatePercent() != null && detail.getRebatePercent() != 0d
-								&& detail.getRebatePercent().doubleValue() > invoice.getRebatePercent().doubleValue())) {
-					rebateAmount = detail.getUnitPrice() * detail.getRebatePercent() / 100 * detail.getQuantity();
-				}
-
-				detail.setRebate(rebateAmount);
 				detail.setTaxRate(product.getTvaRate1());
 
-				// Increment total rebate amount.
-				totalRebateAmount += rebateAmount;
-
 				// Calculates customer credit details amounts
+				detail.setProduct(product);
 				detail.setUnitPrice(product.getPriceTaxIn());
-				detail.setUnitPriceTaxLess(Precision
-						.round(detail.getUnitPrice() - (detail.getUnitPrice() * (detail.getTaxRate() / 100)), 2));
-				detail.setTotalAmount(detail.getUnitPrice() * quantity);
-				detail.setTotalTaxLessAmount(Precision.round(detail.getTotalAmount()
-						- ((detail.getTotalAmount() - rebateAmount) * (detail.getTaxRate() / 100)), 2));
+				
+				invoiceAmountsService.calculateDetailAmounts(detail);
+
+				// Increment total rebate amount.
+				totalRebateAmount += detail.getRebate();
 
 				// Increment customer credit totals amount.
 				totalAmount += detail.getTotalAmount();
@@ -135,7 +121,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 		totalRebateAmount = Precision.round(totalRebateAmount, 2);
 		invoice.setRebateAmount(totalRebateAmount);
-		invoice.setTotalAmount(Precision.round(totalAmount - totalRebateAmount, 2));
+		invoice.setTotalAmount(Precision.round(totalAmount, 2));
 
 		calculateInvoiceTaxes(invoice);
 
@@ -171,21 +157,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 			for (InvoiceDetail detail : invoice.getDetails()) {
 				Product product = productService.findOne(detail.getProduct().getId());
 
-				double quantity = detail.getQuantity();
-
-				// Calculate rebate amount for detail.
-				double rebateAmount = 0d;
-				if (invoice.getRebatePercent() != null && invoice.getRebatePercent().doubleValue() != 0d)
-					rebateAmount = detail.getUnitPrice() * invoice.getRebatePercent() / 100 * detail.getQuantity();
-
-				if ((invoice.getRebatePercent() == null && detail.getRebatePercent() != null && detail.getRebatePercent() != 0d)
-						|| (detail.getRebatePercent() != null && detail.getRebatePercent() != 0d
-								&& detail.getRebatePercent().doubleValue() > invoice.getRebatePercent().doubleValue())) {
-					rebateAmount = detail.getUnitPrice() * detail.getRebatePercent() / 100 * detail.getQuantity();
-				}
-
-				double detailTotalAmount = detail.getUnitPrice().doubleValue() * quantity - rebateAmount;
-
 				// Increment taxed amounts.
 				InvoiceTaxAmount invoiceTaxAmount = totalTaxesAmounts.get(product.getTvaRate1());
 				if (invoiceTaxAmount == null) {
@@ -193,7 +164,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 				} else if (invoiceTaxAmount.getTaxedAmount() == null) {
 					invoiceTaxAmount.setTaxedAmount(0d);
 				}
-				invoiceTaxAmount.setTaxedAmount(detailTotalAmount + invoiceTaxAmount.getTaxedAmount());
+				invoiceTaxAmount.setTaxedAmount(detail.getTotalAmount() + invoiceTaxAmount.getTaxedAmount());
 
 				totalTaxesAmounts.put(product.getTvaRate1(), invoiceTaxAmount);
 			}
@@ -439,6 +410,23 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 			pageRequest = pageRequest.next();
 		} while (page != null && page.getContent().size() != 0);
+	}
+
+	public void recalculateDetailsAmounts() {
+		Page<Invoice> invoicePage;
+		Pageable pageRequest = new PageRequest(0, 50);
+		do {
+			invoicePage = this.findAll(pageRequest);
+
+			for (Invoice invoice : invoicePage.getContent()) {
+				for (InvoiceDetail invoiceDetail : invoice.getDetails())
+					invoiceAmountsService.calculateDetailAmounts(invoiceDetail);
+			}
+
+			pageRequest = pageRequest.next();
+
+			this.invoiceRepository.save(invoicePage.getContent());
+		} while (invoicePage.hasNext());
 	}
 
 	@Override

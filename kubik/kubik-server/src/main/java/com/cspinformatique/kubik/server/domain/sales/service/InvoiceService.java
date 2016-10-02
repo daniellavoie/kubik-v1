@@ -59,6 +59,8 @@ public interface InvoiceService {
 
 	void initializeInvoiceNumbers();
 
+	void recalculateDetailsAmounts();
+
 	void recalculateInvoiceTaxes();
 
 	Invoice save(Invoice invoice);

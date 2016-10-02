@@ -51,8 +51,9 @@ public class InvoiceController {
 
 	@RequestMapping(value = "/init", method = RequestMethod.GET)
 	public void init() {
+		invoiceService.recalculateDetailsAmounts();
 		invoiceService.recalculateInvoiceTaxes();
-		customerCreditService.recalculateCustomerCreditsTaxes();
+//		customerCreditService.recalculateCustomerCreditsTaxes();
 	}
 
 	@ResponseBody
