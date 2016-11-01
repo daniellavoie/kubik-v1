@@ -2,6 +2,7 @@ package com.cspinformatique.kubik.server.jasper.service.impl;
 
 import java.awt.Image;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -47,7 +48,7 @@ public class ReportServiceImpl implements ReportService {
 
 	@Override
 	public JasperPrint generateInvoiceReport(Invoice invoice) {
-		try {
+		try(Connection connection = dataSource.getConnection()) {
 			HashMap<String, Object> reportParameters = new HashMap<String, Object>();
 
 			Company company = companyService.findComapny().get();
@@ -69,14 +70,14 @@ public class ReportServiceImpl implements ReportService {
 
 			return JasperFillManager.fillReport(
 					new ClassPathResource("reports/invoice/invoice.jasper").getInputStream(), reportParameters,
-					dataSource.getConnection());
+					connection);
 		} catch (JRException | SQLException | IOException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
 
 	public JasperPrint generatePurchaseOrderReport(PurchaseOrder purchaseOrder) {
-		try {
+		try(Connection connection = dataSource.getConnection()) {
 			Company company = companyService.findComapny().get();
 
 			HashMap<String, Object> reportParameters = new HashMap<String, Object>();
@@ -100,7 +101,7 @@ public class ReportServiceImpl implements ReportService {
 
 			return JasperFillManager.fillReport(
 					new ClassPathResource("reports/order/order-form.jasper").getInputStream(), reportParameters,
-					dataSource.getConnection());
+					connection);
 		} catch (JRException | SQLException | IOException ex) {
 			throw new RuntimeException(ex);
 		}
@@ -108,7 +109,7 @@ public class ReportServiceImpl implements ReportService {
 
 	@Override
 	public JasperPrint generateReceiptReport(Invoice invoice) {
-		try {
+		try(Connection connection = dataSource.getConnection()) {
 			Company company = companyService.findComapny().get();
 
 			HashMap<String, Object> reportParameters = new HashMap<String, Object>();
@@ -122,7 +123,7 @@ public class ReportServiceImpl implements ReportService {
 
 			return JasperFillManager.fillReport(
 					new ClassPathResource("reports/sale-receipt/sale-receipt.jasper").getInputStream(),
-					reportParameters, dataSource.getConnection());
+					reportParameters, connection);
 		} catch (JRException | SQLException | IOException ex) {
 			throw new RuntimeException(ex);
 		}
@@ -130,7 +131,7 @@ public class ReportServiceImpl implements ReportService {
 
 	@Override
 	public JasperPrint generateRmaReport(Rma rma) {
-		try {
+		try(Connection connection = dataSource.getConnection()) {
 			HashMap<String, Object> reportParameters = new HashMap<String, Object>();
 
 			Company company = companyService.findComapny().get();
@@ -148,7 +149,7 @@ public class ReportServiceImpl implements ReportService {
 			reportParameters.put("ADDRESS_CITY", company.getAddressCity());
 
 			return JasperFillManager.fillReport(new ClassPathResource("reports/rma/rma.jasper").getInputStream(),
-					reportParameters, dataSource.getConnection());
+					reportParameters, connection);
 		} catch (JRException | SQLException | IOException ex) {
 			throw new RuntimeException(ex);
 		}
