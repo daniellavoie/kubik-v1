@@ -1,14 +1,18 @@
 package com.cspinformatique.kubik.kos.domain.product.service.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.cspinformatique.kubik.kos.domain.product.exception.ImageNotFoundException;
