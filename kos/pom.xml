@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.cspinformatique.kubik</groupId>
 		<artifactId>kubik-parent</artifactId>
-		<version>2.8.5-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>kos</artifactId>
@@ -13,6 +13,6 @@
 	
 	<modules>
 		<module>kos-model</module>
-		<module>kos-server</module>
+		<module>kos-core</module>
 	</modules>
 </project>

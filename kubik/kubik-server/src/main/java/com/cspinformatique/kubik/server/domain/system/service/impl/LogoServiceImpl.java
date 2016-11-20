@@ -19,15 +19,14 @@ import com.cspinformatique.kubik.server.domain.system.service.LogoService;
 
 @Service
 public class LogoServiceImpl implements LogoService {
-
-	@Value("${aws.s3.bucket.name}")
+	
+	private AmazonS3 amazonS3;
 	private String bucketName;
 
-	private AmazonS3 amazonS3;
-
 	@Autowired
-	public LogoServiceImpl(AmazonS3 amazonS3) {
+	public LogoServiceImpl(AmazonS3 amazonS3, @Value("${aws.s3.bucket.name}") String bucketName) {
 		this.amazonS3 = amazonS3;
+		this.bucketName = bucketName;
 	}
 
 	@Override

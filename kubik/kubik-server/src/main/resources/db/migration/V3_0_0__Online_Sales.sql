@@ -1,0 +1,2 @@
+create table invoice_confirmation (id bigint not null auto_increment, created_date datetime, error longtext, processed_date datetime, status VARCHAR(255), invoice_id integer, primary key (id));
+alter table invoice_confirmation add constraint FKahp2413d6pm4ijhpg7xp999y7 foreign key (invoice_id) references invoice (id);

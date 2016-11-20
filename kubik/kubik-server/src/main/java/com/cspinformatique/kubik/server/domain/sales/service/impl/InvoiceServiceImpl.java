@@ -66,6 +66,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 	@Resource
 	ProductInventoryService productInventoryService;
 
+//	@Resource
+//	ProductSaleService productSaleService;
+
 	@Resource
 	ProductSaleService productSaleService;
 
@@ -357,6 +360,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 		Invoice invoice = new Invoice();
 		invoice.setStatus(status);
 		invoice.setCustomer(customer);
+		invoice.setCustomerOrderId(customerOrderId);
 		invoice.setDate(Date.from(LocalDateTime.now().withNano(0).atZone(ZoneId.systemDefault()).toInstant()));
 		invoice.setCashRegisterSession(session);
 		invoice.setShippingCost(shippingCost);

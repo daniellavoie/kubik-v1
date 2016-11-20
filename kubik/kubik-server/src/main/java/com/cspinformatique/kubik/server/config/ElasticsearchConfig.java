@@ -18,11 +18,14 @@ public class ElasticsearchConfig {
 
 	@Value("${elasticsearch.port}")
 	private int port;
+	
+	@Value("${elasticsearch.cluster.name}")
+	private String clusterName;
 
 	@Bean
 	public Client client() throws UnknownHostException {
 		return TransportClient.builder()
-				.settings(Settings.settingsBuilder().put("cluster.name", "elasticsearch").build()).build()
+				.settings(Settings.settingsBuilder().put("cluster.name", clusterName).build()).build()
 				.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(hostname), port));
 	}
 }

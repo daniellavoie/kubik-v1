@@ -12,6 +12,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 
 import com.braintreegateway.Transaction;
@@ -25,17 +26,19 @@ import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.sales.exception.InvalidTransactionStatus;
 import com.cspinformatique.kubik.server.domain.sales.exception.TransactionDotNotMatchOrderException;
 import com.cspinformatique.kubik.server.domain.sales.service.CustomerOrderService;
+import com.cspinformatique.kubik.server.domain.sales.service.InvoiceConfirmationService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceStatusService;
 import com.cspinformatique.kubik.server.domain.sales.service.PaymentMethodService;
 import com.cspinformatique.kubik.server.domain.sales.service.PaymentService;
+import com.cspinformatique.kubik.server.jasper.service.ReportService;
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
+import com.cspinformatique.kubik.server.model.sales.Invoice.ShippingMethod;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
 import com.cspinformatique.kubik.server.model.sales.Payment;
 import com.cspinformatique.kubik.server.model.sales.PaymentMethod;
-import com.cspinformatique.kubik.server.model.sales.Invoice.ShippingMethod;
 
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -56,6 +59,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	InvoiceService invoiceService;
 
 	@Resource
+	InvoiceConfirmationService invocieConfirmationService;
+
+	@Resource
 	InvoiceStatusService invoiceStatusService;
 
 	@Resource
@@ -68,15 +74,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	ProductService productService;
 
 	@Resource
-	KosTemplate kosTemplate;
+	ReportService reportService;
 
+	@Resource
+	KosTemplate kosTemplate;
+	
 	@Override
 	public Page<CustomerOrder> findAll(MultiValueMap<String, String> parameters) {
 		return kosTemplate.exchange(CUSTOMER_ORDER_RESOURCE, parameters, HttpMethod.GET, new CustomerOrderPageType());
 	}
 
 	@Override
-	public CustomerOrder findOne(long id) {
+	public CustomerOrder findOne(Long id) {
+		Assert.notNull(id, "CustomerOrder Id is undefined.");
+
 		return kosTemplate.exchange(CUSTOMER_ORDER_RESOURCE + "/" + id, HttpMethod.GET, CustomerOrder.class);
 	}
 
@@ -124,6 +135,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 		// Flag the customer order as closed.
 		customerOrder.setProcessedDate(new Date());
+
+		// Assign the invoice id to the customer order.
+		customerOrder.setInvoiceId(invoice.getId().longValue());
+
+		// Create a new email confirmation to process.
+		invocieConfirmationService.create(invoice);
+
+		// Saves the customer order to KOS.
+		save(customerOrder);
 	}
 
 	@Override
@@ -138,10 +158,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		return kosTemplate.exchange(CUSTOMER_ORDER_RESOURCE, HttpMethod.POST, customerOrder, CustomerOrder.class);
 	}
 
-	private class CustomerOrderPageType extends ParameterizedTypeReference<RestPage<CustomerOrder>> {
-
-	}
-
 	private Transaction validateTransactionState(CustomerOrder customerOrder) {
 		Transaction transaction = paymentService.loadTransaction(customerOrder.getTransactionId());
 
@@ -154,5 +170,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		}
 
 		return transaction;
+	}
+
+	private class CustomerOrderPageType extends ParameterizedTypeReference<RestPage<CustomerOrder>> {
+
 	}
 }

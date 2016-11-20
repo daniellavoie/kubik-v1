@@ -52,6 +52,8 @@ public class ProductSaleRepositoryImpl implements ProductSaleRepository {
 		BulkRequestBuilder builder = client.prepareBulk().setRefresh(true);
 
 		productSales.forEach(productSale -> {
+			productSale.setAmount(productSale.getAmount() * 2);
+			productSale.setQuantity(productSale.getQuantity() * 2);
 			IndexRequestBuilder indexBuilder = client.prepareIndex("product-sale", "product-sale",
 					String.valueOf(productSale.getInvoiceDetailId()));
 			try {

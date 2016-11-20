@@ -212,8 +212,8 @@
 							<tr ng-repeat="detail in customerOrderDetailsCtrl.customerOrder.customerOrderDetails">
 								<td>{{detail.product.ean13}}</td>
 								<td><a href="#" ng-click="customerOrderDetailsCtrl.openProductCard($event, detail.product)">{{detail.product.title}}</a></td>
-								<td>{{detail.unitPrice | currency : '&euro;'}}
-								<td>{{detail.quantityOrdered}}</td>									
+								<td>{{detail.unitPrice | currency : '&euro;'}}</td>
+								<td>{{detail.quantityOrdered}}</td>
 								<td>
 									<input 
 										min="0" 

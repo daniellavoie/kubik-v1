@@ -6,9 +6,10 @@ import org.springframework.util.MultiValueMap;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
 
 public interface CustomerOrderService {
+
 	Page<CustomerOrder> findAll(MultiValueMap<String, String> parameters);
 
-	CustomerOrder findOne(long id);
+	CustomerOrder findOne(Long id);
 
 	CustomerOrder save(CustomerOrder customerOrder);
 }

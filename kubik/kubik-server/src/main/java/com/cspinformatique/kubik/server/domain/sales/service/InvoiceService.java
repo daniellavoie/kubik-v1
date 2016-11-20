@@ -31,7 +31,7 @@ public interface InvoiceService {
 	Page<Invoice> findAll(Pageable pageable);
 
 	Page<Invoice> findAll(Predicate predicate, Pageable pageable);
-
+	
 	Invoice findByNumber(String number);
 
 	List<Invoice> findByPaidDate(Date paidDate);

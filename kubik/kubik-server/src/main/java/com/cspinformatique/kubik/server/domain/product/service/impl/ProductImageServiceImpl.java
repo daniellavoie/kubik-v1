@@ -55,9 +55,6 @@ public class ProductImageServiceImpl implements ProductImageService {
 	@Value("${aws.s3.bucket.name}")
 	private String bucketName;
 
-	@Value("${aws.s3.endpoint}")
-	private String endpoint;
-
 	@Value("${kubik.ean13}")
 	private String ean13;
 
