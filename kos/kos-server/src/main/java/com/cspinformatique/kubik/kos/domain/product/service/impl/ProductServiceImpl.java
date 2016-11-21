@@ -99,18 +99,18 @@ public class ProductServiceImpl implements ProductService {
 			product = new Product();
 			product.setKubikId(productId);
 			product.setImages(new ArrayList<>());
+		}
+		
+		if (kubikProduct.getCategory() != null) {
+			// Loads the category
+			int categoryId = kubikProduct.getCategory().getId();
+			Category category = categoryService.findByKubikId(categoryId);
 
-			if (kubikProduct.getCategory() != null) {
-				// Loads the category
-				int categoryId = kubikProduct.getCategory().getId();
-				Category category = categoryService.findByKubikId(categoryId);
-
-				if (category == null) {
-					throw new RuntimeException("Category with Kubik id " + categoryId
-							+ " doesn not exists. Product will not be synchronized.");
-				}
-				product.setCategory(category);
+			if (category == null) {
+				throw new RuntimeException("Category with Kubik id " + categoryId
+						+ " doesn not exists. Product will not be synchronized.");
 			}
+			product.setCategory(category);
 		}
 
 		product.setAuthor(kubikProduct.getAuthor());
