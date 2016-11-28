@@ -36,9 +36,7 @@ public class ImportProductServiceImpl implements ImportProductService {
 				String[] columns = line.split(";");
 
 				Product product = new Product();
-				product.setExtendedLabel(columns[0]);
-				product.setCashRegisterLabel(columns[0]);
-				product.setStandardLabel(columns[0]);
+				product.setName(columns[0]);
 				product.setCategory(categoryService.findOne(Integer.valueOf(columns[1])));
 				product.setTvaRate1(Double.valueOf(columns[2]));
 				product.setPriceTaxIn(Double.valueOf(columns[3]));

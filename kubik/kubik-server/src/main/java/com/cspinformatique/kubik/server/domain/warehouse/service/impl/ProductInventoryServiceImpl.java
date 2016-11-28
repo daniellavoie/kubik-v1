@@ -190,7 +190,7 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
 				priceTaxLess = new BigDecimal(product.getPriceTaxIn()).subtract(taxAmount);
 			}
 
-			extract.add(new InventoryExtractLine(product.getEan13(), product.getExtendedLabel(), quantityOnHand,
+			extract.add(new InventoryExtractLine(product.getEan13(), product.getName(), quantityOnHand,
 					purchasePrice, purchasePrice.multiply(new BigDecimal(quantityOnHand)), priceTaxLess,
 					priceTaxLess.multiply(new BigDecimal(quantityOnHand))));
 		}

@@ -1,0 +1,5 @@
+package com.cspinformatique.kubik.server.model.product;
+
+public enum PropertyName {
+	EAN13, TITLE, AUTHOR, PUBLISHED_DATE, AVAILABLE_DATE, EDITOR_NAME, EDITOR_PRESENTATION, EDITOR_ISBN, ISBN, THEME, COLLECTION, COLLECTION_REFERENCE
+}

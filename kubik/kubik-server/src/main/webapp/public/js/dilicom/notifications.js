@@ -21,7 +21,7 @@
 			publisher : "Editeur",
 			collection : "Collection",
 			author : "Auteur",
-			publisherPresentation : "Présentation auteur",
+			publisherPresentation : "Présentation éditeur",
 			isbn : "ISBN",
 			supplierReference : "Référence fournisseur",
 			collectionReference : "Référence collection",

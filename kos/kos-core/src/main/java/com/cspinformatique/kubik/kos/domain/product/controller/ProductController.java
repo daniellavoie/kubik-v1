@@ -75,13 +75,13 @@ public class ProductController {
 	public @ResponseBody Page<Product> search(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size, @RequestParam(defaultValue = "ASC") Direction direction,
 			@RequestParam(defaultValue = "title") String orderBy, @RequestParam(required = false) String title,
-			@RequestParam(required = false) String author,
+			@RequestParam(required = false) String brand,
 			@RequestParam(value = "categories[]", required = false) String[] categories,
 			@RequestParam(required = false) Date publishFrom, @RequestParam(required = false) Date publishUntil,
 			@RequestParam(required = false) String manufacturer, @RequestParam(required = false) Double priceFrom,
 			@RequestParam(required = false) Double priceTo, @RequestParam(defaultValue = "true") boolean hideUnavailable,
 			@RequestParam(required = false) String query) {
-		return productService.search(title, author, categories != null ? Arrays.asList(categories) : null, publishFrom,
+		return productService.search(title, brand, categories != null ? Arrays.asList(categories) : null, publishFrom,
 				publishUntil, manufacturer, priceFrom, priceTo, hideUnavailable, query, new PageRequest(page, size, direction, orderBy));
 	}
 }

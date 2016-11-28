@@ -31,7 +31,7 @@ public class InvoiceServiceImplIT {
 		invoice.setTotalTaxAmount(0d);
 		invoice.setTotalTaxLessAmount(0d);
 
-		invoice.getDetails().stream().filter(detail -> detail.getProduct().getExtendedLabel().contains("AGENDA"))
+		invoice.getDetails().stream().filter(detail -> detail.getProduct().getName().contains("AGENDA"))
 				.findAny().get().setRebatePercent(20d);
 
 		invoiceService.save(invoice);

@@ -50,6 +50,6 @@ public interface ProductRepository extends PagingAndSortingRepository<Product, I
 	@Query("SELECT product FROM Product product WHERE category is null ORDER BY RAND()")
 	Page<Product> findRandomWithoutCategory(Pageable pageable);
 
-	@Query("SELECT product FROM Product product WHERE ean13 LIKE ?1 OR extendedLabel LIKE ?1 OR publisher LIKE ?1 OR collection LIKE ?1 OR author LIKE ?1 OR isbn LIKE ?1")
+	@Query("SELECT product FROM Product product WHERE ean13 LIKE ?1 OR name LIKE ?1 OR publisher LIKE ?1 OR collection LIKE ?1 OR brand LIKE ?1 OR isbn LIKE ?1")
 	Page<Product> search(String query, Pageable pageable);
 }

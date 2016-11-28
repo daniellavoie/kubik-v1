@@ -59,7 +59,7 @@ public class ReferenceController {
 	public @ResponseBody Page<Reference> search(@RequestParam String query,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
+			@RequestParam(defaultValue = "name") String sortBy) {
 		return this.referenceService.search(query,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}

@@ -52,7 +52,7 @@
 								<span class="descending hide glyphicon glyphicon-chevron-down"></span>
 							</th>
 							<th>
-								<a data-sortBy="author">Auteur</a>
+								<a data-sortBy="brand">Auteur</a>
 								<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
 								<span class="descending hide glyphicon glyphicon-chevron-down"></span>
 							</th>
@@ -72,7 +72,7 @@
 						>
 							<td>{{notification.product.ean13}}</td>
 							<td>{{notification.product.standardLabel}}</td>
-							<td>{{notification.product.author}}</td>
+							<td>{{notification.product.brand}}</td>
 							<td>{{notification.creationDate | date}}</td>
 							<td>
 								<span 
@@ -115,7 +115,7 @@
 								<div class="form-group">
 									<label class="col-sm-6 control-label text-right">Titre</label>
 								    <div class="col-sm-6 text-left">
-										<p class="form-control-static">{{dilicomNotificationsCtrl.notification.product.extendedLabel}}</p>
+										<p class="form-control-static">{{dilicomNotificationsCtrl.notification.product.name}}</p>
 								    </div>
 								</div>
 								<div class="form-group">

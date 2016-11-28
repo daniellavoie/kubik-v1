@@ -23,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(accountService).passwordEncoder(passwordEncoder()).and().inMemoryAuthentication()
-				.withUser(env.getRequiredProperty("app.username")).password(env.getRequiredProperty("app.password"))
+				.withUser(env.getRequiredProperty("kos.username")).password(env.getRequiredProperty("kos.password"))
 				.roles("SYSTEM");
 	}
 

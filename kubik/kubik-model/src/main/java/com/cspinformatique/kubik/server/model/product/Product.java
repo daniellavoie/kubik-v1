@@ -2,7 +2,9 @@ package com.cspinformatique.kubik.server.model.product;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
@@ -39,16 +42,14 @@ public class Product {
 	private Date datePublished;
 	private ProductType productType;
 	private Date publishEndDate;
-	private String standardLabel;
-	private String cashRegisterLabel;
 	private Integer thickness;
 	private Integer width;
 	private Integer height;
 	private Integer weight;
-	private String extendedLabel;
+	private String name;
 	private String publisher;
 	private String collection;
-	private String author;
+	private String brand;
 	private String publisherPresentation;
 	private String isbn;
 	private String supplierReference;
@@ -72,6 +73,8 @@ public class Product {
 	private List<ProductImage> images;
 	private boolean imagesValidated;
 
+	private Map<PropertyName, ProductProperty> properties;
+
 	public Product() {
 
 	}
@@ -80,8 +83,8 @@ public class Product {
 			Double priceTaxIn, Boolean schoolbook, Double tvaRate1, Double priceTaxOut1, Double tvaRate2,
 			Double priceTaxOut2, Double tvaRate3, Double priceTaxOut3, Double purchasePriceTaxOut,
 			ReturnType returnType, Boolean availableForOrder, Date datePublished, ProductType productType,
-			Date publishEndDate, String standardLabel, String cashRegisterLabel, Integer thickness, Integer width,
-			Integer height, Integer weight, String extendedLabel, String publisher, String collection, String author,
+			Date publishEndDate, Integer thickness, Integer width,
+			Integer height, Integer weight, String name, String publisher, String collection, String brand,
 			String publisherPresentation, String isbn, String supplierReference, String collectionReference,
 			String theme, String publisherIsnb, Boolean replacesAReference, Boolean replacedByAReference,
 			String replacesEan13, String replacedByEan13, Boolean orderableByUnit, BarcodeType barcodeType,
@@ -107,16 +110,14 @@ public class Product {
 		this.datePublished = datePublished;
 		this.productType = productType;
 		this.publishEndDate = publishEndDate;
-		this.standardLabel = standardLabel;
-		this.cashRegisterLabel = cashRegisterLabel;
 		this.thickness = thickness;
 		this.width = width;
 		this.height = height;
 		this.weight = weight;
-		this.extendedLabel = extendedLabel;
+		this.name = name;
 		this.publisher = publisher;
 		this.collection = collection;
-		this.author = author;
+		this.brand = brand;
 		this.publisherPresentation = publisherPresentation;
 		this.isbn = isbn;
 		this.supplierReference = supplierReference;
@@ -150,7 +151,7 @@ public class Product {
 		this.id = id;
 	}
 
-	@Column(unique=true)
+	@Column(unique = true)
 	public String getEan13() {
 		return ean13;
 	}
@@ -303,22 +304,6 @@ public class Product {
 		this.publishEndDate = publishEndDate;
 	}
 
-	public String getStandardLabel() {
-		return standardLabel;
-	}
-
-	public void setStandardLabel(String standardLabel) {
-		this.standardLabel = standardLabel;
-	}
-
-	public String getCashRegisterLabel() {
-		return cashRegisterLabel;
-	}
-
-	public void setCashRegisterLabel(String cashRegisterLabel) {
-		this.cashRegisterLabel = cashRegisterLabel;
-	}
-
 	public Integer getThickness() {
 		return thickness;
 	}
@@ -351,12 +336,12 @@ public class Product {
 		this.weight = weight;
 	}
 
-	public String getExtendedLabel() {
-		return extendedLabel;
+	public String getName() {
+		return name;
 	}
 
-	public void setExtendedLabel(String extendedLabel) {
-		this.extendedLabel = extendedLabel;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getPublisher() {
@@ -375,12 +360,12 @@ public class Product {
 		this.collection = collection;
 	}
 
-	public String getAuthor() {
-		return author;
+	public String getBrand() {
+		return brand;
 	}
 
-	public void setAuthor(String author) {
-		this.author = author;
+	public void setBrand(String brand) {
+		this.brand = brand;
 	}
 
 	public String getPublisherPresentation() {
@@ -563,5 +548,19 @@ public class Product {
 
 	public void setImagesValidated(boolean imagesValidated) {
 		this.imagesValidated = imagesValidated;
+	}
+
+	@MapKey(name = "name")
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+	public Map<PropertyName, ProductProperty> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Map<PropertyName, ProductProperty> properties) {
+		this.properties = properties;
+	}
+
+	public boolean equals(Product other) {
+		return other != null && other.getId() == id;
 	}
 }

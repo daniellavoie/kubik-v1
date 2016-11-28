@@ -113,14 +113,14 @@ public class ProductServiceImpl implements ProductService {
 			}
 		}
 
-		product.setAuthor(kubikProduct.getAuthor());
+		product.setBrand(kubikProduct.getBrand());
 		product.setCollection(kubikProduct.getCollection());
 		product.setDatePublished(kubikProduct.getDatePublished());
 		product.setEan13(kubikProduct.getEan13());
 		product.setIsbn(kubikProduct.getIsbn());
 		product.setManufacturer(kubikProduct.getPublisher());
 		product.setPrice(kubikProduct.getPriceTaxIn());
-		product.setTitle(kubikProduct.getExtendedLabel());
+		product.setName(kubikProduct.getName());
 		product.setThickness(kubikProduct.getThickness());
 		product.setHeight(kubikProduct.getHeight());
 		product.setWidth(kubikProduct.getWidth());
@@ -144,7 +144,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Page<Product> search(String title, String author, List<String> categoriesIds, Date publishFrom,
+	public Page<Product> search(String title, String brand, List<String> categoriesIds, Date publishFrom,
 			Date publishUntil, String manufacturer, Double priceFrom, Double priceTo, Boolean hideUnavailable,
 			String query, Pageable pageable) {
 		if (title != null)
@@ -152,11 +152,11 @@ public class ProductServiceImpl implements ProductService {
 				title = null;
 			else
 				title = "%" + title + "%";
-		if (author != null)
-			if (author.equals(""))
-				author = null;
+		if (brand != null)
+			if (brand.equals(""))
+				brand = null;
 			else
-				author = "%" + author + "%";
+				brand = "%" + brand + "%";
 		if (manufacturer != null)
 			if (manufacturer.equals(""))
 				manufacturer = null;
@@ -171,10 +171,10 @@ public class ProductServiceImpl implements ProductService {
 				query = "%" + query + "%";
 
 		if (categoriesIds == null)
-			return productRepository.search(title, author, publishFrom, publishUntil, manufacturer, priceFrom, priceTo,
+			return productRepository.search(title, brand, publishFrom, publishUntil, manufacturer, priceFrom, priceTo,
 					hideUnavailable, query, pageable);
 		else
-			return productRepository.search(title, author, calculateCategoriesScope(categoriesIds), publishFrom,
+			return productRepository.search(title, brand, calculateCategoriesScope(categoriesIds), publishFrom,
 					publishUntil, manufacturer, priceFrom, priceTo, hideUnavailable, query, pageable);
 	}
 }

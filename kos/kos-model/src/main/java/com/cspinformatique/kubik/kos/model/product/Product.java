@@ -18,8 +18,8 @@ public class Product {
 
 	private int id;
 	private int kubikId;
-	private String title;
-	private String author;
+	private String name;
+	private String brand;
 	private String collection;
 	private String manufacturer;
 	private String ean13;
@@ -39,14 +39,14 @@ public class Product {
 
 	}
 
-	public Product(int id, int kubikId, String title, String author, int categoryId, String collection,
+	public Product(int id, int kubikId, String title, String brand, int categoryId, String collection,
 			String manufacturer, String ean13, String isbn, double price, Date datePublished, Category category,
 			List<ProductImage> images, Integer thickness, Integer width, Integer height,
 			Integer weight, boolean available) {
 		this.id = id;
 		this.kubikId = kubikId;
-		this.title = title;
-		this.author = author;
+		this.name = title;
+		this.brand = brand;
 		this.collection = collection;
 		this.manufacturer = manufacturer;
 		this.ean13 = ean13;
@@ -80,20 +80,20 @@ public class Product {
 		this.kubikId = kubikId;
 	}
 
-	public String getTitle() {
-		return title;
+	public String getName() {
+		return name;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setName(String title) {
+		this.name = title;
 	}
 
-	public String getAuthor() {
-		return author;
+	public String getBrand() {
+		return brand;
 	}
 
-	public void setAuthor(String author) {
-		this.author = author;
+	public void setBrand(String author) {
+		this.brand = author;
 	}
 
 	public String getCollection() {

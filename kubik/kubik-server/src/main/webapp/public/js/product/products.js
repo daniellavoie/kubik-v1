@@ -13,7 +13,7 @@
 		vm.query = "";
 		vm.page = 0;
 		vm.resultPerPage = 50;
-		vm.sortBy = "extendedLabel";
+		vm.sortBy = "name";
 		vm.direction = "ASC";
 		vm.productCreationAllowed = true;
 		

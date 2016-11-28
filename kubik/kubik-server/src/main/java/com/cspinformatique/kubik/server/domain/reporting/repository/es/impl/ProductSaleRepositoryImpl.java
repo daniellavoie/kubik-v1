@@ -33,13 +33,16 @@ public class ProductSaleRepositoryImpl implements ProductSaleRepository {
 	}
 
 	private void createMappingIfNotExist() {
+		client.admin().cluster().prepareHealth("product-sale").setWaitForYellowStatus().get();
+		
 		if (!client.admin().indices().prepareExists("product-sale").execute().actionGet().isExists()) {
 			try (BufferedReader buffer = new BufferedReader(new InputStreamReader(
 					new ClassPathResource("es-mappings/product-sale-mapping.json").getInputStream()))) {
 				if (!client.admin().indices().prepareCreate("product-sale")
 						.addMapping("product-sale", buffer.lines().collect(Collectors.joining("\n"))).get()
 						.isAcknowledged()) {
-					throw new RuntimeException("Mapping of type product-sale for index product-sale could not be created.");
+					throw new RuntimeException(
+							"Mapping of type product-sale for index product-sale could not be created.");
 				}
 			} catch (IOException ioEx) {
 				throw new RuntimeException(ioEx);

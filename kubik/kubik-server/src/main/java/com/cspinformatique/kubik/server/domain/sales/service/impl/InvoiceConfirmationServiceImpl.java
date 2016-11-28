@@ -11,7 +11,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -46,7 +45,6 @@ public class InvoiceConfirmationServiceImpl implements InvoiceConfirmationServic
 	private String contactEmail;
 	private String bucketName;
 
-	@Autowired
 	public InvoiceConfirmationServiceImpl(InvoiceConfirmationRepository repository,
 			CustomerOrderService customerOrderService, InvoiceService invoiceService, ReportService reportService,
 			AmazonS3 amazonS3, JavaMailSender sender, @Value("${kubik.contact.email}") String contactEmail,

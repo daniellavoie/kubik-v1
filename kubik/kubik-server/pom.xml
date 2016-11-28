@@ -100,6 +100,10 @@
 			<artifactId>braintree-java</artifactId>
 		</dependency>
 		<dependency>
+		    <groupId>com.h2database</groupId>
+		    <artifactId>h2</artifactId>
+		</dependency>
+		<dependency>
 		    <groupId>com.mortennobel</groupId>
 		    <artifactId>java-image-scaling</artifactId>
 		</dependency>
@@ -107,6 +111,10 @@
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-jpa</artifactId>
 		</dependency>
+		<dependency>
+		    <groupId>net.java.dev.jna</groupId>
+		    <artifactId>jna</artifactId>
+	    </dependency>
 		<dependency>
 			<groupId>net.sourceforge.nekohtml</groupId>
 			<artifactId>nekohtml</artifactId>

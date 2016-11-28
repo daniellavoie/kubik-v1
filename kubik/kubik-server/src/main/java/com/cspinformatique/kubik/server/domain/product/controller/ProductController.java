@@ -154,7 +154,7 @@ public class ProductController {
 	public Page<CustomerCreditDetail> findProductCustomerCredits(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
+			@RequestParam(defaultValue = "name") String sortBy) {
 		return this.customerCreditDetailService.findByProductAndCustomerCreditStatus(productService.findOne(productId),
 				CustomerCredit.Status.COMPLETED,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
@@ -190,7 +190,7 @@ public class ProductController {
 	public Page<ReceptionDetail> findProductPurchaseOrders(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
+			@RequestParam(defaultValue = "name") String sortBy) {
 		return receptionDetailService.findByProductAndReceptionStatus(productService.findOne(productId),
 				Reception.Status.CLOSED,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
@@ -201,7 +201,7 @@ public class ProductController {
 	public Page<RmaDetail> findProductRmas(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
+			@RequestParam(defaultValue = "name") String sortBy) {
 		return rmaDetailService.findByProductAndRmaStatus(this.productService.findOne(productId), Rma.Status.SHIPPED,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
@@ -299,7 +299,7 @@ public class ProductController {
 	public Page<Product> search(@RequestParam(defaultValue = "") String query,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "extendedLabel") String sortBy) {
+			@RequestParam(defaultValue = "name") String sortBy) {
 		return productService.search(query,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}

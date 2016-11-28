@@ -1,1 +1,3 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.cspinformatique.kubik.common.error.config.ErrorAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.cspinformatique.kubik.common.error.config.ErrorAutoConfiguration,\
+com.cspinformatique.kubik.common.es.ElasticsearchAutoConfiguration

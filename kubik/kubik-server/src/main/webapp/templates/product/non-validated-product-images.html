@@ -41,30 +41,18 @@
 						</div>
 						
 						<div class="form-group row">
-							<label class="col-sm-4 control-label">Titre</label>
+							<label th:if="${@environment.getProperty('kubik.mode).equals('books')}" class="col-sm-4 control-label">Titre</label>
+							<label th:if="${!@environment.getProperty('kubik.mode).equals('books')}" class="col-sm-4 control-label">Nom</label>
 							<div class="col-sm-8">
-								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.extendedLabel}}</p>
+								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.name}}</p>
 							</div>
 						</div>
 						
 						<div class="form-group row">
-							<label class="col-sm-4 control-label">Titre court</label>
+                            <label th:if="${@environment.getProperty('kubik.mode).equals('books')}" class="col-sm-4 control-label">Auteur</label>
+                            <label th:if="${!@environment.getProperty('kubik.mode).equals('books')}" class="col-sm-4 control-label">Marque</label>
 							<div class="col-sm-8">
-								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.standardLabel}}</p>
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-4 control-label">Titre caisse</label>
-							<div class="col-sm-8">
-								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.cashRegisterLabel}}</p>
-							</div>
-						</div>
-						
-						<div class="form-group row">
-							<label class="col-sm-4 control-label">Auteur</label>
-							<div class="col-sm-8">
-								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.author}}</p>
+								<p class="form-control-static">{{nonValidatedProductImagesCtrl.product.brand}}</p>
 							</div>
 						</div>
 						

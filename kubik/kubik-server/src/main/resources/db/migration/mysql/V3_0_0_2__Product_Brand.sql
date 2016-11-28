@@ -1,0 +1,1 @@
+ALTER TABLE `product` CHANGE COLUMN `author` `brand` VARCHAR(255) NULL DEFAULT NULL;

@@ -18,7 +18,7 @@ public class CustomerOrderValidatorImpl implements CustomerOrderValidator {
 	@Resource
 	AccountService accountService;
 
-	@Value("${app.username}")
+	@Value("${kos.username}")
 	private String appUsername;
 
 	public void checkAccessRights(Principal principal, CustomerOrder customerOrder, String customerOrderUuid) {

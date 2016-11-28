@@ -28,7 +28,7 @@ public class ProductSaleServiceImpl implements ProductSaleService {
 
 	private ProductSale map(InvoiceDetail invoiceDetail) {
 		return new ProductSale(invoiceDetail.getId(), invoiceDetail.getProduct().getEan13(),
-				invoiceDetail.getInvoice().getPaidDate(), invoiceDetail.getProduct().getExtendedLabel(),
+				invoiceDetail.getInvoice().getPaidDate(), invoiceDetail.getProduct().getName(),
 				mapProductCategories(invoiceDetail.getProduct()), invoiceDetail.getTotalAmount(),
 				invoiceDetail.getQuantity(), invoiceDetail.getProduct().getTvaRate1());
 	}

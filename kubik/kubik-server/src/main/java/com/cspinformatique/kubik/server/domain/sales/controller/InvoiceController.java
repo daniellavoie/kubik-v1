@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.cspinformatique.kubik.server.domain.sales.service.CustomerCreditService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.server.domain.sales.service.PaymentService;
 import com.cspinformatique.kubik.server.jasper.service.ReportService;
@@ -35,9 +34,6 @@ import net.sf.jasperreports.engine.JasperExportManager;
 public class InvoiceController {
 
 	@Autowired
-	private CustomerCreditService customerCreditService;
-
-	@Autowired
 	private InvoiceService invoiceService;
 
 	@Autowired
@@ -53,7 +49,6 @@ public class InvoiceController {
 	public void init() {
 		invoiceService.recalculateDetailsAmounts();
 		invoiceService.recalculateInvoiceTaxes();
-//		customerCreditService.recalculateCustomerCreditsTaxes();
 	}
 
 	@ResponseBody

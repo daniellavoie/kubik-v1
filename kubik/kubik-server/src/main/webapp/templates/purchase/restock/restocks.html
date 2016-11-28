@@ -39,12 +39,14 @@
 								<span>EAN 13</span>
 							</th>
 							<th>
-								<a data-sortBy="title">Titre</a>
+								<a th:if="${@environment.getProperty('kubik.mode).equals('books')}" data-sortBy="name">Titre</a>
+								<a th:if="${!@environment.getProperty('kubik.mode).equals('books')}" data-sortBy="title">Nom</a>
 								<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
 								<span class="descending hide glyphicon glyphicon-chevron-down"></span>
 							</th>
 							<th>
-								<a data-sortBy="author">Auteur</a>
+								<a th:if="${@environment.getProperty('kubik.mode).equals('books')}" data-sortBy="brand">Auteur</a>
+								<a th:if="${!@environment.getProperty('kubik.mode).equals('books')}" data-sortBy="brand">Marque</a>
 								<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
 								<span class="descending hide glyphicon glyphicon-chevron-down"></span>
 							</th>
@@ -74,7 +76,7 @@
 									{{restock.product.standardLabel}}
 								</a>
 							</td>
-							<td>{{restock.product.author}}</td>
+							<td>{{restock.product.brand}}</td>
 							<td>
 								<a href="#" ng-click="restocksCtrl.openSupplierCard($event, restock.product.supplier)">
 									{{restock.product.supplier.name}}
@@ -104,7 +106,7 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Produit</label>
 								<div class="col-sm-9">
-									<p class="form-control-static">{{restocksCtrl.restock.product.extendedLabel}}</p>
+									<p class="form-control-static">{{restocksCtrl.restock.product.name}}</p>
 								</div>
 							</div>
 							

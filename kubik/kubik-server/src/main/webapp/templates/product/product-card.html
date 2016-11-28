@@ -31,7 +31,12 @@
 						<ul class="nav nav-tabs">
 							<li role="presentation" ng-click="productCardCtrl.changeTab('product')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'product']"><a href="#">Produit</a></li>
 							<li role="presentation" ng-click="productCardCtrl.changeTab('category')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'category']"><a href="#">Catégorisation</a></li>
-							<li role="presentation" ng-click="productCardCtrl.changeTab('publisher')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'publisher']"><a href="#">Editeur</a></li>
+							<li 
+								role="presentation" 
+								ng-click="productCardCtrl.changeTab('publisher')" 
+								th:if="${@environment.getProperty('kubik.mode').equals('books')}"
+								ng-class="{true : 'active'}[productCardCtrl.productTab == 'publisher']"
+							><a href="#">Editeur</a></li>
 							<li role="presentation" ng-click="productCardCtrl.changeTab('price')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'price']"><a href="#">Prix</a></li>
 							<li role="presentation" ng-click="productCardCtrl.changeTab('supplier')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'supplier']"><a href="#">Fournisseur</a></li>
 							<li role="presentation" ng-click="productCardCtrl.changeTab('dimensions')" ng-class="{true : 'active'}[productCardCtrl.productTab == 'dimensions']"><a href="#">Dimensions</a></li>
@@ -49,38 +54,26 @@
 								</div>
 								
 								<div class="form-group">
-									<label class="col-sm-6 control-label">Titre</label>
+									<label th:if="${@environment.getProperty('kubik.mode').equals('books')}" class="col-sm-6 control-label">Titre</label>
+									<label th:if="${!@environment.getProperty('kubik.mode').equals('books')}" class="col-sm-6 control-label">Nom</label>
 									<div class="col-sm-6">
-										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.extendedLabel}}</p>
-										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.extendedLabel" placeholder="Titre" />
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.name}}</p>
+										<input th:if="${@environment.getProperty('kubik.mode').equals('books')}" ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.name" placeholder="Titre" />
+										<input th:if="${!@environment.getProperty('kubik.mode').equals('books')}" ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.name" placeholder="Nom" />
 									</div>
 								</div>
 								
 								<div class="form-group">
-									<label class="col-sm-6 control-label">Titre court</label>
+	                                <label th:if="${@environment.getProperty('kubik.mode').equals('books')}" class="col-sm-6 control-label">Auteur</label>
+	                                <label th:if="${!@environment.getProperty('kubik.mode').equals('books')}" class="col-sm-6 control-label">Marque</label>
 									<div class="col-sm-6">
-										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.standardLabel}}</p>
-										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.standardLabel" placeholder="Titre court" />
+										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.brand}}</p>
+										<input th:if="${@environment.getProperty('kubik.mode').equals('books')}" ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.brand" placeholder="Auteur" />
+										<input th:if="${!@environment.getProperty('kubik.mode').equals('books')}" ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.brand" placeholder="Marque" />
 									</div>
 								</div>
 								
-								<div class="form-group">
-									<label class="col-sm-6 control-label">Titre caisse</label>
-									<div class="col-sm-6">
-										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.cashRegisterLabel}}</p>
-										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.cashRegisterLabel" placeholder="Titre caisse" />
-									</div>
-								</div>
-								
-								<div class="form-group">
-									<label class="col-sm-6 control-label">Auteur</label>
-									<div class="col-sm-6">
-										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.author}}</p>
-										<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.author" placeholder="Auteur" />
-									</div>
-								</div>
-								
-								<div class="form-group">
+								<div th:if="${@environment.getProperty('kubik.mode').equals('books')}" class="form-group">
 									<label class="col-sm-6 control-label">Date de publication</label>
 									<div class="col-sm-6">
 										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.datePublished | date}}</p>
@@ -88,7 +81,7 @@
 									</div>
 								</div>
 								
-								<div class="form-group">
+								<div th:if="${@environment.getProperty('kubik.mode').equals('books')}" class="form-group">
 									<label class="col-sm-6 control-label">Date de fin de disponibilité</label>
 									<div class="col-sm-6">
 										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.publishEndDate | date}}</p>
@@ -96,7 +89,7 @@
 									</div>
 								</div>
 								
-								<div class="form-group">
+								<div th:if="${@environment.getProperty('kubik.mode').equals('books')}" class="form-group">
 									<label class="col-sm-6 control-label">Isbn</label>
 									<div class="col-sm-6">
 										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.isbn}}</p>
@@ -112,7 +105,7 @@
 									</div>
 								</div>
 								
-								<div class="form-group">
+								<div th:if="${@environment.getProperty('kubik.mode').equals('books')}" class="form-group">
 									<label class="col-sm-6 control-label">Collection</label>
 									<div class="col-sm-6">
 										<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.collection}}</p>
@@ -120,7 +113,7 @@
 									</div>
 								</div>
 								
-								<div class="form-group">
+								<div th:if="${@environment.getProperty('kubik.mode').equals('books')}" class="form-group">
 									<label class="col-sm-6 control-label">Référence collection</label>
 									<div class="col-sm-6">
 										<p class="form-control-static">{{productCardCtrl.product.collectionReference}}</p>
@@ -170,7 +163,7 @@
 							</div>
 						</div>
 						
-						<div class="tab publisher" ng-class="{true : 'hidden'}[productCardCtrl.productTab != 'publisher']">	
+						<div th:if="${@environment.getProperty('kubik.mode').equals('books')}" class="tab publisher" ng-class="{true : 'hidden'}[productCardCtrl.productTab != 'publisher']">	
 							<form class="form-horizontal">
 								<div class="form-group">
 									<label class="col-sm-6 control-label">Nom</label>
@@ -227,13 +220,9 @@
 									<label class="col-sm-6 control-label">Taxes</label>
 									<div ng-if="!productCardCtrl.editMode" class="col-sm-6">
 										<p ng-if="productCardCtrl.product.tvaRate1 != null &amp;&amp; productCardCtrl.product.tvaRate1 != 0" class="form-control-static">{{productCardCtrl.product.tvaRate1}} %</p>
-										<p ng-if="productCardCtrl.product.tvaRate2 != null &amp;&amp; productCardCtrl.product.tvaRate2 != 0" class="form-control-static">{{productCardCtrl.product.tvaRate2}} %</p>
-										<p ng-if="productCardCtrl.product.tvaRate3 != null &amp;&amp; productCardCtrl.product.tvaRate3 != 0" class="form-control-static">{{productCardCtrl.product.tvaRate3}} %</p>
 									</div>
 									<div ng-if="productCardCtrl.editMode" class="col-sm-6">
 										<input class="form-control" ng-model="productCardCtrl.product.tvaRate1" placeholder="Taux taxe 1" />
-										<input class="form-control" ng-model="productCardCtrl.product.tvaRate2" placeholder="Taux taxe 2" />
-										<input class="form-control" ng-model="productCardCtrl.product.tvaRate3" placeholder="Taux taxe 3" />
 									</div>
 								</div>
 							</form>

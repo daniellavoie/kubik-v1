@@ -39,30 +39,18 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Titre</label>
+                                <label th:if="${@environment.getProperty('kubik.mode).equals('books')}" class="col-sm-4 control-label">Titre</label>
+                                <label th:if="${!@environment.getProperty('kubik.mode).equals('books')}" class="col-sm-4 control-label">Nom</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.extendedLabel}}</p>
+                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.name}}</p>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-4 control-label">Titre court</label>
+                                <label th:if="${@environment.getProperty('kubik.mode).equals('books')}" class="col-sm-4 control-label">Auteur</label>
+                                <label th:if="${!@environment.getProperty('kubik.mode).equals('books')}" class="col-sm-4 control-label">Marque</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.standardLabel}}</p>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Titre caisse</label>
-                                <div class="col-sm-8">
-                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.cashRegisterLabel}}</p>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Auteur</label>
-                                <div class="col-sm-8">
-                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.author}}</p>
+                                    <p class="form-control-static">{{nonCategorizedProductCtrl.product.brand}}</p>
                                 </div>
                             </div>
 
