@@ -75,7 +75,12 @@
 									></span>	
 								</a>
 								<ul class="dropdown-menu" role="menu">
-									<li><a th:href="@{/product}" target="_self">Produits</a></li>
+									<li th:if="${@environment.getProperty('kubik.product.vehicule.url') != null}">
+										<a th:href="@{/product-vehicule}" target="_self">Produits</a>
+									</li>
+									<li th:if="${@environment.getProperty('kubik.product.vehicule.url') == null}">
+										<a th:href="@{/product}" target="_self">Produits</a>
+									</li>
 									<li><a th:href="@{/category}" target="_self">Catégories de produits</a></li>
 									<li>
 										<a th:href="@{/product?category&amp;random}" target="_self">

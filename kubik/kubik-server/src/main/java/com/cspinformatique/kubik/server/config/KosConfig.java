@@ -1,19 +1,17 @@
 package com.cspinformatique.kubik.server.config;
 
-import javax.annotation.Resource;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
-import com.cspinformatique.kubik.server.domain.kos.rest.KosTemplate;
+import com.cspinformatique.kubik.common.rest.KubikTemplate;
 
 @Configuration
 public class KosConfig {
-	@Resource
-	private Environment environment;
-
-	public @Bean KosTemplate kosTemplate() {
-		return new KosTemplate(environment);
+	@Bean
+	public KubikTemplate kosTemplate(@Value("${kos.notification.url}") String url,
+			@Value("${kos.notification.username}") String username,
+			@Value("${kos.notification.password}") String password) {
+		return new KubikTemplate(url, username, password);
 	}
 }

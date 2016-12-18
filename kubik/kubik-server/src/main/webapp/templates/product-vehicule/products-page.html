@@ -1,0 +1,143 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+
+>
+
+	<head>
+		<title th:text="${@environment.getProperty('kubik.company.name') + ' - Produits'}">Kubik - Produits mécaniques</title>
+		
+		<link th:replace="util/import :: head" />
+	</head>
+	
+	<body>
+		<div th:include="util/menu :: menu"></div>
+		
+		<div ng-app="KubikProductVehicule"  ng-controller="ProductsPageCtrl as productsPageCtrl" class="container">
+			<h1 class="text-center">Produits mécaniques</h1>
+
+			<div class="products-search" ng-cloak="">
+				<div class="form-inline text-center">
+					<div class="form-group">
+						<label>Recherche</label>
+						
+						<input 
+							id="search-product-query" 
+							ng-model="productsPageCtrl.params.queryString"
+							ng-change="productsPageCtrl.query()"
+							class="form-control" 
+							type="text" 
+							placeholder="Recherche"
+						/>
+						
+						<button 
+							class="btn btn-primary"
+							ng-click="productsPageCtrl.newProduct()" 
+						>Nouveau produit</button>
+					</div>
+	
+					<ul class="pager row text-center">
+						<li class="col-md-2">
+							&nbsp;
+							<a 
+								href="#" 
+								ng-if="!productsPageCtrl.productsPage.first" 
+								ng-click="productsPageCtrl.changePage(productsPageCtrl.productsPage.number-1)"
+							>Précédente</a>
+						</li>
+						
+						<li class="col-md-8">Page {{productsPageCtrl.productsPage.number+1}} sur {{productsPageCtrl.productsPage.totalPages}}</li>
+						
+						<li class="col-md-2">
+							&nbsp;
+							<a 
+								href="#" 
+								ng-if="!productsPageCtrl.productsPage.last" 
+								ng-click="productsPageCtrl.changePage(productsPageCtrl.productsPage.number+1)"
+							>Suivante</a>
+						</li>
+					</ul>
+				</div>
+			
+				<div class="table-responsive">
+					<table class="panel panel-default table table-hover table-condensed text-center">
+						<thead>
+							<tr>
+								<th>
+									<span>EAN 13</span>
+								</th>
+								<th>
+									<a data-sortBy="brand">Marque</a>
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>
+									<a data-sortBy="name">Nom</a>									
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>
+								    <a data-sortBy="publicPrice">Prix public</a>									
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>
+									<a data-sortBy="buyingPrice">Prix achat</a>									
+									<span class="ascending hide glyphicon glyphicon-chevron-up"></span>
+									<span class="descending hide glyphicon glyphicon-chevron-down"></span>
+								</th>
+								<th>
+									<a data-sortBy="categoryThirdLevel">Category</a>
+								</th>
+								<th>Image</th>
+								<th>
+									&nbsp;
+								</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							<tr ng-repeat="product in productsPageCtrl.productsPage.content" ng-click="productsPageCtrl.productSelected($event, product)">
+								<td>{{product.ean13}}</td>
+								<td>{{product.brand}}</td>
+								<td>{{product.name}}</td>
+								<td>{{product.publicPrice | currency : "&euro;"}}</td>
+								<td>{{product.buyingPrice | currency : "&euro;"}}</td>
+								<td>{{product.categoryName}}</td>
+								<td><img ng-src="/product/ean13/{{product.ean13}}/image/THUMB.jpg" /></td>
+								<td><span class="glyphicon glyphicon-list-alt" ng-click="productsPageCtrl.openProductCard($event, product)"></span></td>
+							</tr>
+							
+							<tr ng-if="productsPageCtrl.productsPage.content.length == 0">
+								<td colspan="7">
+									Aucun produit retrouvé
+								</td>
+							</tr>
+							
+							<tr ng-if="productsPageCtrl.query == null">
+								<td colspan="7">
+									Rechercher un produit
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div th:replace="product-vehicule/product-card :: product-card"></div>
+		</div>
+		
+		<script th:replace="util/import :: scripts"></script>
+		<script type="text/javascript" th:src="@{/js/upload-file-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/product-vehicule/product-card-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/product-vehicule/product-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/product-vehicule/product-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/product/categories.js}"></script>
+		<script type="text/javascript" th:src="@{/js/product/product-image-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/product/product-images-controller.js}"></script>
+		<script type="text/javascript" th:src="@{/js/product/supplier/supplier-service.js}"></script>
+		<script type="text/javascript" th:src="@{/js/system/environment-service.js}"></script>
+	</body>
+</html>

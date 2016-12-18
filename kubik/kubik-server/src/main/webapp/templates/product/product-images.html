@@ -8,11 +8,11 @@
 		<div class="row">
 			<div class="col-sm-3">
 				<h3>Vignette</h3>
-				<img ng-src="/product/{{productImagesCtrl.product.id}}/image/THUMB.jpg?cache={{productImagesCtrl.cacheKey}}" />
+				<img ng-src="/product/ean13/{{productImagesCtrl.ean13}}/image/THUMB.jpg?cache={{productImagesCtrl.cacheKey}}&amp;preview={{productImagesCtrl.preview}}" />
 			</div>
 			<div class="col-sm-6">
 				<h3>Fiche</h3>
-				<img ng-src="/product/{{productImagesCtrl.product.id}}/image/MEDIUM.jpg?cache={{productImagesCtrl.cacheKey}}" />
+				<img ng-src="/product/ean13/{{productImagesCtrl.ean13}}/image/MEDIUM.jpg?cache={{productImagesCtrl.cacheKey}}&amp;preview={{productImagesCtrl.preview}}" />
 			</div>
 		</div>
 				
@@ -48,7 +48,8 @@
 			<div class="col-md-4">
 				<div 
 					class="form-control btn btn-default file" 
-					ng-if="!productImagesCtrl.downloadingImages">	
+					ng-if="!productImagesCtrl.downloadingImages"
+				>	
 					<span>Télécharger une image personnalisé</span>
 					<input 
 						type="file" 

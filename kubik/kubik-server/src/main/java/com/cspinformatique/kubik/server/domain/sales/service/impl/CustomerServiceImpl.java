@@ -9,9 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import com.cspinformatique.kubik.common.rest.KubikTemplate;
 import com.cspinformatique.kubik.kos.model.account.Account;
 import com.cspinformatique.kubik.kos.model.kubik.KubikNotification;
-import com.cspinformatique.kubik.server.domain.kos.rest.KosTemplate;
 import com.cspinformatique.kubik.server.domain.sales.repository.CustomerRepository;
 import com.cspinformatique.kubik.server.domain.sales.service.CustomerService;
 import com.cspinformatique.kubik.server.model.sales.Customer;
@@ -24,7 +24,7 @@ public class CustomerServiceImpl implements CustomerService {
 	private CustomerRepository customerRepository;
 
 	@Resource
-	private KosTemplate kosTemplate;
+	private KubikTemplate kosTemplate;
 
 	@Override
 	public Iterable<Customer> findAll() {

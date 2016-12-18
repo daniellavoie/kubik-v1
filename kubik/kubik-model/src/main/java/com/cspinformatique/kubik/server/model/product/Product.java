@@ -563,4 +563,9 @@ public class Product {
 	public boolean equals(Product other) {
 		return other != null && other.getId() == id;
 	}
+
+	@Override
+	public String toString() {
+		return "Product [id=" + id + ", ean13=" + ean13 + ", name=" + name + "]";
+	}
 }

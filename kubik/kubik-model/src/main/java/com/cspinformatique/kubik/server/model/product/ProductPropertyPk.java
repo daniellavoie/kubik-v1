@@ -8,9 +8,8 @@ public class ProductPropertyPk implements Serializable {
 	private Product product;
 	private String name;
 	
-	public ProductPropertyPk(Product product, String name){
-		this.product = product;
-		this.name = name;
+	public ProductPropertyPk(){
+		
 	}
 
 	public Product getProduct() {

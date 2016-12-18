@@ -9,4 +9,4 @@ RUN ["apk", "add", "--update", "ttf-dejavu"]
 
 CMD ["java", "-jar", "/kubik/kubik.jar"]
 
-ADD kubik-server/target/kubik.jar /kubik/kubik.jar
+ADD target/kubik.jar /kubik/kubik.jar

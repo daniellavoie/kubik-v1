@@ -37,27 +37,18 @@ public class ProductController {
 	@Resource
 	private ProductService productService;
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Product findOne(@PathVariable int id) {
-		return productService.findOne(id);
+	@RequestMapping(value = "/{ean13}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Product findOne(@PathVariable String ean13) {
+		return productService.findOne(ean13);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-	public String getProductPage() {
-		return "product/product";
-	}
-
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-	public String getProductSearchPage() {
-		return "product/product-search";
-	}
-
-	@RequestMapping(value = "/{id}/image/{size}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-	public @ResponseBody ResponseEntity<InputStreamResource> loadProductImage(@PathVariable int id,
+	@RequestMapping(value = "/{ean13}/image/{size}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+	public @ResponseBody ResponseEntity<InputStreamResource> loadProductImage(@PathVariable String ean13,
 			@PathVariable ProductImageSize size) {
 		try {
 			return new ResponseEntity<InputStreamResource>(
-					new InputStreamResource(productImageService.loadImageInputStream(productService.findOne(id), size)),
+					new InputStreamResource(
+							productImageService.loadImageInputStream(productService.findOne(ean13), size)),
 					HttpStatus.OK);
 		} catch (ImageNotFoundException imageNotFoundEx) {
 			try {
@@ -79,9 +70,11 @@ public class ProductController {
 			@RequestParam(value = "categories[]", required = false) String[] categories,
 			@RequestParam(required = false) Date publishFrom, @RequestParam(required = false) Date publishUntil,
 			@RequestParam(required = false) String manufacturer, @RequestParam(required = false) Double priceFrom,
-			@RequestParam(required = false) Double priceTo, @RequestParam(defaultValue = "true") boolean hideUnavailable,
+			@RequestParam(required = false) Double priceTo,
+			@RequestParam(defaultValue = "true") boolean hideUnavailable,
 			@RequestParam(required = false) String query) {
 		return productService.search(title, brand, categories != null ? Arrays.asList(categories) : null, publishFrom,
-				publishUntil, manufacturer, priceFrom, priceTo, hideUnavailable, query, new PageRequest(page, size, direction, orderBy));
+				publishUntil, manufacturer, priceFrom, priceTo, hideUnavailable, query,
+				new PageRequest(page, size, direction, orderBy));
 	}
 }

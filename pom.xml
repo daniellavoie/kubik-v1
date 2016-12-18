@@ -23,6 +23,7 @@
 		<module>kubik</module>
 		<module>kos</module>
 		<module>kubik-common</module>
+		<module>kubik-product</module>
 	</modules>
 
 	<properties>
@@ -31,6 +32,17 @@
 	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	    <elasticsearch.version>2.3.3</elasticsearch.version>
 	</properties>
+	
+	<distributionManagement>
+		<repository>
+			<id>invivoo</id>
+			<url>http://http://nexus.cspinformatique.com/repository/invivoo-release/</url>
+		</repository>
+		<snapshotRepository>
+			<id>invivoo</id>
+			<url>http://nexus.cspinformatique.com/repository/invivoo-snapshot/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<build>
 		<pluginManagement>
@@ -50,6 +62,7 @@
 		<developerConnection>scm:git:https://github.com/daniellavoie/Kubik.git</developerConnection>
 		<tag>kubik-1.4.1</tag>
 	</scm>
+	
 	<dependencyManagement>
 		<dependencies>
 			<!-- Kubik Dependencies -->
@@ -71,6 +84,11 @@
 			<dependency>
 				<groupId>com.cspinformatique.kubik</groupId>
 				<artifactId>kubik-common</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.cspinformatique.kubik</groupId>
+				<artifactId>kubik-product-vehicule-model</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			

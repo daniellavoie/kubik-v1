@@ -1,0 +1,181 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="product-card" class="product-card" ng-controller="ProductCardCtrl as productCardCtrl">
+		<div class="product-card modal fade">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Fiche produit</h4>
+					</div>
+					
+					<div class="modal-body">
+						<div class="text-center" ng-if="!productCardCtrl.editingImage">
+							<img ng-src="/product/ean13/{{productCardCtrl.product.ean13}}/image/MEDIUM.jpg" />
+						</div>
+						
+						<div ng-if="productCardCtrl.editingImage">
+							<div th:replace="product/product-images :: product-images"></div>
+						</div>
+						
+						<form class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Marque</label>
+								<div class="col-sm-6">
+									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.brand}}</p>
+									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.brand" placeholder="Marque" />
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Nom</label>
+								<div class="col-sm-6">
+									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.name}}</p>
+									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.name" placeholder="Marque" />
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Ean13</label>
+								<div class="col-sm-6">
+									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.ean13}}</p>
+									<input 
+										ng-if="productCardCtrl.editMode" 
+										class="form-control"
+										ng-model="productCardCtrl.product.ean13" 
+										ng-change="onEan13ChangeEvent($event)"
+										placeholder="Ean13" 
+									/>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Catégorie</label>
+								<div class="col-sm-6">
+									<p class="form-control-static">
+										{{productCardCtrl.category.name}}
+										<button 
+											ng-if="productCardCtrl.editMode" 
+											class="btn btn-xs btn-default" 
+											ng-click="productCardCtrl.openProductCategories()"
+										><span class="glyphicon glyphicon-edit"></span></button>
+									</p>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Fournisseur</label>
+								<div class="col-sm-6">
+									<select
+										ng-model="productCardCtrl.supplier"
+										required="required"
+									 	ng-options="supplier as supplier.name for supplier in productCardCtrl.suppliers track by supplier.id"
+									></select>
+								</div>
+							</div>
+								
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Prix achat HT</label>
+								<div class="col-sm-6">
+									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.buyingPrice | currency : "&euro;"}}</p>
+									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.buyingPrice" placeholder="Prix achat HT" />
+								</div>
+							</div>
+								
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Prix public HT</label>
+								<div class="col-sm-6">
+									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.publicPrice | currency : "&euro;"}}</p>
+									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.publicPrice" placeholder="Prix public HT" />
+								</div>
+							</div>
+								
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Prix vente TTC</label>
+								<div class="col-sm-6">
+									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.sellingPrice | currency : "&euro;"}}</p>
+									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.sellingPrice" placeholder="Prix vente TTC" />
+								</div>
+							</div>
+								
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Prix vente HT</label>
+								<div class="col-sm-6">
+									<p class="form-control-static">{{productCardCtrl.product.sellingPriceTaxOut | currency : "&euro;"}}</p>
+								</div>
+							</div>
+								
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Poids</label>
+								<div class="col-sm-6">
+									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.weight | number : 2}}</p>
+									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.weight" placeholder="Poids" />
+								</div>
+							</div>
+								
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Description</label>
+								<div class="col-sm-6">
+									<pre ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.description}}</pre>
+									<textarea ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.description">{{productCardCtrl.product.description}}</textarea>
+								</div>
+							</div>
+								
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Caractéristiques</label>
+								<div class="col-sm-6">
+									<pre ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.characteristics}}</pre>
+									<textarea ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.characteristics">{{productCardCtrl.product.characteristics}}</textarea>
+								</div>
+							</div>
+						</form>
+					</div>
+						
+					<div class="modal-footer">
+						<div class="row">
+							<div class="col-sm-9">
+								<div class="alert alert-danger text-center" ng-if="(productCardCtrl.productErrors != null &amp;&amp; productCardCtrl.productErrors.length != 0) || productCardCtrl.error != null">
+  									<button type="button" class="close" ng-click="productCqrdCtrl.hideErrors()"><span aria-hidden="true">&times;</span></button>
+  									<div ng-repeat="productError in productCardCtrl.productErrors">{{productError}}</div>
+  									<div ng-if="productCardCtrl.error != null">{{productCardCtrl.error}}</div>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<button
+									ng-click="productCardCtrl.cancelModify()"
+									type="button" 
+									class="cancel btn btn-danger hidden" 
+								>Annuler</button>
+								
+								<button 
+									ng-click="productCardCtrl.save()"
+									type="button" 
+									class="save btn btn-success hidden" 
+								>Enregistrer</button>
+								
+								<button 
+									ng-click="productCardCtrl.modify()"
+									type="button" 
+									class="modify btn btn-primary" 
+								>Modifier</button>
+								
+								<button
+									type="button" 
+									class="close-modal btn btn-default" 
+									data-dismiss="modal"
+								>Fermer</button>
+							</div>
+						</div>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		<div th:replace="product/categories-modal :: categories-modal"></div>
+	</div>
+</body>
+</html>

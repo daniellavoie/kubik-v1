@@ -16,11 +16,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 
 import com.braintreegateway.Transaction;
+import com.cspinformatique.kubik.common.rest.KubikTemplate;
 import com.cspinformatique.kubik.common.rest.RestPage;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder.Status;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrderDetail;
-import com.cspinformatique.kubik.server.domain.kos.rest.KosTemplate;
 import com.cspinformatique.kubik.server.domain.misc.service.AddressService;
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.sales.exception.InvalidTransactionStatus;
@@ -77,8 +77,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	ReportService reportService;
 
 	@Resource
-	KosTemplate kosTemplate;
-	
+	KubikTemplate kosTemplate;
+
 	@Override
 	public Page<CustomerOrder> findAll(MultiValueMap<String, String> parameters) {
 		return kosTemplate.exchange(CUSTOMER_ORDER_RESOURCE, parameters, HttpMethod.GET, new CustomerOrderPageType());
@@ -101,7 +101,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 		// Add details to invoice.
 		for (CustomerOrderDetail customerOrderDetail : customerOrder.getCustomerOrderDetails()) {
-			Product product = productService.findOne(customerOrderDetail.getProduct().getKubikId());
+			Product product = productService.findByEan13(customerOrderDetail.getProduct().getEan13());
 
 			invoice.getDetails()
 					.add(new InvoiceDetail(null, invoice, product, (double) customerOrderDetail.getQuantityShipped(),

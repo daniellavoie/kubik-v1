@@ -359,8 +359,6 @@ public class ProductServiceImpl implements ProductService {
 
 		productInventoryService.updateInventory(targetProduct);
 
-		productImageService.deleteByProduct(sourceProduct);
-
 		productRepository.delete(sourceProduct);
 	}
 
@@ -376,28 +374,19 @@ public class ProductServiceImpl implements ProductService {
 		Assert.notNull(product, "Product is undefined");
 		Assert.notNull(product.getEan13(), "Ean13 is undefined");
 		Assert.notNull(product.getSupplier(), "Supplier is undefined");
-		Assert.notNull(product.getSupplier().getEan13(), "Supplier Ean13 is undefined");
 
 		boolean updatePurchaseOrders = false;
 		Product oldVersion = null;
 
-		if (product.getEan13().length() < 12) {
-			while (product.getEan13().length() < 12)
-				product.setEan13("0" + product.getEan13());
-
-			LOGGER.info("Fixing padding issue on product " + product.getEan13());
-		}
+//		if (product.getEan13().length() < 12) {
+//			while (product.getEan13().length() < 12)
+//				product.setEan13("0" + product.getEan13());
+//
+//			LOGGER.info("Fixing padding issue on product " + product.getEan13());
+//		}
 
 		if (product.getId() != null) {
 			oldVersion = findByEan13(product.getEan13());
-		}
-
-		// Checks if the supplier has changed.
-		if (oldVersion != null && !product.getSupplier().getEan13().equals(oldVersion.getSupplier().getEan13())) {
-			// Makes sure no purchase orders exists for the product.
-			if (purchaseOrderService.findByProduct(product).iterator().hasNext()) {
-				throw new RuntimeException("Product can't change supplier as purchase orders exists for it.");
-			}
 		}
 
 		// checks if the prices needs to be calculated.

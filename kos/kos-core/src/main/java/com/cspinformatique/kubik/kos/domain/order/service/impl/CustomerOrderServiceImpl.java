@@ -61,16 +61,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 	@Override
 	public CustomerOrder addDetail(CustomerOrder customerOrder, CustomerOrderDetail customerOrderDetail) {
 		LOGGER.info("Adding " + customerOrderDetail.getQuantityOrdered() + " product "
-				+ customerOrderDetail.getProduct().getId() + " to order " + customerOrder.getId() + ".");
+				+ customerOrderDetail.getProduct() + " to order " + customerOrder.getId() + ".");
 
-		Product product = productService.findOne(customerOrderDetail.getProduct().getId());
+		Product product = productService.findOne(customerOrderDetail.getProduct().getEan13());
 
 		customerOrderDetail.setProduct(product);
 		customerOrderDetail.setCustomerOrder(customerOrder);
 
 		// Retreives the id and the quantity of an existing detail.
 		Optional<CustomerOrderDetail> detailOptional = customerOrder.getCustomerOrderDetails().stream()
-				.filter(existingDetail -> existingDetail.getProduct().getId() == product.getId()).findAny();
+				.filter(existingDetail -> existingDetail.getProduct().getEan13() == product.getEan13()).findAny();
 
 		int quantity = getDetailQuantity(customerOrderDetail);
 		if (detailOptional.isPresent()) {

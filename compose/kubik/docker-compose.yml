@@ -1,0 +1,8 @@
+version : '2'
+services:
+  es:
+    image: elasticsearch:2.3
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    command: "elasticsearch -Dcluster.name=kubik -Dnetwork.host=0.0.0.0"

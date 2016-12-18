@@ -1,5 +1,10 @@
 package com.cspinformatique.kubik.kos.config;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.annotation.Resource;
 
 import org.springframework.context.annotation.Bean;
@@ -32,9 +37,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.formLogin().loginPage("/compte/connexion").failureUrl("/compte/connexion?error")
 				.loginProcessingUrl("/authenticate").usernameParameter("username").passwordParameter("password").and()
 
-		.logout().logoutUrl("/logout").logoutSuccessUrl("/");
+				.logout().logoutUrl("/logout").logoutSuccessUrl("/");
 
-		for (String publicEndpoint : env.getProperty("kos.security.public", "").split(",")) {
+		List<String> publicEndpoints = Stream
+				.concat(Arrays.stream(env.getProperty("kos.security.public", "").split(",")),
+						Arrays.stream(env.getProperty("kos.security.public.extensions", "").split(",")))
+				.collect(Collectors.toList());
+
+		for (String publicEndpoint : publicEndpoints) {
 			if (!publicEndpoint.equals(""))
 				http.authorizeRequests().antMatchers(publicEndpoint).permitAll();
 		}

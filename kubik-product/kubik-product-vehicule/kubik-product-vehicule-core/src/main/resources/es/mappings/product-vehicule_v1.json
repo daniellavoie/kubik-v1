@@ -1,0 +1,62 @@
+{
+	"properties" : {
+		"ean13": {
+			"type": "string",
+			"index": "not_analyzed"
+		},
+		"supplierReferences" : {
+			"properties" : {
+				"supplierType" : {
+					"type": "string",
+					"index": "not_analyzed"
+				},
+				"reference" : {
+					"type" : "string",
+					"index" : "not_analyzed"
+				}
+			}
+		},
+		"brand" : {
+			"type" : "string",
+			"index" : "not_analyzed"
+		},
+		"name" : {
+			"type" : "string"
+		},
+		"category" : {
+			"type" : "string",
+			"index" : "not_analyzed"
+		},
+		"publicPrice" : {
+			"type" : "double"
+		},
+		"sellingPrice" : {
+			"type" : "double"
+		},
+		"buyingPrice" : {
+			"type" : "double"
+		},
+		"weight" : {
+			"type" : "double"
+		},
+		"description" : {
+			"type" : "string"
+		},
+		"caracteristics" : {
+			"type" : "string"
+		},
+		"packaking" : {
+			"type" : "string",
+			"index" : "not_analyzed"
+		},
+		"kubikId" : {
+			"type" : "integer"
+		},
+		"kubikCategoryId" : {
+			"type" : "integer"
+		},
+		"kubikSupplierId" : {
+			"type" : "integer"
+		}
+	}
+}

@@ -3,7 +3,11 @@
 		.module("Kubik")
 		.controller("ProductCategoriesCtrl", ProductCategoriesCtrl);
 	
-	function ProductCategoriesCtrl($scope, $http, $timeout){
+	angular
+		.module("KubikProductVehicule")
+		.controller("ProductCategoriesCtrl", ProductCategoriesCtrl);
+	
+	function ProductCategoriesCtrl(categoryService, $scope, $http, $timeout){
 		var CATEGORIES_URL = "/category";
 		var $modal = $(".categories-modal");
 		
@@ -39,34 +43,35 @@
 		});
 		
 		$scope.$on("updateCategorySelectedCallback", function($event, categorySelected){
-//			$timeout(function(){
 				vm.categorySelectedCallback = categorySelected;
-//			});
 		});
 		
 		function addCategory(parentCategory){
-			if(parentCategory.childCategories == undefined){
+			if(parentCategory.childCategories == undefined)
 				parentCategory.childCategories = [];
-			}
 			
-			$http.get(CATEGORIES_URL + "?newName").success(newCategoryNameLoaded);
+			categoryService
+				.newCategory()
+				.then(newCategoryNameLoaded);
 			
 			function newCategoryNameLoaded(name){
 				parentCategory.childCategories.push({name : name, rootCategory : false});
 				
-				$http.post(CATEGORIES_URL, parentCategory).success(vm.loadCategories);
+				return categoryService
+					.save(parentCategory)
+					.then(vm.loadCategories);
 			}
 		}
 		
 		function addRootCategory(){
-			$http.get(CATEGORIES_URL + "?newName").success(newCategoryNameLoaded);
+			categoryService
+				.newCategory()
+				.then(newCategoryNameLoaded);
 			
 			function newCategoryNameLoaded(name){
-				$http.post(CATEGORIES_URL, {name : name, rootCategory : true}).success(postSuccess);
-				
-				function postSuccess(category){
-					vm.loadCategories();
-				}
+				categoryService
+					.save({name : name, rootCategory : true})
+					.then(vm.loadCategories());
 			}
 		}
 		
@@ -115,15 +120,22 @@
 			
 			var parentCategory = vm.childParentCategoriesMap[category.id];
 			
-			$http.delete(CATEGORIES_URL + "/" + category.id + "/product").success(productCategoriesDeleted);
+			categoryService
+				.deleteProductCategories(category.id)
+				.then(productCategoriesDeleted);
 			
 			function productCategoriesDeleted(){
 				if(category.rootCategory){
-					$http.delete(CATEGORIES_URL + "/" + category.id).error(handleError).finally(deleteCompleted);
+					return categoryService
+						.deleteCategory(category.id)
+						.error(handleError)
+						.finally(deleteCompleted);
 				}else{
 					parentCategory.childCategories.splice(parentCategory.childCategories.indexOf(category), 1);
 					
-					$http.post(CATEGORIES_URL, parentCategory).error(handleError).finally(deleteCompleted);
+					return categoryService
+						.save(parentCategory)
+						.error(handleError).finally(deleteCompleted);
 				}
 				
 				function handleError(data){
@@ -153,56 +165,73 @@
 		function loadCategories(successCallback){
 			vm.loading = true;
 			
-			$http.get(CATEGORIES_URL).success(categoriesLoaded).finally(function(){
-				vm.loading = false;
-			});
+			categoryService
+				.findAll()
+				.then(findAllSuccess)
+				.finally(findAllCompleted);
 			
-			function categoriesLoaded(categories){
+			function findAllCompleted(){
+				vm.loading = false;
+			}
+			
+			function findAllSuccess(categories){
 				vm.categories = categories;
-	
-				var calculateLevel = function(category, level){
+			
+				angular.forEach(categories, onEach);
+							
+				if(successCallback != undefined)
+					successCallback();
+				
+				function calculateLevel(category, level){
 					category.level = level;
 	
-					angular.forEach(category.childCategories, function(childCategory, key){
+					angular.forEach(category.childCategories, onEach);
+					
+					function onEach(childCategory, key){
 						vm.childParentCategoriesMap[childCategory.id] = category;
 						childCategory.parentCategory = { id : category.id};
 						calculateLevel(childCategory, level + 1);
-					});
-				};
-			
-				angular.forEach(categories, function(category, key ){
+					}
+				}
+				
+				function onEach(category, key){
 					category.level = 1;
 	
-					angular.forEach(category.childCategories, function(childCategory, key){
+					angular.forEach(category.childCategories, onEach);
+					
+					function onEach(childCategory, key){
 						vm.childParentCategoriesMap[childCategory.id] = category;
 						childCategory.parentCategory = { id : category.id};
 						calculateLevel(childCategory, 2);
-					});
-				});
-							
-				if(successCallback != undefined){
-					successCallback();
+					}
 				}
 			}
 		};
 		
 		function openModal(options){
-			$modal.on("show.bs.modal", function(e){
-				$timeout(function(){
-					if(options != undefined) vm.categorySelectedCallback = options.categorySelected;
-				});
-			}).modal({
-				backdrop : "static",
-				keyboard : false
-			});
+			$modal
+				.on("show.bs.modal", onShow)
+				.modal({backdrop : "static", keyboard : false});
+			
+			function onShow(event){
+				$timeout(onTimeout);
+				
+				function onTimeout(){
+					if(options != undefined) 
+						vm.categorySelectedCallback = options.categorySelected;
+				}
+			}
 		}
 		
 		function saveCategory(){
 			vm.hideError();
 			
-			$http.post(CATEGORIES_URL, vm.category).error(handleError).finally(saveCompleted);
+			categoryService
+				.save(vm.category)
+				.error(saveError)
+				.finally(saveCompleted);
 			
-			function handleError(data){
+			function saveError(data){
 				vm.error = data.message;
 			}
 			

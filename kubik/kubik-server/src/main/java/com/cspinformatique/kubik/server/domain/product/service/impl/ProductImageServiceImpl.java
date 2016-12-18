@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -34,7 +33,6 @@ import com.cspinformatique.kubik.server.domain.product.repository.ProductImageRe
 import com.cspinformatique.kubik.server.domain.product.service.ProductImageService;
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.model.product.Product;
-import com.cspinformatique.kubik.server.model.product.ProductImage;
 import com.cspinformatique.kubik.server.model.product.ProductImageSize;
 import com.mortennobel.imagescaling.AdvancedResizeOp.UnsharpenMask;
 import com.mortennobel.imagescaling.ResampleOp;
@@ -58,18 +56,8 @@ public class ProductImageServiceImpl implements ProductImageService {
 	@Value("${kubik.ean13}")
 	private String ean13;
 
-	private String calculateImageKey(Product product, ProductImageSize size) {
-		return product.getId() + "-" + size.name() + ".jpg";
-	}
-
-	@Override
-	public void deleteByProduct(Product product) {
-		productImageRepository.deleteByProduct(product);
-	}
-
-	@Override
-	public ProductImage findByProductAndSize(Product product, ProductImageSize size) {
-		return productImageRepository.findByProductAndSize(product, size);
+	private String calculateImageKey(String ean13, ProductImageSize size, boolean preview) {
+		return ean13 + "-" + size.name() + (preview ? "-PREVIEW" : "") + ".jpg";
 	}
 
 	@Override
@@ -83,7 +71,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 			productPage = productService.findAll(pageRequest);
 
 			productPage.getContent().parallelStream().filter(product -> product.isDilicomReference())
-					.forEach(product -> persistProductImagesToAws(product));
+					.forEach(product -> persistProductImagesToAws(product.getEan13()));
 
 			pageRequest = pageRequest.next();
 		} while (productPage.hasNext());
@@ -92,11 +80,14 @@ public class ProductImageServiceImpl implements ProductImageService {
 	}
 
 	@Override
-	public InputStream loadInputStream(Product product, ProductImageSize size) {
-		try (S3Object object = amazonS3.getObject(new GetObjectRequest(bucketName, calculateImageKey(product, size)))) {
-			if (object == null) {
-				throw new ImageNotFoundException();
-			}
+	public InputStream loadInputStream(String ean13, ProductImageSize size, boolean preview) {
+		try (S3Object object = amazonS3
+				.getObject(new GetObjectRequest(bucketName, calculateImageKey(ean13, size, preview)))) {
+			if (object == null)
+				if (preview)
+					return loadInputStream(ean13, size, false);
+				else
+					throw new ImageNotFoundException();
 
 			return IOUtils.toBufferedInputStream(object.getObjectContent());
 		} catch (AmazonClientException | IOException amazonS3Ex) {
@@ -105,55 +96,55 @@ public class ProductImageServiceImpl implements ProductImageService {
 	}
 
 	@Override
-	public void persistProductImagesToAws(Product product) {
-		Assert.notNull(product.getImageEncryptedKey());
-		Assert.isTrue(!product.getImageEncryptedKey().equals(""),
-				"Product " + product.getId() + " image encrypted key cannot be empty.");
-
+	public void persistProductImagesToAws(String ean13) {
 		try {
-			persistAmazonImages(product);
+			persistAmazonImages(ean13);
 		} catch (ImageNotFoundException | ImageTooSmallException ex) {
 			try {
-				persistDilicomImages(product);
+				persistDilicomImages(ean13);
 			} catch (ImageNotFoundException | ImageTooSmallException ex2) {
-				LOGGER.warn("Proper image could not be found for product " + product.getId());
+				LOGGER.warn("Proper image could not be found for ean13 " + ean13);
 			}
 		}
 	}
 
 	@Override
-	public void persistAmazonImages(Product product) {
-		persistAmazonImage(product);
+	public void persistAmazonImages(String ean13) {
+		persistAmazonImage(ean13);
 	}
 
-	private void persistAmazonImage(Product product) {
+	private void persistAmazonImage(String ean13) {
+		Product product = productService.findByEan13(ean13);
+
 		if (product.getIsbn() != null && !product.getIsbn().trim().equals("")) {
 			try {
 				persistImageFromUrlToAws("http://images.amazon.com/images/P/" + product.getIsbn() + ".01.SCRM.jpg",
-						product);
+						ean13);
 			} catch (ImageTooSmallException imageTooSmallEx) {
 				persistImageFromUrlToAws("http://images.amazon.com/images/P/" + product.getIsbn() + ".01.LZZ.jpg",
-						product);
+						ean13);
 			}
 		}
 	}
 
 	@Override
-	public void persistDilicomImages(Product product) {
+	public void persistDilicomImages(String ean13) {
+		Product product = productService.findByEan13(ean13);
+
 		persistImageFromUrlToAws(
 				"http://images1.centprod.com/" + ean13 + "/" + product.getImageEncryptedKey() + "-cover-full.jpg",
-				product);
+				ean13);
 	}
 
 	@Override
-	public void persistImageFromUrlToAws(String url, Product product) {
+	public void persistImageFromUrlToAws(String url, String ean13) {
 		try {
 			HttpURLConnection urlConnection = (HttpURLConnection) new URI(url).toURL().openConnection();
 			urlConnection.connect();
 
 			int responseCode = urlConnection.getResponseCode();
 			if (responseCode == 200 || responseCode == 304) {
-				uploadImageToAws(IOUtils.toByteArray(urlConnection.getInputStream()), product);
+				uploadImageToAws(IOUtils.toByteArray(urlConnection.getInputStream()), ean13);
 			} else {
 				throw new ImageNotFoundException();
 			}
@@ -162,7 +153,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 		}
 	}
 
-	private void resizeAndPersitsImage(BufferedImage originalImage, Product product, ProductImageSize size) {
+	private void resizeAndPersitsImage(BufferedImage originalImage, String ean13, ProductImageSize size) {
 		try (ByteArrayOutputStream outputstream = new ByteArrayOutputStream()) {
 			ImageIO.write(resizeImageWithHint(originalImage,
 					originalImage.getWidth() > size.getWidth() ? size.getWidth() : originalImage.getWidth(),
@@ -172,7 +163,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 					BufferedImage.TYPE_INT_RGB), "jpg", outputstream);
 
 			byte[] imageBytes = outputstream.toByteArray();
-			uploadImageToAws(new ByteArrayInputStream(imageBytes), outputstream.size(), product, size);
+			uploadImageToAws(new ByteArrayInputStream(imageBytes), outputstream.size(), ean13, size);
 		} catch (IOException ioEx) {
 			throw new RuntimeException(ioEx);
 		}
@@ -186,7 +177,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 	}
 
 	@Override
-	public void uploadImageToAws(byte[] imageBytes, Product product) {
+	public void uploadImageToAws(byte[] imageBytes, String ean13) {
 		try {
 			InputStream inputStream = new ByteArrayInputStream(imageBytes);
 
@@ -200,33 +191,51 @@ public class ProductImageServiceImpl implements ProductImageService {
 			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 				ImageIO.write(originalImage, "jpg", outputStream);
 
-				uploadImageToAws(new ByteArrayInputStream(imageBytes), imageBytes.length, product,
-						ProductImageSize.FULL);
+				uploadImageToAws(new ByteArrayInputStream(imageBytes), imageBytes.length, ean13, ProductImageSize.FULL);
 			}
 
-			resizeAndPersitsImage(originalImage, product, ProductImageSize.THUMB);
-			resizeAndPersitsImage(originalImage, product, ProductImageSize.MEDIUM);
-			resizeAndPersitsImage(originalImage, product, ProductImageSize.LARGE);
+			resizeAndPersitsImage(originalImage, ean13, ProductImageSize.THUMB);
+			resizeAndPersitsImage(originalImage, ean13, ProductImageSize.MEDIUM);
+			resizeAndPersitsImage(originalImage, ean13, ProductImageSize.LARGE);
 
-			LOGGER.info("Persisted images for product " + product.getId() + ".");
+			LOGGER.info("Persisted images for ean13 " + ean13 + ".");
 		} catch (IOException ioEx) {
 			throw new RuntimeException(ioEx);
 		}
 	}
 
-	private void uploadImageToAws(InputStream inputStream, long contentLength, Product product, ProductImageSize size) {
+	private void uploadImageToAws(InputStream inputStream, long contentLength, String ean13, ProductImageSize size) {
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentLength(contentLength);
 
-		amazonS3.putObject(bucketName, calculateImageKey(product, size), inputStream, metadata);
+		amazonS3.putObject(bucketName, calculateImageKey(ean13, size, true), inputStream, metadata);
+	}
 
-		ProductImage productImage = productImageRepository.findByProductAndSize(product, size);
+	private void validateImageFromAws(String ean13, ProductImageSize size) {
+		String previewFileName = calculateImageKey(ean13, size, true);
+		String destinationFileName = calculateImageKey(ean13, size, false);
 
-		if (productImage == null)
-			productImage = new ProductImage(0l, product, size, contentLength);
-		else
-			productImage.setContentLength(contentLength);
+		boolean validateImage = false;
+		try (S3Object s3Object = amazonS3.getObject(bucketName, previewFileName)) {
+			validateImage = true;
+		} catch (AmazonClientException | IOException e) {
+			// File does not exists.
+		}
 
-		productImageRepository.save(productImage);
+		if (validateImage) {
+			amazonS3.deleteObject(bucketName, destinationFileName);
+
+			amazonS3.copyObject(bucketName, previewFileName, bucketName, destinationFileName);
+
+			amazonS3.deleteObject(bucketName, previewFileName);
+		}
+	}
+
+	@Override
+	public void validateImagesFromAws(String ean13) {
+		validateImageFromAws(ean13, ProductImageSize.FULL);
+		validateImageFromAws(ean13, ProductImageSize.THUMB);
+		validateImageFromAws(ean13, ProductImageSize.MEDIUM);
+		validateImageFromAws(ean13, ProductImageSize.LARGE);
 	}
 }

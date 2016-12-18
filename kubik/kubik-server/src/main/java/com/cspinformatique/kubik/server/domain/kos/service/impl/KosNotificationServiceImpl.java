@@ -18,8 +18,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import com.cspinformatique.kubik.common.rest.KubikTemplate;
 import com.cspinformatique.kubik.server.domain.kos.repository.KosNotificationRepository;
-import com.cspinformatique.kubik.server.domain.kos.rest.KosTemplate;
 import com.cspinformatique.kubik.server.domain.kos.service.KosNotificationService;
 import com.cspinformatique.kubik.server.domain.product.service.CategoryService;
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
@@ -40,7 +40,7 @@ public class KosNotificationServiceImpl implements KosNotificationService {
 	private KosNotificationRepository kosNotificationRepository;
 
 	@Resource
-	private KosTemplate kosTemplate;
+	private KubikTemplate kosTemplate;
 
 	@Resource
 	private ProductService productService;

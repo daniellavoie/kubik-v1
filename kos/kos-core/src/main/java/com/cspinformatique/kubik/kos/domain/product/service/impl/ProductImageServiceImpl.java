@@ -36,7 +36,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 	private String bucketName;
 
 	private String calculateImageKey(Product product, ProductImageSize size) {
-		return product.getKubikId() + "-" + size.name() + ".jpg";
+		return product.getEan13() + "-" + size.name() + ".jpg";
 	}
 
 	@Override

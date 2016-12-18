@@ -153,8 +153,7 @@ public class ProductController {
 	@RequestMapping(value = "/{productId}/customerCredit", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<CustomerCreditDetail> findProductCustomerCredits(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
-			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "name") String sortBy) {
+			@RequestParam(required = false) Direction direction, @RequestParam(defaultValue = "name") String sortBy) {
 		return this.customerCreditDetailService.findByProductAndCustomerCreditStatus(productService.findOne(productId),
 				CustomerCredit.Status.COMPLETED,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
@@ -189,8 +188,7 @@ public class ProductController {
 	@RequestMapping(value = "/{productId}/reception", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<ReceptionDetail> findProductPurchaseOrders(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
-			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "name") String sortBy) {
+			@RequestParam(required = false) Direction direction, @RequestParam(defaultValue = "name") String sortBy) {
 		return receptionDetailService.findByProductAndReceptionStatus(productService.findOne(productId),
 				Reception.Status.CLOSED,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
@@ -200,8 +198,7 @@ public class ProductController {
 	@RequestMapping(value = "/{productId}/rma", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<RmaDetail> findProductRmas(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
-			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "name") String sortBy) {
+			@RequestParam(required = false) Direction direction, @RequestParam(defaultValue = "name") String sortBy) {
 		return rmaDetailService.findByProductAndRmaStatus(this.productService.findOne(productId), Rma.Status.SHIPPED,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
@@ -242,13 +239,12 @@ public class ProductController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{id}/image/{size}", method = RequestMethod.GET)
-	public ResponseEntity<InputStreamResource> loadProductImage(@PathVariable int id,
-			@PathVariable ProductImageSize size) {
+	@RequestMapping(value = "/ean13/{ean13}/image/{size}", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> loadProductImage(@PathVariable String ean13,
+			@PathVariable ProductImageSize size, @RequestParam(defaultValue = "false") boolean preview) {
 		try {
 			return new ResponseEntity<InputStreamResource>(
-					new InputStreamResource(productImageService.loadInputStream(productService.findOne(id), size)),
-					HttpStatus.OK);
+					new InputStreamResource(productImageService.loadInputStream(ean13, size, preview)), HttpStatus.OK);
 		} catch (ImageNotFoundException imageNotFoundEx) {
 			return new ResponseEntity<InputStreamResource>(HttpStatus.NOT_FOUND);
 		}
@@ -261,21 +257,21 @@ public class ProductController {
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/{productId}/image/amazon", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void persistAmazonImages(@PathVariable int productId) {
-		productImageService.persistAmazonImages(productService.findOne(productId));
+	@RequestMapping(value = "/ean13/{ean13}/image/amazon", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void persistAmazonImages(@PathVariable String ean13) {
+		productImageService.persistAmazonImages(ean13);
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/{productId}/image/dilicom", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void persistDilicomImages(@PathVariable int productId) {
-		productImageService.persistDilicomImages(productService.findOne(productId));
+	@RequestMapping(value = "/ean13/{ean13}/image/dilicom", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void persistDilicomImages(@PathVariable String ean13) {
+		productImageService.persistDilicomImages(ean13);
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/{productId}/image/url", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void persistIamgesFromUrl(@PathVariable int productId, @RequestParam String url) {
-		productImageService.persistImageFromUrlToAws(url, productService.findOne(productId));
+	@RequestMapping(value = "/ean13/{ean13}/image/url", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void persistIamgesFromUrl(@PathVariable String ean13, @RequestParam String url) {
+		productImageService.persistImageFromUrlToAws(url, ean13);
 	}
 
 	@ResponseBody
@@ -285,10 +281,10 @@ public class ProductController {
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/{productId}/image/custom", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void uploadCustomProductImage(@PathVariable int productId, @RequestParam("file") MultipartFile file) {
+	@RequestMapping(value = "/ean13/{ean13}/image/custom", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void uploadCustomProductImage(@PathVariable String ean13, @RequestParam("file") MultipartFile file) {
 		try {
-			productImageService.uploadImageToAws(file.getBytes(), productService.findOne(productId));
+			productImageService.uploadImageToAws(file.getBytes(), ean13);
 		} catch (IOException ioEx) {
 			throw new RuntimeException(ioEx);
 		}
@@ -298,9 +294,14 @@ public class ProductController {
 	@RequestMapping(method = RequestMethod.GET, params = "search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<Product> search(@RequestParam(defaultValue = "") String query,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "50") Integer resultPerPage,
-			@RequestParam(required = false) Direction direction,
-			@RequestParam(defaultValue = "name") String sortBy) {
+			@RequestParam(required = false) Direction direction, @RequestParam(defaultValue = "name") String sortBy) {
 		return productService.search(query,
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
+	}
+
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/ean13/{ean13}/image", params = "validate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void validateImagesFromAws(@PathVariable String ean13) {
+		productImageService.validateImagesFromAws(ean13);
 	}
 }

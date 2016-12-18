@@ -1,7 +1,11 @@
 (function(){
 	angular
 		.module("Kubik")
-		.directive("fileModel", FileModel)
+		.directive("fileModel", FileModel);
+	
+	angular
+		.module	("KubikProductVehicule")
+		.directive("fileModel", FileModel);
 	
 	function FileModel($parse){
 		return {

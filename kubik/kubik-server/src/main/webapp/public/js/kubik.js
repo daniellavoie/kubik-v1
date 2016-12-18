@@ -8,6 +8,7 @@ $(function(){
 
 (function(){
 	angular.module("Kubik", []);
+	angular.module("KubikProductVehicule", []);
 })();
 
 $(document).on('hidden.bs.modal', '.modal', function () {

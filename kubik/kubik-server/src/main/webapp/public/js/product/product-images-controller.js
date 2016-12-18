@@ -1,11 +1,15 @@
 (function(){
 	var PRODUCT_URL = "/product";
-	
+
 	angular
 		.module("Kubik")
 		.controller("ProductImagesCtrl", ProductImagesCtrl);
 	
-	function ProductImagesCtrl(uploadFileService, $scope, $http, $timeout){
+	angular
+		.module("KubikProductVehicule")
+		.controller("ProductImagesCtrl", ProductImagesCtrl);
+	
+	function ProductImagesCtrl(productImageService, $scope, $http, $timeout){
 		var vm = this;
 
 		vm.downloadingImages = false;
@@ -14,29 +18,28 @@
 		vm.downloadImageFromUrl = downloadImageFromUrl;
 		vm.uploadCustomImage = uploadCustomImage;
 		
-		$scope.$on("productImages-setProduct", setProductEvent);
+		$scope.$on("productImages-setProductEan13", setProductEan13Event);
+		$scope.$on("productImages-validate", validateImageEvent)
 		
-		function setProductEvent($event, product){
+		function setProductEan13Event($event, ean13){
 			vm.url = "";
-			vm.product = product;
+			vm.preview = false;
+			vm.ean13 = ean13;
 			
 			vm.cacheKey = Math.random();
 		}
 		
-		function downloadImage(provider){
+		function downloadImage(provider, remoteUrl){
 			vm.downloadingImages = true;
 			
-			var url = PRODUCT_URL + "/" + vm.product.id + "/image/" + provider;
-			if(provider == "url"){
-				url += "?url=" + vm.url; 
-			}
-			
-			$http
-				.get(url)
+			productImageService.downloadImage(vm.ean13, provider, remoteUrl)
 				.then(downloadImageSuccess)
 				.finally(downloadImageCompleted);
 			
 			function downloadImageCompleted(){
+				vm.preview = true;
+				vm.cacheKey = Math.random();
+				
 				vm.downloadingImages = false;
 			}
 			
@@ -54,20 +57,28 @@
 		}
 		
 		function downloadImageFromUrl(){
-			downloadImage("url");
+			downloadImage("url", vm.url);
 		}
 		
 		function uploadCustomImage(){
 			vm.downloadingImages = true;
 			
-			var url = PRODUCT_URL + "/" + vm.product.id + "/image/custom", uploadCustomImageSuccess;
-			
-			uploadFileService.uploadFile(vm.image, url, null, null, uploadCustomImageCompleted);
+			productImageService.uploadCustomImage(vm.ean13, vm.image, uploadCustomImageCompleted);
 			
 			function uploadCustomImageCompleted(){
+				vm.preview = true;
+				
 				vm.downloadingImages = false;
 				
 				vm.cacheKey = Math.random();
+			}
+		}
+		
+		function validateImageEvent($event){
+			productImageService.validateImage(vm.ean13).then(validateImageSuccess);
+			
+			function validateImageSuccess(){
+				$scope.$emit("productImages-image-validated");
 			}
 		}
 	}

@@ -11,10 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import com.cspinformatique.kubik.kos.model.product.Category;
 import com.cspinformatique.kubik.kos.model.product.Product;
 
-public interface ProductRepository extends JpaRepository<Product, Integer> {
+public interface ProductRepository extends JpaRepository<Product, String> {
 	List<Product> findByCategory(Category category);
-
-	Product findByKubikId(int kubikId);
 
 	@Query("SELECT product FROM Product product WHERE "
 			+ "category.availableOnline = true AND "

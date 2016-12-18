@@ -21,8 +21,6 @@ import com.cspinformatique.kubik.kos.domain.product.service.CategoryService;
 import com.cspinformatique.kubik.kos.domain.product.service.ProductService;
 import com.cspinformatique.kubik.kos.model.product.Category;
 import com.cspinformatique.kubik.kos.model.product.Product;
-import com.cspinformatique.kubik.kos.model.product.ProductImage;
-import com.cspinformatique.kubik.kos.model.product.ProductImageSize;
 import com.cspinformatique.kubik.kos.rest.KubikTemplate;
 import com.cspinformatique.kubik.server.model.kos.KosNotification;
 
@@ -45,8 +43,8 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Product findOne(int id) {
-		return productRepository.findOne(id);
+	public Product findOne(String ean13) {
+		return productRepository.findOne(ean13);
 	}
 
 	private List<Category> calculateCategoriesScope(List<String> categoriesNames) {
@@ -93,12 +91,10 @@ public class ProductServiceImpl implements ProductService {
 				com.cspinformatique.kubik.server.model.product.Product.class).getBody();
 
 		// Checks if the product id already exists.
-		Product product = productRepository.findByKubikId(productId);
+		Product product = productRepository.findOne(kubikProduct.getEan13());
 
 		if (product == null) {
 			product = new Product();
-			product.setKubikId(productId);
-			product.setImages(new ArrayList<>());
 
 			if (kubikProduct.getCategory() != null) {
 				// Loads the category
@@ -114,25 +110,13 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		product.setBrand(kubikProduct.getBrand());
-		product.setCollection(kubikProduct.getCollection());
-		product.setDatePublished(kubikProduct.getDatePublished());
 		product.setEan13(kubikProduct.getEan13());
-		product.setIsbn(kubikProduct.getIsbn());
-		product.setManufacturer(kubikProduct.getPublisher());
-		product.setPrice(kubikProduct.getPriceTaxIn());
 		product.setName(kubikProduct.getName());
-		product.setThickness(kubikProduct.getThickness());
-		product.setHeight(kubikProduct.getHeight());
-		product.setWidth(kubikProduct.getWidth());
+		product.setPrice(kubikProduct.getPriceTaxIn());
 		product.setWeight(kubikProduct.getWeight());
+
 		if (kubikProduct.getProductInventory() != null)
 			product.setAvailable(kubikProduct.getProductInventory().getQuantityOnHand() > 0);
-
-		product.getImages().clear();
-		for (com.cspinformatique.kubik.server.model.product.ProductImage kubikImage : kubikProduct.getImages()) {
-			product.getImages().add(new ProductImage(0, product, ProductImageSize.valueOf(kubikImage.getSize().name()),
-					kubikImage.getContentLength()));
-		}
 
 		return product;
 

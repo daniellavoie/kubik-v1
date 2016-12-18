@@ -5,6 +5,10 @@
 		.module	("Kubik")
 		.factory("uploadFileService", UploadFileService);
 	
+	angular
+		.module	("KubikProductVehicule")
+		.factory("uploadFileService", UploadFileService);
+	
 	function UploadFileService($http, $timeout){
 		return {
 			uploadFile : uploadFile 

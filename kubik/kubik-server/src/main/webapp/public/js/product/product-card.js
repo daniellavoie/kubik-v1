@@ -226,7 +226,7 @@
 			vm.editingImage = true;
 
 			$timeout(function(){
-				$scope.$broadcast("productImages-setProduct", vm.product);					
+				$scope.$broadcast("productImages-setProductId", vm.product.id);					
 			});
 		}
 		

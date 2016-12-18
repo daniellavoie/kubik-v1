@@ -13,7 +13,7 @@ import com.cspinformatique.kubik.server.model.kos.KosNotification;
 public interface ProductService {
 	List<Product> findByCategory(Category category);
 
-	Product findOne(int id);
+	Product findOne(String ean13);
 
 	void processProductNotification(KosNotification kosNotification);
 
