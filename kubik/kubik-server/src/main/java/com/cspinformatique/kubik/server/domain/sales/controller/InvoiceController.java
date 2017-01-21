@@ -2,13 +2,13 @@ package com.cspinformatique.kubik.server.domain.sales.controller;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.cspinformatique.kubik.server.domain.sales.service.CustomerCreditService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.server.domain.sales.service.PaymentService;
 import com.cspinformatique.kubik.server.jasper.service.ReportService;
@@ -33,27 +32,23 @@ import net.sf.jasperreports.engine.JasperExportManager;
 @Controller
 @RequestMapping("/invoice")
 public class InvoiceController {
-
-	@Autowired
-	private CustomerCreditService customerCreditService;
-
-	@Autowired
 	private InvoiceService invoiceService;
-
-	@Autowired
 	private PaymentService paymentService;
-
-	@Autowired
 	private PrintService printService;
-
-	@Autowired
 	private ReportService reportService;
+
+	public InvoiceController(InvoiceService invoiceService, PaymentService paymentService, PrintService printService,
+			ReportService reportService) {
+		this.invoiceService = invoiceService;
+		this.paymentService = paymentService;
+		this.printService = printService;
+		this.reportService = reportService;
+	}
 
 	@RequestMapping(value = "/init", method = RequestMethod.GET)
 	public void init() {
 		invoiceService.recalculateDetailsAmounts();
 		invoiceService.recalculateInvoiceTaxes();
-//		customerCreditService.recalculateCustomerCreditsTaxes();
 	}
 
 	@ResponseBody
@@ -136,6 +131,13 @@ public class InvoiceController {
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public String getInvoicesPage() {
 		return "sales/invoice/invoices";
+	}
+
+	@ResponseStatus(HttpStatus.OK)
+	@GetMapping(value = "/{sourceInvoiceId}", params = { "merge",
+			"targetInvoiceId" }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void mergeCustomerOrders(@PathVariable int sourceInvoiceId, @RequestParam int targetInvoiceId) {
+		invoiceService.mergeCustomerOrders(sourceInvoiceId, targetInvoiceId);
 	}
 
 	@ResponseBody

@@ -58,6 +58,8 @@ public interface InvoiceService {
 	double findProductQuantitySoldUntil(int productId, Date until);
 
 	void initializeInvoiceNumbers();
+	
+	void mergeCustomerOrders(int sourceInvoiceId, int targetInvoiceId);
 
 	void recalculateDetailsAmounts();
 

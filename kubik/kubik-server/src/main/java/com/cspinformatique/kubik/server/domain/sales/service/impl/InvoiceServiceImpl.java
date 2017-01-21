@@ -8,7 +8,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.purchase.service.RestockService;
@@ -94,7 +98,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 				// Calculates customer credit details amounts
 				detail.setProduct(product);
 				detail.setUnitPrice(product.getPriceTaxIn());
-				
+
 				invoiceAmountsService.calculateDetailAmounts(detail);
 
 				// Increment total rebate amount.
@@ -410,6 +414,39 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 			pageRequest = pageRequest.next();
 		} while (page != null && page.getContent().size() != 0);
+	}
+
+	@Override
+	public void mergeCustomerOrders(int sourceInvoiceId, int targetInvoiceId) {
+		Invoice sourceInvoice = findOne(sourceInvoiceId);
+		Invoice targetInvoice = findOne(targetInvoiceId);
+
+		Assert.notNull(sourceInvoice, "Invoice " + sourceInvoiceId + " is undefined.");
+		Assert.notNull(targetInvoice, "Invoice " + sourceInvoiceId + " is undefined.");
+
+		Assert.isTrue(sourceInvoice.getStatus().getType().equals(InvoiceStatus.Types.ORDER.toString()),
+				"Source invoice status is not ORDER");
+		Assert.isTrue(targetInvoice.getStatus().getType().equals(InvoiceStatus.Types.ORDER.toString()),
+				"Target invoice status is not ORDER");
+
+		Map<Integer, InvoiceDetail> targetProducts = targetInvoice.getDetails().stream().collect(
+				Collectors.toMap(invoiceDetail -> invoiceDetail.getProduct().getId(), invoiceDetail -> invoiceDetail));
+
+		for (InvoiceDetail invoiceDetail : sourceInvoice.getDetails()) {
+			Optional<InvoiceDetail> optional = Optional
+					.ofNullable(targetProducts.get(invoiceDetail.getProduct().getId()));
+
+			if (optional.isPresent()) {
+				InvoiceDetail existingDetail = optional.get();
+				existingDetail.setQuantity(existingDetail.getQuantity() + invoiceDetail.getQuantity());
+			} else {
+				targetInvoice.getDetails().add(new InvoiceDetail(0, targetInvoice, invoiceDetail.getProduct(),
+						invoiceDetail.getQuantity(), 0d, null, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d));
+			}
+		}
+
+		sourceInvoice.setStatus(invoiceStatusRepository.findByType(Types.CANCELED.toString()));
+		save(Arrays.asList(sourceInvoice, targetInvoice));
 	}
 
 	public void recalculateDetailsAmounts() {
