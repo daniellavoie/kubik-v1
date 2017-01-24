@@ -2,9 +2,7 @@ package com.cspinformatique.kubik.server.model.product;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
@@ -73,8 +70,6 @@ public class Product {
 	private List<ProductImage> images;
 	private boolean imagesValidated;
 
-	private Map<PropertyName, ProductProperty> properties;
-
 	public Product() {
 
 	}
@@ -83,14 +78,13 @@ public class Product {
 			Double priceTaxIn, Boolean schoolbook, Double tvaRate1, Double priceTaxOut1, Double tvaRate2,
 			Double priceTaxOut2, Double tvaRate3, Double priceTaxOut3, Double purchasePriceTaxOut,
 			ReturnType returnType, Boolean availableForOrder, Date datePublished, ProductType productType,
-			Date publishEndDate, Integer thickness, Integer width,
-			Integer height, Integer weight, String name, String publisher, String collection, String brand,
-			String publisherPresentation, String isbn, String supplierReference, String collectionReference,
-			String theme, String publisherIsnb, Boolean replacesAReference, Boolean replacedByAReference,
-			String replacesEan13, String replacedByEan13, Boolean orderableByUnit, BarcodeType barcodeType,
-			Boolean mainReference, Boolean secondaryReference, Integer referencesCount, float discount,
-			String imageEncryptedKey, boolean dilicomReference, Category category, List<ProductImage> images,
-			boolean imagesValidated) {
+			Date publishEndDate, Integer thickness, Integer width, Integer height, Integer weight, String name,
+			String publisher, String collection, String brand, String publisherPresentation, String isbn,
+			String supplierReference, String collectionReference, String theme, String publisherIsnb,
+			Boolean replacesAReference, Boolean replacedByAReference, String replacesEan13, String replacedByEan13,
+			Boolean orderableByUnit, BarcodeType barcodeType, Boolean mainReference, Boolean secondaryReference,
+			Integer referencesCount, float discount, String imageEncryptedKey, boolean dilicomReference,
+			Category category, List<ProductImage> images, boolean imagesValidated) {
 		this.id = id;
 		this.ean13 = ean13;
 		this.supplier = supplier;
@@ -548,16 +542,6 @@ public class Product {
 
 	public void setImagesValidated(boolean imagesValidated) {
 		this.imagesValidated = imagesValidated;
-	}
-
-	@MapKey(name = "name")
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-	public Map<PropertyName, ProductProperty> getProperties() {
-		return properties;
-	}
-
-	public void setProperties(Map<PropertyName, ProductProperty> properties) {
-		this.properties = properties;
 	}
 
 	public boolean equals(Product other) {

@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
+import com.cspinformatique.kubik.server.config.MailConfiguration;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceConfirmationRepository;
 import com.cspinformatique.kubik.server.domain.sales.service.CustomerOrderService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceConfirmationService;
@@ -45,16 +47,17 @@ public class InvoiceConfirmationServiceImpl implements InvoiceConfirmationServic
 	private String contactEmail;
 	private String bucketName;
 
+	@Autowired(required = false)
 	public InvoiceConfirmationServiceImpl(InvoiceConfirmationRepository repository,
 			CustomerOrderService customerOrderService, InvoiceService invoiceService, ReportService reportService,
-			AmazonS3 amazonS3, JavaMailSender sender, @Value("${kubik.contact.email}") String contactEmail,
-			@Value("${aws.s3.bucket.name}") String bucketName) {
+			AmazonS3 amazonS3, MailConfiguration mailConfiguration,
+			@Value("${kubik.contact.email}") String contactEmail, @Value("${aws.s3.bucket.name}") String bucketName) {
 		this.repository = repository;
 		this.customerOrderService = customerOrderService;
 		this.invoiceService = invoiceService;
 		this.reportService = reportService;
 		this.amazonS3 = amazonS3;
-		this.sender = sender;
+		this.sender = mailConfiguration.getSender();
 		this.contactEmail = contactEmail;
 		this.bucketName = bucketName;
 	}
@@ -110,22 +113,25 @@ public class InvoiceConfirmationServiceImpl implements InvoiceConfirmationServic
 	}
 
 	private void sendEmail(CustomerOrder customerOrder, Invoice invoice) {
-		sender.send(mimeMessage -> {
-			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-			helper.addTo(new InternetAddress(customerOrder.getAccount().getUsername()));
-			helper.setFrom(new InternetAddress(contactEmail));
-			helper.setSubject("Votre facture pour votre commande " + customerOrder.getId() + ".");
-			helper.setText("Cher " + customerOrder.getBillingAddress().getFirstName() + " "
-					+ customerOrder.getBillingAddress().getLastName() + ",\n\n"
-					+ "Nous vous remercions de votre commande " + customerOrder.getId() + ".\n\n"
-					+ "Veuillez trouver ci-joint votre facture au format PDF. Vous pouvez la sauvegarder ou l'imprimer en cas de besoin.\n\n"
-					+ "Pour toute autre question concernant votre commande, vous pouvez contacter notre service client grâce à notre adresse mail "
-					+ contactEmail + ".\n\n" + "L'équipe La Dimension Fantastique");
+		if (sender == null)
+			LOGGER.warn("Java Mail Sender is not configured. Skipping email confirmation.");
+		else
+			sender.send(mimeMessage -> {
+				MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+				helper.addTo(new InternetAddress(customerOrder.getAccount().getUsername()));
+				helper.setFrom(new InternetAddress(contactEmail));
+				helper.setSubject("Votre facture pour votre commande " + customerOrder.getId() + ".");
+				helper.setText("Cher " + customerOrder.getBillingAddress().getFirstName() + " "
+						+ customerOrder.getBillingAddress().getLastName() + ",\n\n"
+						+ "Nous vous remercions de votre commande " + customerOrder.getId() + ".\n\n"
+						+ "Veuillez trouver ci-joint votre facture au format PDF. Vous pouvez la sauvegarder ou l'imprimer en cas de besoin.\n\n"
+						+ "Pour toute autre question concernant votre commande, vous pouvez contacter notre service client grâce à notre adresse mail "
+						+ contactEmail + ".\n\n" + "L'équipe La Dimension Fantastique");
 
-			helper.addAttachment("facture-" + invoice.getId() + ".pdf",
-					new ByteArrayResource(JasperExportManager.exportReportToPdf(
-							reportService.generateInvoiceReport(invoiceService.findOne(invoice.getId().intValue())))));
-		});
+				helper.addAttachment("facture-" + invoice.getId() + ".pdf",
+						new ByteArrayResource(JasperExportManager.exportReportToPdf(reportService
+								.generateInvoiceReport(invoiceService.findOne(invoice.getId().intValue())))));
+			});
 
 		LOGGER.info("Confirmation for invoice " + invoice.getId() + " has been sent.");
 	}

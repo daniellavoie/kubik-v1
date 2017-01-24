@@ -19,5 +19,6 @@
 		<module>kubik-server</module>
 		<module>kubik-proxy</module>
 		<module>kubik-proxy-legacy</module>
+		<module>kubik-reporting</module>
 	</modules>
 </project>

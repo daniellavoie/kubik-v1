@@ -23,13 +23,13 @@ import org.springframework.stereotype.Service;
 
 import com.cspinformatique.kubik.server.domain.product.service.ProductService;
 import com.cspinformatique.kubik.server.domain.purchase.service.RestockService;
-import com.cspinformatique.kubik.server.domain.reporting.service.ProductSaleService;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceRepository;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceStatusRepository;
 import com.cspinformatique.kubik.server.domain.sales.service.CustomerService;
 import com.cspinformatique.kubik.server.domain.sales.service.DailyReportService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceAmountsService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
+import com.cspinformatique.kubik.server.domain.sales.service.ProductSaleService;
 import com.cspinformatique.kubik.server.domain.sales.service.ShippingCostLevelService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.ProductInventoryService;
 import com.cspinformatique.kubik.server.domain.warehouse.service.StocktakingService;
@@ -66,9 +66,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 	@Resource
 	ProductInventoryService productInventoryService;
 
-//	@Resource
-//	ProductSaleService productSaleService;
-
 	@Resource
 	ProductSaleService productSaleService;
 
@@ -97,7 +94,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 				// Calculates customer credit details amounts
 				detail.setProduct(product);
 				detail.setUnitPrice(product.getPriceTaxIn());
-				
+
 				invoiceAmountsService.calculateDetailAmounts(detail);
 
 				// Increment total rebate amount.

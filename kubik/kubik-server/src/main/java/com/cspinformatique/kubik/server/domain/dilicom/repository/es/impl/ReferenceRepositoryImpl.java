@@ -18,7 +18,6 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -36,7 +35,6 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
 	private Client client;
 	private ObjectMapper objectMapper;
 
-	@Autowired
 	public ReferenceRepositoryImpl(Client client, ObjectMapper objectMapper) {
 		this.client = client;
 		this.objectMapper = objectMapper;
@@ -54,6 +52,8 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
 	}
 
 	private void createMappingIfNotExist() {
+		client.admin().cluster().prepareHealth().setWaitForYellowStatus().get();
+
 		if (!client.admin().indices().prepareExists("reference").execute().actionGet().isExists()) {
 			try (BufferedReader buffer = new BufferedReader(new InputStreamReader(
 					new ClassPathResource("es-mappings/reference-mapping.json").getInputStream()))) {
@@ -80,13 +80,13 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
 
 	@Override
 	public List<Reference> findByEan13AndImportedInKubik(String ean13, boolean importedInKubik) {
-		return toList(client
-				.prepareSearch(
-						"reference")
-				.setQuery(QueryBuilders.boolQuery()
-						.filter(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("ean13", ean13))
-								.must(QueryBuilders.termQuery("importedInKubik", importedInKubik))))
-				.get());
+		return toList(
+				client.prepareSearch("reference")
+						.setQuery(
+								QueryBuilders.boolQuery()
+										.filter(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("ean13", ean13))
+												.must(QueryBuilders.termQuery("importedInKubik", importedInKubik))))
+						.get());
 	}
 
 	@Override

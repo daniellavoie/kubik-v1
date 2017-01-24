@@ -1,14 +1,18 @@
 package com.cspinformatique.kubik.server.domain.sales.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +26,7 @@ import com.cspinformatique.kubik.server.domain.sales.service.PaymentService;
 import com.cspinformatique.kubik.server.jasper.service.ReportService;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
+import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
 import com.cspinformatique.kubik.server.model.sales.Payment;
 import com.cspinformatique.kubik.server.print.service.PrintService;
 import com.querydsl.core.types.Predicate;
@@ -97,6 +102,13 @@ public class InvoiceController {
 	@RequestMapping(method = RequestMethod.GET, params = "number", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Invoice findByNumber(@RequestParam String number) {
 		return invoiceService.findByNumber(number);
+	}
+
+	@ResponseBody
+	@GetMapping(params = "status", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Invoice> findByStatus(String status) {
+		return invoiceService.findByStatus(new InvoiceStatus(status, null), new PageRequest(0, Integer.MAX_VALUE))
+				.getContent();
 	}
 
 	@ResponseBody
