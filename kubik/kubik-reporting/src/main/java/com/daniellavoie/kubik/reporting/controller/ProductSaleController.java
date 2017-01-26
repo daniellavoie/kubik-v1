@@ -1,5 +1,7 @@
 package com.daniellavoie.kubik.reporting.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cspinformatique.kubik.server.model.sales.Invoice;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus.Types;
+import com.daniellavoie.kubik.reporting.model.ProductSale;
 import com.daniellavoie.kubik.reporting.service.InvoiceService;
 import com.daniellavoie.kubik.reporting.service.ProductSaleService;
 
@@ -24,8 +27,8 @@ public class ProductSaleController {
 		this.invoiceService = invoiceService;
 	}
 
-	@GetMapping
 	@RequestMapping
+	@GetMapping(params = "reload")
 	public void reloadSalesStats() {
 		for (Invoice invoice : invoiceService.findByStatus(Types.PAID.name()))
 			productSaleService.update(invoice);
@@ -35,5 +38,10 @@ public class ProductSaleController {
 	@ResponseStatus(HttpStatus.OK)
 	public void update(@RequestBody Invoice invoice) {
 		productSaleService.update(invoice);
+	}
+
+	@GetMapping
+	public List<ProductSale> findAll() {
+		return productSaleService.findAll();
 	}
 }

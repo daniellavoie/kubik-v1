@@ -3,6 +3,7 @@ package com.daniellavoie.kubik.reporting.repository.es.impl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -45,6 +46,21 @@ public class ProductSaleRepositoryImpl implements ProductSaleRepository {
 			} catch (IOException ioEx) {
 				throw new RuntimeException(ioEx);
 			}
+		}
+	}
+
+	@Override
+	public List<ProductSale> findAll() {
+		try {
+			return Arrays.stream(client.prepareSearch("product-sale").execute().get().getHits().hits()).map(hit -> {
+				try {
+					return objectMapper.readValue(hit.getSourceAsString(), ProductSale.class);
+				} catch (IOException ioEx) {
+					throw new RuntimeException(ioEx);
+				}
+			}).collect(Collectors.toList());
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
 		}
 	}
 

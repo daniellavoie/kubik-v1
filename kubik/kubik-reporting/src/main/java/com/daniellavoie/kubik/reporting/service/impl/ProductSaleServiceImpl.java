@@ -23,6 +23,11 @@ public class ProductSaleServiceImpl implements ProductSaleService {
 	}
 
 	@Override
+	public List<ProductSale> findAll() {
+		return productSaleRepository.findAll();
+	}
+
+	@Override
 	public void update(Invoice invoice) {
 		productSaleRepository.save(invoice.getDetails().stream().map(this::map).collect(Collectors.toList()));
 	}

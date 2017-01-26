@@ -32,6 +32,14 @@
 	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	    <elasticsearch.version>2.3.3</elasticsearch.version>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>jaspersoft</id>
+			<name>jaspersoft-releases</name>
+			<url>https://jaspersoft.artifactoryonline.com/jaspersoft/jr-ce-releases</url>
+		</repository>
+	</repositories>
 	
 	<distributionManagement>
 		<repository>
@@ -98,13 +106,15 @@
 	            <artifactId>spring-boot-starter-web-reactive</artifactId>
 	            <version>0.1.0.BUILD-SNAPSHOT</version>
 	        </dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Camden.SR4</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		
 			<!-- Third Parties Dependencies -->
-		    <dependency>
-		        <groupId>com.amazonaws</groupId>
-		        <artifactId>aws-java-sdk-s3</artifactId>
-		        <version>1.9.0</version>
-		    </dependency>
 			<dependency>
 				<groupId>com.braintreepayments.gateway</groupId>
 				<artifactId>braintree-java</artifactId>
