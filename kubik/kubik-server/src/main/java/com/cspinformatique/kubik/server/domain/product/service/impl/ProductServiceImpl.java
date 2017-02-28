@@ -376,19 +376,9 @@ public class ProductServiceImpl implements ProductService {
 		Assert.notNull(product.getSupplier(), "Supplier is undefined");
 
 		boolean updatePurchaseOrders = false;
-		Product oldVersion = null;
 
-//		if (product.getEan13().length() < 12) {
-//			while (product.getEan13().length() < 12)
-//				product.setEan13("0" + product.getEan13());
-//
-//			LOGGER.info("Fixing padding issue on product " + product.getEan13());
-//		}
-
-		if (product.getId() != null) {
-			oldVersion = findByEan13(product.getEan13());
-		}
-
+		Product oldVersion = findByEan13(product.getEan13());
+		
 		// checks if the prices needs to be calculated.
 		if (oldVersion == null || product.getPriceTaxIn() != oldVersion.getPriceTaxIn()) {
 			calculateTaxesAmounts(product);

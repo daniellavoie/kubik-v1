@@ -36,10 +36,8 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Product save(Product product) {
-		Product savedProduct = productRepository.save(product);
+		product.setKubikId(kubikService.saveProduct(product));
 
-		savedProduct.setKubikId(kubikService.saveProduct(savedProduct));
-
-		return savedProduct;
+		return productRepository.save(product);
 	}
 }

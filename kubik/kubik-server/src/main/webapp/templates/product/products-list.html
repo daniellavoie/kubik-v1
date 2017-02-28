@@ -99,7 +99,7 @@
 									<span ng-if="product.productInventory != null">{{product.productInventory.quantityOnHand}}</span>
 									<span ng-if="product.productInventory == null">0</span>
 								</td>
-								<td>{{product.priceTaxIn | currency : "&euro;"</td>
+								<td>{{product.priceTaxIn | currency : "&euro;"}}</td>
 								<td><span class="glyphicon glyphicon-list-alt" ng-click="productSearchCtrl.openProductCard($event, product)"></span></td>
 							</tr>
 							

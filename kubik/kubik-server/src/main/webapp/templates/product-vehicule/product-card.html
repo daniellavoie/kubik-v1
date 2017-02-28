@@ -24,24 +24,24 @@
 						
 						<form class="form-horizontal">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Marque</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">Marque</label>
+								<div class="col-sm-9">
 									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.brand}}</p>
 									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.brand" placeholder="Marque" />
 								</div>
 							</div>
 							
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Nom</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">Titre</label>
+								<div class="col-sm-9">
 									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.name}}</p>
-									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.name" placeholder="Marque" />
+									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.name" placeholder="Titre" />
 								</div>
 							</div>
 							
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Ean13</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">Ean13</label>
+								<div class="col-sm-9">
 									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.ean13}}</p>
 									<input 
 										ng-if="productCardCtrl.editMode" 
@@ -54,8 +54,8 @@
 							</div>
 							
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Catégorie</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">Catégorie</label>
+								<div class="col-sm-9">
 									<p class="form-control-static">
 										{{productCardCtrl.category.name}}
 										<button 
@@ -68,8 +68,8 @@
 							</div>
 							
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Fournisseur</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">Fournisseur</label>
+								<div class="col-sm-9">
 									<select
 										ng-model="productCardCtrl.supplier"
 										required="required"
@@ -79,57 +79,67 @@
 							</div>
 								
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Prix achat HT</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">Prix achat HT</label>
+								<div class="col-sm-9">
 									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.buyingPrice | currency : "&euro;"}}</p>
 									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.buyingPrice" placeholder="Prix achat HT" />
 								</div>
 							</div>
 								
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Prix public HT</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">Prix public HT</label>
+								<div class="col-sm-9">
 									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.publicPrice | currency : "&euro;"}}</p>
 									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.publicPrice" placeholder="Prix public HT" />
 								</div>
 							</div>
 								
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Prix vente TTC</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">Prix vente TTC</label>
+								<div class="col-sm-9">
 									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.product.sellingPrice | currency : "&euro;"}}</p>
 									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.sellingPrice" placeholder="Prix vente TTC" />
 								</div>
 							</div>
 								
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Prix vente HT</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">Prix vente HT</label>
+								<div class="col-sm-9">
 									<p class="form-control-static">{{productCardCtrl.product.sellingPriceTaxOut | currency : "&euro;"}}</p>
 								</div>
 							</div>
 								
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Poids</label>
-								<div class="col-sm-6">
+								<label class="col-sm-3 control-label">Poids</label>
+								<div class="col-sm-9">
 									<p ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.weight | number : 2}}</p>
 									<input ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.weight" placeholder="Poids" />
 								</div>
 							</div>
 								
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Description</label>
-								<div class="col-sm-6">
-									<pre ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.description}}</pre>
-									<textarea ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.description">{{productCardCtrl.product.description}}</textarea>
+								<label class="col-sm-3 control-label">Description</label>
+								<div class="col-sm-9">
+									<pre ng-if="!productCardCtrl.editMode" class="form-control-static">{{ productCardCtrl.product.description }}</pre>
+									<textarea 
+										row="6"
+										class="form-control" 
+										ng-if="productCardCtrl.editMode" 
+										ng-model="productCardCtrl.product.description"
+									>{{ productCardCtrl.product.description }}</textarea>
 								</div>
 							</div>
 								
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Caractéristiques</label>
-								<div class="col-sm-6">
-									<pre ng-if="!productCardCtrl.editMode" class="form-control-static">{{productCardCtrl.characteristics}}</pre>
-									<textarea ng-if="productCardCtrl.editMode" class="form-control" ng-model="productCardCtrl.product.characteristics">{{productCardCtrl.product.characteristics}}</textarea>
+								<label class="col-sm-3 control-label">Caractéristiques</label>
+								<div class="col-sm-9">
+									<pre ng-if="!productCardCtrl.editMode" class="form-control-static">{{ productCardCtrl.product.caracteristics }}</pre>
+									<textarea 
+										row="6"
+										class="form-control" 
+										ng-if="productCardCtrl.editMode" 
+										ng-model="productCardCtrl.product.caracteristics"
+									>{{ productCardCtrl.product.caracteristics }}</textarea>
 								</div>
 							</div>
 						</form>

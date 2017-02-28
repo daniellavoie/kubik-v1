@@ -1,0 +1,8 @@
+textarea.form-control {
+	resize: none;
+	height: 100px;	
+}
+
+pre {
+	height: 100px;	
+}
