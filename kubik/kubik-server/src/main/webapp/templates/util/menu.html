@@ -83,13 +83,13 @@
 									</li>
 									<li><a th:href="@{/category}" target="_self">Catégories de produits</a></li>
 									<li>
-										<a th:href="@{/product?category&amp;random}" target="_self">
+										<a th:href="@{/product?category&amp;random&amp;page}" target="_self">
 											Produits non catégorisés
 											<span ng-cloak="" class="badge">{{menuCtrl.productsWithoutCategory}}</span>
 										</a>
 									</li>
 									<li>
-										<a th:href="@{/product?nonValidatedProductImages&amp;random}" target="_self">
+										<a th:href="@{/product?nonValidatedProductImages&amp;random&amp;}" target="_self">
 											Images non validées
 											<span ng-cloak="" class="badge">{{menuCtrl.nonValidatedImages}}</span>
 										</a>

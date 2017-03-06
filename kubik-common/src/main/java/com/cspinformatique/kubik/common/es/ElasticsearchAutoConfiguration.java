@@ -9,34 +9,48 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Import;
 
 @Configuration
+@Import(ElasticsearchConfiguration.class)
 public class ElasticsearchAutoConfiguration {
-	@Autowired
-	private Environment environment;
-
 	private Client client;
+	private EsEmbeddedServer server;
 
 	@Bean
 	@SuppressWarnings("resource")
-	@ConditionalOnProperty(name = "elasticsearch.embedded", havingValue = "false", matchIfMissing = false)
-	public Client transportClient() throws IllegalStateException, UnknownHostException {
-		client = new PreBuiltTransportClient(Settings.builder()
-				.put("cluster.name", environment.getRequiredProperty("elasticsearch.cluster.name")).build())
+	@ConditionalOnProperty(name = "elasticsearch.embedded.enabled", havingValue = "false", matchIfMissing = true)
+	public Client transportClient(ElasticsearchConfiguration elasticsearchConfiguration)
+			throws IllegalStateException, UnknownHostException {
+		client = new PreBuiltTransportClient(
+				Settings.builder().put("cluster.name", elasticsearchConfiguration.getClusterName()).build())
 						.addTransportAddress(new InetSocketTransportAddress(
-								InetAddress.getByName(environment.getRequiredProperty("elasticsearch.hostname")),
-								environment.getRequiredProperty("elasticsearch.port", Integer.class)));
+								InetAddress.getByName(elasticsearchConfiguration.getHostname()),
+								elasticsearchConfiguration.getPort()));
 
 		return client;
+	}
+
+	@Bean
+	@ConditionalOnProperty(name = "elasticsearch.embedded.enabled")
+	public Client embeddedClient(ElasticsearchConfiguration elasticsearchConfiguration) {
+		server = new EsEmbeddedServer(elasticsearchConfiguration.getClusterName(),
+				elasticsearchConfiguration.getHomePath(), elasticsearchConfiguration.getDataPath(),
+				elasticsearchConfiguration.getPortRange(), elasticsearchConfiguration.getTransportRange());
+
+		server.start();
+
+		return server.getClient();
 	}
 
 	@PreDestroy
 	public void destroy() {
 		client.close();
+
+		if (server != null)
+			server.stop();
 	}
 }

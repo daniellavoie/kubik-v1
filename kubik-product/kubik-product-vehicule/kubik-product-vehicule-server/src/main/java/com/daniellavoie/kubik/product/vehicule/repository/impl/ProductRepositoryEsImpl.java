@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.bytes.BytesReference;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -75,7 +77,7 @@ public class ProductRepositoryEsImpl implements ProductRepository {
 
 	protected <T> T map(SearchHit searchHit, Class<T> valueType) {
 		try {
-			return objectMapper.readValue(searchHit.getSourceRef().array(), valueType);
+			return objectMapper.readValue(BytesReference.toBytes(searchHit.getSourceRef()), valueType);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -108,7 +110,7 @@ public class ProductRepositoryEsImpl implements ProductRepository {
 	public Product save(Product product) {
 		try {
 			client.prepareIndex(INDEX, "v1").setSource(objectMapper.writeValueAsBytes(product))
-					.setId(product.getEan13()).setRefresh(true).get();
+					.setId(product.getEan13()).setRefreshPolicy(RefreshPolicy.WAIT_UNTIL).get();
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}

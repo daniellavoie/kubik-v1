@@ -14,16 +14,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cspinformatique.kubik.server.domain.product.exception.ImageNotFoundException;
@@ -51,7 +52,7 @@ import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
 import com.cspinformatique.kubik.server.model.sales.ProductInvoice;
 import com.cspinformatique.kubik.server.model.warehouse.InventoryCount;
 
-@Controller
+@RestController
 @RequestMapping("/product")
 public class ProductController {
 	@Resource
@@ -85,38 +86,33 @@ public class ProductController {
 	private RmaDetailService rmaDetailService;
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.GET, params = "category", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(params = "category")
 	public Integer countByCategory(@RequestParam Integer category) {
 		return productService.countByCategory(category != null ? categoryService.findOne(category) : null);
 	}
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.GET, params = { "count",
-			"nonValidatedProductImages" }, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(params = { "count", "nonValidatedProductImages" })
 	public Integer countWithoutValidatedImages() {
 		return productService.countByImagesValidated(false);
 	}
 
-	@ResponseBody
-	@RequestMapping(params = "ean13", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(params = "ean13")
 	public Product findByEan13(@RequestParam String ean13) {
 		return productService.findByEan13(ean13);
 	}
 
-	@ResponseBody
-	@RequestMapping(params = { "ean13", "supplierEan13" }, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(params = { "ean13", "supplierEan13" })
 	public Product findByEan13AndSupplierEan13(@RequestParam String ean13, @RequestParam String supplierEan13) {
 		return this.productService.findByEan13AndSupplier(ean13, this.supplierService.findByEan13(supplierEan13));
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{id}")
 	public Product findOne(@PathVariable int id) {
 		return productService.findOne(id);
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/{id}/productStats", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{id}/productStats")
 	public ProductStats findProductStats(@PathVariable int id, @RequestParam(required = false) Date startDate,
 			@RequestParam(required = false) Date endDate) {
 		if (startDate == null) {
@@ -132,8 +128,7 @@ public class ProductController {
 		return productsStatsService.findByProductId(id, startDate, endDate);
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/{productId}/confirmedInvoice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{productId}/confirmedInvoice")
 	public Page<ProductInvoice> findProductConfirmedInvoices(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(defaultValue = "DESC") Direction direction,
@@ -149,8 +144,7 @@ public class ProductController {
 				invoiceDetailPage.getTotalElements());
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/{productId}/customerCredit", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{productId}/customerCredit")
 	public Page<CustomerCreditDetail> findProductCustomerCredits(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction, @RequestParam(defaultValue = "name") String sortBy) {
@@ -159,8 +153,7 @@ public class ProductController {
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/{productId}/inventoryCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{productId}/inventoryCount")
 	public Page<InventoryCount> findProductInventoryCounts(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(defaultValue = "DESC") Direction direction,
@@ -169,8 +162,7 @@ public class ProductController {
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/{productId}/paidInvoice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{productId}/paidInvoice")
 	public Page<ProductInvoice> findProductPaidInvoices(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(defaultValue = "DESC") Direction direction,
@@ -184,8 +176,7 @@ public class ProductController {
 				detailsPage.getTotalElements());
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/{productId}/reception", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{productId}/reception")
 	public Page<ReceptionDetail> findProductPurchaseOrders(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction, @RequestParam(defaultValue = "name") String sortBy) {
@@ -194,8 +185,7 @@ public class ProductController {
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/{productId}/rma", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{productId}/rma")
 	public Page<RmaDetail> findProductRmas(@PathVariable("productId") int productId,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction, @RequestParam(defaultValue = "name") String sortBy) {
@@ -203,43 +193,17 @@ public class ProductController {
 				new PageRequest(page, resultPerPage, direction != null ? direction : Direction.ASC, sortBy));
 	}
 
-	@ResponseBody
-	@RequestMapping(method = RequestMethod.GET, params = { "random",
-			"category" }, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(params = { "random", "category" })
 	public Product findRandomByCategory(@RequestParam Integer category) {
 		return productService.findRandomByCategory(category != null ? categoryService.findOne(category) : null);
 	}
 
-	@ResponseBody
-	@RequestMapping(method = RequestMethod.GET, params = { "random",
-			"nonValidatedProductImages" }, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(params = { "random", "nonValidatedProductImages" })
 	public Product findRandomWithoutValidatedImages() {
 		return productService.findRandomByImagesValidated(false);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = { "random", "category" }, produces = MediaType.TEXT_HTML_VALUE)
-	public String getNonCategorizedProductsPage() {
-		return "product/non-categorized-product";
-	}
-
-	@RequestMapping(params = "card", produces = MediaType.TEXT_HTML_VALUE)
-	public String getProductCardPage() {
-		return "product/product-card :: product-card";
-	}
-
-	@RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
-	public String getProductsPage() {
-		return "product/products-page";
-	}
-
-	@RequestMapping(method = RequestMethod.GET, params = { "random",
-			"nonValidatedProductImages" }, produces = MediaType.TEXT_HTML_VALUE)
-	public String getNonValidatedProductImagesPage() {
-		return "product/non-validated-product-images";
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/ean13/{ean13}/image/{size}", method = RequestMethod.GET)
+	@GetMapping(value = "/ean13/{ean13}/image/{size}")
 	public ResponseEntity<InputStreamResource> loadProductImage(@PathVariable String ean13,
 			@PathVariable ProductImageSize size, @RequestParam(defaultValue = "false") boolean preview) {
 		try {
@@ -257,31 +221,30 @@ public class ProductController {
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/ean13/{ean13}/image/amazon", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/ean13/{ean13}/image/amazon")
 	public void persistAmazonImages(@PathVariable String ean13) {
 		productImageService.persistAmazonImages(ean13);
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/ean13/{ean13}/image/dilicom", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/ean13/{ean13}/image/dilicom")
 	public void persistDilicomImages(@PathVariable String ean13) {
 		productImageService.persistDilicomImages(ean13);
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/ean13/{ean13}/image/url", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/ean13/{ean13}/image/url")
 	public void persistIamgesFromUrl(@PathVariable String ean13, @RequestParam String url) {
 		productImageService.persistImageFromUrlToAws(url, ean13);
 	}
 
-	@ResponseBody
-	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = { "", "/" }, method = { RequestMethod.POST, RequestMethod.PUT })
 	public Product save(@RequestBody Product product) {
 		return productService.save(product);
 	}
 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value = "/ean13/{ean13}/image/custom", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/ean13/{ean13}/image/custom")
 	public void uploadCustomProductImage(@PathVariable String ean13, @RequestParam("file") MultipartFile file) {
 		try {
 			productImageService.uploadImageToAws(file.getBytes(), ean13);
@@ -290,8 +253,7 @@ public class ProductController {
 		}
 	}
 
-	@ResponseBody
-	@RequestMapping(method = RequestMethod.GET, params = "search", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(params = "search")
 	public Page<Product> search(@RequestParam(defaultValue = "") String query,
 			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "50") Integer resultPerPage,
 			@RequestParam(required = false) Direction direction, @RequestParam(defaultValue = "name") String sortBy) {
@@ -300,7 +262,7 @@ public class ProductController {
 	}
 
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/ean13/{ean13}/image", params = "validate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/ean13/{ean13}/image", params = "validate")
 	public void validateImagesFromAws(@PathVariable String ean13) {
 		productImageService.validateImagesFromAws(ean13);
 	}

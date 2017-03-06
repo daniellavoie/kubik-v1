@@ -13,7 +13,7 @@
 	<artifactId>kubik-product-vehicule</artifactId>
 	
 	<modules>
-		<module>kubik-product-vehicule-core</module>
+		<module>kubik-product-vehicule-server</module>
 		<module>kubik-product-vehicule-model</module>
 	</modules>
 </project>

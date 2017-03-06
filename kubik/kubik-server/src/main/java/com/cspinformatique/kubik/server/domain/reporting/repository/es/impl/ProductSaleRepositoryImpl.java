@@ -10,6 +10,7 @@ import java.util.stream.StreamSupport;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -34,7 +35,7 @@ public class ProductSaleRepositoryImpl implements ProductSaleRepository {
 
 	private void createMappingIfNotExist() {
 		client.admin().cluster().prepareHealth("product-sale").setWaitForYellowStatus().get();
-		
+
 		if (!client.admin().indices().prepareExists("product-sale").execute().actionGet().isExists()) {
 			try (BufferedReader buffer = new BufferedReader(new InputStreamReader(
 					new ClassPathResource("es-mappings/product-sale-mapping.json").getInputStream()))) {
@@ -52,7 +53,7 @@ public class ProductSaleRepositoryImpl implements ProductSaleRepository {
 
 	@Override
 	public void save(List<ProductSale> productSales) {
-		BulkRequestBuilder builder = client.prepareBulk().setRefresh(true);
+		BulkRequestBuilder builder = client.prepareBulk().setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
 
 		productSales.forEach(productSale -> {
 			productSale.setAmount(productSale.getAmount() * 2);

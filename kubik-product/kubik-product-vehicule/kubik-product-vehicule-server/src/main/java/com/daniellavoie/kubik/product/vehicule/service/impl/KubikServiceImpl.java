@@ -39,7 +39,7 @@ public class KubikServiceImpl implements KubikService {
 
 		LOGGER.info("Notifying " + product + " to Kubik.");
 
-		return kubikTemplate.exchange("/product", HttpMethod.POST, kubikProduct,
+		return kubikTemplate.exchange("/product.json", HttpMethod.POST, kubikProduct,
 				com.cspinformatique.kubik.server.model.product.Product.class).getId();
 	}
 

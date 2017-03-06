@@ -8,13 +8,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.bytes.BytesReference;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortOrder;
@@ -69,7 +72,8 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
 	}
 
 	public boolean delete(String id) {
-		return client.prepareDelete("reference", "reference", id).setRefresh(true).get().isFound();
+		return client.prepareDelete("reference", "reference", id).setRefreshPolicy(RefreshPolicy.WAIT_UNTIL).get()
+				.getResult().equals(Result.DELETED);
 	}
 
 	@Override
@@ -80,13 +84,13 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
 
 	@Override
 	public List<Reference> findByEan13AndImportedInKubik(String ean13, boolean importedInKubik) {
-		return toList(client
-				.prepareSearch(
-						"reference")
-				.setQuery(QueryBuilders.boolQuery()
-						.filter(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("ean13", ean13))
-								.must(QueryBuilders.termQuery("importedInKubik", importedInKubik))))
-				.get());
+		return toList(
+				client.prepareSearch("reference")
+						.setQuery(
+								QueryBuilders.boolQuery()
+										.filter(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("ean13", ean13))
+												.must(QueryBuilders.termQuery("importedInKubik", importedInKubik))))
+						.get());
 	}
 
 	@Override
@@ -143,7 +147,7 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
 
 	private Reference map(SearchHit hit) {
 		try {
-			Reference reference = objectMapper.readValue(hit.getSourceRef().toBytes(), Reference.class);
+			Reference reference = objectMapper.readValue(BytesReference.toBytes(hit.getSourceRef()), Reference.class);
 
 			reference.setId(hit.getId());
 
@@ -154,7 +158,7 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
 	}
 
 	public void save(List<Reference> references) {
-		BulkRequestBuilder builder = client.prepareBulk().setRefresh(true);
+		BulkRequestBuilder builder = client.prepareBulk().setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
 
 		references.forEach(reference -> {
 			IndexRequestBuilder indexBuilder = client.prepareIndex("reference", "reference");

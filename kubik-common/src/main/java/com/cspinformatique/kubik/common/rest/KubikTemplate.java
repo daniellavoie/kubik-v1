@@ -9,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class KubikTemplate {
@@ -51,9 +52,9 @@ public class KubikTemplate {
 
 		String parameters = parametersBuilder.toString();
 
-		return restTemplateExecutor.execute(restTemplate -> restTemplate.exchange(
-				url + resource + (!parameters.isEmpty() ? "?" + parameters : ""), method,
-				new HttpEntity<>(authorizationHeader), responseType));
+		return restTemplateExecutor.execute(
+				restTemplate -> restTemplate.exchange(url + resource + (!parameters.isEmpty() ? "?" + parameters : ""),
+						method, new HttpEntity<>(authorizationHeader), responseType));
 	}
 
 	public <T> T exchange(String resource, MultiValueMap<String, String> parameters, HttpMethod method,
@@ -69,8 +70,11 @@ public class KubikTemplate {
 	}
 
 	public <T, S> T exchange(String ressource, HttpMethod method, S body, Class<T> responseType) {
-		return restTemplateExecutor.execute(restTemplate -> restTemplate.exchange(url + ressource, method,
-				new HttpEntity<>(body, authorizationHeader), responseType));
+		return new RestTemplate()
+				.exchange(url + ressource, method, new HttpEntity<>(body, authorizationHeader), responseType).getBody();
+		// return restTemplateExecutor.execute(restTemplate ->
+		// restTemplate.exchange(url + ressource, method,
+		// new HttpEntity<>(body, authorizationHeader), responseType));
 	}
 
 	public <T, S> T exchange(String ressource, HttpMethod method, S body, ParameterizedTypeReference<T> responseType) {
