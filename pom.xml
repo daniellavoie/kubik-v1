@@ -35,12 +35,12 @@
 	
 	<distributionManagement>
 		<repository>
-			<id>invivoo</id>
-			<url>http://http://nexus.cspinformatique.com/repository/invivoo-release/</url>
+			<id>kubik</id>
+			<url>http://http://nexus.cspinformatique.com/repository/kubik-release/</url>
 		</repository>
 		<snapshotRepository>
-			<id>invivoo</id>
-			<url>http://nexus.cspinformatique.com/repository/invivoo-snapshot/</url>
+			<id>kubik</id>
+			<url>http://nexus.cspinformatique.com/repository/kubik-snapshot/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
