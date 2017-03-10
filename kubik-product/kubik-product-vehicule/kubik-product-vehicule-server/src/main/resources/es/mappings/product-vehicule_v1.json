@@ -1,8 +1,7 @@
 {
 	"properties" : {
 		"ean13": {
-			"type": "string",
-			"index": "not_analyzed"
+			"type": "keyword"
 		},
 		"supplierReferences" : {
 			"properties" : {
@@ -17,15 +16,13 @@
 			}
 		},
 		"brand" : {
-			"type" : "string",
-			"index" : "not_analyzed"
+			"type" : "keyword"
 		},
 		"name" : {
-			"type" : "string"
+			"type" : "text"
 		},
 		"category" : {
-			"type" : "string",
-			"index" : "not_analyzed"
+			"type" : "keyword"
 		},
 		"publicPrice" : {
 			"type" : "double"
@@ -40,14 +37,13 @@
 			"type" : "double"
 		},
 		"description" : {
-			"type" : "string"
+			"type" : "text"
 		},
 		"caracteristics" : {
-			"type" : "string"
+			"type" : "text"
 		},
 		"packaking" : {
-			"type" : "string",
-			"index" : "not_analyzed"
+			"type" : "keyword"
 		},
 		"kubikId" : {
 			"type" : "integer"
