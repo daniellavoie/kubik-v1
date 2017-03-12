@@ -43,8 +43,4 @@ node {
   stage('Test') {
 
   }
-
-  stage('Deploy') {
-
-  }
 }
