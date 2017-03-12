@@ -11,7 +11,7 @@ node {
       sh "mvn clean deploy"
 
       docker.withServer("unix:///var/run/docker.sock") {
-        def kubikImage = docker.build("daniellavoie/kubik", "kubik/kubik-server")
+        docker.build("daniellavoie/kubik", "kubik/kubik-server")
 
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'github-daniellavoie', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 	      sh "docker login --password=${PASSWORD} --username=${USERNAME}"
@@ -24,7 +24,7 @@ node {
             sh "docker push ${USERNAME}/kubik:latest"
         }
         
-        def kubikImage = docker.build("daniellavoie/kubik-product-vehicule", "kubik-product/kubik-product-vehicule/kubik-product-vehicule-server")
+        docker.build("daniellavoie/kubik-product-vehicule", "kubik-product/kubik-product-vehicule/kubik-product-vehicule-server")
 
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'github-daniellavoie', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 	      sh "docker login --password=${PASSWORD} --username=${USERNAME}"
