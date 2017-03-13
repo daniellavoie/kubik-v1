@@ -83,4 +83,11 @@ public class ElasticsearchConfiguration {
 	public void setTransportRange(String transportRange) {
 		this.transportRange = transportRange;
 	}
+
+	@Override
+	public String toString() {
+		return "ElasticsearchConfiguration [clusterName=" + clusterName + ", hostname=" + hostname + ", port=" + port
+				+ ", dataPath=" + dataPath + ", homePath=" + homePath + ", portRange=" + portRange + ", transportRange="
+				+ transportRange + "]";
+	}
 }
