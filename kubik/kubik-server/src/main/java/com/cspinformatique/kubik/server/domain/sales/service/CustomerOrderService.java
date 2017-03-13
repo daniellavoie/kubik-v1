@@ -12,4 +12,8 @@ public interface CustomerOrderService {
 	CustomerOrder findOne(Long id);
 
 	CustomerOrder save(CustomerOrder customerOrder);
+	
+	void processConfirmations();
+	
+	void recoverConfirmations();
 }

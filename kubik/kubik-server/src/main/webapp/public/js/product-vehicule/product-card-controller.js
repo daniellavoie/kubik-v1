@@ -82,7 +82,7 @@
 					displayProduct();
 				else{
 					for(var supplierIndex in suppliers){
-						if(suppliers[supplierIndex].id == product.kubikSupplierId)
+						if(suppliers[supplierIndex].id == product.supplierId)
 							vm.supplier = suppliers[supplierIndex];
 					}
 					
@@ -93,7 +93,7 @@
 				
 				function loadCategory(product){
 					return categoryService
-						.findOne(product.kubikCategoryId)
+						.findOne(product.categoryId)
 						.then(findCategorySuccess); 
 					
 					function findCategorySuccess(category){
@@ -127,7 +127,7 @@
 			$scope.$broadcast("openProductCategories", {categorySelected : categorySelected});
 			
 			function categorySelected(category){
-				vm.product.kubikCategoryId = category.id;
+				vm.product.categoryId = category.id;
 				vm.product.categoryName = category.name;
 				vm.category = category;
 				
@@ -143,7 +143,7 @@
 			vm.productErrors = [];
 			
 			if(vm.supplier != undefined)
-				vm.product.kubikSupplierId = vm.supplier.id;
+				vm.product.supplierId = vm.supplier.id;
 			
 			if(vm.product.ean13 == undefined || vm.product.ean13 == "")
 				vm.productErrors.push("Ean13 non renseigné.");
@@ -152,7 +152,7 @@
 				vm.productErrors.push("Prix achat HT non rensigné.");
 			if(vm.product.sellingPrice == undefined || vm.product.sellingPrice == "")
 				vm.productErrors.push("Prix vente TTC non renseigné.");
-			if(vm.product.kubikSupplierId == undefined)
+			if(vm.product.supplierId == undefined)
 				vm.productErrors.push("Fournisseur manquant.");
 			
 				

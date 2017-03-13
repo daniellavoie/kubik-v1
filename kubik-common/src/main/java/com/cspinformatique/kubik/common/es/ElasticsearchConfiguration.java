@@ -5,16 +5,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties
+@ConfigurationProperties(prefix = "elasticsearch")
 public class ElasticsearchConfiguration {
-	@Value("${elasticsearch.cluster.name:kubik-local}")
-	private String clusterName;
-
-	@Value("${elasticsearch.hostname:localhost}")
-	private String hostname;
-
-	@Value("${elasticsearch.port:9300}")
-	private int port;
+	private String clusterName = "kubik-local";
+	private String hostname = "localhost";
+	private int port = 9300;
 
 	@Value("${elasticsearch.embedded.data-path:target/es-data}")
 	private String dataPath;
