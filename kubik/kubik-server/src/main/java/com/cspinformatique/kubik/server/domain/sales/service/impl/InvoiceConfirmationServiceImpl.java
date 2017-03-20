@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import javax.mail.internet.InternetAddress;
 
@@ -21,7 +22,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.cspinformatique.kubik.kos.model.order.CustomerOrder;
 import com.cspinformatique.kubik.server.domain.sales.repository.InvoiceConfirmationRepository;
-import com.cspinformatique.kubik.server.domain.sales.service.CustomerOrderService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceConfirmationService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.server.jasper.service.ReportService;
@@ -37,7 +37,6 @@ public class InvoiceConfirmationServiceImpl implements InvoiceConfirmationServic
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceConfirmationServiceImpl.class);
 
 	private InvoiceConfirmationRepository repository;
-	private CustomerOrderService customerOrderService;
 	private InvoiceService invoiceService;
 	private ReportService reportService;
 	private AmazonS3 amazonS3;
@@ -45,12 +44,10 @@ public class InvoiceConfirmationServiceImpl implements InvoiceConfirmationServic
 	private String contactEmail;
 	private String bucketName;
 
-	public InvoiceConfirmationServiceImpl(InvoiceConfirmationRepository repository,
-			CustomerOrderService customerOrderService, InvoiceService invoiceService, ReportService reportService,
-			AmazonS3 amazonS3, JavaMailSender sender, @Value("${kubik.contact.email}") String contactEmail,
-			@Value("${aws.s3.bucket.name}") String bucketName) {
+	public InvoiceConfirmationServiceImpl(InvoiceConfirmationRepository repository, InvoiceService invoiceService,
+			ReportService reportService, AmazonS3 amazonS3, JavaMailSender sender,
+			@Value("${kubik.contact.email}") String contactEmail, @Value("${aws.s3.bucket.name}") String bucketName) {
 		this.repository = repository;
-		this.customerOrderService = customerOrderService;
 		this.invoiceService = invoiceService;
 		this.reportService = reportService;
 		this.amazonS3 = amazonS3;
@@ -66,21 +63,12 @@ public class InvoiceConfirmationServiceImpl implements InvoiceConfirmationServic
 	}
 
 	@Override
-	public void processConfirmations() {
-		processConfirmations(Status.TO_PROCESS);
+	public List<InvoiceConfirmation> findByStatus(Status status) {
+		return repository.findByStatus(status);
 	}
 
 	@Override
-	public void recoverConfirmations() {
-		processConfirmations(Status.ERROR);
-	}
-
-	private void processConfirmations(Status status) {
-		for (InvoiceConfirmation invoiceConfirmation : repository.findByStatus(status))
-			process(invoiceConfirmation);
-	}
-
-	private void process(InvoiceConfirmation invoiceConfirmation) {
+	public void process(InvoiceConfirmation invoiceConfirmation, CustomerOrder customerOrder) {
 		LOGGER.info("Processing confirmation for invoice " + invoiceConfirmation.getInvoice().getId() + ".");
 
 		try {
@@ -90,8 +78,7 @@ public class InvoiceConfirmationServiceImpl implements InvoiceConfirmationServic
 			invoiceConfirmation.setError(null);
 
 			// Send the email.
-			sendEmail(customerOrderService.findOne(invoiceConfirmation.getInvoice().getCustomerOrderId()),
-					invoiceConfirmation.getInvoice());
+			sendEmail(customerOrder, invoiceConfirmation.getInvoice());
 
 			invoiceConfirmation.setStatus(Status.PROCESSED);
 		} catch (Exception ex) {

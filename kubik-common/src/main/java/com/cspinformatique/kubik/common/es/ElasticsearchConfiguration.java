@@ -5,16 +5,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties
+@ConfigurationProperties(prefix = "elasticsearch")
 public class ElasticsearchConfiguration {
-	@Value("${elasticsearch.cluster.name:kubik-local}")
-	private String clusterName;
-
-	@Value("${elasticsearch.hostname:localhost}")
-	private String hostname;
-
-	@Value("${elasticsearch.port:9300}")
-	private int port;
+	private String clusterName = "kubik-local";
+	private String hostname = "localhost";
+	private int port = 9300;
 
 	@Value("${elasticsearch.embedded.data-path:target/es-data}")
 	private String dataPath;
@@ -82,5 +77,12 @@ public class ElasticsearchConfiguration {
 
 	public void setTransportRange(String transportRange) {
 		this.transportRange = transportRange;
+	}
+
+	@Override
+	public String toString() {
+		return "ElasticsearchConfiguration [clusterName=" + clusterName + ", hostname=" + hostname + ", port=" + port
+				+ ", dataPath=" + dataPath + ", homePath=" + homePath + ", portRange=" + portRange + ", transportRange="
+				+ transportRange + "]";
 	}
 }

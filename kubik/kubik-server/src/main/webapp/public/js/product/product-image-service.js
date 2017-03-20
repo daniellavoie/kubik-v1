@@ -17,7 +17,7 @@
 		};
 		
 		function downloadImage(productId, provider, remoteUrl){
-			var url = PRODUCT_URL + "/" + productId + "/image/" + provider;
+			var url = PRODUCT_URL + "/ean13/" + productId + "/image/" + provider;
 			if(provider == "url"){
 				url += "?url=" + remoteUrl; 
 			}
