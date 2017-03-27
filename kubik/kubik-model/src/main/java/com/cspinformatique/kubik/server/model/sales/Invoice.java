@@ -31,6 +31,10 @@ public class Invoice {
 	public enum ShippingMethod {
 		TAKEOUT, COLISSIMO
 	}
+	
+	public enum RebateType {
+		PERCENT, CASH
+	}
 
 	private Integer id;
 	private String number;
@@ -65,6 +69,7 @@ public class Invoice {
 	private ShippingMethod shippingMethod;
 	private Integer totalWeight;
 	private String note;
+	private RebateType rebateType;
 
 	public Invoice() {
 
@@ -350,5 +355,14 @@ public class Invoice {
 
 	public void setNote(String note) {
 		this.note = note;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public RebateType getRebateType() {
+		return rebateType;
+	}
+
+	public void setRebateType(RebateType rebateType) {
+		this.rebateType = rebateType;
 	}
 }

@@ -13,6 +13,7 @@
 		vm.addCustomerToInvoice = addCustomerToInvoice;
 		vm.addOneProduct = addOneProduct;
 		vm.cancelInvoice = cancelInvoice;
+		vm.changeRebateType = changeRebateType;
 		vm.checkoutInvoice = checkoutInvoice;
 		vm.confirmCancelInvoice = confirmCancelInvoice;
 		vm.invoiceChanged = invoiceChanged;
@@ -101,6 +102,12 @@
 			vm.saveInvoice();
 			
 			$(".confirm-cancel").modal("hide");
+		}
+		
+		function changeRebateType(rebateType){
+			vm.invoice.rebateType = rebateType;
+			
+			vm.saveInvoice();
 		}
 		
 		function checkoutInvoice(){

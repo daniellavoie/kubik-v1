@@ -41,6 +41,7 @@ import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.sales.CashRegisterSession;
 import com.cspinformatique.kubik.server.model.sales.Customer;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
+import com.cspinformatique.kubik.server.model.sales.Invoice.RebateType;
 import com.cspinformatique.kubik.server.model.sales.Invoice.ShippingMethod;
 import com.cspinformatique.kubik.server.model.sales.Invoice.Source;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
@@ -368,6 +369,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 		invoice.setPayments(new ArrayList<>());
 		invoice.setSource(source);
 		invoice.setShippingMethod(shippingMethod);
+		invoice.setRebateType(RebateType.PERCENT);
 
 		return this.save(invoice);
 	}
@@ -543,6 +545,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 					Date.from(LocalDateTime.now().withNano(0).atZone(ZoneId.systemDefault()).toInstant()));
 
 			// Calculate invoice amounts.
+			if (RebateType.CASH.equals(invoice.getRebateType())) {
+				double rebateAmount = invoice.getRebateAmount();
+				invoice.setRebateAmount(0d);
+				invoice.setRebatePercent(0d);
+				this.calculateInvoiceAmounts(invoice);
+
+				invoice.setRebatePercent(rebateAmount * 100 / invoice.getTotalAmount());
+			}
+
 			this.calculateInvoiceAmounts(invoice);
 
 			if (invoice.getPaidDate() != null) {
