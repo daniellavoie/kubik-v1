@@ -38,6 +38,17 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	
+	<distributionManagement>
+		<repository>
+			<id>kubik</id>
+			<url>http://http://nexus.cspinformatique.com/repository/kubik-release/</url>
+		</repository>
+		<snapshotRepository>
+			<id>kubik</id>
+			<url>http://nexus.cspinformatique.com/repository/kubik-snapshot/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<scm>
 		<url>https://github.com/daniellavoie/Kubik</url>
