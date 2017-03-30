@@ -42,7 +42,7 @@
 	<distributionManagement>
 		<repository>
 			<id>kubik</id>
-			<url>http://http://nexus.cspinformatique.com/repository/kubik-release/</url>
+			<url>http://nexus.cspinformatique.com/repository/kubik-release/</url>
 		</repository>
 		<snapshotRepository>
 			<id>kubik</id>
