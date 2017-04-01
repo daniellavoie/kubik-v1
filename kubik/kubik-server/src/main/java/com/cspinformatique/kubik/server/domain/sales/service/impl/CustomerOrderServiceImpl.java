@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.apache.commons.math3.util.Precision;
@@ -31,9 +30,9 @@ import com.cspinformatique.kubik.server.domain.sales.service.InvoiceService;
 import com.cspinformatique.kubik.server.domain.sales.service.InvoiceStatusService;
 import com.cspinformatique.kubik.server.domain.sales.service.PaymentMethodService;
 import com.cspinformatique.kubik.server.domain.sales.service.PaymentService;
-import com.cspinformatique.kubik.server.jasper.service.ReportService;
 import com.cspinformatique.kubik.server.model.product.Product;
 import com.cspinformatique.kubik.server.model.sales.Invoice;
+import com.cspinformatique.kubik.server.model.sales.InvoiceConfirmation;
 import com.cspinformatique.kubik.server.model.sales.Invoice.ShippingMethod;
 import com.cspinformatique.kubik.server.model.sales.InvoiceDetail;
 import com.cspinformatique.kubik.server.model.sales.InvoiceStatus;
@@ -52,32 +51,28 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 					Transaction.Status.SETTLING, Transaction.Status.SETTLEMENT_PENDING,
 					Transaction.Status.SETTLEMENT_CONFIRMED, Transaction.Status.SETTLED });
 
-	@Resource
-	AddressService addressService;
+	private AddressService addressService;
+	private InvoiceService invoiceService;
+	private InvoiceConfirmationService invoiceConfirmationService;
+	private InvoiceStatusService invoiceStatusService;
+	private PaymentService paymentService;
+	private PaymentMethodService paymentMethodService;
+	private ProductService productService;
+	private KubikTemplate kosTemplate;
 
-	@Resource
-	InvoiceService invoiceService;
-
-	@Resource
-	InvoiceConfirmationService invocieConfirmationService;
-
-	@Resource
-	InvoiceStatusService invoiceStatusService;
-
-	@Resource
-	PaymentService paymentService;
-
-	@Resource
-	PaymentMethodService paymentMethodService;
-
-	@Resource
-	ProductService productService;
-
-	@Resource
-	ReportService reportService;
-
-	@Resource
-	KubikTemplate kosTemplate;
+	public CustomerOrderServiceImpl(AddressService addressService, InvoiceService invoiceService,
+			InvoiceConfirmationService invocieConfirmationService, InvoiceStatusService invoiceStatusService,
+			PaymentService paymentService, PaymentMethodService paymentMethodService, ProductService productService,
+			KubikTemplate kosTemplate) {
+		this.addressService = addressService;
+		this.invoiceService = invoiceService;
+		this.invoiceConfirmationService = invocieConfirmationService;
+		this.invoiceStatusService = invoiceStatusService;
+		this.paymentService = paymentService;
+		this.paymentMethodService = paymentMethodService;
+		this.productService = productService;
+		this.kosTemplate = kosTemplate;
+	}
 
 	@Override
 	public Page<CustomerOrder> findAll(MultiValueMap<String, String> parameters) {
@@ -89,6 +84,21 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		Assert.notNull(id, "CustomerOrder Id is undefined.");
 
 		return kosTemplate.exchange(CUSTOMER_ORDER_RESOURCE + "/" + id, HttpMethod.GET, CustomerOrder.class);
+	}
+
+	@Override
+	public void processConfirmations() {
+		processConfirmations(InvoiceConfirmation.Status.TO_PROCESS);
+	}
+
+	@Override
+	public void recoverConfirmations() {
+		processConfirmations(InvoiceConfirmation.Status.ERROR);
+	}
+
+	private void processConfirmations(InvoiceConfirmation.Status status) {
+		for (InvoiceConfirmation invoiceConfirmation : invoiceConfirmationService.findByStatus(status))
+			invoiceConfirmationService.process(invoiceConfirmation, findOne(invoiceConfirmation.getInvoice().getCustomerOrderId()));
 	}
 
 	/**
@@ -140,7 +150,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 		customerOrder.setInvoiceId(invoice.getId().longValue());
 
 		// Create a new email confirmation to process.
-		invocieConfirmationService.create(invoice);
+		invoiceConfirmationService.create(invoice);
 
 		// Saves the customer order to KOS.
 		save(customerOrder);

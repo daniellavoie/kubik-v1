@@ -106,7 +106,7 @@
 								<td>{{product.name}}</td>
 								<td>{{product.publicPrice | currency : "&euro;"}}</td>
 								<td>{{product.buyingPrice | currency : "&euro;"}}</td>
-								<td>{{product.categoryName}}</td>
+								<td>{{product.categoryLevel3Name != unedfined ? product.categoryLevel3Name : product.categoryLevel2Name != unedfined ? product.categoryLevel2Name : product.categoryLevel1Name }}</td>
 								<td><img ng-src="/product/ean13/{{product.ean13}}/image/THUMB.jpg" /></td>
 								<td><span class="glyphicon glyphicon-list-alt" ng-click="productsPageCtrl.openProductCard($event, product)"></span></td>
 							</tr>

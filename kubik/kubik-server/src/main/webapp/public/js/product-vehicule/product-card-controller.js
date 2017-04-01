@@ -82,7 +82,7 @@
 					displayProduct();
 				else{
 					for(var supplierIndex in suppliers){
-						if(suppliers[supplierIndex].id == product.kubikSupplierId)
+						if(suppliers[supplierIndex].id == product.supplierId)
 							vm.supplier = suppliers[supplierIndex];
 					}
 					
@@ -93,7 +93,7 @@
 				
 				function loadCategory(product){
 					return categoryService
-						.findOne(product.kubikCategoryId)
+						.findOne(product.categoryId)
 						.then(findCategorySuccess); 
 					
 					function findCategorySuccess(category){
@@ -127,11 +127,58 @@
 			$scope.$broadcast("openProductCategories", {categorySelected : categorySelected});
 			
 			function categorySelected(category){
-				vm.product.kubikCategoryId = category.id;
-				vm.product.categoryName = category.name;
-				vm.category = category;
+				categoryService.findAll()
+					.then(findAllSuccess);
 				
-				$scope.$broadcast("closeProductCategoriesModal");
+				function findAllSuccess(categories){
+					var thirdCategory;
+					var secondCategory;
+					var firstCategory = category;
+					vm.product.categoryLevel1Name = undefined;
+					vm.product.categoryLevel2Name = undefined;
+					vm.product.categoryLevel3Name = undefined;
+					
+					if(firstCategory.parentCategory != null)
+						secondCategory = findCategory(firstCategory.parentCategory.id, categories);
+					if(secondCategory != null && secondCategory.parentCategory)
+						thirdCategory = findCategory(category.parentCategory.id, categories);
+					
+					vm.product.categoryId = firstCategory.id;
+					// Level1 Category
+					if(thirdCategory != null)
+						vm.product.categoryLevel1Name = thirdCategory.name;
+					else if(secondCategory != null)
+						vm.product.categoryLevel1Name = secondCategory.name;
+					else
+						vm.product.categoryLevel1Name = firstCategory.name;
+						
+				    // Level2 Category
+					if(thirdCategory != null)
+						vm.product.categoryLevel2Name = secondCategory.name;
+					else if(secondCategory != null)
+						vm.product.categoryLevel2Name = firstCategory.name;
+					
+					if(thirdCategory != null)
+						vm.product.categoryLevel3Name = firstCategory.name;
+
+					vm.category = category;
+					
+					$scope.$broadcast("closeProductCategoriesModal");
+				}
+				
+				function findCategory(categoryId, categories){
+					var categoryToFind;
+					for(var i in categories){
+						var category = categories[i];
+						if(categoryToFind == null)
+							if(category.id == categoryId)
+								categoryToFind = category;
+							else
+								categoryToFind = findCategory(categoryId, category.childCategories);
+					}
+					
+					return categoryToFind;
+				}
 			}
 		}
 		
@@ -143,7 +190,7 @@
 			vm.productErrors = [];
 			
 			if(vm.supplier != undefined)
-				vm.product.kubikSupplierId = vm.supplier.id;
+				vm.product.supplierId = vm.supplier.id;
 			
 			if(vm.product.ean13 == undefined || vm.product.ean13 == "")
 				vm.productErrors.push("Ean13 non renseigné.");
@@ -152,7 +199,7 @@
 				vm.productErrors.push("Prix achat HT non rensigné.");
 			if(vm.product.sellingPrice == undefined || vm.product.sellingPrice == "")
 				vm.productErrors.push("Prix vente TTC non renseigné.");
-			if(vm.product.kubikSupplierId == undefined)
+			if(vm.product.supplierId == undefined)
 				vm.productErrors.push("Fournisseur manquant.");
 			
 				

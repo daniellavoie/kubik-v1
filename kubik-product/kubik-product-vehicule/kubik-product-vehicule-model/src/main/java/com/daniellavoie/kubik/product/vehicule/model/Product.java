@@ -6,11 +6,17 @@ public class Product {
 	public enum Packaging {
 		STANDARD, PACK, KIT
 	}
-	
+
 	public enum SupplierType {
 		NONE, SIFAM
 	}
 
+	private int id;
+	private int categoryId;
+	private String categoryLevel1Name;
+	private String categoryLevel2Name;
+	private String categoryLevel3Name;
+	private int supplierId;
 	private String ean13;
 	private List<SupplierReference> supplierReferences;
 	private String brand;
@@ -23,12 +29,57 @@ public class Product {
 	private String description;
 	private String caracteristics;
 	private Packaging packaging;
-	private int kubikId;
-	private int kubikCategoryId;
-	private int kubikSupplierId;
-	
-	public Product(){
-		
+
+	public Product() {
+
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public String getCategoryLevel1Name() {
+		return categoryLevel1Name;
+	}
+
+	public void setCategoryLevel1Name(String categoryLevel1Name) {
+		this.categoryLevel1Name = categoryLevel1Name;
+	}
+
+	public String getCategoryLevel2Name() {
+		return categoryLevel2Name;
+	}
+
+	public void setCategoryLevel2Name(String categoryLevel2Name) {
+		this.categoryLevel2Name = categoryLevel2Name;
+	}
+
+	public String getCategoryLevel3Name() {
+		return categoryLevel3Name;
+	}
+
+	public void setCategoryLevel3Name(String categoryLevel3Name) {
+		this.categoryLevel3Name = categoryLevel3Name;
+	}
+
+	public int getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(int supplierId) {
+		this.supplierId = supplierId;
 	}
 
 	public String getEan13() {
@@ -127,32 +178,8 @@ public class Product {
 		this.packaging = packaging;
 	}
 
-	public int getKubikId() {
-		return kubikId;
-	}
-
-	public void setKubikId(int kubikId) {
-		this.kubikId = kubikId;
-	}
-
-	public int getKubikCategoryId() {
-		return kubikCategoryId;
-	}
-
-	public void setKubikCategoryId(int kubikCategoryId) {
-		this.kubikCategoryId = kubikCategoryId;
-	}
-
-	public int getKubikSupplierId() {
-		return kubikSupplierId;
-	}
-
-	public void setKubikSupplierId(int kubikSupplierId) {
-		this.kubikSupplierId = kubikSupplierId;
-	}
-
 	@Override
 	public String toString() {
-		return "Product [ean13=" + ean13 + ", brand=" + brand + ", name=" + name + "]";
+		return "Product [id=" + id + ", ean13=" + ean13 + ", brand=" + brand + ", name=" + name + "]";
 	}
 }

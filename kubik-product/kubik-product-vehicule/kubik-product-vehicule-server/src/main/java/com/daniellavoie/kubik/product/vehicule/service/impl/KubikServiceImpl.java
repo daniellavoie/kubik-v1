@@ -25,17 +25,17 @@ public class KubikServiceImpl implements KubikService {
 	public int saveProduct(Product product) {
 		com.cspinformatique.kubik.server.model.product.Product kubikProduct = new com.cspinformatique.kubik.server.model.product.Product();
 
-		kubikProduct.setId(product.getKubikId());
+		kubikProduct.setId(product.getId());
 		kubikProduct.setEan13(product.getEan13());
 		kubikProduct.setBrand(product.getBrand());
 		kubikProduct.setCategory(new Category());
-		kubikProduct.getCategory().setId(product.getKubikCategoryId());
+		kubikProduct.getCategory().setId(product.getCategoryId());
 		kubikProduct.setName(product.getName());
 		kubikProduct.setPriceTaxIn(product.getSellingPrice());
 		kubikProduct.setTvaRate1(20d);
 		kubikProduct.setWeight((int) product.getWeight());
 		kubikProduct.setSupplier(new Supplier());
-		kubikProduct.getSupplier().setId(product.getKubikSupplierId());
+		kubikProduct.getSupplier().setId(product.getSupplierId());
 
 		LOGGER.info("Notifying " + product + " to Kubik.");
 

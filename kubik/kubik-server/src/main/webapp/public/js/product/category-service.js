@@ -20,12 +20,11 @@
 		};
 		
 		function deleteCategory(categoryId){
-			return $http.delete(CATEGORIES_URL + "/" + categoryId);
+			return $http.delete(CATEGORY_URL + "/" + categoryId);
 		}
 		
 		function deleteProductCategories(categoryId){
-			return $http
-				delete(CATEGORY_URL + "/" + categoryId + "/product");
+			return $http.delete(CATEGORY_URL + "/" + categoryId + "/product");
 		}
 		
 		function findAll(){

@@ -18,7 +18,7 @@
 							<img ng-src="/product/ean13/{{productCardCtrl.product.ean13}}/image/MEDIUM.jpg" />
 						</div>
 						
-						<div ng-if="productCardCtrl.editingImage">
+						<div ng-if="productCardCtrl.editingImage &amp;&amp; productCardCtrl.product.id != undefined">
 							<div th:replace="product/product-images :: product-images"></div>
 						</div>
 						
